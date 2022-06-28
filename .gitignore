@@ -362,7 +362,12 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Output directory
 OutPut/
+
+# Resources directory
 !Resources/
+
+# Library directory
 !lib/
 lib/DirectXTex/

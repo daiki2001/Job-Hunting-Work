@@ -7,14 +7,14 @@ TextrueCommon::TextrueCommon() :
 	metadata{},
 	scratchImg{},
 	img{},
-	textrueCount(1),
+	textrueCount(0),
 	descHeap{}
 {
 	noneTextrue[0] = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 /*static•Ï”‚Ì‰Šú‰»*/
-DirectDrawing::vector<Textrue> LoadTex::textrueData(1);
+DirectDrawing::vector<Textrue> LoadTex::textrueData{};
 TextrueCommon LoadTex::texCommonData = {};
 
 LoadTex::LoadTex() :

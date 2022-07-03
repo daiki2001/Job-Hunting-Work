@@ -1037,7 +1037,7 @@ int DrawPolygon::Draw(
 	const bool& isOrthoGraphic, const bool& viewMultiFlag, Object* parent)
 {
 	if ((polygonData < 0 || (size_t)polygonData >= vertices.size()) ||
-		(graphHandle < 0 || (UINT)graphHandle > texCommonData.textrueCount)/* ||
+		(graphHandle < 0 || (UINT)graphHandle > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
 		return EoF;
@@ -1162,7 +1162,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 	const XMFLOAT4& color, const bool& isOrthoGraphic, const bool& viewMultiFlag, Object* parent)
 {
 	if ((obj[object].polygonData < 0 || (size_t)obj[object].polygonData >= vertices.size()) ||
-		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > texCommonData.textrueCount)/* ||
+		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
 		return EoF;

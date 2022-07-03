@@ -7,18 +7,17 @@ TextrueCommon::TextrueCommon() :
 	metadata{},
 	scratchImg{},
 	img{},
-	textrueCount(0),
 	descHeap{}
 {
 	noneTextrue[0] = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
-/*static変数の初期化*/
-DirectDrawing::vector<Textrue> LoadTex::textrueData{};
-TextrueCommon LoadTex::texCommonData = {};
+UINT LoadTex::textrueCount = 0;
 
 LoadTex::LoadTex() :
 	DirectDrawing(),
+	texCommonData{},
+	textrueData{},
 	spriteCount(0)
 {
 }
@@ -55,7 +54,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 
 	if (fileName != nullptr)
 	{
-		texCommonData.textrueCount++;
+		textrueCount++;
 
 		// WICテクスチャのロード
 		LoadFromWICFile(
@@ -131,11 +130,16 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 		);
 	}
 
-	return texCommonData.textrueCount - 1;
+	return static_cast<int>(textrueData.size() - 1);
 }
 
 void LoadTex::DataClear()
 {
+	for (size_t i = 0; i < textrueData.size(); i++)
+	{
+		textrueCount--;
+	}
+
 	textrueData.clear();
 	texCommonData = {};
 }
@@ -172,7 +176,7 @@ int LoadTex::DrawTextrue(const float& posX, const float& posY, const float& widt
 	using namespace DirectX;
 	using namespace Engine;
 
-	if ((graphHandle < 0 || (UINT)graphHandle > texCommonData.textrueCount) ||
+	if ((graphHandle < 0 || (UINT)graphHandle > textrueCount) ||
 		(parent < -1 || (parent != -1 && (size_t)parent >= spriteIndex.size())))
 	{
 		return FUNCTION_ERROR;
@@ -298,7 +302,7 @@ int LoadTex::DrawCutTextrue(const float& posX, const float& posY, const float& w
 	using namespace DirectX;
 	using namespace Engine;
 
-	if ((graphHandle < 0 || (UINT)graphHandle > texCommonData.textrueCount) ||
+	if ((graphHandle < 0 || (UINT)graphHandle > textrueCount) ||
 		(parent < -1 && (size_t)parent >= spriteIndex.size()))
 	{
 		return FUNCTION_ERROR;

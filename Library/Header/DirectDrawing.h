@@ -216,14 +216,6 @@ struct Sprite
 
 class DirectDrawing
 {
-public: // サブクラス
-	// オブジェクトデータ（スプライトのデータ）のインデックス
-	struct IndexData
-	{
-		int constant; //定数バッファ
-		int textrue;  //テクスチャ
-	};
-
 protected: // エイリアス
 	// DirectX::を省略
 	using XMFLOAT3 = DirectX::XMFLOAT3;
@@ -233,15 +225,47 @@ protected: // エイリアス
 	// Microsoft::WRL::を省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+public: // サブクラス
+	// オブジェクトデータ（スプライトのデータ）のインデックス
+	struct IndexData
+	{
+		int constant; //定数バッファ
+		int textrue;  //テクスチャ
+	};
+
 public: // 静的メンバ変数
 	static bool isDepthWriteBan; //trueだったら、デプスに対しての上書き禁止
 protected:
-	static vector<Sprite> sprite;              //スプライトのデータ
-	static vector<IndexData> spriteIndex;      //スプライトのデータのインデックス
-
 	static CommonData spriteData; //スプライトのデータで共通のデータ
 
 	static size_t blendMode; //ブレンドモード
+
+protected: // メンバ変数
+	vector<VertexData> vertices; //頂点データ
+	Vertex* vertMap;
+
+	vector<OBJData> obj; //オブジェクトデータ
+	vector<IndexData> objIndex; //オブジェクトデータのインデックス
+	ComPtr<ID3D12DescriptorHeap> basicDescHeap; //定数バッファ用のデスクリプタヒープ
+	vector<DescHandle> srvHandle;
+	size_t nullBufferCount; //ワールド行列だけのオブジェクトデータの数
+
+	vector<Sprite> sprite;         //スプライトのデータ
+	vector<IndexData> spriteIndex; //スプライトのデータのインデックス
+
+	CommonData objectData[2];   //オブジェクトデータで共通のデータ
+	CommonData materialData[2]; //マテリアルデータで共通のデータ
+
+	vector<OBJSubset> objSubset;
+private:
+	float nearClip; //ニアクリップ距離
+	float farClip;  //ファークリップ距離
+
+	// 関数の初期化フラグ
+	bool isDrawingInit = false;
+	bool isMaterialInit = false;
+	bool isSpriteDrawingInit = false;
+	bool isBasicDescHeapInit = false;
 
 public: // メンバ関数
 	// コンストラクタ
@@ -304,33 +328,4 @@ protected:
 private:
 	// データの消去
 	void DataClear();
-protected: // メンバ変数
-	vector<VertexData> vertices; //頂点データ
-	Vertex* vertMap;
-
-	vector<OBJData> obj; //オブジェクトデータ
-	vector<IndexData> objIndex; //オブジェクトデータのインデックス
-	ComPtr<ID3D12DescriptorHeap> basicDescHeap; //定数バッファ用のデスクリプタヒープ
-	vector<DescHandle> srvHandle;
-	size_t nullBufferCount; //ワールド行列だけのオブジェクトデータの数
-
-	ComPtr<ID3DBlob> vsBlob;    //頂点シェーダオブジェクト
-	ComPtr<ID3DBlob> psBlob;    //ピクセルシェーダオブジェクト
-	ComPtr<ID3DBlob> errorBlob; //エラーオブジェクト
-	ComPtr<ID3DBlob> rootSigBlob;
-
-	CommonData objectData[2];   //オブジェクトデータで共通のデータ
-	CommonData materialData[2]; //マテリアルデータで共通のデータ
-
-	vector<OBJSubset> objSubset;
-private:
-	float nearClip; //ニアクリップ距離
-	float farClip;  //ファークリップ距離
-
-	// 関数の初期化フラグ
-	bool isDrawingInit = false;
-	bool isMaterialInit = false;
-	bool isSpriteDrawingInit = false;
-	bool isBasicDescHeapInit = false;
-
 };

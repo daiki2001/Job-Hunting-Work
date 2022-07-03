@@ -66,8 +66,6 @@ void Object::SetCollider(BaseCollider* collider)
 
 /*static変数の初期化*/
 CommonData DirectDrawing::spriteData = {};
-DirectDrawing::vector<Sprite> DirectDrawing::sprite = {};
-DirectDrawing::vector<DirectDrawing::IndexData> DirectDrawing::spriteIndex = {};
 size_t DirectDrawing::blendMode = BLENDMODE_NOBLEND;
 bool DirectDrawing::isDepthWriteBan = false;
 
@@ -89,10 +87,8 @@ DirectDrawing::DirectDrawing() :
 	basicDescHeap{},
 	srvHandle{},
 	nullBufferCount(0),
-	vsBlob{},
-	psBlob{},
-	errorBlob{},
-	rootSigBlob{},
+	sprite{},
+	spriteIndex{},
 	nearClip(0.1f),
 	farClip(1000.0f)
 {
@@ -166,6 +162,11 @@ HRESULT DirectDrawing::DrawingInit()
 	}
 
 	static auto* dev = DirectXInit::GetDevice();
+
+	ComPtr<ID3DBlob> vsBlob;    //頂点シェーダオブジェクト
+	ComPtr<ID3DBlob> psBlob;    //ピクセルシェーダオブジェクト
+	ComPtr<ID3DBlob> errorBlob; //エラーオブジェクト
+	ComPtr<ID3DBlob> rootSigBlob;
 
 	isDrawingInit = true;
 
@@ -396,6 +397,11 @@ HRESULT DirectDrawing::MaterialInit()
 	}
 
 	static auto* dev = DirectXInit::GetDevice();
+
+	ComPtr<ID3DBlob> vsBlob;    //頂点シェーダオブジェクト
+	ComPtr<ID3DBlob> psBlob;    //ピクセルシェーダオブジェクト
+	ComPtr<ID3DBlob> errorBlob; //エラーオブジェクト
+	ComPtr<ID3DBlob> rootSigBlob;
 
 	isMaterialInit = true;
 
@@ -629,6 +635,11 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 	}
 
 	static auto* dev = DirectXInit::GetDevice();
+
+	ComPtr<ID3DBlob> vsBlob;    //頂点シェーダオブジェクト
+	ComPtr<ID3DBlob> psBlob;    //ピクセルシェーダオブジェクト
+	ComPtr<ID3DBlob> errorBlob; //エラーオブジェクト
+	ComPtr<ID3DBlob> rootSigBlob;
 
 	isSpriteDrawingInit = true;
 

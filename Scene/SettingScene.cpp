@@ -29,6 +29,10 @@ void SettingScene::Init()
 
 void SettingScene::Update()
 {
+	if (Input::IsKeyTrigger(DIK_R))
+	{
+		sceneChenger->PopScene();
+	}
 	if (Input::IsKeyTrigger(DIK_SPACE))
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
@@ -40,6 +44,7 @@ void SettingScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
+	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
 
 	// îwåi
 	draw.DrawTextrue(

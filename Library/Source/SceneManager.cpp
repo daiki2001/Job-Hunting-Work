@@ -43,3 +43,15 @@ void SceneManager::SceneChenge(const SceneChenger::Scene scene, const bool stack
 		break;
 	}
 }
+
+int SceneManager::PopScene()
+{
+	if (sceneStack.size() <= 1)
+	{
+		return Engine::FUNCTION_ERROR;
+	}
+
+	sceneStack.pop();
+
+	return 0;
+}

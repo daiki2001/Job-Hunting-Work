@@ -44,6 +44,7 @@ void GameScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
+	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
 
 	// îwåi
 	draw.DrawTextrue(

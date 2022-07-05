@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "BlockType.h"
 #include <vector>
 
 class BlockManager final
 {
-public: //ƒVƒ“ƒOƒ‹ƒgƒ“‰»
+public: //ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
 	static BlockManager* Get();
 private:
 	BlockManager();
@@ -12,7 +12,7 @@ private:
 	~BlockManager();
 	BlockManager operator=(const BlockManager&) = delete;
 
-public: //ƒTƒuƒNƒ‰ƒX
+public: //ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 	enum TypeId
 	{
 		NONE
@@ -20,13 +20,13 @@ public: //ƒTƒuƒNƒ‰ƒX
 
 	class Block
 	{
-	public: //ƒƒ“ƒo•Ï”
+	public: //ãƒ¡ãƒ³ãƒå¤‰æ•°
 		int posX = 0;
 		int posY = 0;
 	private:
 		TypeId typeId = BlockManager::TypeId::NONE;
 
-	public: //ƒƒ“ƒoŠÖ”
+	public: //ãƒ¡ãƒ³ãƒé–¢æ•°
 		Block() = default;
 		~Block() = default;
 
@@ -34,19 +34,19 @@ public: //ƒTƒuƒNƒ‰ƒX
 		void SetTypeId(const TypeId& typeId) { this->typeId = typeId; }
 	};
 
-private: //ƒƒ“ƒo•Ï”
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
 	std::vector<BlockType> blockType;
 	std::vector<Block> block;
 
-public: //ƒƒ“ƒoŠÖ”
-	// ‰Šú‰»ˆ—
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–å‡¦ç†
 	void Init(DrawPolygon* const draw);
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update();
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Draw();
 
-	// ƒuƒƒbƒN‚Ì¶¬ˆ—
+	// ãƒ–ãƒ­ãƒƒã‚¯ã®ç”Ÿæˆå‡¦ç†
 	int CreateBlock(const BlockManager::TypeId& typeId);
 
 	Block& GetBlock(const int& index) { return block[index]; };

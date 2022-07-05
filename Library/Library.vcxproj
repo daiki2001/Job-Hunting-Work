@@ -194,6 +194,7 @@
     <ClInclude Include="Header\Error.h" />
     <ClInclude Include="Header\FbxLoader.h" />
     <ClInclude Include="Header\Input.h" />
+    <ClInclude Include="Header\LoadFile.h" />
     <ClInclude Include="Header\LoadTex.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Parameter.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="Source\EngineGeneral.cpp" />
     <ClCompile Include="Source\FbxLoader.cpp" />
     <ClCompile Include="Source\Input.cpp" />
+    <ClCompile Include="Source\LoadFile.cpp" />
     <ClCompile Include="Source\LoadTex.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Parameter.cpp" />

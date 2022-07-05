@@ -1,26 +1,30 @@
-#pragma once
-#include <string>
+ï»¿#pragma once
+#include "./Math/EngineMath.h"
+#include "LoadFile.h"
+#include "Error.h"
 
-/*’è”*/
+/*å®šæ•°*/
 namespace Engine
 {
-namespace General
-{
-static const std::string libraryDirectory = "./lib/";             //ƒ‰ƒCƒuƒ‰ƒŠƒfƒBƒŒƒNƒgƒŠ
-static const std::string defaultTextureFileName = "white1x1.png"; //ƒfƒtƒHƒ‹ƒg‰æ‘œ
-} //General
+static const std::string libraryDirectory = "./lib/";             //ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+static const std::string defaultTextureFileName = "white1x1.png"; //ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆç”»åƒ
 } //Engine
 
-/*ŠÖ”*/
+/*é–¢æ•°*/
 namespace Engine
 {
-namespace General
-{
-// ƒfƒBƒŒƒNƒgƒŠ‚ğŠÜ‚ñ‚¾ƒtƒ@ƒCƒ‹ƒpƒX‚©‚çƒtƒ@ƒCƒ‹–¼‚ğ’Šo‚·‚é
+// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å«ã‚“ã ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‹ã‚‰ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒ‘ã‚¹ã‚’æŠ½å‡ºã™ã‚‹
 std::string ExtractDirectory(const std::string& path);
-// ƒfƒBƒŒƒNƒgƒŠ‚ğŠÜ‚ñ‚¾ƒtƒ@ƒCƒ‹ƒpƒX‚©‚çƒtƒ@ƒCƒ‹–¼‚ğ’Šo‚·‚é
+// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å«ã‚“ã ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‹ã‚‰ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æŠ½å‡ºã™ã‚‹
 std::string ExtractFileName(const std::string& path);
-} //General
+
+template <class T>
+void Swap(T* a, T* b)
+{
+	T tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
 } //Engine
 
 using namespace Engine;

@@ -1,4 +1,4 @@
-#include "BlockManager.h"
+﻿#include "BlockManager.h"
 
 #include "./Header/Error.h"
 
@@ -65,7 +65,7 @@ int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 
 		block.push_back({});
 		block.back().SetTypeId(typeId);
-		return block.size() - 1;
+		return static_cast<int>(block.size() - 1);
 	}
 
 	return Engine::FUNCTION_ERROR;

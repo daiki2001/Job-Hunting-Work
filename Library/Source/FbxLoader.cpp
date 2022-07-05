@@ -66,8 +66,6 @@ void FbxLoader::Finalize()
 
 int FbxLoader::LoadModelFromFile(const string& modelPath)
 {
-	using namespace Engine::General;
-
 	size_t foundExtension = modelPath.find_last_of(".");
 	string directoryPath = ExtractDirectory(modelPath);
 	string modelName = modelPath.substr(modelPath.size(), foundExtension - modelPath.size());
@@ -298,8 +296,6 @@ void FbxLoader::ParseMeshFaces(Model* model, FbxMesh* fbxMesh)
 
 void FbxLoader::ParseMaterial(Model* model, FbxNode* fbxNode)
 {
-	using namespace Engine::General;
-
 	const int materialCount = fbxNode->GetMaterialCount();
 	if (materialCount > 0)
 	{

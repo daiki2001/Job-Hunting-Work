@@ -1,4 +1,4 @@
-#include "BlockType.h"
+﻿#include "BlockType.h"
 
 #include "./Header/Error.h"
 
@@ -25,5 +25,5 @@ int BlockType::Create(const wchar_t* filename)
 
 void BlockType::Draw(const int& posX, const int& posY)
 {
-	draw->DrawTextrue(posX, posY, WIDTH, HEIGHT, 0, graph, DirectX::XMFLOAT2(0.0f, 0.0f));
+	draw->DrawTextrue(static_cast<float>(posX), static_cast<float>(posY), WIDTH, HEIGHT, 0, graph, DirectX::XMFLOAT2(0.0f, 0.0f));
 }

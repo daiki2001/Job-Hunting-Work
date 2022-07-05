@@ -1,4 +1,4 @@
-#include "GameScene.h"
+ï»¿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Input.h"
 #include "./Stage/BlockManager.h"
@@ -28,9 +28,9 @@ void GameScene::Init()
 	background = draw.LoadTextrue((gameResourcesDir + L"background.png").c_str());
 	blockMgr->Init(&draw);
 
-	for (size_t y = 0; y < 5; y++)
+	for (int y = 0; y < 5; y++)
 	{
-		for (size_t x = 0; x < 5; x++)
+		for (int x = 0; x < 5; x++)
 		{
 			int index = blockMgr->CreateBlock(BlockManager::TypeId::NONE);
 
@@ -67,7 +67,7 @@ void GameScene::Draw()
 	w->ClearScreen();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
 
-	// ”wŒi
+	// èƒŒæ™¯
 	draw.DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f,
@@ -77,13 +77,13 @@ void GameScene::Draw()
 		background
 	);
 
-	// 3DƒIƒuƒWƒFƒNƒg
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	blockMgr->Draw();
 
-	// ‘OŒi
+	// å‰æ™¯
 
 	w->ScreenFlip();
 
-	// ƒ‹[ƒv‚ÌI—¹ˆ—
+	// ãƒ«ãƒ¼ãƒ—ã®çµ‚äº†å‡¦ç†
 	draw.PolygonLoopEnd();
 }

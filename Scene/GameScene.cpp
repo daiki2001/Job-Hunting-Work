@@ -1,13 +1,13 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Input.h"
-#include "./Stage/BlockManager.h"
+#include "./Stage/Stage.h"
 
 #include "./Header/Error.h"
 
 namespace
 {
-static BlockManager* blockMgr = BlockManager::Get();
+static Stage* stage = Stage::Get();
 }
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
@@ -26,29 +26,13 @@ GameScene::~GameScene()
 void GameScene::Init()
 {
 	background = draw.LoadTextrue((gameResourcesDir + L"background.png").c_str());
-	blockMgr->Init(&draw);
-
-	for (int y = 0; y < 5; y++)
-	{
-		for (int x = 0; x < 5; x++)
-		{
-			int index = blockMgr->CreateBlock(BlockManager::TypeId::NONE);
-
-			if (index == Engine::FUNCTION_ERROR)
-			{
-				continue;
-			}
-
-			auto& block = blockMgr->GetBlock(index);
-			block.posX = x * BlockType::WIDTH + 200;
-			block.posY = y * BlockType::HEIGHT + 200;
-		}
-	}
+	stage->Init(&draw);
+	stage->LoadStage("./Resources/Game/Stage/test.csv");
 }
 
 void GameScene::Update()
 {
-	blockMgr->Update();
+	stage->Update();
 
 	/*if (Input::IsKeyTrigger(DIK_SPACE))
 	{
@@ -78,7 +62,7 @@ void GameScene::Draw()
 	);
 
 	// 3Dオブジェクト
-	blockMgr->Draw();
+	stage->Draw(200, 200);
 
 	// 前景
 

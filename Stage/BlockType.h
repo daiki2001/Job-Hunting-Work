@@ -2,6 +2,10 @@
 #include "./Header/DrawPolygon.h"
 #include <string>
 
+#ifdef _DEBUG
+#include <DirectXMath.h>
+#endif // _DEBUG
+
 class BlockType
 {
 public: //’è”
@@ -23,6 +27,9 @@ public: //ƒƒ“ƒoŠÖ”
 	virtual int Create(const wchar_t* filename);
 	// •`‰æˆ—
 	void Draw(const int& posX, const int& posY);
+#ifdef _DEBUG
+	void Draw(const int& posX, const int& posY, const DirectX::XMFLOAT4& color);
+#endif // _DEBUG
 
 	// ID‚Ìæ“¾
 	const int GetId() const { return typeId; }

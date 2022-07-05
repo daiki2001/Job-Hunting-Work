@@ -28,6 +28,9 @@
     <Filter Include="Stage">
       <UniqueIdentifier>{53a5ba2e-8288-43a9-97ad-234fe7056906}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Stage\Block">
+      <UniqueIdentifier>{cae89078-5544-4172-a063-b130db7e8e46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,11 +48,11 @@
     <ClCompile Include="Stage\Stage.cpp">
       <Filter>Stage</Filter>
     </ClCompile>
-    <ClCompile Include="Stage\BlockType.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Stage\BlockManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Stage\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage\BlockType.cpp">
+      <Filter>Stage\Block</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,14 +65,14 @@
     <ClInclude Include="Scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Stage\Stage.h">
-      <Filter>Stage</Filter>
+    <ClInclude Include="Stage\BlockManager.h">
+      <Filter>Stage\Block</Filter>
     </ClInclude>
     <ClInclude Include="Stage\BlockType.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Stage\Block</Filter>
     </ClInclude>
-    <ClInclude Include="Stage\BlockManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Stage\Stage.h">
+      <Filter>Stage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

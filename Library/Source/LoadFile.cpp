@@ -1,5 +1,6 @@
 ﻿#include "./Header/LoadFile.h"
 #include <stdio.h>
+#include "./Header/Error.h"
 
 namespace Engine
 {
@@ -7,6 +8,10 @@ namespace Load
 {
 int LoadMapChip(int* mapArray, const size_t& mapSize, const char* FilePath, int LoadStopNumber)
 {
+	if (FilePath == nullptr)
+	{
+		return Engine::FUNCTION_ERROR;
+	}
 	for (size_t i = 0; i < mapSize; i++)
 	{
 		mapArray[i] = 0;

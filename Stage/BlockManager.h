@@ -15,7 +15,8 @@ private:
 public: //サブクラス
 	enum TypeId
 	{
-		NONE
+		NONE,
+		WALL
 	};
 
 	class Block
@@ -44,7 +45,7 @@ public: //メンバ関数
 	// 更新処理
 	void Update();
 	// 描画処理
-	void Draw();
+	void Draw(const int& offsetX = 0, const int& offsetY = 0);
 
 	// ブロックの生成処理
 	int CreateBlock(const BlockManager::TypeId& typeId);

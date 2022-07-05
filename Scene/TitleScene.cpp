@@ -29,10 +29,7 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_SPACE))
-	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
-	}
+	sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
 }
 
 void TitleScene::Draw()

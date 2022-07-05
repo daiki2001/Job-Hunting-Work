@@ -1,12 +1,13 @@
 #include "GameScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Input.h"
+#include "./Stage/BlockManager.h"
 
 #include "./Header/Error.h"
 
 namespace
 {
-static const std::wstring backgroundFileName = L"background.png";
+static BlockManager* blockMgr = BlockManager::Get();
 }
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
@@ -24,19 +25,39 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
-	background = draw.LoadTextrue((gameResourcesDir + backgroundFileName).c_str());
+	background = draw.LoadTextrue((gameResourcesDir + L"background.png").c_str());
+	blockMgr->Init(&draw);
+
+	for (size_t y = 0; y < 5; y++)
+	{
+		for (size_t x = 0; x < 5; x++)
+		{
+			int index = blockMgr->CreateBlock(BlockManager::TypeId::NONE);
+
+			if (index == Engine::FUNCTION_ERROR)
+			{
+				continue;
+			}
+
+			auto& block = blockMgr->GetBlock(index);
+			block.posX = x * BlockType::WIDTH + 200;
+			block.posY = y * BlockType::HEIGHT + 200;
+		}
+	}
 }
 
 void GameScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_SPACE))
+	blockMgr->Update();
+
+	/*if (Input::IsKeyTrigger(DIK_SPACE))
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
 	}
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Setting, false);
-	}
+	}*/
 }
 
 void GameScene::Draw()
@@ -57,6 +78,7 @@ void GameScene::Draw()
 	);
 
 	// 3Dオブジェクト
+	blockMgr->Draw();
 
 	// 前景
 

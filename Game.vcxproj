@@ -171,11 +171,17 @@
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SettingScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="Stage\BlockType.cpp" />
+    <ClCompile Include="Stage\BlockManager.cpp" />
+    <ClCompile Include="Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SettingScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Stage\BlockType.h" />
+    <ClInclude Include="Stage\BlockManager.h" />
+    <ClInclude Include="Stage\Stage.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Game\background.png" />

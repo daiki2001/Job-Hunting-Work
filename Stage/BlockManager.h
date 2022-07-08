@@ -51,4 +51,11 @@ public: //メンバ関数
 	int CreateBlock(const BlockManager::TypeId& typeId);
 
 	Block& GetBlock(const int& index) { return block[index]; };
+private:
+	/// <summary>
+	/// プレイヤーの周囲のブロックを取得する
+	/// </summary>
+	/// <param name="radius"> 0を指定するとプレイヤーがいる場所のブロックだけ渡す </param>
+	/// <param name="surroundingBlockType"> 要素番号をまとめた配列 </param>
+	void GetSurroundingBlock(const int& radius, BlockManager::TypeId* surroundingBlockType);
 };

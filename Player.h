@@ -14,16 +14,17 @@ private:
 public: //サブクラス
 	enum Direction
 	{
+		LEFT = -1,
 		UP,
 		RIGHT,
-		DOWN,
-		LEFT
+		DOWN
 	};
 
-private: //メンバ変数
+public: //メンバ変数
+	int posX, posY; //座標
+private:
 	DrawPolygon* draw;
 
-	int posX, posY;      //座標
 	Direction direction; //向いている方向
 	int graph;           //画像
 
@@ -34,4 +35,6 @@ public: //メンバ関数
 	void Update();
 	// 描画処理
 	void Draw(const int& offsetX = 0, const int& offsetY = 0);
+
+	const Direction GetDirection() const { return direction; };
 };

@@ -25,10 +25,10 @@ BlockManager* BlockManager::Get()
 void BlockManager::Init(DrawPolygon* const draw)
 {
 	blockType.push_back(BlockType(NONE, draw));
-	blockType.back().Create(L"NoneBlock.png");
+	blockType.back().Create(L"WallBlock.png");
 
 	blockType.push_back(BlockType(WALL, draw));
-	blockType.back().Create(L"NoneBlock.png");
+	blockType.back().Create(L"WallBlock.png");
 }
 
 void BlockManager::Update()

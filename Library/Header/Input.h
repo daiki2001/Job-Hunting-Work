@@ -1,38 +1,49 @@
-#pragma once
+ï»¿#pragma once
 #include "DirectInput.h"
 #include "Win32API.h"
 
 class Input final
 {
+public: // ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
+	static Input* Get();
 private:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğprivate‚É‚·‚é
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’privateã«ã™ã‚‹
 	Input() {}
-	// ƒfƒXƒgƒ‰ƒNƒ^‚ğprivate‚É‚·‚é
-	~Input() {}
-public:
-	// ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ìíœ
+	// ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å‰Šé™¤
 	Input(const Input& obj) = delete;
-	// ‘ã“ü‰‰Zq‚Ìíœ
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’privateã«ã™ã‚‹
+	~Input() {}
+	// ä»£å…¥æ¼”ç®—å­ã®å‰Šé™¤
 	const Input& operator=(const Input& obj) = delete;
 
-public: // Ã“Iƒƒ“ƒoŠÖ”
-	// ‰Šú‰»
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–
 	static void Init();
-	// XV
+	// æ›´æ–°
 	static void Update();
-	// ƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
+	// ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹
 	static bool IsKey(int key);
-	// ƒL[‚ª‰Ÿ‚³‚ê‚½‚©‚Ç‚¤‚©
+	// ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã‹ã©ã†ã‹
 	static bool IsKeyTrigger(int key);
-	// ƒL[‚©‚ç—£‚ê‚½‚©‚Ç‚¤‚©
+	// ã‚­ãƒ¼ã‹ã‚‰é›¢ã‚ŒãŸã‹ã©ã†ã‹
 	static bool IsKeyReturn(int key);
+	// ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹
+	static bool IsGamepad(DirectInput::GamepadInputType gamepadType);
+	// ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã‹ã©ã†ã‹
+	static bool IsGamepadTrigger(DirectInput::GamepadInputType gamepadType);
+	// ã‚­ãƒ¼ã‹ã‚‰é›¢ã‚ŒãŸã‹ã©ã†ã‹
+	static bool IsGamepadReturn(DirectInput::GamepadInputType gamepadType);
 
-private: // Ã“Iƒƒ“ƒo•Ï”
-	// “ü—ÍƒfƒoƒCƒX
+private: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹
 	static DirectInput* input;
-	// ÅV‚ÌƒL[ƒ{[ƒhî•ñ—p
+	// æœ€æ–°ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æƒ…å ±ç”¨
 	static char keys[256];
-	// 1ƒ‹[ƒv(ƒtƒŒ[ƒ€)‘O‚ÌƒL[ƒ{[ƒhî•ñ
-	static char oldkeys[256];
+	// 1ãƒ«ãƒ¼ãƒ—(ãƒ•ãƒ¬ãƒ¼ãƒ )å‰ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æƒ…å ±
+	static char oldKeys[256];
+	// æœ€æ–°ã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰æƒ…å ±ç”¨
+	static DIJOYSTATE gamepad;
+	// 1ãƒ«ãƒ¼ãƒ—(ãƒ•ãƒ¬ãƒ¼ãƒ )å‰ã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰æƒ…å ±
+	static DIJOYSTATE oldGamepad;
 
 };

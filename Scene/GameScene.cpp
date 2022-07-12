@@ -56,20 +56,28 @@ void GameScene::Draw()
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
 
 	// 背景
-	draw.DrawTextrue(
-		w->windowWidth / 2.0f,
-		w->windowHeight / 2.0f,
-		static_cast<float>(w->windowWidth),
-		static_cast<float>(w->windowHeight),
-		0.0f,
-		background
-	);
+	for (int y = 0; y * 128 < w->windowHeight; y++)
+	{
+		for (int x = 0; x * 128 < w->windowWidth; x++)
+		{
+			draw.DrawTextrue(
+				x * 128.0f,
+				y * 128.0f,
+				128.0f,
+				128.0f,
+				0.0f,
+				background,
+				DirectX::XMFLOAT2(0.0f, 0.0f)
+			);
+		}
+	}
 
 	// 3Dオブジェクト
 	stage->Draw(200, 200);
 	player->Draw(200, 200);
 
 	// 前景
+	draw.DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	draw.DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
 
 	w->ScreenFlip();

@@ -19,7 +19,7 @@ std::string ExtractDirectory(const std::string& path);
 std::string ExtractFileName(const std::string& path);
 
 template <class T>
-void Swap(T* a, T* b)
+constexpr void Swap(T* a, T* b)
 {
 	T tmp = *a;
 	*a = *b;

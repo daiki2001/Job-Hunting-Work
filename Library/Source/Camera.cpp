@@ -68,6 +68,16 @@ void Camera::Init()
 	}
 }
 
+void Camera::Update()
+{
+	pos.x = cosf(longitude) * cosf(latitude);
+	pos.y = sinf(latitude);
+	pos.z = sinf(longitude) * cosf(latitude);
+	pos *= targetRadius;
+	pos += target;
+	SetCamera(pos, target, upVec);
+}
+
 DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;

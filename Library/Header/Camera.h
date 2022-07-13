@@ -29,8 +29,10 @@ public: // 定数
 	static const size_t MAIN_CAMERA;
 
 public: // 静的メンバ関数
-	// 初期化
+	// 初期化処理
 	static void Init();
+	// 更新処理
+	static void Update();
 
 	// キャラクタ姿勢行列の生成
 	static DirectX::XMMATRIX CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);

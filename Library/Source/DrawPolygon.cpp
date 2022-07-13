@@ -15,11 +15,6 @@ DrawPolygon::DrawPolygon() :
 	verticesCount{},
 	material{}
 {
-	using DirectX::XMLoadFloat3;
-
-	XMFLOAT3 cameraPos = { 0, 0, -100 };
-	XMFLOAT3 cameraTarget = { 0, 0, 0 };
-	XMFLOAT3 upVector = { 0, 1, 0 };
 }
 
 DrawPolygon::~DrawPolygon()
@@ -1358,7 +1353,6 @@ void DrawPolygon::PolygonLoopEnd()
 
 void DrawPolygon::DataClear()
 {
-	Camera::matView.clear();
 	verticesCount.clear();
 	material.clear();
 }

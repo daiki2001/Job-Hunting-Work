@@ -1,10 +1,9 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Input.h"
+#include "./Header/Camera.h"
 #include "Player.h"
 #include "./Stage/Stage.h"
-
-#include "./Header/Error.h"
 
 namespace
 {
@@ -31,6 +30,14 @@ void GameScene::Init()
 	player->Init(&draw);
 	stage->Init(&draw);
 	stage->LoadStage("./Resources/Game/Stage/test.csv");
+
+	Camera::targetRadius = 10.0f;
+	Camera::longitude = Math::DEGREE_F * (0.0f);
+	Camera::latitude = Math::DEGREE_F * (0.0f);
+
+	Camera::pos = { 0.0f, 0.0f, -10.0f };
+	Camera::target = { 0.0f, 2.5f, 0.0f };
+	Camera::upVec = { 0.0f, 1.0f, 0.0f };
 }
 
 void GameScene::Update()
@@ -73,7 +80,7 @@ void GameScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage->Draw(200, 200);
+	stage->Draw();
 	player->Draw(200, 200);
 
 	// 前景

@@ -1,7 +1,10 @@
 #include "./Header/Scenemanager.h"
+#include "./Header/Camera.h"
+
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/SettingScene.h"
+
 #include "./Header/Error.h"
 
 SceneManager::SceneManager()
@@ -12,6 +15,7 @@ SceneManager::SceneManager()
 void SceneManager::Loop() const
 {
 	sceneStack.top()->Update();
+	Camera::Update();
 	sceneStack.top()->Draw();
 }
 

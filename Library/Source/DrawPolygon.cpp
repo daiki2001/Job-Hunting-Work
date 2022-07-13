@@ -5,8 +5,6 @@
 #include "./Header/DirectXInit.h"
 #include "./Header/Error.h"
 
-#define EoF -1 // End of Function
-
 DrawPolygon::DrawPolygon() :
 	DebugText(),
 	polygonCount(0),
@@ -508,7 +506,7 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 
 int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 {
-	if (filePath == nullptr) { return EoF; }
+	if (filePath == nullptr) { return Engine::FUNCTION_ERROR; }
 
 	using namespace std;
 	using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -667,7 +665,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			}
 			if (materialIndex >= material.size())
 			{
-				return EoF;
+				return Engine::FUNCTION_ERROR;
 			}
 
 			isFaceStart = false;
@@ -706,7 +704,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			IID_PPV_ARGS(&vertices[i].vertBuff));
 		if (FAILED(hr))
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 
 		hr = vertices[i].vertBuff->Map(0, nullptr, (void**)&vertMap);
@@ -741,7 +739,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			IID_PPV_ARGS(&vertices[i].indexBuff));
 		if (FAILED(hr))
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 
 		// GPU上のバッファに対応した仮想メモリを取得
@@ -996,16 +994,16 @@ int DrawPolygon::DrawPolygonInit()
 	hr = CreateConstBuffer(&index);
 	if (FAILED(hr))
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	if (isDrawPolygonInit == false)
 	{
 		isDrawPolygonInit = true;
 
-		if (LoadTextrue() == EoF)
+		if (LoadTextrue() == Engine::FUNCTION_ERROR)
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 	}
 
@@ -1020,7 +1018,7 @@ int DrawPolygon::DrawOBJInit()
 	hr = CreateConstBuffer(&index);
 	if (FAILED(hr))
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	if (isDrawOBJPolygonInit == false)
@@ -1040,7 +1038,7 @@ int DrawPolygon::Draw(
 		(graphHandle < 0 || (UINT)graphHandle > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	using namespace DirectX;
@@ -1057,9 +1055,9 @@ int DrawPolygon::Draw(
 	if (isInit == false)
 	{
 		int size = DrawPolygonInit();
-		if (size == EoF)
+		if (size == Engine::FUNCTION_ERROR)
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 
 		objIndex.push_back({ size, graphHandle });
@@ -1075,7 +1073,7 @@ int DrawPolygon::Draw(
 
 	if (objIndex.size() <= 0)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	polygonCount++;
@@ -1165,7 +1163,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	using namespace DirectX;
@@ -1184,9 +1182,9 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 		if (isInit == false)
 		{
 			int size = DrawOBJInit();
-			if (size == EoF)
+			if (size == Engine::FUNCTION_ERROR)
 			{
-				return EoF;
+				return Engine::FUNCTION_ERROR;
 			}
 
 			objIndex.push_back({ size, (int)obj[i].material.textrueIndex });
@@ -1201,7 +1199,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 
 	if (objIndex.size() <= 0)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	polygonCount++;

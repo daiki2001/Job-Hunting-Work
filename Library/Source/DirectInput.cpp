@@ -329,6 +329,11 @@ int DirectInput::GamepadInputUpdate(const size_t& gamepadNo)
 		}
 	}
 
+	if (devgamepad.size() <= 0)
+	{
+		return Engine::FUNCTION_ERROR;
+	}
+
 	hr = devgamepad[gamepadNo]->Acquire();
 	if (FAILED(hr))
 	{

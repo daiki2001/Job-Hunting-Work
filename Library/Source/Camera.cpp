@@ -5,8 +5,8 @@
 const size_t Camera::MAIN_CAMERA = 0;
 
 float Camera::targetRadius = 150.0f;
-float Camera::longitude = Engine::Math::degree * (-90.0f);
-float Camera::latitude = Engine::Math::degree * (0.0f);
+float Camera::longitude = Engine::Math::DEGREE_F * (-90.0f);
+float Camera::latitude = Engine::Math::DEGREE_F * (0.0f);
 
 Engine::Math::Vector3 Camera::pos = {};
 Engine::Math::Vector3 Camera::target = { 0.0f, 50.0f, 0.0f };
@@ -43,7 +43,7 @@ void Camera::Init()
 		);
 	matProjection[Projection::PERSPECTIVE] =
 		XMMatrixPerspectiveFovLH(
-			degree * 60.0f,
+			DEGREE_F * 60.0f,
 			static_cast<float>(DirectXInit::GetInstance()->windowWidth) /
 			static_cast<float>(DirectXInit::GetInstance()->windowHeight),
 			0.1f,

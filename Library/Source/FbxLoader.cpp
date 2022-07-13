@@ -145,7 +145,7 @@ void FbxLoader::ParseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent)
 	};
 
 	// 回転角をDegreeからRadianに変換
-	rota *= degree;
+	rota *= DEGREE_F;
 
 	// 回転行列の計算
 	node.rotation = rotateZ(rota.z);

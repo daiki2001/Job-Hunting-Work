@@ -56,7 +56,7 @@ void Stage::LoadStage(const char* filePath)
 		}
 
 		auto& block = blockMgr->GetBlock(index);
-		block.posX = x * BlockType::WIDTH;
-		block.posY = y * BlockType::HEIGHT;
+		block.pos.x = static_cast<float>(x * BlockType::WIDTH);
+		block.pos.y = static_cast<float>(y * BlockType::HEIGHT);
 	}
 }

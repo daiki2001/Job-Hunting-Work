@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "BlockType.h"
 #include <vector>
+#include "./Header/EngineGeneral.h"
 
 class BlockManager final
 {
@@ -12,6 +13,9 @@ private:
 	~BlockManager();
 	BlockManager operator=(const BlockManager&) = delete;
 
+public: //エイリアス
+	using Vector3 = Math::Vector3;
+
 public: //サブクラス
 	enum TypeId
 	{
@@ -22,8 +26,7 @@ public: //サブクラス
 	class Block
 	{
 	public: //メンバ変数
-		int posX = 0;
-		int posY = 0;
+		Vector3 pos = {};
 	private:
 		TypeId typeId = BlockManager::TypeId::NONE;
 

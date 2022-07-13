@@ -77,7 +77,7 @@ void GameScene::Draw()
 	player->Draw(200, 200);
 
 	// 前景
-	draw.DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	draw.DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	draw.DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
 
 	w->ScreenFlip();

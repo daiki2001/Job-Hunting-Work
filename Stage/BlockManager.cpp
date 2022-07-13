@@ -84,9 +84,9 @@ void BlockManager::Draw(const int& offsetX, const int& offsetY)
 			break;
 		}
 
-		blockType[block[i].GetTypeId()].Draw(block[i].posX + offsetX, block[i].posY + offsetY, color);
+		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(offsetX, offsetY, 0.0f), color);
 #else
-		blockType[block[i].GetTypeId()].Draw(block[i].posX + offsetX, block[i].posY + offsetY);
+		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(offsetX, offsetY, 0.0f));
 #endif // _DEBUG
 	}
 }
@@ -122,7 +122,7 @@ void BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* 
 	{
 		if (i == 0)
 		{
-			for (int y = player->posY - radius; (y < player->posY + radius) && (y < block[i].posY / BlockType::HEIGHT); y++)
+			for (int y = player->posY - radius; (y < player->posY + radius) && (y < block[i].pos.y / BlockType::HEIGHT); y++)
 			{
 				for (int x = 0; x < radius * 2 + 1; x++)
 				{
@@ -131,9 +131,9 @@ void BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* 
 			}
 		}
 
-		if (block[i].posX == block[0].posX)
+		if (block[i].pos.x == block[0].pos.x)
 		{
-			for (int x = player->posX - radius; (x < player->posX + radius) && (x < block[i].posX / BlockType::WIDTH); x++)
+			for (int x = player->posX - radius; (x < player->posX + radius) && (x < block[i].pos.x / BlockType::WIDTH); x++)
 			{
 				j++;
 			}
@@ -144,15 +144,15 @@ void BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* 
 			break;
 		}
 
-		if ((block[i].posX / BlockType::WIDTH >= player->posX - radius && block[i].posX / BlockType::WIDTH <= player->posX + radius) &&
-			(block[i].posY / BlockType::HEIGHT >= player->posY - radius && block[i].posY / BlockType::HEIGHT <= player->posY + radius))
+		if ((block[i].pos.x / BlockType::WIDTH >= player->posX - radius && block[i].pos.x / BlockType::WIDTH <= player->posX + radius) &&
+			(block[i].pos.y / BlockType::HEIGHT >= player->posY - radius && block[i].pos.y / BlockType::HEIGHT <= player->posY + radius))
 		{
 			surroundingBlock[j++] = i;
 		}
 
-		if (block[i].posX == block[block.size() - 1].posX)
+		if (block[i].pos.x == block[block.size() - 1].pos.x)
 		{
-			for (int x = player->posX + radius; (x > player->posX - radius) && (x > block[i].posX / BlockType::WIDTH); x--)
+			for (int x = player->posX + radius; (x > player->posX - radius) && (x > block[i].pos.x / BlockType::WIDTH); x--)
 			{
 				j++;
 			}

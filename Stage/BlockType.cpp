@@ -29,15 +29,21 @@ int BlockType::Create(const wchar_t* filename)
 
 void BlockType::Draw(const Vector3& pos)
 {
-	draw->Draw(BlockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), graph);
-	//draw->DrawTextrue(static_cast<float>(posX), static_cast<float>(posY), WIDTH, HEIGHT, 0, graph, DirectX::XMFLOAT2(0.0f, 0.0f));
+	// 'typeId'が0(None)以外
+	if (typeId != 0)
+	{
+		draw->Draw(BlockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), graph);
+	}
 }
 
 #ifdef _DEBUG
 void BlockType::Draw(const Vector3& pos, const DirectX::XMFLOAT4& color)
 {
-	draw->Draw(BlockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), color, graph);
-	//draw->DrawTextrue(static_cast<float>(posX), static_cast<float>(posY), WIDTH, HEIGHT, 0, graph, DirectX::XMFLOAT2(0.0f, 0.0f), color);
+	// 'typeId'が0(None)以外
+	if (typeId != 0)
+	{
+		draw->Draw(BlockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), color, graph);
+	}
 }
 #endif // _DEBUG
 

@@ -32,17 +32,17 @@ void GameScene::Init()
 	stage->LoadStage("./Resources/Game/Stage/test.csv");
 
 	Camera::targetRadius = 10.0f;
-	Camera::longitude = Math::DEGREE_F * (0.0f);
+	Camera::longitude = Math::DEGREE_F * (-90.0f);
 	Camera::latitude = Math::DEGREE_F * (0.0f);
 
 	Camera::pos = { 0.0f, 0.0f, -10.0f };
-	Camera::target = { 0.0f, 2.5f, 0.0f };
+	Camera::target = { 6.0f, -2.0f, 0.0f };
 	Camera::upVec = { 0.0f, 1.0f, 0.0f };
 }
 
 void GameScene::Update()
 {
-	player->Update();
+	player->Update(Input::Get());
 	stage->Update();
 
 	/*if (Input::IsKeyTrigger(DIK_SPACE))
@@ -81,7 +81,7 @@ void GameScene::Draw()
 
 	// 3Dオブジェクト
 	stage->Draw();
-	player->Draw(200, 200);
+	player->Draw();
 
 	// 前景
 	draw.DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));

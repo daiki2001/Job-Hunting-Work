@@ -31,13 +31,14 @@ void Stage::Update()
 
 void Stage::Draw(const int& offsetX, const int& offsetY)
 {
-	blockMgr->Draw(offsetX, offsetY);
+	blockMgr->Draw(offsetX, -offsetY);
 }
 
 void Stage::LoadStage(const char* filePath)
 {
-	static const int stageWidth = 5;
-	int mapArray[stageWidth * stageWidth] = { BlockManager::TypeId::NONE };
+	static const int stageWidth = 13;
+	static const int stageHeight = 5;
+	int mapArray[stageWidth * stageHeight] = { BlockManager::TypeId::NONE };
 
 	if (filePath != nullptr)
 	{
@@ -56,7 +57,7 @@ void Stage::LoadStage(const char* filePath)
 		}
 
 		auto& block = blockMgr->GetBlock(index);
-		block.pos.x = static_cast<float>(x * BlockType::WIDTH);
-		block.pos.y = static_cast<float>(y * BlockType::HEIGHT);
+		block.pos.x = static_cast<float>(x);
+		block.pos.y = static_cast<float>(-y);
 	}
 }

@@ -5,7 +5,7 @@
 
 /*ウィンドウサイズ*/
 constexpr int window_width = 1280; //横幅
-constexpr int window_height = 720; //縦幅
+constexpr int window_height = 768; //縦幅
 
 constexpr WCHAR title[] = L"DirectXGame"; //タイトル
 

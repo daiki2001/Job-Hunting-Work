@@ -46,16 +46,16 @@ void BlockManager::Update()
 		switch (player->GetDirection())
 		{
 		case Player::Direction::LEFT:
-			player->posX++;
+			player->pos.x++;
 			break;
 		case Player::Direction::UP:
-			player->posY++;
+			player->pos.y--;
 			break;
 		case Player::Direction::RIGHT:
-			player->posX--;
+			player->pos.x--;
 			break;
 		case Player::Direction::DOWN:
-			player->posY--;
+			player->pos.y++;
 			break;
 		default:
 			break;
@@ -70,24 +70,7 @@ void BlockManager::Draw(const int& offsetX, const int& offsetY)
 {
 	for (size_t i = 0; i < block.size(); i++)
 	{
-#ifdef _DEBUG
-		DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		switch (block[i].GetTypeId())
-		{
-		case BlockManager::TypeId::WALL:
-			color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-			break;
-		case BlockManager::TypeId::NONE:
-		default:
-			color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-			break;
-		}
-
-		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(offsetX, offsetY, 0.0f), color);
-#else
-		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(offsetX, offsetY, 0.0f));
-#endif // _DEBUG
+		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f));
 	}
 }
 
@@ -122,7 +105,9 @@ void BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* 
 	{
 		if (i == 0)
 		{
-			for (int y = player->posY - radius; (y < player->posY + radius) && (y < block[i].pos.y / BlockType::HEIGHT); y++)
+			for (int y = static_cast<int>(player->pos.y) - radius;
+				 (y < static_cast<int>(player->pos.y) + radius) && (y < static_cast<int>(block[i].pos.y));
+				 y++)
 			{
 				for (int x = 0; x < radius * 2 + 1; x++)
 				{
@@ -133,7 +118,9 @@ void BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* 
 
 		if (block[i].pos.x == block[0].pos.x)
 		{
-			for (int x = player->posX - radius; (x < player->posX + radius) && (x < block[i].pos.x / BlockType::WIDTH); x++)
+			for (int x = static_cast<int>(player->pos.x) - radius;
+				 (x < static_cast<int>(player->pos.x) + radius) && (x < static_cast<int>(block[i].pos.x));
+				 x++)
 			{
 				j++;
 			}
@@ -144,15 +131,19 @@ void BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* 
 			break;
 		}
 
-		if ((block[i].pos.x / BlockType::WIDTH >= player->posX - radius && block[i].pos.x / BlockType::WIDTH <= player->posX + radius) &&
-			(block[i].pos.y / BlockType::HEIGHT >= player->posY - radius && block[i].pos.y / BlockType::HEIGHT <= player->posY + radius))
+		if ((static_cast<int>(block[i].pos.x) >= static_cast<int>(player->pos.x) - radius &&
+			 static_cast<int>(block[i].pos.x) <= static_cast<int>(player->pos.x) + radius) &&
+			(static_cast<int>(block[i].pos.y) >= static_cast<int>(player->pos.y) - radius &&
+			 static_cast<int>(block[i].pos.y) <= static_cast<int>(player->pos.y) + radius))
 		{
 			surroundingBlock[j++] = i;
 		}
 
 		if (block[i].pos.x == block[block.size() - 1].pos.x)
 		{
-			for (int x = player->posX + radius; (x > player->posX - radius) && (x > block[i].pos.x / BlockType::WIDTH); x--)
+			for (int x = static_cast<int>(player->pos.x) + radius;
+				 (x > static_cast<int>(player->pos.x) - radius) && (x > static_cast<int>(block[i].pos.x) / BlockType::WIDTH);
+				 x--)
 			{
 				j++;
 			}

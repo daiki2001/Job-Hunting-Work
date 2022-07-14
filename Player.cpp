@@ -1,13 +1,11 @@
 #include "Player.h"
 #include "./Stage/BlockType.h"
-#include "./Header/Input.h"
-#include "./Header/Error.h"
 
 Player::Player() :
     draw(nullptr),
-    posX(0),
-    posY(0),
+    pos{},
     direction(Player::Direction::UP),
+    object(Engine::FUNCTION_ERROR),
     graph(Engine::FUNCTION_ERROR)
 {
 }
@@ -25,41 +23,47 @@ Player* Player::Get()
 void Player::Init(DrawPolygon* const draw)
 {
     this->draw = draw;
+    object = draw->CreateCylinder(0.5f, 0.5f, 3);
     graph = draw->LoadTextrue(L"./Resources/Game/Player.png");
 }
 
-void Player::Update()
+void Player::Update(const Input* const input)
 {
-    if (Input::IsKeyTrigger(DIK_W))
-    {
-        posY--;
-        direction = Player::Direction::UP;
-    }
-    if (Input::IsKeyTrigger(DIK_A))
-    {
-        posX--;
-        direction = Player::Direction::LEFT;
-    }
-    if (Input::IsKeyTrigger(DIK_S))
-    {
-        posY++;
-        direction = Player::Direction::DOWN;
-    }
-    if (Input::IsKeyTrigger(DIK_D))
-    {
-        posX++;
-        direction = Player::Direction::RIGHT;
-    }
+    Move(input);
 }
 
 void Player::Draw(const int& offsetX, const int& offsetY)
 {
-    draw->DrawTextrue(
-        static_cast<float>((posX * BlockType::WIDTH) + (BlockType::WIDTH / 2) + offsetX),
-        static_cast<float>((posY * BlockType::HEIGHT) + (BlockType::HEIGHT / 2) + offsetY),
-        static_cast<float>(BlockType::WIDTH),
-        static_cast<float>(BlockType::HEIGHT),
-        direction * 90.0f,
+    draw->Draw(
+        object,
+        pos + Vector3(offsetX, offsetY, 0.0f),
+        Math::rotateZ(direction * Math::PI_F / 2),
+        Vector3(0.5f, 1.0f, 1.0f),
+        DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
         graph
     );
+}
+
+void Player::Move(const Input* const input)
+{
+    if (input->IsKeyTrigger(DIK_W))
+    {
+        pos.y += 1.0f;
+        direction = Player::Direction::UP;
+    }
+    if (input->IsKeyTrigger(DIK_A))
+    {
+        pos.x -= 1.0f;
+        direction = Player::Direction::LEFT;
+    }
+    if (input->IsKeyTrigger(DIK_S))
+    {
+        pos.y -= 1.0f;
+        direction = Player::Direction::DOWN;
+    }
+    if (input->IsKeyTrigger(DIK_D))
+    {
+        pos.x += 1.0f;
+        direction = Player::Direction::RIGHT;
+    }
 }

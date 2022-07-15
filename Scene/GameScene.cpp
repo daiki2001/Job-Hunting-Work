@@ -36,7 +36,7 @@ void GameScene::Init()
 	Camera::latitude = Math::DEGREE_F * (0.0f);
 
 	Camera::pos = { 0.0f, 0.0f, -10.0f };
-	Camera::target = { 6.0f, -2.0f, 0.0f };
+	Camera::target = { 7.0f, -3.0f, 0.0f };
 	Camera::upVec = { 0.0f, 1.0f, 0.0f };
 }
 

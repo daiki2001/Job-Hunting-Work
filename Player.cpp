@@ -1,4 +1,4 @@
-#include "Player.h"
+﻿#include "Player.h"
 #include "./Stage/BlockType.h"
 
 Player::Player() :
@@ -51,17 +51,17 @@ void Player::Move(const Input* const input)
         pos.y += 1.0f;
         direction = Player::Direction::UP;
     }
-    if (input->IsKeyTrigger(DIK_A))
+    else if (input->IsKeyTrigger(DIK_A))
     {
         pos.x -= 1.0f;
         direction = Player::Direction::LEFT;
     }
-    if (input->IsKeyTrigger(DIK_S))
+    else if (input->IsKeyTrigger(DIK_S))
     {
         pos.y -= 1.0f;
         direction = Player::Direction::DOWN;
     }
-    if (input->IsKeyTrigger(DIK_D))
+    else if (input->IsKeyTrigger(DIK_D))
     {
         pos.x += 1.0f;
         direction = Player::Direction::RIGHT;

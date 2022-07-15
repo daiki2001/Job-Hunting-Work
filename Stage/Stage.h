@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "BlockManager.h"
+#include "./Header/EngineGeneral.h"
 
 class Stage final
 {
@@ -12,11 +13,13 @@ private:
 	~Stage();
 	Stage operator=(const Stage&) = delete;
 
-private: //静的メンバ変数
-	static BlockManager* blockMgr;
+private: //エイリアス
+	using Vector3 = Math::Vector3;
 
-private: //メンバ変数
-	//DrawPolygon* const draw;
+private: //静的メンバ変数
+	static DrawPolygon* draw;
+	static BlockManager* block_mgr;
+	static int wall_obj; //外壁のオブジェクト
 
 public: //メンバ関数
 	// 初期化処理

@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "./Header/Input.h"
 #include "./Header/EngineGeneral.h"
 
 class Player final
 {
-public: //ƒVƒ“ƒOƒ‹ƒgƒ“‰»
+public: //ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
 	static Player* Get();
 private:
 	Player();
@@ -13,10 +13,10 @@ private:
 	~Player();
 	Player operator=(const Player&) = delete;
 
-private: //ƒGƒCƒŠƒAƒX
+private: //ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	using Vector3 = Math::Vector3;
 
-public: //ƒTƒuƒNƒ‰ƒX
+public: //ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 	enum Direction
 	{
 		RIGHT = -1,
@@ -25,22 +25,24 @@ public: //ƒTƒuƒNƒ‰ƒX
 		DOWN
 	};
 
-public: //ƒƒ“ƒo•Ï”
-	Vector3 pos; //À•W
+public: //ãƒ¡ãƒ³ãƒå¤‰æ•°
+	Vector3 pos; //åº§æ¨™
 private:
 	DrawPolygon* draw;
 
-	Direction direction; //Œü‚¢‚Ä‚¢‚é•ûŒü
-	int object;          //ƒvƒŒƒCƒ„[‚ÌƒIƒuƒWƒFƒNƒg
-	int graph;           //‰æ‘œ
+	Direction direction; //å‘ã„ã¦ã„ã‚‹æ–¹å‘
+	int object;          //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	int graph;           //ç”»åƒ
 
-public: //ƒƒ“ƒoŠÖ”
-	// ‰Šú‰»ˆ—
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–å‡¦ç†
 	void Init(DrawPolygon* const draw);
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update(const Input* const input);
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Draw(const int& offsetX = 0, const int& offsetY = 0);
+
+	void Reset();
 
 	const Direction GetDirection() const { return direction; };
 private:

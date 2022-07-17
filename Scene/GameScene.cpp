@@ -48,11 +48,11 @@ void GameScene::Update()
 	/*if (Input::IsKeyTrigger(DIK_SPACE))
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
-	}
+	}*/
 	if (Input::IsKeyTrigger(DIK_R))
 	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Setting, false);
-	}*/
+		player->Reset();
+	}
 }
 
 void GameScene::Draw()

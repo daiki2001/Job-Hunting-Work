@@ -37,11 +37,16 @@ void Player::Draw(const int& offsetX, const int& offsetY)
     draw->Draw(
         object,
         pos + Vector3(offsetX, offsetY, 0.0f),
-        Math::rotateZ(direction * Math::PI_F / 2),
-        Vector3(0.5f, 1.0f, 1.0f),
+        Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
+        { 0.5f, 1.0f, 1.0f },
         DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
         graph
     );
+}
+
+void Player::Reset()
+{
+    pos = { 0.0f, 0.0f, 0.0f };
 }
 
 void Player::Move(const Input* const input)

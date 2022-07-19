@@ -56,6 +56,11 @@ void Stage::Draw(const int& offsetX, const int& offsetY)
 		draw->Draw(door_obj, Vector3(0.0f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(11.0f, 1.0f, 2.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), debugTex);
 	}
 
+	if (block_mgr->GetDoor() == false)
+	{
+		draw->DrawOBJ(wall_obj, Vector3(), Math::Identity(), Vector3(1.0f, 1.0f, 1.0f));
+	}
+
 	block_mgr->Draw(offsetX, -offsetY);
 }
 

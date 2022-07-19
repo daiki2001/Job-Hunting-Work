@@ -39,6 +39,11 @@ void Stage::Draw(const int& offsetX, const int& offsetY)
 	draw->DrawOBJ(wall_obj, Vector3(+7.5f, -3.5f, 0.0f) + Vector3(7.0f, -3.0f, 0.0f) + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f), Math::rotateZ(2 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+7.5f, +3.5f, 0.0f) + Vector3(7.0f, -3.0f, 0.0f) + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f), Math::rotateZ(3 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 
+	if (block_mgr->GetDoor() == false)
+	{
+		draw->DrawOBJ(wall_obj, Vector3(), Math::Identity(), Vector3(1.0f, 1.0f, 1.0f));
+	}
+
 	block_mgr->Draw(offsetX, -offsetY);
 }
 

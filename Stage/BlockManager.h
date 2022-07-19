@@ -20,27 +20,29 @@ public: //サブクラス
 	enum TypeId
 	{
 		NONE,
-		WALL
+		WALL,
+		SWITCH
 	};
 
 	class Block
 	{
 	public: //メンバ変数
-		Vector3 pos = {};
+		Vector3 pos; //座標
+		bool isSwitch;
 	private:
-		TypeId typeId = BlockManager::TypeId::NONE;
+		TypeId typeId;
 
 	public: //メンバ関数
-		Block() = default;
+		Block(const TypeId& typeId);
 		~Block() = default;
 
 		const TypeId GetTypeId() const { return typeId; }
-		void SetTypeId(const TypeId& typeId) { this->typeId = typeId; }
 	};
 
 private: //メンバ変数
 	std::vector<BlockType> blockType;
 	std::vector<Block> block;
+	bool isOpen;
 
 public: //メンバ関数
 	// 初期化処理
@@ -54,11 +56,18 @@ public: //メンバ関数
 	int CreateBlock(const BlockManager::TypeId& typeId);
 
 	Block& GetBlock(const int& index) { return block[index]; };
+	const bool GetDoor() const { return isOpen; }
 private:
+	// プレイヤーの押し戻し処理
+	void PlayerPushBack() const;
+	// スイッチが押された時の処理
+	void SwitchPush(const size_t& blockNo);
+
 	/// <summary>
 	/// プレイヤーの周囲のブロックを取得する
 	/// </summary>
 	/// <param name="radius"> 0を指定するとプレイヤーがいる場所のブロックだけ渡す </param>
 	/// <param name="surroundingBlockType"> 要素番号をまとめた配列 </param>
-	void GetSurroundingBlock(const int& radius, BlockManager::TypeId* surroundingBlockType);
+	/// <returns> プレイヤーが踏んでいるブロックの要素番号 </returns>
+	int GetSurroundingBlock(const int& radius, BlockManager::TypeId* surroundingBlockType);
 };

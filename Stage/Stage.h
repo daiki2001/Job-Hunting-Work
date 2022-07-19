@@ -20,6 +20,7 @@ private: //静的メンバ変数
 	static DrawPolygon* draw;
 	static BlockManager* block_mgr;
 	static int wall_obj; //外壁のオブジェクト
+	static int door_obj; //ドアのオブジェクト
 
 public: //メンバ関数
 	// 初期化処理

@@ -11,22 +11,23 @@ public: //エイリアス
 public: //定数
 	static const int WIDTH;
 	static const int HEIGHT;
-	static const std::wstring blockResourcesDir;
+	static const std::string blockResourcesDir;
 
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static int BlockBox;
 	
 private: //メンバ変数
 	int typeId;
 	int graph;
+	int blockBox;
 
 public: //メンバ関数
 	BlockType(const int& typeId, DrawPolygon* const draw);
 	virtual ~BlockType();
 
 	// 生成処理
-	virtual int Create(const wchar_t* filename);
+	virtual int Create(const wchar_t* filename = nullptr);
+	virtual int Create(const char* filename);
 	// 描画処理
 	void Draw(const Vector3& pos);
 #ifdef _DEBUG

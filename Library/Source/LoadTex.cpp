@@ -1,5 +1,6 @@
-#include "./Header/LoadTex.h"
+ï»¿#include "./Header/LoadTex.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/Camera.h"
 
 #include "./Header/Error.h"
 
@@ -34,17 +35,17 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 	HRESULT hr = S_FALSE;
 	static auto* dev = DirectXInit::GetDevice();
 	CD3DX12_RESOURCE_DESC texResDesc{};
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; //Ý’è\‘¢‘Ì
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{}; //è¨­å®šæ§‹é€ ä½“
 
 	if (isLoadTextrueInit == false)
 	{
 		isLoadTextrueInit = true;
 
-		D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc{}; //Ý’è\‘¢‘Ì
+		D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc{}; //è¨­å®šæ§‹é€ ä½“
 		descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; //ƒVƒF[ƒ_‚©‚çŒ©‚¦‚é
-		descHeapDesc.NumDescriptors = (UINT)(50000); //ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@‚Ì”
-		// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚Ì¶¬
+		descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; //ã‚·ã‚§ãƒ¼ãƒ€ã‹ã‚‰è¦‹ãˆã‚‹
+		descHeapDesc.NumDescriptors = (UINT)(50000); //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡ã®æ•°
+		// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã®ç”Ÿæˆ
 		hr = dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&texCommonData.descHeap));
 		if (FAILED(hr))
 		{
@@ -56,7 +57,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 	{
 		textrueCount++;
 
-		// WICƒeƒNƒXƒ`ƒƒ‚Ìƒ[ƒh
+		// WICãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒ­ãƒ¼ãƒ‰
 		LoadFromWICFile(
 			fileName,
 			DirectX::WIC_FLAGS_IGNORE_SRGB,
@@ -79,7 +80,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 			&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
 			D3D12_HEAP_FLAG_NONE,
 			&texResDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ, //ƒeƒNƒXƒ`ƒƒ—pŽw’è
+			D3D12_RESOURCE_STATE_GENERIC_READ, //ãƒ†ã‚¯ã‚¹ãƒãƒ£ç”¨æŒ‡å®š
 			nullptr,
 			IID_PPV_ARGS(&textrueData[textrueData.size() - 1].texbuff)
 		);
@@ -88,20 +89,20 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 			return FUNCTION_ERROR;
 		}
 
-		// ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@‚Éƒf[ƒ^“]‘—
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è»¢é€
 		hr = textrueData[textrueData.size() - 1].texbuff->WriteToSubresource(
 			0,
-			nullptr,                            //‘S—Ìˆæ‚ÖƒRƒs[
-			texCommonData.img->pixels,          //Œ³ƒf[ƒ^ƒAƒhƒŒƒX
-			(UINT)texCommonData.img->rowPitch,  //1ƒ‰ƒCƒ“ƒTƒCƒY
-			(UINT)texCommonData.img->slicePitch //ˆê–‡ƒTƒCƒY
+			nullptr,                            //å…¨é ˜åŸŸã¸ã‚³ãƒ”ãƒ¼
+			texCommonData.img->pixels,          //å…ƒãƒ‡ãƒ¼ã‚¿ã‚¢ãƒ‰ãƒ¬ã‚¹
+			(UINT)texCommonData.img->rowPitch,  //1ãƒ©ã‚¤ãƒ³ã‚µã‚¤ã‚º
+			(UINT)texCommonData.img->slicePitch //ä¸€æžšã‚µã‚¤ã‚º
 		);
 		if (FAILED(hr))
 		{
 			return FUNCTION_ERROR;
 		}
 
-		// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚Ìæ“ªƒnƒ“ƒhƒ‹(CPU)‚ðŽæ“¾
+		// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã®å…ˆé ­ãƒãƒ³ãƒ‰ãƒ«(CPU)ã‚’å–å¾—
 		textrueData[textrueData.size() - 1].cpuDescHandle =
 			CD3DX12_CPU_DESCRIPTOR_HANDLE(
 				texCommonData.descHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -109,7 +110,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 				dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 			);
 
-		// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚Ìæ“ªƒnƒ“ƒhƒ‹(GPU)‚ðŽæ“¾
+		// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã®å…ˆé ­ãƒãƒ³ãƒ‰ãƒ«(GPU)ã‚’å–å¾—
 		textrueData[textrueData.size() - 1].gpuDescHandle =
 			CD3DX12_GPU_DESCRIPTOR_HANDLE(
 				texCommonData.descHeap->GetGPUDescriptorHandleForHeapStart(),
@@ -117,15 +118,15 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 				dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 			);
 
-		// ƒVƒF[ƒ_ƒŠƒ\[ƒXƒrƒ…[Ý’è
+		// ã‚·ã‚§ãƒ¼ãƒ€ãƒªã‚½ãƒ¼ã‚¹ãƒ“ãƒ¥ãƒ¼è¨­å®š
 		srvDesc.Format = texCommonData.metadata.format;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; //2DƒeƒNƒXƒ`ƒƒ
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; //2Dãƒ†ã‚¯ã‚¹ãƒãƒ£
 		srvDesc.Texture2D.MipLevels = 1;
 
 		dev->CreateShaderResourceView(
-			textrueData[textrueData.size() - 1].texbuff.Get(), //ƒrƒ…[‚ÆŠÖ˜A•t‚¯‚éƒoƒbƒtƒ@
-			&srvDesc, //ƒeƒNƒXƒ`ƒƒÝ’èî•ñ
+			textrueData[textrueData.size() - 1].texbuff.Get(), //ãƒ“ãƒ¥ãƒ¼ã¨é–¢é€£ä»˜ã‘ã‚‹ãƒãƒƒãƒ•ã‚¡
+			&srvDesc, //ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®šæƒ…å ±
 			textrueData[textrueData.size() - 1].cpuDescHandle
 		);
 	}
@@ -243,7 +244,7 @@ int LoadTex::DrawTextrue(const float& posX, const float& posY, const float& widt
 		vert[RB].pos = { right, bottom, 0.0f };
 		vert[RT].pos = { right, top, 0.0f };
 
-		// ’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒf[ƒ^“]‘—
+		// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒ‡ãƒ¼ã‚¿è»¢é€
 		SpriteVertex* vertexMap = nullptr;
 		sprite[index.constant].vertBuff->Map(0, nullptr, (void**)&vertexMap);
 		memcpy(vertexMap, vert, sizeof(vert));
@@ -273,21 +274,21 @@ int LoadTex::DrawTextrue(const float& posX, const float& posY, const float& widt
 	{
 		constMap->color = sprite[index.constant].color;
 		constMap->mat = sprite[index.constant].matWorld *
-			spriteData.matProjection[CommonData::Projection::ORTHOGRAPHIC];
+			Camera::matProjection[Camera::Projection::ORTHOGRAPHIC];
 		sprite[index.constant].constBuff->Unmap(0, nullptr);
 	}
 
-	// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚ðƒZƒbƒg
+	// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã‚’ã‚»ãƒƒãƒˆ
 	ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	// ’è”ƒoƒbƒtƒ@ƒrƒ…[‚ðƒZƒbƒg
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	cmdList->SetGraphicsRootConstantBufferView(0, sprite[index.constant].constBuff->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootDescriptorTable(1, textrueData[index.textrue].gpuDescHandle);
 
-	// ’¸“_ƒoƒbƒtƒ@‚ÌÝ’è
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
 	cmdList->IASetVertexBuffers(0, 1, &sprite[index.constant].vbView);
-	// •`‰æƒRƒ}ƒ“ƒh
+	// æç”»ã‚³ãƒžãƒ³ãƒ‰
 	cmdList->DrawInstanced(4, 1, 0, 0);
 
 #pragma endregion
@@ -375,7 +376,7 @@ int LoadTex::DrawCutTextrue(const float& posX, const float& posY, const float& w
 		vert[RB].pos = { right, bottom, 0.0f };
 		vert[RT].pos = { right, top, 0.0f };
 
-		// ƒeƒNƒXƒ`ƒƒƒf[ƒ^Žæ“¾
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‡ãƒ¼ã‚¿å–å¾—
 		D3D12_RESOURCE_DESC resDesc = textrueData[index.textrue].texbuff->GetDesc();
 
 		float texLeft = sprite[index.constant].texLeftTop.x / resDesc.Width;
@@ -388,7 +389,7 @@ int LoadTex::DrawCutTextrue(const float& posX, const float& posY, const float& w
 		vert[RB].uv = { texRight, texBottom };
 		vert[RT].uv = { texRight, texTop };
 
-		// ’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒf[ƒ^“]‘—
+		// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒ‡ãƒ¼ã‚¿è»¢é€
 		SpriteVertex* vertexMap = nullptr;
 		sprite[index.constant].vertBuff->Map(0, nullptr, (void**)&vertexMap);
 		memcpy(vertexMap, vert, sizeof(vert));
@@ -417,20 +418,20 @@ int LoadTex::DrawCutTextrue(const float& posX, const float& posY, const float& w
 	sprite[index.constant].constBuff->Map(0, nullptr, (void**)&constMap);
 	constMap->color = sprite[index.constant].color;
 	constMap->mat = sprite[index.constant].matWorld *
-		spriteData.matProjection[CommonData::Projection::ORTHOGRAPHIC];
+		Camera::matProjection[Camera::Projection::ORTHOGRAPHIC];
 	sprite[index.constant].constBuff->Unmap(0, nullptr);
 
-	// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚ðƒZƒbƒg
+	// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã‚’ã‚»ãƒƒãƒˆ
 	ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	// ’è”ƒoƒbƒtƒ@ƒrƒ…[‚ðƒZƒbƒg
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	cmdList->SetGraphicsRootConstantBufferView(0, sprite[index.constant].constBuff->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootDescriptorTable(1, textrueData[index.textrue].gpuDescHandle);
 
-	// ’¸“_ƒoƒbƒtƒ@‚ÌÝ’è
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
 	cmdList->IASetVertexBuffers(0, 1, &sprite[index.constant].vbView);
-	// •`‰æƒRƒ}ƒ“ƒh
+	// æç”»ã‚³ãƒžãƒ³ãƒ‰
 	cmdList->DrawInstanced(4, 1, 0, 0);
 
 #pragma endregion

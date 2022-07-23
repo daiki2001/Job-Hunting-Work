@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/ShaderManager.h"
 #include "./Header/Input.h"
 
 #include "./Header/Error.h"
@@ -38,6 +39,7 @@ void TitleScene::Draw()
 
 	w->ClearScreen();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
+	ShaderManager::blendMode = ShaderManager::BlendMode::ALPHA;
 
 	// îwåi
 	draw.DrawTextrue(

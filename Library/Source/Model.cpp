@@ -1,25 +1,32 @@
 #include "./Header/Model.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/FbxLoader.h"
-
-#include "./Header/Error.h"
+#include "./Header/ShaderManager.h"
 
 /*シェーダ用*/
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
 
+namespace
+{
+ShaderManager* shaderMgr = ShaderManager::Get();
+}
+
 Node::Node() :
 	name{},
 	position{ 0.0f, 0.0f, 0.0f },
-	rotation{ Engine::Math::Identity() },
+	rotation{ Math::Identity() },
 	scaling{ 1.0f, 1.0f, 1.0f },
-	transform{ Engine::Math::Identity() },
-	globalTransform{ Engine::Math::Identity() },
+	transform{ Math::Identity() },
+	globalTransform{ Math::Identity() },
 	parent{ nullptr }
 {
 }
 
 ID3D12Device* Model::dev = DirectXInit::GetDevice();
+int Model::fbxVS = FUNCTION_ERROR;
+int Model::fbxPS = FUNCTION_ERROR;
+int Model::fbxInputLayout = FUNCTION_ERROR;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> Model::pipelineState;
 
@@ -30,9 +37,9 @@ Model::Model() :
 	metadata{},
 	scratchImg{},
 	pos(0.0f, 0.0f, 0.0f),
-	rota(Engine::Math::Identity()),
+	rota(Math::Identity()),
 	scale(1.0f, 1.0f, 1.0f),
-	world(Engine::Math::Identity()),
+	world(Math::Identity()),
 	frameTime{},
 	startTime{},
 	endTime{},
@@ -61,57 +68,19 @@ HRESULT Model::CreateGraphicsPipeline()
 		return S_OK;
 	}
 
-	using namespace Microsoft::WRL;
-
 	isInit = true;
 
-	// 頂点シェーダの読み込みとコンパイル
-	hr = D3DCompileFromFile(
-		L"./lib/Shaders/FBXVS.hlsl",    // シェーダファイル名
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
-		"main", "vs_5_0",    // エントリーポイント名、シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0,
-		&vsBlob, &errorBlob);
-	if (FAILED(hr)) {
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-					errorBlob->GetBufferSize(),
-					errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
-
-	// ピクセルシェーダの読み込みとコンパイル
-	hr = D3DCompileFromFile(
-		L"./lib/Shaders/FBXPS.hlsl",    // シェーダファイル名
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
-		"main", "ps_5_0",    // エントリーポイント名、シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0,
-		&psBlob, &errorBlob);
-	if (FAILED(hr)) {
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-					errorBlob->GetBufferSize(),
-					errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
+	// 各種シェーダーのコンパイルと読み込み
+	fbxVS = shaderMgr->CompileVertexShader(L"./lib/Shaders/FBXVS.hlsl");
+	fbxPS = shaderMgr->CompilePixleShader(L"./lib/Shaders/FBXPS.hlsl");
 
 	// 頂点レイアウト
+	fbxInputLayout = shaderMgr->CreateInputLayout();
+	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
+	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
+	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("BONEINDICES", DXGI_FORMAT_R32G32B32A32_UINT);
+	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("BONEWEIGHTS", DXGI_FORMAT_R32G32B32A32_FLOAT);
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{ // xy座標(1行で書いたほうが見やすい)
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
@@ -142,15 +111,13 @@ HRESULT Model::CreateGraphicsPipeline()
 
 	// グラフィックスパイプラインの流れを設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
-	gpipeline.VS = CD3DX12_SHADER_BYTECODE(vsBlob.Get());
-	gpipeline.PS = CD3DX12_SHADER_BYTECODE(psBlob.Get());
+	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetVertexShader(fbxVS).GetShaderBlob());
+	gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetPixleShader(fbxPS).GetShaderBlob());
 
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	// ラスタライザステート
 	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	//gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-	//gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 
@@ -174,8 +141,7 @@ HRESULT Model::CreateGraphicsPipeline()
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	// 頂点レイアウトの設定
-	gpipeline.InputLayout.pInputElementDescs = inputLayout;
-	gpipeline.InputLayout.NumElements = _countof(inputLayout);
+	gpipeline.InputLayout = shaderMgr->GetInputLayout(fbxInputLayout).GetInputLayout();
 
 	// 図形の形状設定（三角形）
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -244,7 +210,7 @@ void Model::Init()
 
 int Model::Update()
 {
-	using namespace Engine::Math;
+	using namespace Math;
 
 	if (isPlay)
 	{
@@ -257,7 +223,7 @@ int Model::Update()
 	}
 
 	world = Identity();
-	world *= Engine::Math::scale(scale);
+	world *= Math::scale(scale);
 	world *= rota;
 	world *= translate(pos);
 
@@ -508,9 +474,9 @@ HRESULT Model::CreateConstBuffer()
 	{
 		for (int i = 0; i < bones.size(); i++)
 		{
-			constMap->viewProj = Engine::Math::Identity();
-			constMap->world = Engine::Math::Identity();
-			constMap->cameraPos = Engine::Math::Vector3();
+			constMap->viewProj = Math::Identity();
+			constMap->world = Math::Identity();
+			constMap->cameraPos = Math::Vector3();
 		}
 		constBuff->Unmap(0, nullptr);
 	}
@@ -532,7 +498,7 @@ HRESULT Model::CreateConstBuffer()
 	{
 		for (int i = 0; i < MAX_BONE; i++)
 		{
-			constMapSkin->bones[i] = Engine::Math::Identity();
+			constMapSkin->bones[i] = Math::Identity();
 		}
 		constBuffSkin->Unmap(0, nullptr);
 	}

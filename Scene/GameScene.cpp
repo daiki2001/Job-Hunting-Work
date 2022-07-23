@@ -1,5 +1,6 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/ShaderManager.h"
 #include "./Header/Input.h"
 #include "./Header/Camera.h"
 #include "Player.h"
@@ -61,6 +62,7 @@ void GameScene::Draw()
 
 	w->ClearScreen();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
+	ShaderManager::blendMode = ShaderManager::BlendMode::ALPHA;
 
 	// 背景
 	for (int y = 0; y * 128 < w->windowHeight; y++)

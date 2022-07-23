@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <DirectXTex.h>
-#include "./Math/EngineMath.h"
+#include "./Header/EngineGeneral.h"
 #include "./Camera.h"
 
 struct Node
@@ -70,6 +70,9 @@ public: // サブクラス
 private: // 静的メンバ変数
 	static ID3D12Device* dev;
 
+	static int fbxVS; //*.fbxの頂点シェーダー
+	static int fbxPS; //*.fbxのピクセルシェーダー
+	static int fbxInputLayout; //*.fbxのインプットレイアウト
 	static ComPtr<ID3D12RootSignature> rootSignature; //ルートシグネチャ
 	static ComPtr<ID3D12PipelineState> pipelineState; //パイプラインステート
 

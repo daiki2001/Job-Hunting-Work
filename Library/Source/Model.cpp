@@ -1,7 +1,7 @@
 #include "./Header/Model.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/FbxLoader.h"
-#include "./Header/ShaderManager.h"
+#include "./ShaderMgr/ShaderManager.h"
 
 /*シェーダ用*/
 #include <d3dcompiler.h>
@@ -24,8 +24,7 @@ Node::Node() :
 }
 
 ID3D12Device* Model::dev = DirectXInit::GetDevice();
-int Model::fbxVS = FUNCTION_ERROR;
-int Model::fbxPS = FUNCTION_ERROR;
+int Model::fbxShader = FUNCTION_ERROR;
 int Model::fbxInputLayout = FUNCTION_ERROR;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature;
 Microsoft::WRL::ComPtr<ID3D12PipelineState> Model::pipelineState;
@@ -71,8 +70,7 @@ HRESULT Model::CreateGraphicsPipeline()
 	isInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	fbxVS = shaderMgr->CompileVertexShader(L"./lib/Shaders/FBXVS.hlsl");
-	fbxPS = shaderMgr->CompilePixleShader(L"./lib/Shaders/FBXPS.hlsl");
+	fbxShader = shaderMgr->CreateShader(L"./lib/Shaders/FBXVS.hlsl", L"./lib/Shaders/FBXPS.hlsl");
 
 	// 頂点レイアウト
 	fbxInputLayout = shaderMgr->CreateInputLayout();
@@ -111,8 +109,8 @@ HRESULT Model::CreateGraphicsPipeline()
 
 	// グラフィックスパイプラインの流れを設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
-	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetVertexShader(fbxVS).GetShaderBlob());
-	gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetPixleShader(fbxPS).GetShaderBlob());
+	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(fbxShader).GetVertex().GetShaderBlob());
+	gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(fbxShader).GetPixle().GetShaderBlob());
 
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定

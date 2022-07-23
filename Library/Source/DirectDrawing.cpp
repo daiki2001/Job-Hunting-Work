@@ -1,6 +1,6 @@
 ﻿#include "./Header/DirectDrawing.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/ShaderManager.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Camera.h"
 #include "./Math/Collision/BaseCollider.h"
 #include "./Math/Collision/CollisionManager.h"
@@ -73,13 +73,10 @@ CommonData DirectDrawing::spriteData = {};
 size_t DirectDrawing::blendMode = BLENDMODE_NOBLEND;
 bool DirectDrawing::isDepthWriteBan = false;
 
-int DirectDrawing::objVS = Engine::FUNCTION_ERROR;
-int DirectDrawing::objPS = Engine::FUNCTION_ERROR;
+int DirectDrawing::objShader = Engine::FUNCTION_ERROR;
 int DirectDrawing::objPipeline = Engine::FUNCTION_ERROR;
-int DirectDrawing::materialVS = Engine::FUNCTION_ERROR;
-int DirectDrawing::materialPS = Engine::FUNCTION_ERROR;
-int DirectDrawing::spriteVS = Engine::FUNCTION_ERROR;
-int DirectDrawing::spritePS = Engine::FUNCTION_ERROR;
+int DirectDrawing::materialShader = Engine::FUNCTION_ERROR;
+int DirectDrawing::spriteShader = Engine::FUNCTION_ERROR;
 int DirectDrawing::inputLayout3d = Engine::FUNCTION_ERROR;
 int DirectDrawing::inputLayout2d = Engine::FUNCTION_ERROR;
 
@@ -158,8 +155,7 @@ HRESULT DirectDrawing::DrawingInit()
 	isDrawingInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	objVS = shaderMgr->CompileVertexShader(L"./lib/Shaders/ObjectVS.hlsl");
-	objPS = shaderMgr->CompilePixleShader(L"./lib/Shaders/ObjectPS.hlsl");
+	objShader = shaderMgr->CreateShader(L"./lib/Shaders/ObjectVS.hlsl", L"./lib/Shaders/ObjectPS.hlsl");
 
 	// 頂点レイアウト
 	if (inputLayout3d ==Engine::FUNCTION_ERROR)
@@ -170,7 +166,7 @@ HRESULT DirectDrawing::DrawingInit()
 		shaderMgr->GetInputLayout(inputLayout3d).PushInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 	}
 
-	objPipeline = shaderMgr->CreatePipeline(inputLayout3d, objVS, objPS);
+	objPipeline = shaderMgr->CreatePipeline(inputLayout3d, objShader);
 	// デスクリプタテーブルの設定
 	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {}; //デスクリプタテーブルの設定(シェーダリソース)
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -224,8 +220,8 @@ HRESULT DirectDrawing::DrawingInit()
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = {};
 
 			// 頂点シェーダ、ピクセルシェーダをパイプラインに設定
-			gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetVertexShader(objVS).GetShaderBlob());
-			gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetPixleShader(objPS).GetShaderBlob());
+			gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(objShader).GetVertex().GetShaderBlob());
+			gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(objShader).GetPixle().GetShaderBlob());
 			// サンプルマスクとラスタライザステートの設定
 			gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; //標準設定
 			gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
@@ -316,8 +312,7 @@ HRESULT DirectDrawing::MaterialInit()
 	isMaterialInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	materialVS = shaderMgr->CompileVertexShader(L"./lib/Shaders/MaterialVS.hlsl");
-	materialPS = shaderMgr->CompilePixleShader(L"./lib/Shaders/MaterialPS.hlsl");
+	materialShader = shaderMgr->CreateShader(L"./lib/Shaders/MaterialVS.hlsl", L"./lib/Shaders/MaterialPS.hlsl");
 
 	// 頂点レイアウト
 	if (inputLayout3d == Engine::FUNCTION_ERROR)
@@ -383,8 +378,8 @@ HRESULT DirectDrawing::MaterialInit()
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC materialPipeline = {};
 
 			// 頂点シェーダ、ピクセルシェーダをパイプラインに設定
-			materialPipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetVertexShader(materialVS).GetShaderBlob());
-			materialPipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetPixleShader(materialPS).GetShaderBlob());
+			materialPipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(materialShader).GetVertex().GetShaderBlob());
+			materialPipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(materialShader).GetPixle().GetShaderBlob());
 			// サンプルマスクとラスタライザステートの設定
 			materialPipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; //標準設定
 			materialPipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
@@ -476,8 +471,7 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 	isSpriteDrawingInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	spriteVS = shaderMgr->CompileVertexShader(L"./lib/Shaders/SpriteVS.hlsl");
-	spritePS = shaderMgr->CompilePixleShader(L"./lib/Shaders/SpritePS.hlsl");
+	spriteShader = shaderMgr->CreateShader(L"./lib/Shaders/SpriteVS.hlsl", L"./lib/Shaders/SpritePS.hlsl");
 
 	// 頂点レイアウト
 	inputLayout2d = shaderMgr->CreateInputLayout();
@@ -531,8 +525,8 @@ HRESULT DirectDrawing::SpriteDrawingInit()
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC spritePipeline = {};
 
 		// 頂点シェーダ、ピクセルシェーダをパイプラインに設定
-		spritePipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetVertexShader(spriteVS).GetShaderBlob());
-		spritePipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetPixleShader(spritePS).GetShaderBlob());
+		spritePipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(spriteShader).GetVertex().GetShaderBlob());
+		spritePipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(spriteShader).GetPixle().GetShaderBlob());
 		// サンプルマスクとラスタライザステートの設定
 		spritePipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; //標準設定
 		spritePipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);

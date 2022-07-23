@@ -1,72 +1,9 @@
-﻿#include "./Header/ShaderManager.h"
+﻿#include "ShaderManager.h"
 #include <string>
 #include <d3dx12.h>
 #include "./Header/DirectXInit.h"
 
 #include "./Header/Error.h"
-
-// シェーダーコンパイル用
-#include <d3dcompiler.h>
-#pragma comment(lib,"d3dcompiler.lib")
-
-Microsoft::WRL::ComPtr<ID3D10Blob> ShaderManager::Shader::errorBlob = {};
-
-ShaderManager::Shader::Shader(LPCWSTR pFileName, ShaderType shaderType)
-{
-	static LPCSTR pTarget = nullptr;
-
-	switch (shaderType)
-	{
-	case ShaderType::VERTEX_SHADER:
-		pTarget = "vs_5_0";
-		break;
-	case ShaderType::PIXLE_SHADER:
-		pTarget = "ps_5_0";
-		break;
-	case ShaderType::DOMAIN_SHADER:
-		pTarget = "ds_5_0";
-		break;
-	case ShaderType::HULL_SHADER:
-		pTarget = "hs_5_0";
-		break;
-	case ShaderType::GEOMETRY_SHADER:
-		pTarget = "gs_5_0";
-		break;
-	case ShaderType::COMPUTE_SHADER:
-		pTarget = "cs_5_0";
-		break;
-	default:
-		shaderBlob = nullptr;
-		errorBlob = nullptr;
-		return;
-		break;
-	}
-
-	HRESULT hr = D3DCompileFromFile(
-		pFileName, //シェーダファイル名
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,				 //インクルード可能にする
-		"main",											 //エントリーポイント名
-		pTarget,										 //シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, //デバッグ用設定
-		0,
-		&shaderBlob,
-		&errorBlob);
-	if (FAILED(hr))
-	{
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-					errorBlob->GetBufferSize(),
-					errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		exit(1);
-	}
-}
 
 ShaderManager::InputLayout::InputLayout() :
 	inputLayout{}
@@ -95,12 +32,7 @@ ShaderManager::PipelineState::PipelineState() :
 ShaderManager::BlendMode ShaderManager::blendMode = ShaderManager::BlendMode::NOBLEND;
 
 ShaderManager::ShaderManager() :
-	vertexShaders{},
-	pixleShaders{},
-	domainShaders{},
-	hullShaders{},
-	geometryShaders{},
-	computeShaders{},
+	shaders{},
 	inputLayouts{},
 	gPipelines{},
 	pipelines{}
@@ -117,43 +49,47 @@ ShaderManager* ShaderManager::Get()
 	return &instance;
 }
 
-int ShaderManager::CompileVertexShader(LPCWSTR pFileName)
+int ShaderManager::CreateShader(LPCWSTR vsFileName, LPCWSTR psFileName)
 {
-	vertexShaders.push_back(Shader(pFileName, ShaderType::VERTEX_SHADER));
-	return static_cast<int>(vertexShaders.size() - 1);
+	shaders.push_back({});
+
+	shaders.back().CompileVertexShader(vsFileName);
+	shaders.back().CompilePixleShader(psFileName);
+
+	return static_cast<int>(shaders.size() - 1);
 }
 
-int ShaderManager::CompilePixleShader(LPCWSTR pFileName)
+int ShaderManager::CreateShader(Shaders::Shader veatex, LPCWSTR psFileName)
 {
-	pixleShaders.push_back(Shader(pFileName, ShaderType::PIXLE_SHADER));
-	return static_cast<int>(pixleShaders.size() - 1);
+	shaders.push_back({});
+
+	shaders.back().GetVertex() = veatex;
+	shaders.back().CompilePixleShader(psFileName);
+
+	return static_cast<int>(shaders.size() - 1);
 }
 
-int ShaderManager::CompileDomainShader(LPCWSTR pFileName)
+int ShaderManager::CreateShader(LPCWSTR vsFileName, Shaders::Shader pixle)
 {
-	domainShaders.push_back(Shader(pFileName, ShaderType::DOMAIN_SHADER));
-	return static_cast<int>(domainShaders.size() - 1);
+	shaders.push_back({});
+
+	shaders.back().CompileVertexShader(vsFileName);
+	shaders.back().GetPixle() = pixle;
+
+	return static_cast<int>(shaders.size() - 1);
 }
 
-int ShaderManager::CompileHullShader(LPCWSTR pFileName)
+int ShaderManager::CreateShader(Shaders::Shader veatex, Shaders::Shader pixle)
 {
-	hullShaders.push_back(Shader(pFileName, ShaderType::HULL_SHADER));
-	return static_cast<int>(hullShaders.size() - 1);
+	shaders.push_back({});
+
+	shaders.back().GetVertex() = veatex;
+	shaders.back().GetPixle() = pixle;
+
+	return static_cast<int>(shaders.size() - 1);
 }
 
-int ShaderManager::CompileGeometryShader(LPCWSTR pFileName)
-{
-	geometryShaders.push_back(Shader(pFileName, ShaderType::GEOMETRY_SHADER));
-	return static_cast<int>(geometryShaders.size() - 1);
-}
-
-int ShaderManager::CompileComputeShader(LPCWSTR pFileName)
-{
-	computeShaders.push_back(Shader(pFileName, ShaderType::COMPUTE_SHADER));
-	return static_cast<int>(computeShaders.size() - 1);
-}
-
-int ShaderManager::CreateGPipeline(const int& inputLayoutIndex, const int& vsIndex, const int& psIndex)
+int ShaderManager::CreateGPipeline(const int& inputLayoutIndex, const int& shaderIndex)
 {
 	for (size_t i = 0; i < sizeof(gPipelines) / sizeof(gPipelines[0]); i++)
 	{
@@ -161,8 +97,8 @@ int ShaderManager::CreateGPipeline(const int& inputLayoutIndex, const int& vsInd
 		auto& gpipeline = gPipelines[i].back();
 
 		// 頂点シェーダ、ピクセルシェーダをパイプラインに設定
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(vertexShaders[vsIndex].GetShaderBlob());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(pixleShaders[psIndex].GetShaderBlob());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaders[shaderIndex].GetVertex().GetShaderBlob());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaders[shaderIndex].GetPixle().GetShaderBlob());
 		// サンプルマスクとラスタライザステートの設定
 		gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; //標準設定
 		gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
@@ -226,9 +162,9 @@ int ShaderManager::CreateGPipeline(const int& inputLayoutIndex, const int& vsInd
 	return static_cast<int>(gPipelines[0].size() - 1);
 }
 
-int ShaderManager::CreatePipeline(const int& inputLayoutIndex, const int& vsIndex, const int& psIndex)
+int ShaderManager::CreatePipeline(const int& inputLayoutIndex, const int& shaderIndex)
 {
-	if (inputLayoutIndex < 0 || vsIndex< 0 || psIndex< 0)
+	if (inputLayoutIndex < 0 || shaderIndex< 0)
 	{
 		return Engine::FUNCTION_ERROR;
 	}
@@ -289,8 +225,8 @@ int ShaderManager::CreatePipeline(const int& inputLayoutIndex, const int& vsInde
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = {};
 
 		// 頂点シェーダ、ピクセルシェーダをパイプラインに設定
-		gpipeline.VS = CD3DX12_SHADER_BYTECODE(vertexShaders[vsIndex].GetShaderBlob());
-		gpipeline.PS = CD3DX12_SHADER_BYTECODE(pixleShaders[psIndex].GetShaderBlob());
+		gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaders[shaderIndex].GetVertex().GetShaderBlob());
+		gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaders[shaderIndex].GetPixle().GetShaderBlob());
 		// サンプルマスクとラスタライザステートの設定
 		gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; //標準設定
 		gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);

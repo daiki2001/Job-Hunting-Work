@@ -228,13 +228,10 @@ protected:
 
 	static size_t blendMode; //ブレンドモード
 private:
-	static int objVS; //*.objデータの頂点シェーダー
-	static int objPS; //*.objデータのピクセルシェーダー
+	static int objShader; //*.objデータのシェーダー
 	static int objPipeline; //*.objデータのパイプライン
-	static int materialVS; //マテリアルデータの頂点シェーダー
-	static int materialPS; //マテリアルデータのピクセルシェーダー
-	static int spriteVS; //スプライトデータの頂点シェーダー
-	static int spritePS; //スプライトデータのピクセルシェーダー
+	static int materialShader; //マテリアルデータのシェーダー
+	static int spriteShader; //スプライトデータのシェーダー
 	static int inputLayout3d; //3dデータのインプットレイアウト
 	static int inputLayout2d; //2dデータのインプットレイアウト
 

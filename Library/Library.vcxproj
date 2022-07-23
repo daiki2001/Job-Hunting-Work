@@ -203,7 +203,6 @@
     <ClInclude Include="Header\SafeDelete.h" />
     <ClInclude Include="Header\SceneChenge.h" />
     <ClInclude Include="Header\SceneManager.h" />
-    <ClInclude Include="Header\ShaderManager.h" />
     <ClInclude Include="Header\Win32API.h" />
     <ClInclude Include="Math\Collision\BaseCollider.h" />
     <ClInclude Include="Math\Collision\Collision.h" />
@@ -219,6 +218,7 @@
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Scene\EngineTestScene.h" />
     <ClInclude Include="Scene\TestObject.h" />
+    <ClInclude Include="ShaderMgr\ShaderManager.h" />
     <ClInclude Include="ShaderMgr\Shaders.h" />
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +233,7 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Scene\EngineTestScene.cpp" />
     <ClCompile Include="Scene\TestObject.cpp" />
+    <ClCompile Include="ShaderMgr\ShaderManager.cpp" />
     <ClCompile Include="ShaderMgr\Shaders.cpp" />
     <ClCompile Include="Source\Audio.cpp" />
     <ClCompile Include="Source\BaseScene.cpp" />
@@ -252,7 +253,6 @@
     <ClCompile Include="Source\PostEffect.cpp" />
     <ClCompile Include="Source\RenderTexture.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
-    <ClCompile Include="Source\ShaderManager.cpp" />
     <ClCompile Include="Source\Win32API.cpp" />
   </ItemGroup>
   <ItemGroup>

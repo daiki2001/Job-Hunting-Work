@@ -65,10 +65,10 @@ public: //ƒƒ“ƒoŠÖ”
 	int CompileComputeShader(LPCWSTR pFileName)
 	{ return computeShader.CompileShader(pFileName, ShaderType::COMPUTE_SHADER); }
 
-	Shader GetVertexShader() { return vertexShader; }
-	Shader GetPixleShader() { return pixleShader; }
-	Shader GetDomainShader() { return domainShader; }
-	Shader GetHullShader() { return hullShader; }
-	Shader GetGeometryShader() { return geometryShader; }
-	Shader GetComputeShader() { return computeShader; }
+	Shader GetVertex() { return vertexShader; }
+	Shader GetPixle() { return pixleShader; }
+	Shader GetDomain() { return domainShader; }
+	Shader GetHull() { return hullShader; }
+	Shader GetGeometry() { return geometryShader; }
+	Shader GetCompute() { return computeShader; }
 };

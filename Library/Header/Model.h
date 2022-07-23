@@ -70,8 +70,7 @@ public: // サブクラス
 private: // 静的メンバ変数
 	static ID3D12Device* dev;
 
-	static int fbxVS; //*.fbxの頂点シェーダー
-	static int fbxPS; //*.fbxのピクセルシェーダー
+	static int fbxShader; //*.fbxのシェーダー
 	static int fbxInputLayout; //*.fbxのインプットレイアウト
 	static ComPtr<ID3D12RootSignature> rootSignature; //ルートシグネチャ
 	static ComPtr<ID3D12PipelineState> pipelineState; //パイプラインステート

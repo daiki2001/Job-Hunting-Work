@@ -1,7 +1,7 @@
 ﻿#include "./Header/DrawPolygon.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
-#include "./Header/ShaderManager.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include <fstream>
 #include <sstream>
 #include <string>

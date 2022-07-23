@@ -1,6 +1,6 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/ShaderManager.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Input.h"
 #include "./Header/Camera.h"
 #include "Player.h"

@@ -24,10 +24,14 @@ Node::Node() :
 }
 
 ID3D12Device* Model::dev = DirectXInit::GetDevice();
-int Model::fbxShader = FUNCTION_ERROR;
-int Model::fbxInputLayout = FUNCTION_ERROR;
-Microsoft::WRL::ComPtr<ID3D12RootSignature> Model::rootSignature;
-Microsoft::WRL::ComPtr<ID3D12PipelineState> Model::pipelineState;
+int Model::defaultShader = FUNCTION_ERROR;
+int Model::colorShader = FUNCTION_ERROR;
+int Model::inputLayout = FUNCTION_ERROR;
+int Model::defaultGPipeline = FUNCTION_ERROR;
+int Model::colorGPipeline = FUNCTION_ERROR;
+int Model::rootSignature;
+int Model::defaultPipelineState;
+int Model::colorPipelineState;
 
 Model::Model() :
 	meshNode(nullptr),
@@ -70,85 +74,19 @@ HRESULT Model::CreateGraphicsPipeline()
 	isInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	fbxShader = shaderMgr->CreateShader(L"./lib/Shaders/FBXVS.hlsl", L"./lib/Shaders/FBXPS.hlsl");
+	defaultShader = shaderMgr->CreateShader(L"./lib/Shaders/FBXVS.hlsl", L"./lib/Shaders/FBXPS.hlsl");
+	colorShader = shaderMgr->CreateShader(shaderMgr->GetShader(defaultShader).GetVertex(), L"./lib/Shaders/color.hlsl");
 
 	// 頂点レイアウト
-	fbxInputLayout = shaderMgr->CreateInputLayout();
-	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
-	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
-	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
-	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("BONEINDICES", DXGI_FORMAT_R32G32B32A32_UINT);
-	shaderMgr->GetInputLayout(fbxInputLayout).PushInputLayout("BONEWEIGHTS", DXGI_FORMAT_R32G32B32A32_FLOAT);
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // 法線ベクトル(1行で書いたほうが見やすい)
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // uv座標(1行で書いたほうが見やすい)
-			"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // 影響を受けるボーン番号(4つ)
-			"BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{ // ボーンのスキンウェイト(4つ)
-			"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
+	inputLayout = shaderMgr->CreateInputLayout();
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("BONEINDICES", DXGI_FORMAT_R32G32B32A32_UINT);
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("BONEWEIGHTS", DXGI_FORMAT_R32G32B32A32_FLOAT);
 
-	// グラフィックスパイプラインの流れを設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
-	gpipeline.VS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(fbxShader).GetVertex().GetShaderBlob());
-	gpipeline.PS = CD3DX12_SHADER_BYTECODE(shaderMgr->GetShader(fbxShader).GetPixle().GetShaderBlob());
-
-	// サンプルマスク
-	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	// ラスタライザステート
-	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	// デプスステンシルステート
-	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-
-	// レンダーターゲットのブレンド設定
-	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RBGA全てのチャンネルを描画
-	blenddesc.BlendEnable = true;
-	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	// ブレンドステートの設定
-	gpipeline.BlendState.RenderTarget[0] = blenddesc;
-	gpipeline.BlendState.RenderTarget[1] = blenddesc;
-
-	// 深度バッファのフォーマット
-	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	// 頂点レイアウトの設定
-	gpipeline.InputLayout = shaderMgr->GetInputLayout(fbxInputLayout).GetInputLayout();
-
-	// 図形の形状設定（三角形）
-	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	// レンダーターゲットの設定
-	gpipeline.NumRenderTargets = 2;    // 描画対象は1つ
-	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	gpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
-	gpipeline.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
+	defaultGPipeline = shaderMgr->CreateGPipeline(defaultShader, inputLayout);
+	colorGPipeline = shaderMgr->CreateGPipeline(colorShader, inputLayout);
 
 	// デスクリプタレンジ
 	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {};
@@ -163,35 +101,48 @@ HRESULT Model::CreateGraphicsPipeline()
 	// CBV（スキニング用）
 	rootparams[2].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-	// スタティックサンプラー
-	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
+	rootSignature = shaderMgr->CreateRootSignature(defaultGPipeline, _countof(rootparams), rootparams);
 
-	// ルートシグネチャの設定
-	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-	rootSignatureDesc.Init_1_0(_countof(rootparams), rootparams, 1, &samplerDesc,
-							   D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	ComPtr<ID3DBlob> rootSigBlob;
-	// バージョン自動判定のシリアライズ
-	hr = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
-	// ルートシグネチャの生成
-	hr = dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(),
-								  rootSigBlob->GetBufferSize(), IID_PPV_ARGS(rootSignature.ReleaseAndGetAddressOf()));
-	if (FAILED(hr))
+	for (size_t i = 0; i < 5; i++)
 	{
-		return hr;
+		auto& defaultGpipeline = shaderMgr->GetGraphicsPipeline(defaultGPipeline, static_cast<ShaderManager::BlendMode>(i));
+		auto& colorGpipeline = shaderMgr->GetGraphicsPipeline(colorGPipeline, static_cast<ShaderManager::BlendMode>(i));
+
+		// ブレンドステートの設定
+		defaultGpipeline.BlendState.RenderTarget[1] = defaultGpipeline.BlendState.RenderTarget[0];
+		colorGpipeline.BlendState = colorGpipeline.BlendState;
+
+		// レンダーターゲットの設定
+		defaultGpipeline.NumRenderTargets = 2;    // 描画対象は1つ
+		defaultGpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+		defaultGpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0～255指定のRGBA
+		colorGpipeline.NumRenderTargets = defaultGpipeline.NumRenderTargets;
+		colorGpipeline.RTVFormats[0] = defaultGpipeline.RTVFormats[0];
+		colorGpipeline.RTVFormats[1] = defaultGpipeline.RTVFormats[1];
+
+		colorGpipeline.pRootSignature = shaderMgr->GetRootSignature(rootSignature);
 	}
 
-	gpipeline.pRootSignature = rootSignature.Get();
-
-	// グラフィックスパイプラインの生成
-	hr = dev->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(pipelineState.ReleaseAndGetAddressOf()));
-	if (FAILED(hr))
-	{
-		return hr;
-	}
+	defaultPipelineState = shaderMgr->CreatePipelineState(defaultGPipeline);
+	colorPipelineState = shaderMgr->CreatePipelineState(colorGPipeline);
 
 	return S_OK;
+}
+
+void Model::ChangeDefaultShader()
+{
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		rootSignature,
+		defaultPipelineState);
+}
+
+void Model::ChangeColorShader()
+{
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		rootSignature,
+		colorPipelineState);
 }
 
 void Model::Init()
@@ -206,7 +157,7 @@ void Model::Init()
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);
 }
 
-int Model::Update()
+int Model::Update(DirectX::XMFLOAT4 color)
 {
 	using namespace Math;
 
@@ -238,6 +189,7 @@ int Model::Update()
 	{
 		constMap->viewProj = matViewPorj;
 		constMap->world = modelTrans * world;
+		constMap->color = color;
 		constMap->cameraPos = cameraPos;
 		constBuff->Unmap(0, nullptr);
 	}
@@ -271,10 +223,6 @@ void Model::Draw()
 	static ID3D12GraphicsCommandList* cmdList = DirectXInit::GetCommandList();
 
 #pragma region オブジェクト
-	// パイプラインの設定
-	cmdList->SetPipelineState(pipelineState.Get());
-	// ルートシグネチャの設定
-	cmdList->SetGraphicsRootSignature(rootSignature.Get());
 	// プリミティブ形状の設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// 定数バッファビューをセット
@@ -475,6 +423,7 @@ HRESULT Model::CreateConstBuffer()
 			constMap->viewProj = Math::Identity();
 			constMap->world = Math::Identity();
 			constMap->cameraPos = Math::Vector3();
+			constMap->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		}
 		constBuff->Unmap(0, nullptr);
 	}

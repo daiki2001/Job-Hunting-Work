@@ -1,11 +1,11 @@
 cbuffer cbuff0 : register(b0)
 {
-	float4 color; //F (RGBA)
-	matrix mat;   //3D•ÏŠ·s—ñ
+	float4 color; //è‰² (RGBA)
+	matrix mat;   //3Då¤‰æ›è¡Œåˆ—
 }
 
 struct VSOutput
 {
-	float4 svpos  : SV_POSITION; //ƒVƒXƒeƒ€—p’¸“_À•W
-	float2 uv     : TEXCOORD;    //uvÀ•W
+	float4 svpos  : SV_POSITION; //ã‚·ã‚¹ãƒ†ãƒ ç”¨é ‚ç‚¹åº§æ¨™
+	float2 uv     : TEXCOORD;    //uvåº§æ¨™
 };

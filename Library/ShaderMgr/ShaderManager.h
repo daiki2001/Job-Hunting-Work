@@ -57,27 +57,41 @@ public: //静的メンバ変数
 	static BlendMode blendMode;
 
 private: //メンバ変数
-	vector<Shaders> shaders; //シェーダー群
-
+	vector<Shaders> shaders;          //シェーダー群
 	vector<InputLayout> inputLayouts; //インプットレイアウト
+
 	vector<D3D12_GRAPHICS_PIPELINE_STATE_DESC> gPipelines[5]; //グラフィックパイプライン
-	vector<PipelineState> pipelines; //パイプライン
+	vector<ComPtr<ID3D12RootSignature>> rootSignature;        //ルートシグネチャ
+	vector<ComPtr<ID3D12PipelineState>> pipelineState[5];     //パイプラインの状態
 
 public: //メンバ関数
 	// コンパイル済シェーダーデータの生成
-	int CreateShader(LPCWSTR vsFileName, LPCWSTR psFileName);
-	int CreateShader(Shaders::Shader veatex, LPCWSTR psFileName);
-	int CreateShader(LPCWSTR vsFileName, Shaders::Shader pixle);
-	int CreateShader(Shaders::Shader veatex, Shaders::Shader pixle);
+	int CreateShader(const LPCWSTR& vsFileName, const LPCWSTR& psFileName);
+	int CreateShader(const Shaders::Shader& veatex, const LPCWSTR& psFileName);
+	int CreateShader(const LPCWSTR& vsFileName, const Shaders::Shader& pixle);
+	int CreateShader(const Shaders::Shader& veatex, const Shaders::Shader& pixle);
 
 	// インプットレイアウトの生成
 	int CreateInputLayout() { inputLayouts.push_back({}); return static_cast<int>(inputLayouts.size() - 1); }
 	// グラフィックパイプラインの生成
-	int CreateGPipeline(const int& inputLayoutIndex, const int& shaderIndex);
-	// パイプラインの生成
-	int CreatePipeline(const int& inputLayoutIndex, const int& shaderIndex);
+	int CreateGPipeline(const int& shaderIndex, const int& inputLayoutIndex);
+	// ルートシグネチャの生成
+	int CreateRootSignature(const int& gPipelineIndex, const UINT& numParameters, const D3D12_ROOT_PARAMETER* _pParameters);
+	// パイプラインステートの生成
+	int CreatePipelineState(const int& gPipelineIndex);
 
-	Shaders GetShader(const int& index) const { return shaders.at(index); }
+	int ChangePipelineState(ID3D12GraphicsCommandList* cmdList, const int& rootSignatureIndex, const int& pipelineStateIndex);
+	int ChangePipelineState(ID3D12GraphicsCommandList* cmdList, ID3D12RootSignature* rootSignature, const int& pipelineStateIndex);
+
+	Shaders& GetShader(const int& index) { return shaders.at(index); }
 	InputLayout& GetInputLayout(const int& index) { return inputLayouts.at(index); }
-	PipelineState GetPipeline(const int& index) const { return pipelines.at(index); }
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(const int& index)
+	{ return gPipelines[blendMode].at(index); }
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(const int& index, const BlendMode& blendMode)
+	{ return gPipelines[blendMode].at(index); }
+	ID3D12RootSignature* GetRootSignature(const int& index) const { return rootSignature.at(index).Get(); }
+	ID3D12PipelineState* GetPipelineState(const int& index) const
+	{ return pipelineState[blendMode].at(index).Get(); }
+	ID3D12PipelineState* GetPipelineState(const int& index, const BlendMode& blendMode) const
+	{ return pipelineState[blendMode].at(index).Get(); }
 };

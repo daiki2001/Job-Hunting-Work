@@ -52,6 +52,7 @@ public: // サブクラス
 	{
 		Matrix4 viewProj;  //ビュープロジェクション行列
 		Matrix4 world;     //ワールド行列
+		DirectX::XMFLOAT4 color; //色情報
 		Vector3 cameraPos; //カメラ座標
 	};
 	// ボーン構造体
@@ -70,13 +71,29 @@ public: // サブクラス
 private: // 静的メンバ変数
 	static ID3D12Device* dev;
 
-	static int fbxShader; //*.fbxのシェーダー
-	static int fbxInputLayout; //*.fbxのインプットレイアウト
-	static ComPtr<ID3D12RootSignature> rootSignature; //ルートシグネチャ
-	static ComPtr<ID3D12PipelineState> pipelineState; //パイプラインステート
+	static int defaultShader;        //シェーダー
+	static int colorShader;          //シェーダー
+	static int inputLayout;          //インプットレイアウト
+	static int defaultGPipeline;     //グラフィックパイプライン
+	static int colorGPipeline;       //グラフィックパイプライン
+	static int rootSignature;        //ルートシグネチャ
+	static int defaultPipelineState; //パイプラインステート
+	static int colorPipelineState;   //パイプラインステート
 
 public: // 静的メンバ関数
 	static HRESULT CreateGraphicsPipeline();
+
+	static int GetDefaultShaderShader() { return defaultShader; }
+	static int GetColorShaderShader() { return colorShader; }
+	static int GetInputLayout() { return inputLayout; }
+	static int GetDefaultGPipeline() { return defaultGPipeline; }
+	static int GetColorGPipeline() { return colorGPipeline; }
+	static int GetRootSignature() { return rootSignature; }
+	static int GetDefaultPipelineState() { return defaultPipelineState; }
+	static int GetColorPipelineState() { return colorPipelineState; }
+
+	static void ChangeDefaultShader();
+	static void ChangeColorShader();
 
 public: // メンバ変数
 	Vector3 pos;   //ローカル座標
@@ -123,7 +140,7 @@ public: // メンバ関数
 	// 初期化
 	void Init();
 	// 更新処理
-	int Update();
+	int Update(DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	// 描画
 	void Draw();
 	// 終了処理

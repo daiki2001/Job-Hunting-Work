@@ -2,8 +2,12 @@
 #include "./Header/DirectXInit.h"
 #include "./Header/DirectDrawing.h"
 #include "./Header/RenderTexture.h"
+#include "./ShaderMgr/ShaderManager.h"
 
-#include "./Header/Error.h"
+namespace
+{
+ShaderManager* shaderMgr = ShaderManager::Get();
+}
 
 /*シェーダ用*/
 #include <d3dcompiler.h>
@@ -14,10 +18,13 @@ const float PostEffect::clearColor[4] = { 1.0f, 0.5f, 0.0f, 0.0f };
 PostEffect::PostEffect() :
 	position(0.0f, 0.0f, 0.0f),
 	angle(0.0f),
-	matWorld(Engine::Math::Identity()),
+	matWorld(Math::Identity()),
 	color(1.0f, 1.0f, 1.0f, 1.0f),
-	pipelineState{},
-	rootSignature{},
+	shader(FUNCTION_ERROR),
+	inputLayout(FUNCTION_ERROR),
+	gPipeline(FUNCTION_ERROR),
+	rootSignature(nullptr),
+	pipelineState(FUNCTION_ERROR),
 	vertBuff{},
 	vbView{},
 	constBuff{},
@@ -41,32 +48,32 @@ int PostEffect::Init()
 	hr = CreateGraphicsPipelineState();
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	hr = CreateVertexBuffer();
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	// 定数バッファの生成
 	hr = CreateConstantBuffer();
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	hr = renderTex->CreateRenderTexture(&texBuff, &descHeapSRV, 2);
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	hr = renderTex->CreateRTV(&descHeapRTV, texBuff);
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	// リソース設定
@@ -92,7 +99,7 @@ int PostEffect::Init()
 	);
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	// DSV用デスクリプタヒープ設定
@@ -103,7 +110,7 @@ int PostEffect::Init()
 	hr = dev->CreateDescriptorHeap(&dsvDescHeapDesc, IID_PPV_ARGS(&descHeapDSV));
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	// デスクリプタヒープにDSV作成
@@ -144,9 +151,6 @@ int PostEffect::Draw()
 		constMap->mat = Math::Identity();
 		constBuff->Unmap(0, nullptr);
 	}
-
-	cmdList->SetPipelineState(pipelineState.Get());
-	cmdList->SetGraphicsRootSignature(rootSignature.Get());
 
 	// プリミティブ形状の設定
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -270,137 +274,30 @@ int PostEffect::PostDraw()
 HRESULT PostEffect::CreateGraphicsPipelineState()
 {
 	HRESULT hr = S_FALSE;
-	ComPtr<ID3DBlob> vsBlob;
-	ComPtr<ID3DBlob> psBlob;
 	ComPtr<ID3DBlob> rootSigBlob;
 	ComPtr<ID3DBlob> errorBlob;
 	auto dev = DirectXInit::GetDevice();
 
-	// 頂点シェーダの読み込みとコンパイル
-	hr = D3DCompileFromFile(
-		L"./lib/Shaders/PostEffectTestVS.hlsl", //シェーダファイル名
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,               //インクルード可能にする
-		"main",                                          //エントリーポイント名
-		"vs_5_0",                                        //シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, //デバッグ用設定
-		0,
-		&vsBlob,
-		&errorBlob);
-
-	if (FAILED(hr))
-	{
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-					errorBlob->GetBufferSize(),
-					errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		assert(0);
-		return hr;
-	}
-
-	// ピクセルシェーダの読み込みとコンパイル
-	hr = D3DCompileFromFile(
-		L"./lib/Shaders/PostEffectTestPS.hlsl",
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main",
-		"ps_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&psBlob,
-		&errorBlob);
-
-	if (FAILED(hr))
-	{
-		// errorBlobからエラー内容をstring型にコピー
-		std::string errstr;
-		errstr.resize(errorBlob->GetBufferSize());
-
-		std::copy_n((char*)errorBlob->GetBufferPointer(),
-					errorBlob->GetBufferSize(),
-					errstr.begin());
-		errstr += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(errstr.c_str());
-		assert(0);
-		return hr;
-	}
+	// 各種シェーダーのコンパイルと読み込み
+	shader = shaderMgr->CreateShader(L"./lib/Shaders/PostEffectTestVS.hlsl", L"./lib/Shaders/PostEffectTestPS.hlsl");
 
 	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		// xyz座標
-		{
-			"POSITION",
-			0,
-			DXGI_FORMAT_R32G32B32_FLOAT,
-			0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-			0
-		},
-		// uv座標
-		{
-			"TEXCOORD",
-			0,
-			DXGI_FORMAT_R32G32_FLOAT,
-			0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-			0
-		},
-	};
+	inputLayout = DirectDrawing::Get2dInputLayout();
 
 	// グラフィックスパイプライン設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gPipeline = {};
+	gPipeline = shaderMgr->CreateGPipeline(shader, inputLayout);
 
-	// 頂点シェーダ、ピクセルシェーダをパイプラインに設定
-	gPipeline.VS = CD3DX12_SHADER_BYTECODE(vsBlob.Get());
-	gPipeline.PS = CD3DX12_SHADER_BYTECODE(psBlob.Get());
+	for (size_t i = 0; i < 5; i++)
+	{
+		auto& gp = shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i));
 
-	// サンプルマスク
-	gPipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; //標準設定
-	// ラスタライザステート
-	gPipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	gPipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; //背面カリングしない
-	// デプスステンシルステート
-	gPipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	gPipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS; //常に上書き
+		// ラスタライザステート
+		gp.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; //背面カリングしない
 
-	// レンダーターゲットのブレンド設定
-	D3D12_RENDER_TARGET_BLEND_DESC blendDesc = {};
-	blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; //標準設定
-	blendDesc.BlendEnable = true;                //ブレンドを有効にする
-	blendDesc.BlendOp = D3D12_BLEND_OP_ADD;          //加算
-	blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;      //ソースのアルファ値
-	blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; //1.0f - ソースのアルファ値
-
-	blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD; //加算
-	blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;   //ソースの値を 100% 使う
-	blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO; //デストの値を   0% 使う
-
-	// ブレンドステートの設定
-	gPipeline.BlendState.RenderTarget[0] = blendDesc;
-
-	// 深度バッファのフォーマット
-	gPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-
-	// 頂点レイアウトの設定
-	gPipeline.InputLayout.pInputElementDescs = inputLayout;
-	gPipeline.InputLayout.NumElements = _countof(inputLayout);
-
-	// 図形の形状設定(三角形)
-	gPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	// その他の設定
-	gPipeline.NumRenderTargets = 1; //描画対象は1つ
-	gPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; //0~255指定のRGBA
-	gPipeline.SampleDesc.Count = 1; //1ピクセルにつき1回サンプリング
+		// デプスステンシルステートの設定
+		gp.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		gp.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS; //常に上書き
+	}
 
 	// デスクリプタレンジ
 	CD3DX12_DESCRIPTOR_RANGE descRangeSRV0 = {};
@@ -454,15 +351,14 @@ HRESULT PostEffect::CreateGraphicsPipelineState()
 	}
 
 	// パイプラインにルートシグネチャをセット
-	gPipeline.pRootSignature = rootSignature.Get();
+	for (size_t i = 0; i < 5; i++)
+	{
+		shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i)).pRootSignature =
+			rootSignature.Get();
+	}
 
 	// グラフィックスパイプラインの生成
-	hr = dev->CreateGraphicsPipelineState(&gPipeline, IID_PPV_ARGS(&pipelineState));
-	if (FAILED(hr))
-	{
-		assert(0);
-		return hr;
-	}
+	pipelineState = shaderMgr->CreatePipelineState(gPipeline);
 
 	return hr;
 }
@@ -533,7 +429,7 @@ HRESULT PostEffect::CreateConstantBuffer()
 	if (SUCCEEDED(hr))
 	{
 		constMap->color = color;
-		constMap->mat = Engine::Math::Identity();
+		constMap->mat = Math::Identity();
 		constBuff->Unmap(0, nullptr);
 	}
 

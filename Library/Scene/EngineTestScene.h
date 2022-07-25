@@ -34,4 +34,8 @@ private: // メンバ変数
 
 	// オブジェクトの生成
 	int fbxModel; //FBXモデル
+	int fbxModel2; //FBXモデル
+
+	UINT useShader;
+	int defaultPostEffect;
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
+#include <string>
 
 class Shaders
 {
@@ -25,12 +26,14 @@ public: //サブクラス
 
 	private: //メンバ変数
 		ComPtr<ID3DBlob> shaderBlob;
+		std::wstring fileName;
 
 	public: //メンバ関数
 		Shader();
 		~Shader() = default;
 
 		int CompileShader(LPCWSTR pFileName, ShaderType shaderType);
+		std::wstring GetFileName() const { return fileName; }
 		ID3DBlob* GetShaderBlob() const { return shaderBlob.Get(); }
 	};
 
@@ -65,10 +68,10 @@ public: //メンバ関数
 	int CompileComputeShader(LPCWSTR pFileName)
 	{ return computeShader.CompileShader(pFileName, ShaderType::COMPUTE_SHADER); }
 
-	Shader GetVertex() { return vertexShader; }
-	Shader GetPixle() { return pixleShader; }
-	Shader GetDomain() { return domainShader; }
-	Shader GetHull() { return hullShader; }
-	Shader GetGeometry() { return geometryShader; }
-	Shader GetCompute() { return computeShader; }
+	Shader GetVertex() const { return vertexShader; }
+	Shader GetPixle() const { return pixleShader; }
+	Shader GetDomain() const { return domainShader; }
+	Shader GetHull() const { return hullShader; }
+	Shader GetGeometry() const { return geometryShader; }
+	Shader GetCompute() const { return computeShader; }
 };

@@ -223,20 +223,43 @@ public: // サブクラス
 
 public: // 静的メンバ変数
 	static bool isDepthWriteBan; //trueだったら、デプスに対しての上書き禁止
-protected:
-	static CommonData spriteData; //スプライトのデータで共通のデータ
-
-	static size_t blendMode; //ブレンドモード
 private:
-	static int objShader; //*.objデータのシェーダー
-	static int objPipeline; //*.objデータのパイプライン
-	static int materialShader; //マテリアルデータのシェーダー
-	static int spriteShader; //スプライトデータのシェーダー
+	static int objShader;          //*.objデータのシェーダー
+	static int objGraphicPipeline; //*.objデータのグラフィックパイプライン
+	static int objRootSignature;   //*.objデータのルートシグネチャ
+	static int objPipelineState;   //*.objデータのパイプライン
+
+	static int materialShader;          //マテリアルデータのシェーダー
+	static int materialGraphicPipeline; //マテリアルデータのグラフィックパイプライン
+	static int materialRootSignature;   //マテリアルデータのルートシグネチャ
+	static int materialPipelineState;   //マテリアルデータのパイプライン
+
+	static int spriteShader;          //スプライトデータのシェーダー
+	static int spriteGraphicPipeline; //スプライトデータのグラフィックパイプライン
+	static int spriteRootSignature;   //スプライトデータのルートシグネチャ
+	static int spritePipelineState;   //スプライトデータのパイプライン
+
 	static int inputLayout3d; //3dデータのインプットレイアウト
 	static int inputLayout2d; //2dデータのインプットレイアウト
 
 public: // 静的メンバ関数
-	static int GetObjPipeline() { return objPipeline; }
+	static int GetObjShader() { return objShader; }
+	static int GetObjGraphicPipeline() { return objGraphicPipeline; }
+	static int GetObjRootSignature() { return objRootSignature; }
+	static int GetObjPipelineState() { return objPipelineState; }
+
+	static int GetMaterialShader() { return materialShader; }
+	static int GetMaterialGraphicPipeline() { return materialGraphicPipeline; }
+	static int GetMaterialRootSignature() { return materialRootSignature; }
+	static int GetMaterialPipelineState() { return materialPipelineState; }
+
+	static int GetSpriteShader() { return spriteShader; }
+	static int GetSpriteGraphicPipeline() { return spriteGraphicPipeline; }
+	static int GetSpriteRootSignature() { return spriteRootSignature; }
+	static int GetSpritePipelineState() { return spritePipelineState; }
+
+	static int Get2dInputLayout() { return inputLayout2d; }
+	static int Get3dInputLayout() { return inputLayout3d; }
 
 protected: // メンバ変数
 	vector<VertexData> vertices; //頂点データ
@@ -250,9 +273,6 @@ protected: // メンバ変数
 
 	vector<Sprite> sprite;         //スプライトのデータ
 	vector<IndexData> spriteIndex; //スプライトのデータのインデックス
-
-	CommonData objectData[2];   //オブジェクトデータで共通のデータ
-	CommonData materialData[2]; //マテリアルデータで共通のデータ
 
 	vector<OBJSubset> objSubset;
 private:
@@ -298,13 +318,13 @@ public: // メンバ関数
 	}
 protected:
 	// 初期化
-	HRESULT Init();
+	int Init();
 	// オブジェクトの描画関係の初期化
-	HRESULT DrawingInit();
+	void DrawingInit();
 	// オブジェクトの描画関係の初期化
-	HRESULT MaterialInit();
+	void MaterialInit();
 	// スプライトの描画関係の初期化
-	HRESULT SpriteDrawingInit();
+	void SpriteDrawingInit();
 	// 頂点バッファとインデックスバッファの生成
 	int CreateVertexAndIndexBuffer();
 	// 定数バッファの生成

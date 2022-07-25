@@ -1119,10 +1119,6 @@ int DrawPolygon::Draw(
 
 	BaseDrawGraphics();
 
-	auto pipeline = shaderMgr->GetPipeline(DirectDrawing::GetObjPipeline());
-	cmdList->SetPipelineState(pipeline.pipelinestate[ShaderManager::blendMode].Get());
-	cmdList->SetGraphicsRootSignature(pipeline.rootsignature.Get());
-
 	ConstBufferData* constMap = nullptr;
 	obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //マッピング
 
@@ -1256,9 +1252,6 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 	BaseDrawGraphics();
 
 	static auto* cmdList = DirectXInit::GetCommandList();
-
-	cmdList->SetPipelineState(materialData[isDepthWriteBan].pipelinestate[blendMode].Get());
-	cmdList->SetGraphicsRootSignature(materialData[isDepthWriteBan].rootsignature.Get());
 
 	for (int i = static_cast<int>(parentIndex); i <= object; i++)
 	{

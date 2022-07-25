@@ -311,5 +311,11 @@
     <FxCompile Include="..\lib\Shaders\MaterialPS.hlsl">
       <Filter>シェーダファイル\Material</Filter>
     </FxCompile>
+    <FxCompile Include="..\lib\Shaders\defaultPS.hlsl">
+      <Filter>シェーダファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="..\lib\Shaders\color.hlsl">
+      <Filter>シェーダファイル</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

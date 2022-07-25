@@ -8,7 +8,8 @@
 Shaders::ComPtr<ID3DBlob> Shaders::Shader::errorBlob = nullptr;
 
 Shaders::Shader::Shader() :
-	shaderBlob(nullptr)
+	shaderBlob(nullptr),
+	fileName{}
 {
 }
 
@@ -18,6 +19,8 @@ int Shaders::Shader::CompileShader(LPCWSTR pFileName, ShaderType shaderType)
 	{
 		return Engine::ErrorLog("シェーダーファイル名がありません");
 	}
+
+	fileName = pFileName;
 
 	static LPCSTR pTarget = nullptr;
 

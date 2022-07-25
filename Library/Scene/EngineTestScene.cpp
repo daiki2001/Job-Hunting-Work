@@ -4,15 +4,24 @@
 #include "./Header/Input.h"
 #include "./Header/Camera.h"
 
+namespace
+{
+ShaderManager* shaderMgr = ShaderManager::Get();
+DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+}
+
 EngineTestScene::EngineTestScene(SceneChenger* sceneChenger) :
 	BaseScene(sceneChenger),
 	fbxLoader(FbxLoader::GetInstance()),
 	background(FUNCTION_ERROR),
 	fbxModel(FUNCTION_ERROR),
-	postEffect{}
+	fbxModel2(FUNCTION_ERROR),
+	postEffect{},
+	useShader(0),
+	defaultPostEffect(FUNCTION_ERROR)
 {
-	Init();
 	postEffect.Init();
+	Init();
 }
 
 EngineTestScene::~EngineTestScene()
@@ -27,7 +36,9 @@ void EngineTestScene::Init()
 
 	fbxLoader->Init();
 	fbxModel = fbxLoader->LoadModelFromFile("./Resources/boneTest.fbx");
+	fbxModel2 = fbxLoader->LoadModelFromFile("./Resources/cube/cube.fbx");
 	fbxLoader->GetModel(fbxModel)->Init();
+	fbxLoader->GetModel(fbxModel2)->Init();
 
 	// 画像の読み込み
 	background = draw.LoadTextrue(L"./Resources/background.png");
@@ -42,6 +53,17 @@ void EngineTestScene::Init()
 
 	fbxLoader->GetModel(fbxModel)->pos = { 0.0f, 0.0f, 0.0f };
 	fbxLoader->GetModel(fbxModel)->PlayAnimation();
+	fbxLoader->GetModel(fbxModel2)->pos = { -100.0f, -10.0f, -50.0f };
+
+	int shader = shaderMgr->CreateShader(shaderMgr->GetShader(postEffect.GetShader()).GetVertex(),
+										 L"./lib/Shaders/defaultPS.hlsl");
+	int gPipeline = shaderMgr->CreateGPipeline(shader, postEffect.GetInputLayout());
+	for (size_t i = 0; i < 5; i++)
+	{
+		shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i)).pRootSignature =
+			postEffect.GetRootSignature();
+	}
+	defaultPostEffect = shaderMgr->CreatePipelineState(gPipeline);
 }
 
 void EngineTestScene::Update()
@@ -103,6 +125,32 @@ void EngineTestScene::Update()
 		Camera::targetRadius += 1.0f;
 	}
 
+	if (Input::IsKey(DIK_UP))
+	{
+		color.x += 0.01f;
+		if (color.x >= 1.0f)
+		{
+			color.x = 1.0f;
+		}
+	}
+	if (Input::IsKey(DIK_DOWN))
+	{
+		color.x -= 0.01f;
+		if (color.x <= 0.0f)
+		{
+			color.x = 0.0f;
+		}
+	}
+
+	if (Input::IsKeyTrigger(DIK_RETURN))
+	{
+		useShader++;
+		if (useShader > 2)
+		{
+			useShader = 0;
+		}
+	}
+
 	Camera::pos.x = cosf(Camera::longitude) * cosf(Camera::latitude);
 	Camera::pos.y = sinf(Camera::latitude);
 	Camera::pos.z = sinf(Camera::longitude) * cosf(Camera::latitude);
@@ -110,7 +158,8 @@ void EngineTestScene::Update()
 	Camera::pos += Camera::target;
 	Camera::SetCamera(Camera::pos, Camera::target, Camera::upVec);
 
-	fbxLoader->GetModel(fbxModel)->Update();
+	fbxLoader->GetModel(fbxModel)->Update(color);
+	fbxLoader->GetModel(fbxModel2)->Update(color);
 }
 
 void EngineTestScene::Draw()
@@ -122,13 +171,36 @@ void EngineTestScene::Draw()
 
 	postEffect.PreDraw();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
-	ShaderManager::blendMode = ShaderManager::BlendMode::ALPHA;
 
+	if (useShader < 2)
+	{
+		switch (useShader)
+		{
+		case 0:
+			Model::ChangeDefaultShader();
+			break;
+		case 1:
+			Model::ChangeColorShader();
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		Model::ChangeDefaultShader();
+	}
 	fbxLoader->GetModel(fbxModel)->Draw();
+	fbxLoader->GetModel(fbxModel2)->Draw();
 
 	postEffect.PostDraw();
 
 	w->ClearScreen();
+
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		DirectDrawing::GetSpriteRootSignature(),
+		DirectDrawing::GetSpritePipelineState());
 	// 背景
 	draw.DrawTextrue(
 		0.0f,
@@ -140,7 +212,42 @@ void EngineTestScene::Draw()
 		XMFLOAT2(0.0f, 0.0f)
 	);
 
+	if (useShader < 2)
+	{
+		shaderMgr->ChangePipelineState(
+			DirectXInit::GetCommandList(),
+			postEffect.GetRootSignature(),
+			defaultPostEffect);
+	}
+	else
+	{
+		switch (useShader)
+		{
+		case 2:
+			shaderMgr->ChangePipelineState(
+				DirectXInit::GetCommandList(),
+				postEffect.GetRootSignature(),
+				postEffect.GetPipelineState());
+			break;
+		default:
+			break;
+		}
+	}
 	postEffect.Draw();
+
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		DirectDrawing::GetSpriteRootSignature(),
+		DirectDrawing::GetSpritePipelineState());
+	// 前景
+	draw.DrawString(
+		10.0f,
+		10.0f,
+		2.0f,
+		color,
+		"%d",
+		useShader
+	);
 	w->ScreenFlip();
 
 	// ループの終了処理

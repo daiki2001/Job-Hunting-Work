@@ -1,6 +1,5 @@
 #include "SettingScene.h"
 #include "./Header/DirectXInit.h"
-#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Input.h"
 
 #include "./Header/Error.h"
@@ -46,9 +45,9 @@ void SettingScene::Draw()
 
 	w->ClearScreen();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
-	ShaderManager::blendMode = ShaderManager::BlendMode::ALPHA;
 
 	// ”wŒi
+	DirectDrawing::ChangeSpriteShader();
 	draw.DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f,

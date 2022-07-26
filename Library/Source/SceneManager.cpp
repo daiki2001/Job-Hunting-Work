@@ -23,13 +23,6 @@ SceneManager::SceneManager()
 
 void SceneManager::Loop() const
 {
-#ifndef _DEBUG
-	if (DirectXInit::EngineDebug)
-	{
-		DirectXInit::EngineDebug = false;
-	}
-#endif // !_DEBUG
-
 	sceneStack.top()->Update();
 	Camera::Update();
 	sceneStack.top()->Draw();

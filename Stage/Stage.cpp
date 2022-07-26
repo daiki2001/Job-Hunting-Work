@@ -46,6 +46,7 @@ void Stage::Draw(const int& offsetX, const int& offsetY)
 	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
 
 	// 外壁の描画
+	DirectDrawing::ChangeMaterialShader();
 	draw->DrawOBJ(wall_obj, Vector3(-7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(0 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(-7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(1 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(2 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
@@ -53,12 +54,8 @@ void Stage::Draw(const int& offsetX, const int& offsetY)
 
 	if (block_mgr->GetDoor() == false)
 	{
+		DirectDrawing::ChangeOBJShader();
 		draw->Draw(door_obj, Vector3(0.0f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(11.0f, 1.0f, 2.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), debugTex);
-	}
-
-	if (block_mgr->GetDoor() == false)
-	{
-		draw->DrawOBJ(wall_obj, Vector3(), Math::Identity(), Vector3(1.0f, 1.0f, 1.0f));
 	}
 
 	block_mgr->Draw(offsetX, -offsetY);

@@ -34,6 +34,7 @@ void Player::Update(const Input* const input)
 
 void Player::Draw(const int& offsetX, const int& offsetY)
 {
+    DirectDrawing::ChangeOBJShader();
     draw->Draw(
         object,
         pos + Vector3(static_cast<float>(offsetX),

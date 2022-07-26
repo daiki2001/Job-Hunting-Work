@@ -100,6 +100,30 @@ void DirectDrawing::DataClear()
 	objSubset.clear();
 }
 
+void DirectDrawing::ChangeOBJShader()
+{
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		objRootSignature,
+		objPipelineState);
+}
+
+void DirectDrawing::ChangeMaterialShader()
+{
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		materialRootSignature,
+		materialPipelineState);
+}
+
+void DirectDrawing::ChangeSpriteShader()
+{
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		spriteRootSignature,
+		spritePipelineState);
+}
+
 DirectDrawing::DirectDrawing() :
 	vertices{},
 	vertMap(nullptr),

@@ -243,6 +243,10 @@ private:
 	static int inputLayout2d; //2dデータのインプットレイアウト
 
 public: // 静的メンバ関数
+	static void ChangeOBJShader();
+	static void ChangeMaterialShader();
+	static void ChangeSpriteShader();
+
 	static int GetObjShader() { return objShader; }
 	static int GetObjGraphicPipeline() { return objGraphicPipeline; }
 	static int GetObjRootSignature() { return objRootSignature; }

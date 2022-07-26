@@ -1,6 +1,5 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
-#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Input.h"
 #include "./Header/Camera.h"
 #include "Player.h"
@@ -62,9 +61,9 @@ void GameScene::Draw()
 
 	w->ClearScreen();
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
-	ShaderManager::blendMode = ShaderManager::BlendMode::ALPHA;
 
 	// 背景
+	DirectDrawing::ChangeSpriteShader();
 	for (int y = 0; y * 128 < w->windowHeight; y++)
 	{
 		for (int x = 0; x * 128 < w->windowWidth; x++)
@@ -86,6 +85,7 @@ void GameScene::Draw()
 	player->Draw();
 
 	// 前景
+	DirectDrawing::ChangeSpriteShader();
 	draw.DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	draw.DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
 

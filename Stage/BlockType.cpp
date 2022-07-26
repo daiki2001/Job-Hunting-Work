@@ -65,11 +65,13 @@ void BlockType::Draw(const Vector3& pos)
 	if (graph == FUNCTION_ERROR)
 	{
 		// 'graph'が'FUNCTION_ERROR'の時
+		DirectDrawing::ChangeMaterialShader();
 		draw->DrawOBJ(blockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f));
 	}
 	else
 	{
 		// 'graph'が'FUNCTION_ERROR'でない時
+		DirectDrawing::ChangeOBJShader();
 		draw->Draw(blockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), graph);
 	}
 }

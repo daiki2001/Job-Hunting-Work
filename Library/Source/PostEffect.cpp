@@ -13,8 +13,6 @@ ShaderManager* shaderMgr = ShaderManager::Get();
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
 
-const float PostEffect::clearColor[4] = { 1.0f, 0.5f, 0.0f, 0.0f };
-
 PostEffect::PostEffect() :
 	position(0.0f, 0.0f, 0.0f),
 	angle(0.0f),
@@ -247,7 +245,7 @@ int PostEffect::PreDraw()
 	// 画面クリア
 	for (size_t i = 0; i < texBuff.size(); i++)
 	{
-		cmdList->ClearRenderTargetView(rtvH[i], clearColor, 0, nullptr);
+		cmdList->ClearRenderTargetView(rtvH[i], RenderTexture::clearColor, 0, nullptr);
 	}
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 

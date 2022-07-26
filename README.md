@@ -1,9 +1,10 @@
-# エンジン整備用リポジトリ
+# 就職作品用リポジトリ
 
 >### lssuseにまとめてある項目
->* [エンジンの移植作業](https://github.com/daiki2001/Engine-maintenance/issues/3) [^1]
->* [ライブラリ化](https://github.com/daiki2001/Engine-maintenance/issues/2)
->* [その他](https://github.com/daiki2001/Engine-maintenance/issues/1)
+>* [エンジン整備](https://github.com/daiki2001/Job-Hunting-Work/issues/2)
+>* [gitとReadmeの更新](https://github.com/daiki2001/Job-Hunting-Work/issues/1)
+>* [その他](https://github.com/daiki2001/Job-Hunting-Work/issues/4)
 
+## 脚注
 ### 注釈
-[^1]: [移植元](https://github.com/daiki2001/CG4)
+### 使っている素材(自作じゃない物)

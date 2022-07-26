@@ -1,22 +1,20 @@
-#include "./Header/DirectInput.h"
+ï»¿#include "./Header/DirectInput.h"
 #include "./Header/Win32API.h"
-#include <cassert>
 
-#define EoF (-1) // End of Function
+#include "./Header/Error.h"
 
-const LONG DirectInput::zoneMax = +1000;
-const LONG DirectInput::zoneMin = -1000;
+const LONG DirectInput::DEADZONE = 200;
 
 IDirectInput8* DirectInput::dinput = nullptr;
 IDirectInputDevice8* DirectInput::devkeyborad = nullptr;
 std::vector<IDirectInputDevice8*> DirectInput::devgamepad = {};
 BYTE DirectInput::key[256] = {};
-std::vector<DIJOYSTATE> DirectInput::gamepad = {};
+std::vector<DIJOYSTATE> DirectInput::gamepads = {};
 std::vector<DIDEVICEINSTANCE> DirectInput::parameter = {};
 
 DirectInput* DirectInput::GetInstance()
 {
-	// ƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	static DirectInput instance;
 
 	return &instance;
@@ -27,7 +25,7 @@ BOOL CALLBACK DirectInput::EnumGamepadCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID
 	std::vector<DIDEVICEINSTANCE>* ptr = (std::vector<DIDEVICEINSTANCE>*)pvRef;
 	DIDEVICEINSTANCE tmp = *lpddi;
 
-	// ”z—ñ‚ÉŠi”[
+	// é…åˆ—ã«æ ¼ç´
 	ptr->push_back(tmp);
 
 	return DIENUM_CONTINUE;
@@ -37,55 +35,55 @@ int DirectInput::Init()
 {
 	HRESULT hr;
 
-	// DirectInputƒCƒ“ƒ^[ƒtƒF[ƒX‚Ì¶¬
+	// DirectInputã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã®ç”Ÿæˆ
 	hr = DirectInput8Create(Win32API::GetWindow().hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dinput, nullptr);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("DirectInputƒCƒ“ƒ^[ƒtƒF[ƒX‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("DirectInputã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
-	// ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ì¶¬
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆ
 	hr = dinput->CreateDevice(GUID_SysKeyboard, &devkeyborad, NULL);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
-	// “ü—Íƒf[ƒ^Œ`®‚ÌƒZƒbƒg
-	hr = devkeyborad->SetDataFormat(&c_dfDIKeyboard); //•W€Œ`®
+	// å…¥åŠ›ãƒ‡ãƒ¼ã‚¿å½¢å¼ã®ã‚»ãƒƒãƒˆ
+	hr = devkeyborad->SetDataFormat(&c_dfDIKeyboard); //æ¨™æº–å½¢å¼
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ìƒf[ƒ^Œ`®‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ãƒ‡ãƒ¼ã‚¿å½¢å¼ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
-	// ‹¦’²ƒŒƒxƒ‹‚ÌƒZƒbƒg
+	// å”èª¿ãƒ¬ãƒ™ãƒ«ã®ã‚»ãƒƒãƒˆ
 	hr = devkeyborad->SetCooperativeLevel(Win32API::GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ì‹¦’²ƒŒƒxƒ‹‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®å”èª¿ãƒ¬ãƒ™ãƒ«ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
-	// ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì¶¬
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆ
 	hr = CreateGamePadDevice();
 	if (FAILED(hr))
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	return 0;
@@ -93,13 +91,13 @@ int DirectInput::Init()
 
 int DirectInput::Update()
 {
-	if (KeyInputUpdate() == EoF)
+	if (KeyInputUpdate() != 0)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
-	if (GamePadInputUpdate() == EoF)
+	if (GamepadInputUpdate() != 0)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	return 0;
@@ -107,20 +105,20 @@ int DirectInput::Update()
 
 void DirectInput::Release()
 {
-	// ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ì§Œä‚ğ’â~‚³‚¹‚é
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®åˆ¶å¾¡ã‚’åœæ­¢ã•ã›ã‚‹
 	devkeyborad->Unacquire();
-	// ƒL[ƒ{[ƒhƒfƒoƒCƒX‚ğ‰ğ•ú‚·‚é
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã‚’è§£æ”¾ã™ã‚‹
 	devkeyborad->Release();
 
 	for (size_t i = 0; i < devgamepad.size(); i++)
 	{
-		// ŠeƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì§Œä‚ğ’â~‚³‚¹‚é
+		// å„ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®åˆ¶å¾¡ã‚’åœæ­¢ã•ã›ã‚‹
 		devgamepad[i]->Unacquire();
-		// ŠeƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚ğ‰ğ•ú‚·‚é
+		// å„ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã‚’è§£æ”¾ã™ã‚‹
 		devgamepad[i]->Release();
 	}
 
-	// DirectInput‚ğ‰ğ•ú‚·‚é
+	// DirectInputã‚’è§£æ”¾ã™ã‚‹
 	dinput->Release();
 }
 
@@ -144,7 +142,93 @@ bool DirectInput::CheckHitKey(int keyCode)
 	return false;
 }
 
-int DirectInput::CheckHitKeyAll(int CheckType)
+bool DirectInput::CheckHitGamepad(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad)
+{
+	if (GamepadInputUpdate() != 0)
+	{
+		return false;
+	}
+
+	// ãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚‹ã‹ã©ã†ã‹
+	if (inputType >= 0 && inputType <= 32)
+	{
+		if (gamepad.rgbButtons[inputType])
+		{
+			return true;
+		}
+	}
+	// åå­—ã‚­ãƒ¼ã®å…¥åŠ›ãŒã‚ã‚‹ã‹ã©ã†ã‹
+	if (inputType >= DirectInput::GamepadInputType::PAD_POV_UP && inputType <= DirectInput::GamepadInputType::PAD_POV_UP_LEFT)
+	{
+		int pov = inputType - DirectInput::GamepadInputType::PAD_POV_UP;
+		return gamepad.rgdwPOV[0] == pov * 4500;
+	}
+	// ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ãŒã‚ã‚‹ã‹ã©ã†ã‹
+	if (CheckHitGamepadAnalogStick(inputType, gamepad))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool DirectInput::CheckHitGamepadAnalogStick(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad)
+{
+	if (inputType < DirectInput::GamepadInputType::PAD_TRIGGER_LEFT)
+	{
+		return false;
+	}
+
+	static const int deadZoneMax = DEADZONE / 2;
+	static const int deadZoneMin = -deadZoneMax;
+
+	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_UP)
+	{
+		return gamepad.lY < deadZoneMin;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_RIGHT)
+	{
+		return gamepad.lX > deadZoneMax;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_DOWN)
+	{
+		return gamepad.lY > deadZoneMax;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_LEFT)
+	{
+		return gamepad.lX < deadZoneMin;
+	}
+
+	if (inputType == DirectInput::GamepadInputType::PAD_TRIGGER_LEFT)
+	{
+		return gamepad.lZ > deadZoneMax;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_TRIGGER_RIGHT)
+	{
+		return gamepad.lZ < deadZoneMin;
+	}
+
+	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_UP)
+	{
+		return gamepad.lRy < deadZoneMin;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_RIGHT)
+	{
+		return gamepad.lRx > deadZoneMax;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_DOWN)
+	{
+		return gamepad.lRy > deadZoneMax;
+	}
+	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_LEFT)
+	{
+		return gamepad.lRx < deadZoneMin;
+	}
+
+	return false;
+}
+
+int DirectInput::CheckHitAll(int CheckType)
 {
 	if ((CheckType & CHECKINPUT_KEY) != 0)
 	{
@@ -158,7 +242,13 @@ int DirectInput::CheckHitKeyAll(int CheckType)
 	}
 	if ((CheckType & CHECKINPUT_PAD) != 0)
 	{
-
+		for (int i = 0; i <= GamepadInputType::PAD_RSTICK_LEFT; i++)
+		{
+			if (CheckHitGamepad(static_cast<GamepadInputType>(i), gamepads[0]) == true)
+			{
+				return 0;
+			}
+		}
 	}
 	if ((CheckType & CHECKINPUT_MOUSE) != 0)
 	{
@@ -190,14 +280,14 @@ int DirectInput::GetHitKeyStateAll(char* KeyStateArray)
 	return 0;
 }
 
-int DirectInput::GetGamepadStateAll(DIJOYSTATE* gamepadState, const size_t& gamepadIndex)
+int DirectInput::GetGamepadStateAll(DIJOYSTATE* gamepadState, const size_t& gamepadNo)
 {
-	if (gamepadIndex >= gamepad.size())
+	if (gamepadNo >= gamepads.size())
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
-	*gamepadState = gamepad[gamepadIndex];
+	*gamepadState = gamepads[gamepadNo];
 
 	return 0;
 }
@@ -209,7 +299,7 @@ int DirectInput::KeyInputUpdate()
 	ZeroMemory(key, sizeof(key));
 	hr = devkeyborad->GetDeviceState(sizeof(key), key);
 	if (FAILED(hr)) {
-		// ¸”s‚È‚çÄŠJ‚³‚¹‚Ä‚à‚¤ˆê“xæ“¾
+		// å¤±æ•—ãªã‚‰å†é–‹ã•ã›ã¦ã‚‚ã†ä¸€åº¦å–å¾—
 		devkeyborad->Acquire();
 		devkeyborad->GetDeviceState(sizeof(key), key);
 	}
@@ -217,18 +307,17 @@ int DirectInput::KeyInputUpdate()
 	return 0;
 }
 
-int DirectInput::GamePadInputUpdate(const size_t& gamepadNo)
+int DirectInput::GamepadInputUpdate(const size_t& gamepadNo)
 {
 	HRESULT hr;
 
 	if (gamepadNo > devgamepad.size())
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("w’è‚³‚ê‚½ƒQ[ƒ€ƒpƒbƒh‚Í‚ ‚è‚Ü‚¹‚ñ\n");
+		OutputDebugStringA("æŒ‡å®šã•ã‚ŒãŸã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã¯ã‚ã‚Šã¾ã›ã‚“\n");
 #endif // _DEBUG
 
-		assert(0);
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	if (gamepadNo == devgamepad.size())
@@ -236,25 +325,34 @@ int DirectInput::GamePadInputUpdate(const size_t& gamepadNo)
 		hr = CreateGamePadDevice();
 		if (FAILED(hr))
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 	}
 
+	if (devgamepad.size() <= 0)
+	{
+		return Engine::FUNCTION_ERROR;
+	}
+
 	hr = devgamepad[gamepadNo]->Acquire();
-	if (hr == DIERR_INPUTLOST)
+	if (FAILED(hr))
 	{
-		// ƒfƒoƒCƒX‚ªƒƒXƒg‚µ‚Ä‚¢‚½‚çŠÖ”‚ğI—¹‚·‚é
-		return EoF;
+		// ãƒ‡ãƒã‚¤ã‚¹ãŒãƒ­ã‚¹ãƒˆã—ã¦ã„ãŸã‚‰é–¢æ•°ã‚’çµ‚äº†ã™ã‚‹
+		return Engine::FUNCTION_ERROR;
 	}
 
-	devgamepad[gamepadNo]->Poll();
-
-	for (size_t i = gamepad.size(); i < gamepadNo; i++)
+	hr = devgamepad[gamepadNo]->Poll();
+	if (FAILED(hr))
 	{
-		gamepad.push_back({});
+		return Engine::FUNCTION_ERROR;
 	}
-	ZeroMemory(&gamepad[gamepadNo], sizeof(DIJOYSTATE));
-	devgamepad[gamepadNo]->GetDeviceState(sizeof(DIJOYSTATE), &gamepad[gamepadNo]);
+
+	for (size_t i = gamepads.size(); i <= devgamepad.size(); i++)
+	{
+		gamepads.push_back({});
+	}
+	ZeroMemory(&gamepads[gamepadNo], sizeof(DIJOYSTATE));
+	devgamepad[gamepadNo]->GetDeviceState(sizeof(DIJOYSTATE), &gamepads[gamepadNo]);
 
 	return 0;
 }
@@ -263,12 +361,12 @@ HRESULT DirectInput::CreateGamePadDevice()
 {
 	HRESULT hr = S_OK;
 
-	// ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì—ñ‹“
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®åˆ—æŒ™
 	hr = dinput->EnumDevices(DI8DEVTYPE_GAMEPAD, &EnumGamepadCallback, &parameter, DIEDFL_ATTACHEDONLY);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì—ñ‹“‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®åˆ—æŒ™ã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
 		return hr;
@@ -278,45 +376,45 @@ HRESULT DirectInput::CreateGamePadDevice()
 	{
 		devgamepad.push_back({});
 
-		// ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì¶¬
+		// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆ
 		hr = dinput->CreateDevice(parameter[i].guidInstance, &devgamepad[i], NULL);
 		if (FAILED(hr))
 		{
 #ifdef _DEBUG
-			OutputDebugStringA("ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½\n");
+			OutputDebugStringA("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
 			return hr;
 		}
 
-		// “ü—Íƒf[ƒ^Œ`®‚ÌƒZƒbƒg
+		// å…¥åŠ›ãƒ‡ãƒ¼ã‚¿å½¢å¼ã®ã‚»ãƒƒãƒˆ
 		hr = devgamepad[i]->SetDataFormat(&c_dfDIJoystick);
 		if (FAILED(hr))
 		{
 #ifdef _DEBUG
-			OutputDebugStringA("ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ìƒf[ƒ^Œ`®‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+			OutputDebugStringA("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ãƒ‡ãƒ¼ã‚¿å½¢å¼ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
 			return hr;
 		}
 
-		// ƒvƒƒpƒeƒB‚Ìİ’è
+		// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®è¨­å®š
 		hr = SetUpGamePadProperty(i);
 		if (FAILED(hr))
 		{
 #ifdef _DEBUG
-			OutputDebugStringA("ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚ÌƒvƒƒpƒeƒB‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+			OutputDebugStringA("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
 			return hr;
 		}
 
-		// ‹¦’²ƒŒƒxƒ‹‚Ìİ’è
+		// å”èª¿ãƒ¬ãƒ™ãƒ«ã®è¨­å®š
 		hr = devgamepad[i]->SetCooperativeLevel(Win32API::GetHwnd(), DISCL_FOREGROUND | DISCL_EXCLUSIVE);
 		if (FAILED(hr))
 		{
 #ifdef _DEBUG
-			OutputDebugStringA("ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì‹¦’²ƒŒƒxƒ‹‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+			OutputDebugStringA("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®å”èª¿ãƒ¬ãƒ™ãƒ«ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 
 			return hr;
@@ -331,7 +429,7 @@ HRESULT DirectInput::SetUpGamePadProperty(const size_t& gamepadNo)
 	if (gamepadNo >= devgamepad.size())
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("w’è‚³‚ê‚½ƒQ[ƒ€ƒpƒbƒh‚Í‚ ‚è‚Ü‚¹‚ñ\n");
+		OutputDebugStringA("æŒ‡å®šã•ã‚ŒãŸã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã¯ã‚ã‚Šã¾ã›ã‚“\n");
 #endif // _DEBUG
 
 		return S_FALSE;
@@ -339,7 +437,7 @@ HRESULT DirectInput::SetUpGamePadProperty(const size_t& gamepadNo)
 
 	HRESULT hr;
 
-	// ²ƒ‚[ƒh‚ğâ‘Î’lƒ‚[ƒh‚Æ‚µ‚Äİ’è
+	// è»¸ãƒ¢ãƒ¼ãƒ‰ã‚’çµ¶å¯¾å€¤ãƒ¢ãƒ¼ãƒ‰ã¨ã—ã¦è¨­å®š
 	DIPROPDWORD diprop;
 	ZeroMemory(&diprop, sizeof(diprop));
 	diprop.diph.dwSize = sizeof(diprop);
@@ -353,70 +451,70 @@ HRESULT DirectInput::SetUpGamePadProperty(const size_t& gamepadNo)
 		return hr;
 	}
 
-	// X²‚Ì’l‚Ì”ÍˆÍİ’è
+	// Xè»¸ã®å€¤ã®ç¯„å›²è¨­å®š
 	DIPROPRANGE diprg;
 	ZeroMemory(&diprg, sizeof(diprg));
 	diprg.diph.dwSize = sizeof(diprg);
 	diprg.diph.dwHeaderSize = sizeof(diprg.diph);
 	diprg.diph.dwHow = DIPH_BYOFFSET;
 	diprg.diph.dwObj = DIJOFS_X;
-	diprg.lMin = zoneMin;
-	diprg.lMax = zoneMax;
+	diprg.lMin = -1000;
+	diprg.lMax = +1000;
 	hr = devgamepad[gamepadNo]->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("X²‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("Xè»¸ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 	}
 
-	// Y²‚Ì’l‚Ì”ÍˆÍİ’è
+	// Yè»¸ã®å€¤ã®ç¯„å›²è¨­å®š
 	diprg.diph.dwObj = DIJOFS_Y;
 	hr = devgamepad[gamepadNo]->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("Y²‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("Yè»¸ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 	}
 
-	// Z²‚Ì’l‚Ì”ÍˆÍİ’è
+	// Zè»¸ã®å€¤ã®ç¯„å›²è¨­å®š
 	diprg.diph.dwObj = DIJOFS_Z;
 	hr = devgamepad[gamepadNo]->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("Z²‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("Zè»¸ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 	}
 
-	// RX²‚Ì’l‚Ì”ÍˆÍİ’è
+	// RXè»¸ã®å€¤ã®ç¯„å›²è¨­å®š
 	diprg.diph.dwObj = DIJOFS_RX;
 	hr = devgamepad[gamepadNo]->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("RX²‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("RXè»¸ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 	}
 
-	// RY²‚Ì’l‚Ì”ÍˆÍİ’è
+	// RYè»¸ã®å€¤ã®ç¯„å›²è¨­å®š
 	diprg.diph.dwObj = DIJOFS_RY;
 	hr = devgamepad[gamepadNo]->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("RY²‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("RYè»¸ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 	}
 
-	// RZ²‚Ì’l‚Ì”ÍˆÍİ’è
+	// RZè»¸ã®å€¤ã®ç¯„å›²è¨­å®š
 	diprg.diph.dwObj = DIJOFS_RZ;
 	hr = devgamepad[gamepadNo]->SetProperty(DIPROP_RANGE, &diprg.diph);
 	if (FAILED(hr))
 	{
 #ifdef _DEBUG
-		OutputDebugStringA("RZ²‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½\n");
+		OutputDebugStringA("RZè»¸ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸ\n");
 #endif // _DEBUG
 	}
 

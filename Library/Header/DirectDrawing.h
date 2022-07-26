@@ -1,158 +1,146 @@
-#pragma once
+ï»¿#pragma once
 #include "./Math/EngineMath.h"
 #include "./Math/Collision/CollisionInfo.h"
 #include <vector>
 #include <wrl.h>
 #include <d3dx12.h>
+#include <memory>
 
-/*ƒVƒF[ƒ_—p*/
-#include <d3dcompiler.h>
-#pragma comment(lib,"d3dcompiler.lib")
-
-/*DirectDrawing‚Ìƒo[ƒWƒ‡ƒ“w’è*/
+/*DirectDrawingã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æŒ‡å®š*/
 #define DIRECTDRAWING_VERSION 0x0001
 
-/*ƒuƒŒƒ“ƒhƒ‚[ƒh*/
-#define BLENDMODE_NOBLEND (0) //ƒm[ƒuƒŒƒ“ƒh
-#define BLENDMODE_ALPHA   (1) //ƒ¿ƒuƒŒƒ“ƒh
-#define BLENDMODE_ADD     (2) //‰ÁZ‡¬
-#define BLENDMODE_SUB     (3) //Œ¸Z‡¬
-#define BLENDMODE_INV     (4) //F”½“]‡¬
+/*ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰*/
+#define BLENDMODE_NOBLEND (0) //ãƒãƒ¼ãƒ–ãƒ¬ãƒ³ãƒ‰
+#define BLENDMODE_ALPHA   (1) //Î±ãƒ–ãƒ¬ãƒ³ãƒ‰
+#define BLENDMODE_ADD     (2) //åŠ ç®—åˆæˆ
+#define BLENDMODE_SUB     (3) //æ¸›ç®—åˆæˆ
+#define BLENDMODE_INV     (4) //è‰²åè»¢åˆæˆ
 
 class BaseCollider;
 
-// ’¸“_ƒf[ƒ^\‘¢‘Ì
+// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 struct Vertex
 {
-	DirectX::XMFLOAT3 pos;    //xyzÀ•W
-	DirectX::XMFLOAT3 normal; //–@üƒxƒNƒgƒ‹
-	DirectX::XMFLOAT2 uv;     //uvÀ•W
+	DirectX::XMFLOAT3 pos;    //xyzåº§æ¨™
+	DirectX::XMFLOAT3 normal; //æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«
+	DirectX::XMFLOAT2 uv;     //uvåº§æ¨™
 };
 
-// 1ƒIƒuƒWƒFƒNƒg‚Ì’¸“_î•ñ‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+// 1ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®é ‚ç‚¹æƒ…å ±ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 struct VertexData
 {
-	/*”z—ñ‚É‚µ‚Äg‚¤‚±‚Æ‚ª‘O’ñ*/
+	/*é…åˆ—ã«ã—ã¦ä½¿ã†ã“ã¨ãŒå‰æ*/
 
-private: // ƒGƒCƒŠƒAƒX
-	// Microsoft::WRL::‚ğÈ—ª
+private: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
+	// Microsoft::WRL::ã‚’çœç•¥
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public:
-	std::vector<Vertex> vertices;    //’¸“_ƒf[ƒ^
-	ComPtr<ID3D12Resource> vertBuff; //’¸“_ƒoƒbƒtƒ@‚Ì¶¬
-	D3D12_VERTEX_BUFFER_VIEW vbView = {}; //’¸“_ƒoƒbƒtƒ@ƒrƒ…[‚Ìì¬
+	std::vector<Vertex> vertices;    //é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿
+	ComPtr<ID3D12Resource> vertBuff; //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
+	D3D12_VERTEX_BUFFER_VIEW vbView = {}; //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã®ä½œæˆ
 
-	std::vector<unsigned short> indices; //ƒCƒ“ƒfƒbƒNƒXƒf[ƒ^
-	ComPtr<ID3D12Resource> indexBuff;    //ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìİ’è
-	D3D12_INDEX_BUFFER_VIEW ibView = {};      //ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒrƒ…[‚Ìì¬
+	std::vector<unsigned short> indices; //ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿
+	ComPtr<ID3D12Resource> indexBuff;    //ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
+	D3D12_INDEX_BUFFER_VIEW ibView = {};      //ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã®ä½œæˆ
 };
 
-// ’¸“_ƒf[ƒ^\‘¢‘Ì(ƒXƒvƒ‰ƒCƒg—p)
+// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“(ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆç”¨)
 struct SpriteVertex
 {
-	DirectX::XMFLOAT3 pos; //xyzÀ•W
-	DirectX::XMFLOAT2 uv;  //uvÀ•W
+	DirectX::XMFLOAT3 pos; //xyzåº§æ¨™
+	DirectX::XMFLOAT2 uv;  //uvåº§æ¨™
 };
 
-// ’è”ƒoƒbƒtƒ@—pƒf[ƒ^\‘¢‘Ì
+// å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”¨ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 struct ConstBufferData
 {
-	DirectX::XMFLOAT4 color;    //F (RGBA)
-	DirectX::XMMATRIX mat;      //3D•ÏŠ·s—ñ
-	DirectX::XMFLOAT3 lightVec; //ŒõŒ¹‚Ö‚ÌƒxƒNƒgƒ‹
+	DirectX::XMFLOAT4 color;    //è‰² (RGBA)
+	DirectX::XMMATRIX mat;      //3Då¤‰æ›è¡Œåˆ—
+	DirectX::XMFLOAT3 lightVec; //å…‰æºã¸ã®ãƒ™ã‚¯ãƒˆãƒ«
 };
-// ’è”ƒoƒbƒtƒ@—pƒf[ƒ^\‘¢‘Ì(ƒ}ƒeƒŠƒAƒ‹)
+// å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”¨ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“(ãƒãƒ†ãƒªã‚¢ãƒ«)
 struct MaterialConstBufferData
 {
-	DirectX::XMFLOAT3 ambient;  //ƒAƒ“ƒrƒGƒ“ƒgŒW”
-	float pad1;                 //ƒpƒfƒBƒ“ƒO
-	DirectX::XMFLOAT3 diffuse;  //ƒfƒBƒtƒ…[ƒYŒW”
-	float pad2;                 //ƒpƒfƒBƒ“ƒO
-	DirectX::XMFLOAT3 specular; //ƒXƒyƒLƒ…ƒ‰[ŒW”
-	float alpha;                //ƒAƒ‹ƒtƒ@
+	DirectX::XMFLOAT3 ambient;  //ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆä¿‚æ•°
+	float pad1;                 //ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°
+	DirectX::XMFLOAT3 diffuse;  //ãƒ‡ã‚£ãƒ•ãƒ¥ãƒ¼ã‚ºä¿‚æ•°
+	float pad2;                 //ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°
+	DirectX::XMFLOAT3 specular; //ã‚¹ãƒšã‚­ãƒ¥ãƒ©ãƒ¼ä¿‚æ•°
+	float alpha;                //ã‚¢ãƒ«ãƒ•ã‚¡
 };
-// ’è”ƒoƒbƒtƒ@—pƒf[ƒ^\‘¢‘Ì(ƒXƒvƒ‰ƒCƒg—p)
+// å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”¨ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“(ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆç”¨)
 struct SpriteConstBufferData
 {
-	DirectX::XMFLOAT4 color; //F (RGBA)
-	DirectX::XMMATRIX mat;   //3D•ÏŠ·s—ñ
+	DirectX::XMFLOAT4 color; //è‰² (RGBA)
+	DirectX::XMMATRIX mat;   //3Då¤‰æ›è¡Œåˆ—
 };
 
-// ƒfƒBƒXƒNƒŠƒvƒ^ƒnƒ“ƒhƒ‹
+// ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒãƒ³ãƒ‰ãƒ«
 struct DescHandle
 {
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandle; //CPU‘¤‚Ìƒnƒ“ƒhƒ‹
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandle; //GPU‘¤‚Ìƒnƒ“ƒhƒ‹
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandle; //CPUå´ã®ãƒãƒ³ãƒ‰ãƒ«
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandle; //GPUå´ã®ãƒãƒ³ãƒ‰ãƒ«
 };
 
-// ŠeƒIƒuƒWƒFƒNƒg(ƒXƒvƒ‰ƒCƒg)‚Å‹¤’Ê‚Ìƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+// å„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ(ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ)ã§å…±é€šã®ãƒ‡ãƒ¼ã‚¿ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 struct CommonData
 {
-	/*'matProjection'‚Ìˆø”*/
-	enum Projection
-	{
-		ORTHOGRAPHIC, //•½s“Š‰e
-		PERSPECTIVE   //“§‹“Š‰e
-	};
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelinestate[5]; //ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã®çŠ¶æ…‹
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootsignature;    //ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
 
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelinestate[5]; //ƒpƒCƒvƒ‰ƒCƒ“‚Ìó‘Ô
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootsignature;    //ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ
-
-	DirectX::XMMATRIX matProjection[2]; //Ë‰es—ñ
-
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CommonData();
 };
 
-// ƒIƒuƒWƒFƒNƒg‚Ìƒ[ƒ‹ƒhs—ñ‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 class Object
 {
-	/*”z—ñ‚É‚µ‚Äg‚¤‚±‚Æ‚ª‘O’ñ*/
-public: // ƒƒ“ƒoŠÖ”
+	/*é…åˆ—ã«ã—ã¦ä½¿ã†ã“ã¨ãŒå‰æ*/
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
 	Object();
 	virtual ~Object();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	virtual void Init();
-	// XV
+	// æ›´æ–°
 	virtual void Update();
 
-	// ƒRƒ‰ƒCƒ_[‚Ìİ’è
+	// ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã®è¨­å®š
 	void SetCollider(BaseCollider* collider);
-	// Õ“ËƒR[ƒ‹ƒoƒbƒNŠÖ”
+	// è¡çªæ™‚ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°
 	virtual void OnCollision(const CollisionInfo& info) {}
 
-public: // ƒƒ“ƒo•Ï”
-	int polygonData; //’¸“_î•ñ‚Ì—v‘f”Ô†
-	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //’è”ƒoƒbƒtƒ@
+public: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	int polygonData; //é ‚ç‚¹æƒ…å ±ã®è¦ç´ ç•ªå·
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //å®šæ•°ãƒãƒƒãƒ•ã‚¡
 
-	DirectX::XMFLOAT3 position; //À•W
-	DirectX::XMMATRIX rotation; //‰ñ“]s—ñ
-	DirectX::XMFLOAT3 scale;    //ƒXƒP[ƒ‹
-	DirectX::XMFLOAT4 color;    //F
+	DirectX::XMFLOAT3 position; //åº§æ¨™
+	DirectX::XMMATRIX rotation; //å›è»¢è¡Œåˆ—
+	DirectX::XMFLOAT3 scale;    //ã‚¹ã‚±ãƒ¼ãƒ«
+	DirectX::XMFLOAT4 color;    //è‰²
 
-	DirectX::XMMATRIX matWorld; //ƒ[ƒ‹ƒhs—ñ
+	DirectX::XMMATRIX matWorld; //ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—
 
-	Object* parent; //e‚Ì—v‘f”Ô†
+	Object* parent; //è¦ªã®è¦ç´ ç•ªå·
 
-	const char* name = nullptr; //ƒNƒ‰ƒX–¼(ƒfƒoƒbƒO—p)
-	BaseCollider* collider = nullptr; //ƒRƒ‰ƒCƒ_[
+	const char* name = nullptr; //ã‚¯ãƒ©ã‚¹å(ãƒ‡ãƒãƒƒã‚°ç”¨)
+	BaseCollider* collider = nullptr; //ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼
 };
 
-// ƒ}ƒeƒŠƒAƒ‹
+// ãƒãƒ†ãƒªã‚¢ãƒ«
 struct Material
 {
-	std::string name;            //ƒ}ƒeƒŠƒAƒ‹–¼
-	DirectX::XMFLOAT3 ambient;   //ƒAƒ“ƒrƒGƒ“ƒg‰e‹¿“x
-	DirectX::XMFLOAT3 diffuse;   //ƒfƒBƒtƒ…[ƒY‰e‹¿“x
-	DirectX::XMFLOAT3 specular;  //ƒXƒyƒLƒ…ƒ‰[‰e‹¿“x
-	float alpha;                 //ƒAƒ‹ƒtƒ@
-	std::string textureFilename; //ƒeƒNƒXƒ`ƒƒƒtƒ@ƒCƒ‹–¼
+	std::string name;            //ãƒãƒ†ãƒªã‚¢ãƒ«å
+	DirectX::XMFLOAT3 ambient;   //ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆå½±éŸ¿åº¦
+	DirectX::XMFLOAT3 diffuse;   //ãƒ‡ã‚£ãƒ•ãƒ¥ãƒ¼ã‚ºå½±éŸ¿åº¦
+	DirectX::XMFLOAT3 specular;  //ã‚¹ãƒšã‚­ãƒ¥ãƒ©ãƒ¼å½±éŸ¿åº¦
+	float alpha;                 //ã‚¢ãƒ«ãƒ•ã‚¡
+	std::string textureFilename; //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚¡ã‚¤ãƒ«å
 
-	size_t textrueIndex; //ƒeƒNƒXƒ`ƒƒ‚ÌƒCƒ“ƒfƒbƒNƒX
+	size_t textrueIndex; //ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	Material()
 	{
 		ambient = { 0.3f,0.3f,0.3f };
@@ -164,21 +152,21 @@ struct Material
 	}
 };
 
-// objƒtƒ@ƒCƒ‹‚Ìƒf[ƒ^
+// objãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‡ãƒ¼ã‚¿
 class OBJData : public Object
 {
-	/*”z—ñ‚É‚µ‚Äg‚¤‚±‚Æ‚ª‘O’ñ*/
-	/*æ‚Éƒ‚ƒfƒ‹•s—v‚ÌƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚é*/
+	/*é…åˆ—ã«ã—ã¦ä½¿ã†ã“ã¨ãŒå‰æ*/
+	/*å…ˆã«ãƒ¢ãƒ‡ãƒ«ä¸è¦ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹*/
 public:
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialConstBuff; //’è”ƒoƒbƒtƒ@
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialConstBuff; //å®šæ•°ãƒãƒƒãƒ•ã‚¡
 	Material material;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	OBJData() : Object()
 	{
 		material = {};
 	}
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	virtual ~OBJData() override
 	{
 		Object::~Object();
@@ -191,88 +179,137 @@ struct OBJSubset
 	size_t verticesCount;
 };
 
-// ƒXƒvƒ‰ƒCƒgˆê–‡•ª‚Ìƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆä¸€æšåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 struct Sprite
 {
-	/*”z—ñ‚É‚µ‚Äg‚¤‚±‚Æ‚ª‘O’ñ*/
+	/*é…åˆ—ã«ã—ã¦ä½¿ã†ã“ã¨ãŒå‰æ*/
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff;  //’¸“_ƒoƒbƒtƒ@
-	D3D12_VERTEX_BUFFER_VIEW vbView;                  //’¸“_ƒoƒbƒtƒ@ƒrƒ…[
-	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //’è”ƒoƒbƒtƒ@
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff;  //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+	D3D12_VERTEX_BUFFER_VIEW vbView;                  //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //å®šæ•°ãƒãƒƒãƒ•ã‚¡
 
-	DirectX::XMMATRIX matWorld = DirectX::XMMatrixIdentity(); //ƒ[ƒ‹ƒhs—ñ
-	DirectX::XMFLOAT4 color = { 1, 1, 1, 1 }; //F (RGBA)
+	DirectX::XMMATRIX matWorld = DirectX::XMMatrixIdentity(); //ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—
+	DirectX::XMFLOAT4 color = { 1, 1, 1, 1 }; //è‰² (RGBA)
 
-	DirectX::XMFLOAT3 pos = { 0, 0, 0 }; //À•W
-	float rotation = 0.0f; //‰ñ“]Šp
-	DirectX::XMFLOAT2 size = { 0.000000001f, 0.000000001f }; //‘å‚«‚³
+	DirectX::XMFLOAT3 pos = { 0, 0, 0 }; //åº§æ¨™
+	float rotation = 0.0f; //å›è»¢è§’
+	DirectX::XMFLOAT2 size = { 0.000000001f, 0.000000001f }; //å¤§ãã•
 
-	DirectX::XMFLOAT2 anchorpoint = { 0.5f, 0.5f }; //ƒAƒ“ƒJ[ƒ|ƒCƒ“ƒg
+	DirectX::XMFLOAT2 anchorpoint = { 0.5f, 0.5f }; //ã‚¢ãƒ³ã‚«ãƒ¼ãƒã‚¤ãƒ³ãƒˆ
 
-	// •`‰æ”ÍˆÍ
+	// æç”»ç¯„å›²
 	DirectX::XMFLOAT2 texLeftTop = { 0, 0 };
 	DirectX::XMFLOAT2 texSize = { 100, 100 };
 };
 
 class DirectDrawing
 {
-public: // ƒTƒuƒNƒ‰ƒX
-	// ƒIƒuƒWƒFƒNƒgƒf[ƒ^iƒXƒvƒ‰ƒCƒg‚Ìƒf[ƒ^j‚ÌƒCƒ“ƒfƒbƒNƒX
-	struct IndexData
-	{
-		int constant; //’è”ƒoƒbƒtƒ@
-		int textrue;  //ƒeƒNƒXƒ`ƒƒ
-	};
-
-protected: // ƒGƒCƒŠƒAƒX
-	// DirectX::‚ğÈ—ª
+protected: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
+	// DirectX::ã‚’çœç•¥
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 	using XMMATRIX = DirectX::XMMATRIX;
-	// std::‚ğÈ—ª
+	// std::ã‚’çœç•¥
 	template<class T> using vector = std::vector<T>;
-	// Microsoft::WRL::‚ğÈ—ª
+	// Microsoft::WRL::ã‚’çœç•¥
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public: // Ã“Iƒƒ“ƒo•Ï”
-	static bool isDepthWriteBan; //true‚¾‚Á‚½‚çAƒfƒvƒX‚É‘Î‚µ‚Ä‚Ìã‘‚«‹Ö~
-protected:
-	static vector<Sprite> sprite;              //ƒXƒvƒ‰ƒCƒg‚Ìƒf[ƒ^
-	static vector<IndexData> spriteIndex;      //ƒXƒvƒ‰ƒCƒg‚Ìƒf[ƒ^‚ÌƒCƒ“ƒfƒbƒNƒX
+public: // ã‚µãƒ–ã‚¯ãƒ©ã‚¹
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ï¼ˆã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®ãƒ‡ãƒ¼ã‚¿ï¼‰ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	struct IndexData
+	{
+		int constant; //å®šæ•°ãƒãƒƒãƒ•ã‚¡
+		int textrue;  //ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	};
 
-	static CommonData spriteData; //ƒXƒvƒ‰ƒCƒg‚Ìƒf[ƒ^‚Å‹¤’Ê‚Ìƒf[ƒ^
+public: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	static bool isDepthWriteBan; //trueã ã£ãŸã‚‰ã€ãƒ‡ãƒ—ã‚¹ã«å¯¾ã—ã¦ã®ä¸Šæ›¸ãç¦æ­¢
+private:
+	static int objShader;          //*.objãƒ‡ãƒ¼ã‚¿ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	static int objGraphicPipeline; //*.objãƒ‡ãƒ¼ã‚¿ã®ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
+	static int objRootSignature;   //*.objãƒ‡ãƒ¼ã‚¿ã®ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
+	static int objPipelineState;   //*.objãƒ‡ãƒ¼ã‚¿ã®ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
 
-	static size_t blendMode; //ƒuƒŒƒ“ƒhƒ‚[ƒh
+	static int materialShader;          //ãƒãƒ†ãƒªã‚¢ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	static int materialGraphicPipeline; //ãƒãƒ†ãƒªã‚¢ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
+	static int materialRootSignature;   //ãƒãƒ†ãƒªã‚¢ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
+	static int materialPipelineState;   //ãƒãƒ†ãƒªã‚¢ãƒ«ãƒ‡ãƒ¼ã‚¿ã®ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
 
-public: // ƒƒ“ƒoŠÖ”
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	static int spriteShader;          //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒ‡ãƒ¼ã‚¿ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	static int spriteGraphicPipeline; //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒ‡ãƒ¼ã‚¿ã®ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
+	static int spriteRootSignature;   //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒ‡ãƒ¼ã‚¿ã®ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
+	static int spritePipelineState;   //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒ‡ãƒ¼ã‚¿ã®ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
+
+	static int inputLayout3d; //3dãƒ‡ãƒ¼ã‚¿ã®ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
+	static int inputLayout2d; //2dãƒ‡ãƒ¼ã‚¿ã®ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
+
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	static int GetObjShader() { return objShader; }
+	static int GetObjGraphicPipeline() { return objGraphicPipeline; }
+	static int GetObjRootSignature() { return objRootSignature; }
+	static int GetObjPipelineState() { return objPipelineState; }
+
+	static int GetMaterialShader() { return materialShader; }
+	static int GetMaterialGraphicPipeline() { return materialGraphicPipeline; }
+	static int GetMaterialRootSignature() { return materialRootSignature; }
+	static int GetMaterialPipelineState() { return materialPipelineState; }
+
+	static int GetSpriteShader() { return spriteShader; }
+	static int GetSpriteGraphicPipeline() { return spriteGraphicPipeline; }
+	static int GetSpriteRootSignature() { return spriteRootSignature; }
+	static int GetSpritePipelineState() { return spritePipelineState; }
+
+	static int Get2dInputLayout() { return inputLayout2d; }
+	static int Get3dInputLayout() { return inputLayout3d; }
+
+protected: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	vector<VertexData> vertices; //é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿
+	Vertex* vertMap;
+
+	vector<OBJData> obj; //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿
+	vector<IndexData> objIndex; //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	ComPtr<ID3D12DescriptorHeap> basicDescHeap; //å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”¨ã®ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—
+	vector<DescHandle> srvHandle;
+	size_t nullBufferCount; //ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã ã‘ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®æ•°
+
+	vector<Sprite> sprite;         //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®ãƒ‡ãƒ¼ã‚¿
+	vector<IndexData> spriteIndex; //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®ãƒ‡ãƒ¼ã‚¿ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+
+	vector<OBJSubset> objSubset;
+private:
+	// é–¢æ•°ã®åˆæœŸåŒ–ãƒ•ãƒ©ã‚°
+	bool isDrawingInit = false;
+	bool isMaterialInit = false;
+	bool isSpriteDrawingInit = false;
+	bool isBasicDescHeapInit = false;
+
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	DirectDrawing();
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~DirectDrawing();
 
 	/// <summary>
-	/// ‹ó‚Ì’è”ƒoƒbƒtƒ@‚Ì¶¬
+	/// ç©ºã®å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	/// </summary>
-	/// <param name="pos"> À•W </param>
-	/// <param name="rota"> ‰ñ“]s—ñ </param>
-	/// <param name="scale"> ƒXƒP[ƒ‹ </param>
-	/// <returns> ƒIƒuƒWƒFƒNƒgƒf[ƒ^‚Ì—v‘f”Ô† </returns>
+	/// <param name="pos"> åº§æ¨™ </param>
+	/// <param name="rota"> å›è»¢è¡Œåˆ— </param>
+	/// <param name="scale"> ã‚¹ã‚±ãƒ¼ãƒ« </param>
+	/// <returns> ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®è¦ç´ ç•ªå· </returns>
 	int CreateNullConstant(const XMFLOAT3& pos, const XMMATRIX& rota, const XMFLOAT3& scale);
 	/// <summary>
-	/// ’è”ƒoƒbƒtƒ@‚ÌXV
+	/// å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®æ›´æ–°
 	/// </summary>
-	/// <param name="pos"> À•W </param>
-	/// <param name="rota"> ‰ñ“]s—ñ </param>
-	/// <param name="scale"> ƒXƒP[ƒ‹ </param>
-	/// <param name="objectIndex"> ƒIƒuƒWƒFƒNƒgƒf[ƒ^‚Ì—v‘f”Ô† </param>
-	/// <param name="polygonData"> ’¸“_î•ñ‚Ì—v‘f”Ô† </param>
-	/// <param name="parent"> e‚Ì—v‘f”Ô† </param>
+	/// <param name="pos"> åº§æ¨™ </param>
+	/// <param name="rota"> å›è»¢è¡Œåˆ— </param>
+	/// <param name="scale"> ã‚¹ã‚±ãƒ¼ãƒ« </param>
+	/// <param name="objectIndex"> ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®è¦ç´ ç•ªå· </param>
+	/// <param name="polygonData"> é ‚ç‚¹æƒ…å ±ã®è¦ç´ ç•ªå· </param>
+	/// <param name="parent"> è¦ªã®è¦ç´ ç•ªå· </param>
 	void UpdataConstant(const XMFLOAT3& pos, const XMMATRIX& rota, const XMFLOAT3& scale,
 						const DirectX::XMFLOAT4& color, const int& objectIndex,
 						const int& polygonData = -1, Object* parent = nullptr);
-	// •`‰æ‚ÌÛ‚ÌƒuƒŒƒ“ƒhƒ‚[ƒh‚ğƒZƒbƒg‚·‚é
+	// æç”»ã®éš›ã®ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
 	int SetDrawBlendMode(int blendMode);
-	// ƒJƒƒ‰‚ÌƒjƒAƒNƒŠƒbƒv‹——£‚Æƒtƒ@[ƒNƒŠƒbƒv‹——£‚ğİ’è‚·‚é
-	HRESULT SetNearFar(float nearClip, float farClip);
 
 	inline OBJData* GetObjData(int object)
 	{
@@ -280,57 +317,28 @@ public: // ƒƒ“ƒoŠÖ”
 		return &obj[object];
 	}
 protected:
-	// ‰Šú‰»
-	HRESULT Init();
-	// ƒIƒuƒWƒFƒNƒg‚Ì•`‰æŠÖŒW‚Ì‰Šú‰»
-	HRESULT DrawingInit();
-	// ƒIƒuƒWƒFƒNƒg‚Ì•`‰æŠÖŒW‚Ì‰Šú‰»
-	HRESULT MaterialInit();
-	// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æŠÖŒW‚Ì‰Šú‰»
-	HRESULT SpriteDrawingInit();
-	// ’¸“_ƒoƒbƒtƒ@‚ÆƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ì¶¬
+	// åˆæœŸåŒ–
+	int Init();
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æç”»é–¢ä¿‚ã®åˆæœŸåŒ–
+	void DrawingInit();
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æç”»é–¢ä¿‚ã®åˆæœŸåŒ–
+	void MaterialInit();
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”»é–¢ä¿‚ã®åˆæœŸåŒ–
+	void SpriteDrawingInit();
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã¨ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	int CreateVertexAndIndexBuffer();
-	// ’è”ƒoƒbƒtƒ@‚Ì¶¬
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	HRESULT CreateConstBuffer(int* objIndex);
-	// ƒXƒvƒ‰ƒCƒg‚Ì¶¬
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®ç”Ÿæˆ
 	int CreateSprite();
-	// ƒfƒBƒXƒNƒŠƒvƒ^ƒq[ƒv‚Ì‰Šú‰»
+	// ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã®åˆæœŸåŒ–
 	HRESULT BasicDescHeapInit();
 
-	// •`‰æˆ—‚Ì‹¤’Ê•”•ª
+	// æç”»å‡¦ç†ã®å…±é€šéƒ¨åˆ†
 	void BaseDrawGraphics();
-	// •`‰æˆ—‚Ì‹¤’Ê•”•ª(ƒXƒvƒ‰ƒCƒg—p)
+	// æç”»å‡¦ç†ã®å…±é€šéƒ¨åˆ†(ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆç”¨)
 	void BaseDrawSpriteGraphics();
 private:
-	// ƒf[ƒ^‚ÌÁ‹
+	// ãƒ‡ãƒ¼ã‚¿ã®æ¶ˆå»
 	void DataClear();
-protected: // ƒƒ“ƒo•Ï”
-	vector<VertexData> vertices; //’¸“_ƒf[ƒ^
-	Vertex* vertMap;
-
-	vector<OBJData> obj; //ƒIƒuƒWƒFƒNƒgƒf[ƒ^
-	vector<IndexData> objIndex; //ƒIƒuƒWƒFƒNƒgƒf[ƒ^‚ÌƒCƒ“ƒfƒbƒNƒX
-	ComPtr<ID3D12DescriptorHeap> basicDescHeap; //’è”ƒoƒbƒtƒ@—p‚ÌƒfƒXƒNƒŠƒvƒ^ƒq[ƒv
-	vector<DescHandle> srvHandle;
-	size_t nullBufferCount; //ƒ[ƒ‹ƒhs—ñ‚¾‚¯‚ÌƒIƒuƒWƒFƒNƒgƒf[ƒ^‚Ì”
-
-	ComPtr<ID3DBlob> vsBlob;    //’¸“_ƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg
-	ComPtr<ID3DBlob> psBlob;    //ƒsƒNƒZƒ‹ƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg
-	ComPtr<ID3DBlob> errorBlob; //ƒGƒ‰[ƒIƒuƒWƒFƒNƒg
-	ComPtr<ID3DBlob> rootSigBlob;
-
-	CommonData objectData[2];   //ƒIƒuƒWƒFƒNƒgƒf[ƒ^‚Å‹¤’Ê‚Ìƒf[ƒ^
-	CommonData materialData[2]; //ƒ}ƒeƒŠƒAƒ‹ƒf[ƒ^‚Å‹¤’Ê‚Ìƒf[ƒ^
-
-	vector<OBJSubset> objSubset;
-private:
-	float nearClip; //ƒjƒAƒNƒŠƒbƒv‹——£
-	float farClip;  //ƒtƒ@[ƒNƒŠƒbƒv‹——£
-
-	// ŠÖ”‚Ì‰Šú‰»ƒtƒ‰ƒO
-	bool isDrawingInit = false;
-	bool isMaterialInit = false;
-	bool isSpriteDrawingInit = false;
-	bool isBasicDescHeapInit = false;
-
 };

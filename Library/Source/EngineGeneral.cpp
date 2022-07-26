@@ -1,21 +1,19 @@
-#include "./Header/EngineGeneral.h"
+ï»¿#include "./Header/EngineGeneral.h"
 
 namespace Engine
-{
-namespace General
 {
 std::string ExtractDirectory(const std::string& path)
 {
 	using string = std::string;
 
 	size_t pos1;
-	// ‹æØ‚è•¶š'\\'‚ªo‚Ä‚­‚éˆê”ÔÅŒã‚Ì•”•ª‚ğŒŸõ
+	// åŒºåˆ‡ã‚Šæ–‡å­—'\\'ãŒå‡ºã¦ãã‚‹ä¸€ç•ªæœ€å¾Œã®éƒ¨åˆ†ã‚’æ¤œç´¢
 	pos1 = path.rfind('\\');
 	if (pos1 != string::npos)
 	{
 		return path.substr(0, pos1 + 1);
 	}
-	// ‹æØ‚è•¶š'/'‚ªo‚Ä‚­‚éˆê”ÔÅŒã‚Ì•”•ª‚ğŒŸõ
+	// åŒºåˆ‡ã‚Šæ–‡å­—'/'ãŒå‡ºã¦ãã‚‹ä¸€ç•ªæœ€å¾Œã®éƒ¨åˆ†ã‚’æ¤œç´¢
 	pos1 = path.rfind('/');
 	if (pos1 != string::npos)
 	{
@@ -30,13 +28,13 @@ std::string ExtractFileName(const std::string& path)
 	using string = std::string;
 
 	size_t pos1;
-	// ‹æØ‚è•¶š'\\'‚ªo‚Ä‚­‚éˆê”ÔÅŒã‚Ì•”•ª‚ğŒŸõ
+	// åŒºåˆ‡ã‚Šæ–‡å­—'\\'ãŒå‡ºã¦ãã‚‹ä¸€ç•ªæœ€å¾Œã®éƒ¨åˆ†ã‚’æ¤œç´¢
 	pos1 = path.rfind('\\');
 	if (pos1 != string::npos)
 	{
 		return path.substr(pos1 + 1, path.size() - pos1 - 1);
 	}
-	// ‹æØ‚è•¶š'/'‚ªo‚Ä‚­‚éˆê”ÔÅŒã‚Ì•”•ª‚ğŒŸõ
+	// åŒºåˆ‡ã‚Šæ–‡å­—'/'ãŒå‡ºã¦ãã‚‹ä¸€ç•ªæœ€å¾Œã®éƒ¨åˆ†ã‚’æ¤œç´¢
 	pos1 = path.rfind('/');
 	if (pos1 != string::npos)
 	{
@@ -45,5 +43,4 @@ std::string ExtractFileName(const std::string& path)
 
 	return path;
 }
-} //General
 } //Engine

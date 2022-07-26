@@ -11,7 +11,6 @@ struct TextrueCommon
 	DirectX::ScratchImage scratchImg;
 	const DirectX::Image* img;
 
-	UINT textrueCount;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descHeap; //srv専用のディスクリプタヒープ
 
 	TextrueCommon();
@@ -31,6 +30,21 @@ class LoadTex : public DirectDrawing
 	/*namespace名省略*/
 protected:
 	using XMFLOAT4 = DirectX::XMFLOAT4;
+
+	/*メンバ変数*/
+protected:
+	static UINT textrueCount;
+
+	/*メンバ変数*/
+protected:
+	vector<Textrue> textrueData;
+	TextrueCommon texCommonData;
+private:
+	UINT spriteCount;
+
+	// 関数の初期化フラグ
+	bool isLoadTextrueInit = false;
+	bool isDrawTextrueInit = false;
 
 	/*メンバ関数*/
 public:
@@ -59,15 +73,4 @@ public:
 private:
 	// データの消去
 	void DataClear();
-
-	/*メンバ変数*/
-protected:
-	static vector<Textrue> textrueData;
-	static TextrueCommon texCommonData;
-private:
-	UINT spriteCount;
-
-	// 関数の初期化フラグ
-	bool isLoadTextrueInit = false;
-	bool isDrawTextrueInit = false;
 };

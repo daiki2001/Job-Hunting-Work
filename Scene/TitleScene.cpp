@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "./Header/DirectXInit.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Input.h"
 
 #include "./Header/Error.h"
@@ -29,10 +30,7 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_SPACE))
-	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
-	}
+	sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
 }
 
 void TitleScene::Draw()
@@ -40,6 +38,8 @@ void TitleScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
+	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
+	ShaderManager::blendMode = ShaderManager::BlendMode::ALPHA;
 
 	// îwåi
 	draw.DrawTextrue(

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Math/EngineMath.h"
+#include "./Header/EngineGeneral.h"
 #include <d3d12.h>
 #include <wrl.h>
 #include <vector>
@@ -12,7 +12,6 @@ private: //エイリアス
 	using Matrix4 = Engine::Math::Matrix4;
 	
 private: //定数
-	static const float clearColor[4];
 		
 public: //メンバ変数
 	Vector3 position;        //座標
@@ -20,11 +19,15 @@ public: //メンバ変数
 	Matrix4 matWorld;        //ワールド行列
 	DirectX::XMFLOAT4 color; //色
 private:
-	ComPtr<ID3D12PipelineState> pipelineState; //グラフィックパイプライン
+	int shader;                                //シェーダー
+	int inputLayout;                           //インプットレイアウト
+	int gPipeline;                             //グラフィックパイプライン
 	ComPtr<ID3D12RootSignature> rootSignature; //ルートシグネチャ
-	ComPtr<ID3D12Resource> vertBuff;           //頂点バッファ
-	D3D12_VERTEX_BUFFER_VIEW vbView;           //頂点バッファビュー
-	ComPtr<ID3D12Resource> constBuff;          //定数バッファ
+	int pipelineState;                         //パイプラインステート
+
+	ComPtr<ID3D12Resource> vertBuff;  //頂点バッファ
+	D3D12_VERTEX_BUFFER_VIEW vbView;  //頂点バッファビュー
+	ComPtr<ID3D12Resource> constBuff; //定数バッファ
 
 	std::vector<ComPtr<ID3D12Resource>> texBuff; //テクスチャバッファ
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;    //SRV用のデスクリプタヒープ
@@ -47,6 +50,12 @@ public: //メンバ関数
 	int PreDraw();
 	// 描画後処理
 	int PostDraw();
+
+	int GetShader() { return shader; }
+	int GetInputLayout() { return inputLayout; }
+	int GetGPipeline() { return gPipeline; }
+	ID3D12RootSignature* GetRootSignature() { return rootSignature.Get(); }
+	int GetPipelineState() { return pipelineState; }
 private:
 	// パイプラインの生成
 	HRESULT CreateGraphicsPipelineState();

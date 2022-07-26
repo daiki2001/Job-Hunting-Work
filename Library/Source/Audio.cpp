@@ -2,7 +2,7 @@
 #include <fstream>
 #include <cassert>
 
-#define EoF -1 // End of Function
+#include "./Header/Error.h"
 
 Audio::Audio() :
 	xAudio2(nullptr),
@@ -53,7 +53,7 @@ int Audio::SoundLoadWave(const char* filePath)
 	// ファイルオープン失敗を検出する
 	if (file.fail())
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	// RIFFヘッダーの読み込み

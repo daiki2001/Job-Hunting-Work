@@ -12,6 +12,7 @@ public: // ƒƒ“ƒoŠÖ”
 
 	void Loop() const;
 	void SceneChenge(const SceneChenger::Scene scene, const bool stackClear) override;
+	int PopScene() override;
 
 private: // ƒƒ“ƒo•Ï”
 	std::stack<std::shared_ptr<BaseScene>> sceneStack;

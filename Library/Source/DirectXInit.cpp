@@ -1,6 +1,7 @@
 #include "./Header/DirectXInit.h"
 #include <string>
 
+bool DirectXInit::EngineDebug = false;
 Microsoft::WRL::ComPtr<ID3D12Device> DirectXInit::dev = {};
 Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXInit::cmdList = {};
 

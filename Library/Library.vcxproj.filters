@@ -43,6 +43,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{b1e89a78-fc97-4880-961f-f5fcbe745d8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ShaderMgr">
+      <UniqueIdentifier>{98ccd8ac-c63e-4199-843d-298908d1c06c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\DirectDrawing.h">
@@ -147,6 +150,18 @@
     <ClInclude Include="Header\EngineGeneral.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\EngineTestScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TestObject.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr\Shaders.h">
+      <Filter>ShaderMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr\ShaderManager.h">
+      <Filter>ShaderMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\DirectDrawing.cpp">
@@ -233,6 +248,18 @@
     <ClCompile Include="Source\LoadFile.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\EngineTestScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TestObject.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr\Shaders.cpp">
+      <Filter>ShaderMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr\ShaderManager.cpp">
+      <Filter>ShaderMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\lib\DebugTextFont.png">
@@ -283,6 +310,12 @@
     </FxCompile>
     <FxCompile Include="..\lib\Shaders\MaterialPS.hlsl">
       <Filter>シェーダファイル\Material</Filter>
+    </FxCompile>
+    <FxCompile Include="..\lib\Shaders\defaultPS.hlsl">
+      <Filter>シェーダファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="..\lib\Shaders\color.hlsl">
+      <Filter>シェーダファイル</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

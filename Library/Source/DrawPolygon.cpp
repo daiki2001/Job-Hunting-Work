@@ -1,10 +1,17 @@
 ﻿#include "./Header/DrawPolygon.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include <fstream>
 #include <sstream>
 #include <string>
+
 #include "./Header/Error.h"
+
+namespace
+{
+ShaderManager* shaderMgr = ShaderManager::Get();
+}
 
 DrawPolygon::DrawPolygon() :
 	DebugText(),
@@ -1112,9 +1119,6 @@ int DrawPolygon::Draw(
 
 	BaseDrawGraphics();
 
-	cmdList->SetPipelineState(objectData[isDepthWriteBan].pipelinestate[blendMode].Get());
-	cmdList->SetGraphicsRootSignature(objectData[isDepthWriteBan].rootsignature.Get());
-
 	ConstBufferData* constMap = nullptr;
 	obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //マッピング
 
@@ -1248,9 +1252,6 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 	BaseDrawGraphics();
 
 	static auto* cmdList = DirectXInit::GetCommandList();
-
-	cmdList->SetPipelineState(materialData[isDepthWriteBan].pipelinestate[blendMode].Get());
-	cmdList->SetGraphicsRootSignature(materialData[isDepthWriteBan].rootsignature.Get());
 
 	for (int i = static_cast<int>(parentIndex); i <= object; i++)
 	{

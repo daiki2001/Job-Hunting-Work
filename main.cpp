@@ -14,6 +14,7 @@ constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //”wŒiF
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	DirectXInit* w = DirectXInit::GetInstance();
+	DirectXInit::EngineDebug = true;
 
 	w->title = title;
 	for (UINT i = 0; i < 4; i++)

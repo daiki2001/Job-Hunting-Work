@@ -1,6 +1,8 @@
 #include "./Header/Scenemanager.h"
 #include "./Header/Camera.h"
+#include "./Header/DirectXInit.h"
 
+#include "./Scene/EngineTestScene.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/SettingScene.h"
@@ -9,11 +11,25 @@
 
 SceneManager::SceneManager()
 {
-	sceneStack.push(std::make_shared<TitleScene>(this));
+	if (DirectXInit::EngineDebug)
+	{
+		sceneStack.push(std::make_shared<EngineTestScene>(this));
+	}
+	else
+	{
+		sceneStack.push(std::make_shared<TitleScene>(this));
+	}
 }
 
 void SceneManager::Loop() const
 {
+#ifndef _DEBUG
+	if (DirectXInit::EngineDebug)
+	{
+		DirectXInit::EngineDebug = false;
+	}
+#endif // !_DEBUG
+
 	sceneStack.top()->Update();
 	Camera::Update();
 	sceneStack.top()->Draw();

@@ -30,7 +30,9 @@ protected: // エイリアス
 	// Microsoft::WRL::を省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-private: // 静的メンバ変数
+public: // 静的メンバ変数
+	static bool EngineDebug;
+private:
 	static ComPtr<ID3D12Device> dev; //D3D12デバイス
 	static ComPtr<ID3D12GraphicsCommandList> cmdList; //コマンドリスト
 

@@ -47,6 +47,7 @@ void SettingScene::Draw()
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
 
 	// ”wŒi
+	DirectDrawing::ChangeSpriteShader();
 	draw.DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f,

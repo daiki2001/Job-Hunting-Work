@@ -3,7 +3,7 @@
 #include "./Header/DirectXInit.h"
 #include <cassert>
 
-float RenderTexture::clearColor[4] = { 0.1f, 0.875f, 0.875f, 1.0f };
+float RenderTexture::clearColor[4] = { 1.0f, 0.5f, 0.0f, 0.0f };
 
 RenderTexture::RenderTexture()
 {

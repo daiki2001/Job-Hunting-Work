@@ -1,12 +1,12 @@
-#include "./Header/Camera.h"
+ï»¿#include "./Header/Camera.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Error.h"
 
 const size_t Camera::MAIN_CAMERA = 0;
 
 float Camera::targetRadius = 150.0f;
-float Camera::longitude = Engine::Math::degree * (-90.0f);
-float Camera::latitude = Engine::Math::degree * (0.0f);
+float Camera::longitude = Engine::Math::DEGREE_F * (-90.0f);
+float Camera::latitude = Engine::Math::DEGREE_F * (0.0f);
 
 Engine::Math::Vector3 Camera::pos = {};
 Engine::Math::Vector3 Camera::target = { 0.0f, 50.0f, 0.0f };
@@ -15,6 +15,9 @@ Engine::Math::Vector3 Camera::upVec = { 0.0f, 1.0f, 0.0f };
 Engine::Math::Matrix4 Camera::matProjection[2] = {};
 std::vector<Engine::Math::Matrix4> Camera::matView = {};
 size_t Camera::cameraNo = Camera::MAIN_CAMERA;
+
+float Camera::nearClip = 0.1f;
+float Camera::farClip = 1000.0f;
 
 Camera* Camera::Get()
 {
@@ -43,7 +46,7 @@ void Camera::Init()
 		);
 	matProjection[Projection::PERSPECTIVE] =
 		XMMatrixPerspectiveFovLH(
-			degree * 60.0f,
+			DEGREE_F * 60.0f,
 			static_cast<float>(DirectXInit::GetInstance()->windowWidth) /
 			static_cast<float>(DirectXInit::GetInstance()->windowHeight),
 			0.1f,
@@ -68,6 +71,16 @@ void Camera::Init()
 	}
 }
 
+void Camera::Update()
+{
+	pos.x = cosf(longitude) * cosf(latitude);
+	pos.y = sinf(latitude);
+	pos.z = sinf(longitude) * cosf(latitude);
+	pos *= targetRadius;
+	pos += target;
+	SetCamera(pos, target, upVec);
+}
+
 DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
@@ -88,15 +101,15 @@ DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& targ
 	mat.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	mat = XMMatrixTranspose(mat);
 
-	// ‹“_À•W‚É-1‚ğŠ|‚¯‚½À•W
+	// è¦–ç‚¹åº§æ¨™ã«-1ã‚’æ›ã‘ãŸåº§æ¨™
 	XMVECTOR reverseEyePosition = XMVectorNegate(pos);
-	// ƒJƒƒ‰‚ÌˆÊ’u‚©‚çƒ[ƒ‹ƒhŒ´“_‚Ö‚ÌƒxƒNƒgƒ‹iƒJƒƒ‰À•WŒnj
-	XMVECTOR tX = XMVector3Dot(x, reverseEyePosition); //X¬•ª
-	XMVECTOR tY = XMVector3Dot(y, reverseEyePosition); //Y¬•ª
-	XMVECTOR tZ = XMVector3Dot(z, reverseEyePosition); //Z¬•ª
-	// ˆê‚Â‚ÌƒxƒNƒgƒ‹‚É‚Ü‚Æ‚ß‚é
+	// ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‹ã‚‰ãƒ¯ãƒ¼ãƒ«ãƒ‰åŸç‚¹ã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ï¼ˆã‚«ãƒ¡ãƒ©åº§æ¨™ç³»ï¼‰
+	XMVECTOR tX = XMVector3Dot(x, reverseEyePosition); //Xæˆåˆ†
+	XMVECTOR tY = XMVector3Dot(y, reverseEyePosition); //Yæˆåˆ†
+	XMVECTOR tZ = XMVector3Dot(z, reverseEyePosition); //Zæˆåˆ†
+	// ä¸€ã¤ã®ãƒ™ã‚¯ãƒˆãƒ«ã«ã¾ã¨ã‚ã‚‹
 	XMVECTOR translation = XMVectorSet(tX.m128_f32[0], tY.m128_f32[1], tZ.m128_f32[2], 1.0f);
-	// ƒrƒ…[s—ñ‚É•½sˆÚ“®¬•ª‚ğİ’è
+	// ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—ã«å¹³è¡Œç§»å‹•æˆåˆ†ã‚’è¨­å®š
 	mat.r[3] = translation;
 
 	return mat;
@@ -150,4 +163,76 @@ void Camera::SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Mat
 		XMLoadFloat3(&cameraTarget),
 		XMLoadFloat3(&upVector)
 	);
+}
+
+int Camera::SetNear(const float& nearClip)
+{
+	using namespace DirectX;
+
+	if (nearClip == Camera::nearClip)
+	{
+		return 0;
+	}
+
+	if (nearClip <= 0.0f || nearClip == Camera::farClip)
+	{
+		return Engine::ErrorLog("nearClipã®å€¤ãŒãŠã‹ã—ã„ã§ã™ã€‚");
+	}
+
+	Camera::nearClip = nearClip;
+
+	Camera::matProjection[Camera::Projection::PERSPECTIVE] = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(60.0f),                      //ä¸Šä¸‹ç”»è§’60åº¦
+		static_cast<float>(DirectXInit::GetInstance()->windowWidth) /
+		static_cast<float>(DirectXInit::GetInstance()->windowHeight), //ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+		Camera::nearClip, //å‰ç«¯
+		Camera::farClip   //å¥¥ç«¯
+	);
+
+	Camera::matProjection[Camera::Projection::ORTHOGRAPHIC] = XMMatrixOrthographicOffCenterLH(
+		0.0f,
+		static_cast<float>(DirectXInit::GetInstance()->windowWidth),
+		static_cast<float>(DirectXInit::GetInstance()->windowHeight),
+		0.0f,
+		Camera::nearClip, //å‰ç«¯
+		Camera::farClip   //å¥¥ç«¯
+	);
+
+	return 0;
+}
+
+int Camera::SetFar(const float& farClip)
+{
+	using namespace DirectX;
+
+	if (farClip == Camera::farClip)
+	{
+		return 0;
+	}
+
+	if (farClip <= 0.0f || Camera::nearClip == farClip)
+	{
+		return Engine::ErrorLog("farClipã®å€¤ãŒãŠã‹ã—ã„ã§ã™ã€‚");
+	}
+
+	Camera::farClip = farClip;
+
+	Camera::matProjection[Camera::Projection::PERSPECTIVE] = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(60.0f),                      //ä¸Šä¸‹ç”»è§’60åº¦
+		static_cast<float>(DirectXInit::GetInstance()->windowWidth) /
+		static_cast<float>(DirectXInit::GetInstance()->windowHeight), //ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+		Camera::nearClip, //å‰ç«¯
+		Camera::farClip   //å¥¥ç«¯
+	);
+
+	Camera::matProjection[Camera::Projection::ORTHOGRAPHIC] = XMMatrixOrthographicOffCenterLH(
+		0.0f,
+		static_cast<float>(DirectXInit::GetInstance()->windowWidth),
+		static_cast<float>(DirectXInit::GetInstance()->windowHeight),
+		0.0f,
+		Camera::nearClip, //å‰ç«¯
+		Camera::farClip   //å¥¥ç«¯
+	);
+
+	return 0;
 }

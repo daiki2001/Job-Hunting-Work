@@ -29,10 +29,7 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_SPACE))
-	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
-	}
+	sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
 }
 
 void TitleScene::Draw()
@@ -43,6 +40,7 @@ void TitleScene::Draw()
 	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
 
 	// ”wŒi
+	DirectDrawing::ChangeSpriteShader();
 	draw.DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f,

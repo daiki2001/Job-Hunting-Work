@@ -1,83 +1,118 @@
-#pragma once
-#define DIRECTINPUT_VERSION 0x0800 //DirectInput‚Ìƒo[ƒWƒ‡ƒ“w’è
+ï»¿#pragma once
+#define DIRECTINPUT_VERSION 0x0800 //DirectInputã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æŒ‡å®š
 #include <dinput.h>
 #include <vector>
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
-// ƒQ[ƒ€ƒpƒbƒh‚Ì\šƒL[“ü—Í
-#define PAD_POVLEFT   (28)
-#define PAD_POVRIGHT  (29)
-#define PAD_POVUP     (30)
-#define PAD_POVDOWN   (31)
-
-// CheckHitKeyAll ‚Å’²‚×‚é“ü—Íƒ^ƒCƒv
-#define CHECKINPUT_KEY   (0x01) //ƒL[“ü—Í‚ğ’²‚×‚é
-#define CHECKINPUT_PAD   (0x02) //ƒpƒbƒh“ü—Í‚ğ’²‚×‚é
-#define CHECKINPUT_MOUSE (0x04) //ƒ}ƒEƒXƒ{ƒ^ƒ““ü—Í‚ğ’²‚×‚é
-#define CHECKINPUT_ALL   (CHECKINPUT_KEY | CHECKINPUT_PAD | CHECKINPUT_MOUSE) //‚·‚×‚Ä‚Ì“ü—Í‚ğ’²‚×‚é
+// CheckHitAll ã§èª¿ã¹ã‚‹å…¥åŠ›ã‚¿ã‚¤ãƒ—
+#define CHECKINPUT_KEY   (0x01) //ã‚­ãƒ¼å…¥åŠ›ã‚’èª¿ã¹ã‚‹
+#define CHECKINPUT_PAD   (0x02) //ãƒ‘ãƒƒãƒ‰å…¥åŠ›ã‚’èª¿ã¹ã‚‹
+#define CHECKINPUT_MOUSE (0x04) //ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³å…¥åŠ›ã‚’èª¿ã¹ã‚‹
+#define CHECKINPUT_ALL   (CHECKINPUT_KEY | CHECKINPUT_PAD | CHECKINPUT_MOUSE) //ã™ã¹ã¦ã®å…¥åŠ›ã‚’èª¿ã¹ã‚‹
 
 class DirectInput final
 {
-private:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğprivate‚É‚·‚é
-	DirectInput() {};
-	// ƒfƒXƒgƒ‰ƒNƒ^‚ğprivate‚É‚·‚é
-	~DirectInput() {}
 public:
-	// ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ğ–³Œø‚É‚·‚é
-	DirectInput(const DirectInput& obj) = delete;
-	// ‘ã“ü‰‰Zq‚ğ–³Œø‚É‚·‚é
-	const DirectInput& operator=(const DirectInput& obj) = delete;
-	// ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìæ“¾
+	// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®å–å¾—
 	static DirectInput* GetInstance();
+private: // ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’privateã«ã™ã‚‹
+	DirectInput() {};
+	// ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’ç„¡åŠ¹ã«ã™ã‚‹
+	DirectInput(const DirectInput& obj) = delete;
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’privateã«ã™ã‚‹
+	~DirectInput() {}
+	// ä»£å…¥æ¼”ç®—å­ã‚’ç„¡åŠ¹ã«ã™ã‚‹
+	const DirectInput& operator=(const DirectInput& obj) = delete;
 
-public: // ’è”
-	static const LONG zoneMax; //ƒXƒeƒBƒbƒN“ü—Í‚ÌãŒÀ’l
-	static const LONG zoneMin; //ƒXƒeƒBƒbƒN“ü—Í‚Ì‰ºŒÀ’l
+public: // ã‚µãƒ–ã‚¯ãƒ©ã‚¹
+	enum GamepadInputType
+	{
+		// ãƒœã‚¿ãƒ³
+		PAD_BUTTON_A = 0,           //Aãƒœã‚¿ãƒ³
+		PAD_BUTTON_B = 1,           //Bãƒœã‚¿ãƒ³
+		PAD_BUTTON_X = 2,           //Xãƒœã‚¿ãƒ³
+		PAD_BUTTON_Y = 3,           //Yãƒœã‚¿ãƒ³
+		PAD_BUTTON_LB = 4,          //LBãƒœã‚¿ãƒ³
+		PAD_BUTTON_RB = 5,          //RBãƒœã‚¿ãƒ³
+		PAD_BUTTON_BACK = 6,        //BACKãƒœã‚¿ãƒ³
+		PAD_BUTTON_START = 7,       //STARTãƒœã‚¿ãƒ³
+		PAD_BUTTON_LSTICK_PUSH = 8, //Lã‚¹ãƒ†ã‚£ãƒƒã‚¯æŠ¼ã—è¾¼ã¿
+		PAD_BUTTON_RSTICK_PUSH = 9, //Rã‚¹ãƒ†ã‚£ãƒƒã‚¯æŠ¼ã—è¾¼ã¿
+		// åå­—ã‚­ãƒ¼
+		PAD_POV_UP = 32,    //ä¸Šå…¥åŠ›
+		PAD_POV_UP_RIGHT,   //å³ä¸Šå…¥åŠ›
+		PAD_POV_RIGHT,      //å³å…¥åŠ›
+		PAD_POV_DOWN_RIGHT, //å³ä¸‹å…¥åŠ›
+		PAD_POV_DOWN,       //ä¸‹å…¥åŠ›
+		PAD_POV_DOWN_LEFT,  //å·¦ä¸‹å…¥åŠ›
+		PAD_POV_LEFT,       //å·¦å…¥åŠ›
+		PAD_POV_UP_LEFT,    //å·¦ä¸Šå…¥åŠ›
+		// å·¦å³ãƒˆãƒªã‚¬ãƒ¼
+		PAD_TRIGGER_LEFT,  //å·¦ãƒˆãƒªã‚¬ãƒ¼
+		PAD_TRIGGER_RIGHT, //å³ãƒˆãƒªã‚¬ãƒ¼
+		// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯
+		PAD_LSTICK_UP,    //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®ä¸Šå…¥åŠ›
+		PAD_LSTICK_RIGHT, //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å³å…¥åŠ›
+		PAD_LSTICK_DOWN,  //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®ä¸‹å…¥åŠ›
+		PAD_LSTICK_LEFT,  //å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å·¦å…¥åŠ›
+		// å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯
+		PAD_RSTICK_UP,    //å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®ä¸Šå…¥åŠ›
+		PAD_RSTICK_RIGHT, //å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å³å…¥åŠ›
+		PAD_RSTICK_DOWN,  //å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®ä¸‹å…¥åŠ›
+		PAD_RSTICK_LEFT,  //å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å·¦å…¥åŠ›
+	};
 
-public: // Ã“Iƒƒ“ƒoŠÖ”
-	// ‰Šú‰»
+public: // å®šæ•°
+	static const LONG DEADZONE; //ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›ã®ç„¡åŠ¹ç¯„å›²
+
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–
 	static int Init();
-	// XV
+	// æ›´æ–°
 	static int Update();
-	// ƒfƒoƒCƒX‚Ì‰ğ•ú
+	// ãƒ‡ãƒã‚¤ã‚¹ã®è§£æ”¾
 	static void Release();
 
-	// “Á’è‚ÌƒL[ƒ{[ƒh‚Ì“ü—Íó‘Ô‚Ìæ“¾
+	// ç‰¹å®šã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›çŠ¶æ…‹ã®å–å¾—
 	static bool CheckHitKey(int keyCode);
-	// ‘S‚Ä‚Ì“ü—ÍƒfƒoƒCƒX‚Ìó‘Ô‚Ìæ“¾
-	static int CheckHitKeyAll(int CheckType = CHECKINPUT_ALL);
-	// ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ì“ü—Íó‘Ô‚Ìæ“¾
+	// ç‰¹å®šã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®å…¥åŠ›çŠ¶æ…‹ã®å–å¾—
+	static bool CheckHitGamepad(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad);
+	// ç‰¹å®šã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›çŠ¶æ…‹ã®å–å¾—
+	static bool CheckHitGamepadAnalogStick(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad);
+	// å…¨ã¦ã®å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹ã®çŠ¶æ…‹ã®å–å¾—
+	static int CheckHitAll(int CheckType = CHECKINPUT_ALL);
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®å…¥åŠ›çŠ¶æ…‹ã®å–å¾—
 	static int GetHitKeyStateAll(char* KeyStateArray);
-	// “Á’è‚ÌƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì¶‚Ì“ü—Íó‘Ô‚Ìæ“¾
-	static int GetGamepadStateAll(DIJOYSTATE* gamepadState, const size_t& gamepadIndex = 0);
+	// ç‰¹å®šã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿã®å…¥åŠ›çŠ¶æ…‹ã®å–å¾—
+	static int GetGamepadStateAll(DIJOYSTATE* gamepadState, const size_t& gamepadNo = 0);
 private:
-	// ƒfƒoƒCƒX‚ğ—ñ‹“‚·‚é‚ÌƒR[ƒ‹ƒoƒbƒNŠÖ”
+	// ãƒ‡ãƒã‚¤ã‚¹ã‚’åˆ—æŒ™ã™ã‚‹æ™‚ã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°
 	static BOOL CALLBACK EnumGamepadCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef);
 
-	// ƒL[ƒ{[ƒhƒfƒoƒCƒX‚ÌXV
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®æ›´æ–°
 	static int KeyInputUpdate();
-	// ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚ÌXV
-	static int GamePadInputUpdate(const size_t& gamepadNo = 0);
-	// ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX‚Ì¶¬
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®æ›´æ–°
+	static int GamepadInputUpdate(const size_t& gamepadNo = 0);
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆ
 	static HRESULT CreateGamePadDevice();
-	// ƒvƒƒpƒeƒB‚Ìİ’è
+	// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®è¨­å®š
 	static HRESULT SetUpGamePadProperty(const size_t& gamepadNo = 0);
 
-private: // Ã“Iƒƒ“ƒo•Ï”
-	// DirectInputƒCƒ“ƒ^[ƒtƒF[ƒX
+private: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	// DirectInputã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	static IDirectInput8* dinput;
-	// ƒL[ƒ{[ƒhƒfƒoƒCƒX
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹
 	static IDirectInputDevice8* devkeyborad;
-	// ƒQ[ƒ€ƒpƒbƒhƒfƒoƒCƒX
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒ‡ãƒã‚¤ã‚¹
 	static std::vector<IDirectInputDevice8*> devgamepad;
 
-	// ƒL[ƒ{[ƒh‚Ì“ü—Íî•ñ
+	// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›æƒ…å ±
 	static BYTE key[256];
-	// ƒQ[ƒ€ƒpƒbƒh‚Ì“ü—Íî•ñ
-	static std::vector<DIJOYSTATE> gamepad;
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®å…¥åŠ›æƒ…å ±
+	static std::vector<DIJOYSTATE> gamepads;
 
 	static std::vector<DIDEVICEINSTANCE> parameter;
 

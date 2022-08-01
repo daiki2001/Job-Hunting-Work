@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "./Math/EngineMath.h"
 #include <vector>
 
 class Camera final
 {
-public: // ƒVƒ“ƒOƒ‹ƒgƒ“‰»
+public: // ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
 	Camera* Get();
 private:
 	Camera();
@@ -12,48 +12,58 @@ private:
 	~Camera() {}
 	Camera operator=(const Camera&) = delete;
 
-private: // ƒGƒCƒŠƒAƒX
+private: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
 	using Vector3 = Engine::Math::Vector3;
 	using Matrix4 = Engine::Math::Matrix4;
 
-public: // ƒTƒuƒNƒ‰ƒX
+public: // ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 	enum Projection
 	{
 		PERSPECTIVE,
 		ORTHOGRAPHIC
 	};
 
-public: // ’è”
+public: // å®šæ•°
 	static const size_t MAIN_CAMERA;
 
-public: // Ã“Iƒƒ“ƒoŠÖ”
-	// ‰Šú‰»
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–å‡¦ç†
 	static void Init();
+	// æ›´æ–°å‡¦ç†
+	static void Update();
 
-	// ƒLƒƒƒ‰ƒNƒ^p¨s—ñ‚Ì¶¬
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿å§¿å‹¢è¡Œåˆ—ã®ç”Ÿæˆ
 	static DirectX::XMMATRIX CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);
-	// ƒLƒƒƒ‰ƒNƒ^p¨‘©”›s—ñ‚Ì¶¬
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿å§¿å‹¢æŸç¸›è¡Œåˆ—ã®ç”Ÿæˆ
 	static DirectX::XMMATRIX CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);
 
-	// ƒJƒƒ‰‚ÌØ‚è‘Ö‚¦
+	// ã‚«ãƒ¡ãƒ©ã®åˆ‡ã‚Šæ›¿ãˆ
 	static int ChangeCamera(const size_t& cameraNo);
-	// ƒJƒƒ‰‚Ìİ’è
+	// ã‚«ãƒ¡ãƒ©ã®è¨­å®š
 	static void SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Math::Vector3& cameraTarget, const Engine::Math::Vector3& upVector);
-	// ƒJƒƒ‰‚Ìæ“¾
+	// ã‚«ãƒ¡ãƒ©ã®å–å¾—
 	static Matrix4 GetMatView() { return matView[cameraNo]; };
 
-public: // Ã“Iƒƒ“ƒo•Ï”
-	static float targetRadius; //’‹“_‚©‚ç‚Ì‹——£
-	static float longitude;    //Œo“x
-	static float latitude;     //ˆÜ“x
+	// ãƒ‹ã‚¢ã‚¯ãƒªãƒƒãƒ—è·é›¢ã®è¨­å®š
+	static int SetNear(const float& nearClip);
+	// ãƒ•ã‚¡ãƒ¼ã‚¯ãƒªãƒƒãƒ—è·é›¢ã®è¨­å®š
+	static int SetFar(const float& farClip);
 
-	static Vector3 pos;    //ƒJƒƒ‰‚ÌˆÊ’u
-	static Vector3 target; //ƒJƒƒ‰‚Ì’‹“_
-	static Vector3 upVec;  //ãƒxƒNƒgƒ‹
+public: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	static float targetRadius; //æ³¨è¦–ç‚¹ã‹ã‚‰ã®è·é›¢
+	static float longitude;    //çµŒåº¦
+	static float latitude;     //ç·¯åº¦
 
-	static Matrix4 matProjection[2];     //ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ
-	static std::vector<Matrix4> matView; //ƒrƒ…[•ÏŠ·s—ñ(ƒJƒƒ‰)
-	static size_t cameraNo;              //ƒJƒƒ‰‚Ì”Ô†iÅ‰‚ÍMAIN_CAMERA‚ğw‚µ‚Ä‚¢‚éj
+	static Vector3 pos;    //ã‚«ãƒ¡ãƒ©ã®ä½ç½®
+	static Vector3 target; //ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹
+	static Vector3 upVec;  //ä¸Šãƒ™ã‚¯ãƒˆãƒ«
+
+	static Matrix4 matProjection[2];     //ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³è¡Œåˆ—
+	static std::vector<Matrix4> matView; //ãƒ“ãƒ¥ãƒ¼å¤‰æ›è¡Œåˆ—(ã‚«ãƒ¡ãƒ©)
+	static size_t cameraNo;              //ã‚«ãƒ¡ãƒ©ã®ç•ªå·ï¼ˆæœ€åˆã¯MAIN_CAMERAã‚’æŒ‡ã—ã¦ã„ã‚‹ï¼‰
+private:
+	static float nearClip; //ãƒ‹ã‚¢ã‚¯ãƒªãƒƒãƒ—è·é›¢
+	static float farClip;  //ãƒ•ã‚¡ãƒ¼ã‚¯ãƒªãƒƒãƒ—è·é›¢
 };

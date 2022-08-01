@@ -5,7 +5,7 @@
 
 /*ウィンドウサイズ*/
 constexpr int window_width = 1280; //横幅
-constexpr int window_height = 720; //縦幅
+constexpr int window_height = 768; //縦幅
 
 constexpr WCHAR title[] = L"DirectXGame"; //タイトル
 
@@ -14,6 +14,10 @@ constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //背景色
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	DirectXInit* w = DirectXInit::GetInstance();
+
+#ifdef _DEBUG
+	//DirectXInit::EngineDebug = true;
+#endif // _DEBUG
 
 	w->title = title;
 	for (UINT i = 0; i < 4; i++)

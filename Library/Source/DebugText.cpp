@@ -1,7 +1,8 @@
-#include "./Header/DebugText.h"
+ï»¿#include "./Header/DebugText.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/Camera.h"
 
-/*static•Ï”‚Ì‰Šú‰»*/
+/*staticå¤‰æ•°ã®åˆæœŸåŒ–*/
 int DebugText::fontTex = -1;
 UINT64 DebugText::fontTexWidth = {};
 UINT DebugText::fontTexHeight = {};
@@ -23,7 +24,7 @@ HRESULT DebugText::DrawStringInit()
 	HRESULT hr = S_FALSE;
 	static bool isInit = false;
 
-	// ‰Šú‰»‚³‚ê‚Ä‚¢‚½‚çreturn‚·‚é
+	// åˆæœŸåŒ–ã•ã‚Œã¦ã„ãŸã‚‰returnã™ã‚‹
 	if (isInit == true)
 	{
 		return S_OK;
@@ -39,14 +40,14 @@ HRESULT DebugText::DrawStringInit()
 			return S_FALSE;
 		}
 
-		// ƒfƒoƒbƒOƒeƒLƒXƒg—p‚ÌƒeƒLƒXƒg‰æ‘œ‚Ì“Ç‚Ýž‚Ý
+		// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆç”¨ã®ãƒ†ã‚­ã‚¹ãƒˆç”»åƒã®èª­ã¿è¾¼ã¿
 		fontTex = LoadTextrue(L"./lib/DebugTextFont.png");
 		if (fontTex == -1)
 		{
 			return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 		}
 
-		// ƒeƒNƒXƒ`ƒƒƒf[ƒ^Žæ“¾
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‡ãƒ¼ã‚¿å–å¾—
 		D3D12_RESOURCE_DESC resDesc = textrueData[fontTex].texbuff->GetDesc();
 
 		fontTexWidth = resDesc.Width;
@@ -88,11 +89,11 @@ HRESULT DebugText::DrawString(const float& posX, const float& posY,
 
 	XMFLOAT2 pixel = { 1.0f * fontScale / fontTexWidth, 1.0f * fontScale / fontTexHeight };
 
-	// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚ðƒZƒbƒg
+	// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã‚’ã‚»ãƒƒãƒˆ
 	ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	// ƒVƒF[ƒ_[ƒŠƒ\[ƒXƒrƒ…[‚ðƒZƒbƒg
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒªã‚½ãƒ¼ã‚¹ãƒ“ãƒ¥ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	cmdList->SetGraphicsRootDescriptorTable(1, textrueData[fontTex].gpuDescHandle);
 
 	for (size_t i = 0, j = 0, k = 0; text[j] != '\0'; i++)
@@ -217,7 +218,7 @@ HRESULT DebugText::DrawString(const float& posX, const float& posY,
 		vert[RB].uv = { texRight, texBottom };
 		vert[RT].uv = { texRight,    texTop };
 
-		// ’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒf[ƒ^“]‘—
+		// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒ‡ãƒ¼ã‚¿è»¢é€
 		SpriteVertex* vertexMap = nullptr;
 		hr = sprite[fontIndex[charCount]].vertBuff->Map(0, nullptr, (void**)&vertexMap);
 		memcpy(vertexMap, vert, sizeof(vert));
@@ -239,15 +240,15 @@ HRESULT DebugText::DrawString(const float& posX, const float& posY,
 		hr = sprite[fontIndex[charCount]].constBuff->Map(0, nullptr, (void**)&constMap);
 		constMap->color = sprite[fontIndex[charCount]].color;
 		constMap->mat = sprite[fontIndex[charCount]].matWorld *
-			spriteData.matProjection[CommonData::Projection::ORTHOGRAPHIC];
+			Camera::matProjection[Camera::Projection::ORTHOGRAPHIC];
 		sprite[fontIndex[charCount]].constBuff->Unmap(0, nullptr);
 
-		// ’è”ƒoƒbƒtƒ@ƒrƒ…[‚ðƒZƒbƒg
+		// å®šæ•°ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 		cmdList->SetGraphicsRootConstantBufferView(0, sprite[fontIndex[charCount]].constBuff->GetGPUVirtualAddress());
 
-		// ’¸“_ƒoƒbƒtƒ@‚ÌÝ’è
+		// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
 		cmdList->IASetVertexBuffers(0, 1, &sprite[fontIndex[charCount]].vbView);
-		// •`‰æƒRƒ}ƒ“ƒh
+		// æç”»ã‚³ãƒžãƒ³ãƒ‰
 		cmdList->DrawInstanced(4, 1, 0, 0);
 
 		if (formatFlag == true)

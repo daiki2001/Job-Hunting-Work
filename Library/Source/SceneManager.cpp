@@ -1,17 +1,30 @@
 #include "./Header/Scenemanager.h"
+#include "./Header/Camera.h"
+#include "./Header/DirectXInit.h"
+
+#include "./Scene/EngineTestScene.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/SettingScene.h"
+
 #include "./Header/Error.h"
 
 SceneManager::SceneManager()
 {
-	sceneStack.push(std::make_shared<TitleScene>(this));
+	if (DirectXInit::EngineDebug)
+	{
+		sceneStack.push(std::make_shared<EngineTestScene>(this));
+	}
+	else
+	{
+		sceneStack.push(std::make_shared<TitleScene>(this));
+	}
 }
 
 void SceneManager::Loop() const
 {
 	sceneStack.top()->Update();
+	Camera::Update();
 	sceneStack.top()->Draw();
 }
 

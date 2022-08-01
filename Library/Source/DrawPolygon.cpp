@@ -1,11 +1,17 @@
-#include "./Header/DrawPolygon.h"
+Ôªø#include "./Header/DrawPolygon.h"
+#include "./Header/DirectXInit.h"
+#include "./Header/Camera.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "./Header/DirectXInit.h"
+
 #include "./Header/Error.h"
 
-#define EoF -1 // End of Function
+namespace
+{
+ShaderManager* shaderMgr = ShaderManager::Get();
+}
 
 DrawPolygon::DrawPolygon() :
 	DebugText(),
@@ -17,11 +23,6 @@ DrawPolygon::DrawPolygon() :
 	verticesCount{},
 	material{}
 {
-	using DirectX::XMLoadFloat3;
-
-	XMFLOAT3 cameraPos = { 0, 0, -100 };
-	XMFLOAT3 cameraTarget = { 0, 0, 0 };
-	XMFLOAT3 upVector = { 0, 1, 0 };
 }
 
 DrawPolygon::~DrawPolygon()
@@ -129,42 +130,42 @@ int DrawPolygon::Create3Dbox(const float& width, const float& height, const floa
 {
 	vertices.push_back(VertexData());
 
-	// ëO
+	// Ââç
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
-	// å„ÇÎ
+	// Âæå„Çç
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
-	// ç∂
+	// Â∑¶
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
-	// âE
+	// Âè≥
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
-	// è„
+	// ‰∏ä
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
-	// â∫
+	// ‰∏ã
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
 	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
@@ -343,7 +344,7 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 
 	vertices.push_back(VertexData());
 
-	// ïœêîè»ó™
+	// Â§âÊï∞ÁúÅÁï•
 	auto& vert = vertices[vertices.size() - 1];
 
 	size_t sizeV = vert.vertices.size();
@@ -508,7 +509,7 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 
 int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 {
-	if (filePath == nullptr) { return EoF; }
+	if (filePath == nullptr) { return Engine::FUNCTION_ERROR; }
 
 	using namespace std;
 	using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -519,9 +520,9 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 	const string modelPath = filePath;
 	file.open(modelPath);
 
-	vector<XMFLOAT3> positions; //í∏ì_ç¿ïW
-	vector<XMFLOAT3> normals; //ñ@ê¸ÉxÉNÉgÉã
-	vector<XMFLOAT2> texcoords; //ÉeÉNÉXÉ`ÉÉUV
+	vector<XMFLOAT3> positions; //È†ÇÁÇπÂ∫ßÊ®ô
+	vector<XMFLOAT3> normals; //Ê≥ïÁ∑ö„Éô„ÇØ„Éà„É´
+	vector<XMFLOAT2> texcoords; //„ÉÜ„ÇØ„Çπ„ÉÅ„É£UV
 
 	bool isFaceStart = false;
 	size_t verticesCount = 0;
@@ -529,60 +530,60 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 
 	Object* parent = nullptr;
 
-	// àÍçsÇ∏Ç¬ì«Ç›çûÇﬁ
+	// ‰∏ÄË°å„Åö„Å§Ë™≠„ÅøËæº„ÇÄ
 	string line;
 
 	while (getline(file, line))
 	{
-		// 1çsï™ÇÃï∂éöóÒÇÉXÉgÉäÅ[ÉÄÇ…ïœä∑ÇµÇƒâêÕÇµÇ‚Ç∑Ç≠Ç∑ÇÈ
+		// 1Ë°åÂàÜ„ÅÆÊñáÂ≠óÂàó„Çí„Çπ„Éà„É™„Éº„É†„Å´Â§âÊèõ„Åó„Å¶Ëß£Êûê„Åó„ÇÑ„Åô„Åè„Åô„Çã
 		std::istringstream line_stream(line);
 
-		// îºäpÉXÉyÅ[ÉXãÊêÿÇËÇ≈çsÇÃêÊì™ï∂éöóÒÇéÊìæÇ∑ÇÈ
+		// ÂçäËßí„Çπ„Éö„Éº„ÇπÂå∫Âàá„Çä„ÅßË°å„ÅÆÂÖàÈ†≠ÊñáÂ≠óÂàó„ÇíÂèñÂæó„Åô„Çã
 		std::string key;
 		std::getline(line_stream, key, ' ');
 
-		// êÊì™ï∂éöóÒÇ™vÇ»ÇÁí∏ì_ç¿ïW
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååv„Å™„ÇâÈ†ÇÁÇπÂ∫ßÊ®ô
 		if (key == "v")
 		{
-			// X,Y,Zç¿ïWì«Ç›çûÇ›
+			// X,Y,ZÂ∫ßÊ®ôË™≠„ÅøËæº„Åø
 			XMFLOAT3 pos{};
 			line_stream >> pos.x;
 			line_stream >> pos.y;
 			line_stream >> pos.z;
-			// ç¿ïWÉfÅ[É^ÇÃí«â¡
+			// Â∫ßÊ®ô„Éá„Éº„Çø„ÅÆËøΩÂä†
 			positions.emplace_back(pos);
 		}
 
-		// êÊì™ï∂éöóÒÇ™vtÇ»ÇÁÉeÉNÉXÉ`ÉÉ
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååvt„Å™„Çâ„ÉÜ„ÇØ„Çπ„ÉÅ„É£
 		if (key == "vt")
 		{
-			// U,Vê¨ï™ì«Ç›çûÇ›
+			// U,VÊàêÂàÜË™≠„ÅøËæº„Åø
 			XMFLOAT2 tex{};
 			line_stream >> tex.x;
 			line_stream >> tex.y;
-			// Vï˚å¸îΩì]
+			// VÊñπÂêëÂèçËª¢
 			tex.y = 1.0f - tex.y;
-			// ÉeÉNÉXÉ`ÉÉÉfÅ[É^ÇÃí«â¡
+			// „ÉÜ„ÇØ„Çπ„ÉÅ„É£„Éá„Éº„Çø„ÅÆËøΩÂä†
 			texcoords.emplace_back(tex);
 		}
 
-		// êÊì™ï∂éöóÒÇ™vnÇ»ÇÁñ@ê¸ÉxÉNÉgÉã
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååvn„Å™„ÇâÊ≥ïÁ∑ö„Éô„ÇØ„Éà„É´
 		if (key == "vn")
 		{
-			// X,Y,Zê¨ï™ì«Ç›çûÇ›
+			// X,Y,ZÊàêÂàÜË™≠„ÅøËæº„Åø
 			XMFLOAT3 normal{};
 			line_stream >> normal.x;
 			line_stream >> normal.y;
 			line_stream >> normal.z;
-			// ñ@ê¸ÉxÉNÉgÉãÉfÅ[É^ÇÃí«â¡
+			// Ê≥ïÁ∑ö„Éô„ÇØ„Éà„É´„Éá„Éº„Çø„ÅÆËøΩÂä†
 			normals.emplace_back(normal);
 		}
 
-		// êÊì™ï∂éöóÒÇ™fÇ»ÇÁÉ|ÉäÉSÉìÅiéOäpå`Åj
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååf„Å™„Çâ„Éù„É™„Ç¥„É≥Ôºà‰∏âËßíÂΩ¢Ôºâ
 		if (key == "f")
 		{
 			size_t index_count = 0;
-			// îºäpÉXÉyÅ[ÉXãÊêÿÇËÇ≈çsÇÃë±Ç´Çì«Ç›çûÇﬁ
+			// ÂçäËßí„Çπ„Éö„Éº„ÇπÂå∫Âàá„Çä„ÅßË°å„ÅÆÁ∂ö„Åç„ÇíË™≠„ÅøËæº„ÇÄ
 			std::string index_string;
 			while (std::getline(line_stream, index_string, ' '))
 			{
@@ -592,20 +593,20 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 					vertices.push_back(VertexData());
 				}
 
-				// í∏ì_ÉCÉìÉfÉbÉNÉX1å¬ï™ÇÃï∂éöóÒÇÉXÉgÉäÅ[ÉÄÇ…ïœä∑ÇµÇƒâêÕÇµÇ‚Ç∑Ç≠Ç∑ÇÈ
+				// È†ÇÁÇπ„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ1ÂÄãÂàÜ„ÅÆÊñáÂ≠óÂàó„Çí„Çπ„Éà„É™„Éº„É†„Å´Â§âÊèõ„Åó„Å¶Ëß£Êûê„Åó„ÇÑ„Åô„Åè„Åô„Çã
 				std::istringstream index_stream(index_string);
 				unsigned short indexPos, indexUv, indexNormal;
-				// ÉCÉìÉfÉbÉNÉXÇÃèÓïÒÇ™í∏ì_ç¿ïWÇÃÇ›Ç©Ç«Ç§Ç©
+				// „Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„ÅÆÊÉÖÂ†±„ÅåÈ†ÇÁÇπÂ∫ßÊ®ô„ÅÆ„Åø„Åã„Å©„ÅÜ„Åã
 				auto resultIter = std::find(index_string.begin(), index_string.end(), '/');
 				auto temp = std::distance(index_string.begin(), ++resultIter);
-				// ïœêîè»ó™
+				// Â§âÊï∞ÁúÅÁï•
 				auto& vert = vertices[vertices.size() - 1];
 
 				if (index_string[temp] == '/')
 				{
 					index_stream >> indexPos;
 
-					// í∏ì_ÉfÅ[É^ÇÃí«â¡
+					// È†ÇÁÇπ„Éá„Éº„Çø„ÅÆËøΩÂä†
 					Vertex vertex{};
 					vertex.pos = positions[indexPos - 1Ui64];
 					vertex.normal = XMFLOAT3();
@@ -615,12 +616,12 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 				else
 				{
 					index_stream >> indexPos;
-					index_stream.seekg(1, std::ios_base::cur); //ÉXÉâÉbÉVÉÖÇîÚÇŒÇ∑
+					index_stream.seekg(1, std::ios_base::cur); //„Çπ„É©„ÉÉ„Ç∑„É•„ÇíÈ£õ„Å∞„Åô
 					index_stream >> indexUv;
-					index_stream.seekg(1, std::ios_base::cur); //ÉXÉâÉbÉVÉÖÇîÚÇŒÇ∑
+					index_stream.seekg(1, std::ios_base::cur); //„Çπ„É©„ÉÉ„Ç∑„É•„ÇíÈ£õ„Å∞„Åô
 					index_stream >> indexNormal;
 
-					// í∏ì_ÉfÅ[É^ÇÃí«â¡
+					// È†ÇÁÇπ„Éá„Éº„Çø„ÅÆËøΩÂä†
 					Vertex vertex{};
 					vertex.pos = positions[indexPos - 1Ui64];
 					vertex.normal = normals[indexNormal - 1Ui64];
@@ -628,7 +629,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 					vert.vertices.emplace_back(vertex);
 				}
 
-				// ÉCÉìÉfÉbÉNÉXÉfÅ[É^ÇÃí«â¡
+				// „Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„Çø„ÅÆËøΩÂä†
 				vert.indices.emplace_back((unsigned short)vert.vertices.size() - 1);
 				index_count++;
 
@@ -640,20 +641,20 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			}
 		}
 
-		// êÊì™ï∂éöóÒÇ™mtllibÇ»ÇÁÉ}ÉeÉäÉAÉãÉtÉ@ÉCÉãÇÃì«Ç›çûÇ›
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååmtllib„Å™„Çâ„Éû„ÉÜ„É™„Ç¢„É´„Éï„Ç°„Ç§„É´„ÅÆË™≠„ÅøËæº„Åø
 		if (key == "mtllib")
 		{
-			// É}ÉeÉäÉAÉãÇÃÉtÉ@ÉCÉãñºì«Ç›çûÇ›
+			// „Éû„ÉÜ„É™„Ç¢„É´„ÅÆ„Éï„Ç°„Ç§„É´ÂêçË™≠„ÅøËæº„Åø
 			std::string fileName;
 			line_stream >> fileName;
-			// É}ÉeÉäÉAÉãì«Ç›çûÇ›
+			// „Éû„ÉÜ„É™„Ç¢„É´Ë™≠„ÅøËæº„Åø
 			LoadMaterial(directoryPath, fileName);
 		}
 
-		// êÊì™ï∂éöóÒÇ™usemtlÇ»ÇÁégópÇ∑ÇÈÉ}ÉeÉäÉAÉã
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååusemtl„Å™„Çâ‰ΩøÁî®„Åô„Çã„Éû„ÉÜ„É™„Ç¢„É´
 		if (key == "usemtl")
 		{
-			// É}ÉeÉäÉAÉãñºì«Ç›çûÇ›
+			// „Éû„ÉÜ„É™„Ç¢„É´ÂêçË™≠„ÅøËæº„Åø
 			std::string materialName;
 			line_stream >> materialName;
 
@@ -667,7 +668,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			}
 			if (materialIndex >= material.size())
 			{
-				return EoF;
+				return Engine::FUNCTION_ERROR;
 			}
 
 			isFaceStart = false;
@@ -686,10 +687,10 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			verticesCount++;
 		}
 	}
-	// ÉtÉ@ÉCÉãÇï¬Ç∂ÇÈ
+	// „Éï„Ç°„Ç§„É´„ÇíÈñâ„Åò„Çã
 	file.close();
 
-	// í∏ì_ÉfÅ[É^àÍÇ¬ï™ÇÃÉTÉCÉY * í∏ì_ÉfÅ[É^ÇÃóvëfêî
+	// È†ÇÁÇπ„Éá„Éº„Çø‰∏Ä„Å§ÂàÜ„ÅÆ„Çµ„Ç§„Ç∫ * È†ÇÁÇπ„Éá„Éº„Çø„ÅÆË¶ÅÁ¥†Êï∞
 	for (size_t i = vertices.size() - verticesCount; i < vertices.size(); i++)
 	{
 #pragma region VertexBuffer
@@ -698,7 +699,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 		sizeVB = static_cast<UINT>(sizeof(Vertex) * vertices[i].vertices.size());
 
 		hr = dev->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ÉAÉbÉvÉçÅ[Éhâ¬î\
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //„Ç¢„ÉÉ„Éó„É≠„Éº„ÉâÂèØËÉΩ
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(sizeVB),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -706,18 +707,18 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			IID_PPV_ARGS(&vertices[i].vertBuff));
 		if (FAILED(hr))
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 
 		hr = vertices[i].vertBuff->Map(0, nullptr, (void**)&vertMap);
 
-		// ëSí∏ì_Ç…ëŒÇµÇƒ
+		// ÂÖ®È†ÇÁÇπ„Å´ÂØæ„Åó„Å¶
 		for (UINT j = 0; j < vertices[i].vertices.size(); j++)
 		{
-			vertMap[j] = vertices[i].vertices[j]; //ç¿ïWÇÉRÉsÅ[
+			vertMap[j] = vertices[i].vertices[j]; //Â∫ßÊ®ô„Çí„Ç≥„Éî„Éº
 		}
 
-		// É}ÉbÉvÇâèú
+		// „Éû„ÉÉ„Éó„ÇíËß£Èô§
 		vertices[i].vertBuff->Unmap(0, nullptr);
 
 		vertices[i].vbView.BufferLocation = vertices[i].vertBuff->GetGPUVirtualAddress();
@@ -728,12 +729,12 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 
 #pragma region IndexBuffer
 
-		//ÉCÉìÉfÉbÉNÉXÉfÅ[É^ëSëÃÇÃÉTÉCÉY
+		//„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„ÇøÂÖ®‰Ωì„ÅÆ„Çµ„Ç§„Ç∫
 		UINT sizeIB;
 		sizeIB = static_cast<UINT>(sizeof(unsigned short) * vertices[i].indices.size());
 
 		hr = dev->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ÉAÉbÉvÉçÅ[Éhâ¬î\
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //„Ç¢„ÉÉ„Éó„É≠„Éº„ÉâÂèØËÉΩ
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(sizeIB),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -741,20 +742,20 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			IID_PPV_ARGS(&vertices[i].indexBuff));
 		if (FAILED(hr))
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 
-		// GPUè„ÇÃÉoÉbÉtÉ@Ç…ëŒâûÇµÇΩâºëzÉÅÉÇÉäÇéÊìæ
+		// GPU‰∏ä„ÅÆ„Éê„ÉÉ„Éï„Ç°„Å´ÂØæÂøú„Åó„Åü‰ªÆÊÉ≥„É°„É¢„É™„ÇíÂèñÂæó
 		static unsigned short* indexMap = nullptr;
 		hr = vertices[i].indexBuff->Map(0, nullptr, (void**)&indexMap);
 
-		// ëSÉCÉìÉfÉbÉNÉXÇ…ëŒÇµÇƒ
+		// ÂÖ®„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Å´ÂØæ„Åó„Å¶
 		for (size_t j = 0; j < vertices[i].indices.size(); j++)
 		{
-			indexMap[j] = vertices[i].indices[j]; //ÉCÉìÉfÉbÉNÉXÇÉRÉsÅ[
+			indexMap[j] = vertices[i].indices[j]; //„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Çí„Ç≥„Éî„Éº
 		}
 
-		// åqÇ™ÇËÇâèú
+		// Áπã„Åå„Çä„ÇíËß£Èô§
 		vertices[i].indexBuff->Unmap(0, nullptr);
 
 		vertices[i].ibView.BufferLocation = vertices[i].indexBuff->GetGPUVirtualAddress();
@@ -767,9 +768,9 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 	for (size_t i = obj.size() - verticesCount; i < obj.size(); i++)
 	{
 		hr = dev->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ÉAÉbÉvÉçÅ[Éhâ¬î\
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //„Ç¢„ÉÉ„Éó„É≠„Éº„ÉâÂèØËÉΩ
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xFF) & ~0xFF), //ÉäÉ\Å[ÉXê›íË
+			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xFF) & ~0xFF), //„É™„ÇΩ„Éº„ÇπË®≠ÂÆö
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
 			IID_PPV_ARGS(&obj[i].constBuff));
@@ -778,9 +779,9 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			return hr;
 		}
 		hr = dev->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ÉAÉbÉvÉçÅ[Éhâ¬î\
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //„Ç¢„ÉÉ„Éó„É≠„Éº„ÉâÂèØËÉΩ
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(MaterialConstBufferData) + 0xFF) & ~0xFF), //ÉäÉ\Å[ÉXê›íË
+			&CD3DX12_RESOURCE_DESC::Buffer((sizeof(MaterialConstBufferData) + 0xFF) & ~0xFF), //„É™„ÇΩ„Éº„ÇπË®≠ÂÆö
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
 			IID_PPV_ARGS(&obj[i].materialConstBuff));
@@ -795,11 +796,11 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 
 void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::string& filename)
 {
-	// ÉtÉ@ÉCÉãÉXÉgÉäÅ[ÉÄ
+	// „Éï„Ç°„Ç§„É´„Çπ„Éà„É™„Éº„É†
 	std::ifstream file;
-	// É}ÉeÉäÉAÉãÉtÉ@ÉCÉãÇäJÇ≠
+	// „Éû„ÉÜ„É™„Ç¢„É´„Éï„Ç°„Ç§„É´„ÇíÈñã„Åè
 	file.open(directoryPath + filename);
-	// ÉtÉ@ÉCÉãÉIÅ[ÉvÉìé∏îsÇÉ`ÉFÉbÉN
+	// „Éï„Ç°„Ç§„É´„Ç™„Éº„Éó„É≥Â§±Êïó„Çí„ÉÅ„Çß„ÉÉ„ÇØ
 	if (file.fail())
 	{
 		assert(0);
@@ -807,32 +808,32 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 
 	material.clear();
 
-	// 1çsÇ∏Ç¬ì«Ç›çûÇﬁ
+	// 1Ë°å„Åö„Å§Ë™≠„ÅøËæº„ÇÄ
 	std::string line;
 	while (std::getline(file, line))
 	{
-		// 1çsï™ÇÃï∂éöóÒÇÉXÉgÉäÅ[ÉÄÇ…ïœä∑
+		// 1Ë°åÂàÜ„ÅÆÊñáÂ≠óÂàó„Çí„Çπ„Éà„É™„Éº„É†„Å´Â§âÊèõ
 		std::istringstream line_stream(line);
 
-		// îºäpÉXÉyÅ[ÉXãÊêÿÇËÇ≈çsÇÃêÊì™ï∂éöóÒÇéÊìæ
+		// ÂçäËßí„Çπ„Éö„Éº„ÇπÂå∫Âàá„Çä„ÅßË°å„ÅÆÂÖàÈ†≠ÊñáÂ≠óÂàó„ÇíÂèñÂæó
 		std::string key;
 		std::getline(line_stream, key, ' ');
 
-		// êÊì™ÇÃÉ^ÉuÇÕñ≥éãÇ∑ÇÈ
+		// ÂÖàÈ†≠„ÅÆ„Çø„Éñ„ÅØÁÑ°Ë¶ñ„Åô„Çã
 		if (key[0] == '\t')
 		{
-			key.erase(key.begin()); //êÊì™ÇÃï∂éöÇçÌèú
+			key.erase(key.begin()); //ÂÖàÈ†≠„ÅÆÊñáÂ≠ó„ÇíÂâäÈô§
 		}
 
-		// êÊì™ï∂éöóÒÇ™newmtlÇ»ÇÁÉ}ÉeÉäÉAÉãñº
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Åånewmtl„Å™„Çâ„Éû„ÉÜ„É™„Ç¢„É´Âêç
 		if (key == "newmtl")
 		{
 			material.push_back({});
-			// É}ÉeÉäÉAÉãñºì«Ç›çûÇ›
+			// „Éû„ÉÜ„É™„Ç¢„É´ÂêçË™≠„ÅøËæº„Åø
 			line_stream >> material[material.size() - 1].name;
 		}
 
-		// êÊì™ï∂éöóÒÇ™KaÇ»ÇÁÉAÉìÉrÉGÉìÉgêF
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„ÅåKa„Å™„Çâ„Ç¢„É≥„Éì„Ç®„É≥„ÉàËâ≤
 		if (key == "Ka")
 		{
 			line_stream >> material[material.size() - 1].ambient.x;
@@ -840,7 +841,7 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 			line_stream >> material[material.size() - 1].ambient.z;
 		}
 
-		// êÊì™ï∂éöóÒÇ™KdÇ»ÇÁÉfÉBÉtÉÖÅ[ÉYêF
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„ÅåKd„Å™„Çâ„Éá„Ç£„Éï„É•„Éº„Ç∫Ëâ≤
 		if (key == "Kd")
 		{
 			line_stream >> material[material.size() - 1].diffuse.x;
@@ -848,7 +849,7 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 			line_stream >> material[material.size() - 1].diffuse.z;
 		}
 
-		// êÊì™ï∂éöóÒÇ™KsÇ»ÇÁÉXÉyÉLÉÖÉâÅ[êF
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„ÅåKs„Å™„Çâ„Çπ„Éö„Ç≠„É•„É©„ÉºËâ≤
 		if (key == "Ks")
 		{
 			line_stream >> material[material.size() - 1].specular.x;
@@ -856,26 +857,26 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 			line_stream >> material[material.size() - 1].specular.z;
 		}
 
-		// êÊì™ï∂éöóÒÇ™dÇ©TrÇ»ÇÁÉAÉãÉtÉ@
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååd„ÅãTr„Å™„Çâ„Ç¢„É´„Éï„Ç°
 		if (key == "d" || key == "Tr")
 		{
 			line_stream >> material[material.size() - 1].alpha;
 		}
 
-		// êÊì™ï∂éöóÒÇ™map_KdÇ»ÇÁÉeÉNÉXÉ`ÉÉÉtÉ@ÉCÉãñº
+		// ÂÖàÈ†≠ÊñáÂ≠óÂàó„Ååmap_Kd„Å™„Çâ„ÉÜ„ÇØ„Çπ„ÉÅ„É£„Éï„Ç°„Ç§„É´Âêç
 		if (key == "map_Kd")
 		{
-			// ÉeÉNÉXÉ`ÉÉÇÃÉtÉ@ÉCÉãñºì«Ç›çûÇ›
+			// „ÉÜ„ÇØ„Çπ„ÉÅ„É£„ÅÆ„Éï„Ç°„Ç§„É´ÂêçË™≠„ÅøËæº„Åø
 			line_stream >> material[material.size() - 1].textureFilename;
 			std::string texFilePath = directoryPath + material[material.size() - 1].textureFilename;
-			// ÉÜÉjÉRÅ[Éhï∂éöóÒÇ…ïœä∑Ç∑ÇÈ
+			// „É¶„Éã„Ç≥„Éº„ÉâÊñáÂ≠óÂàó„Å´Â§âÊèõ„Åô„Çã
 			wchar_t filepath[128];
 			int iBufferSize = MultiByteToWideChar(CP_ACP, 0, texFilePath.c_str(), -1, filepath, _countof(filepath));
-			// ÉeÉNÉXÉ`ÉÉì«Ç›çûÇ›
+			// „ÉÜ„ÇØ„Çπ„ÉÅ„É£Ë™≠„ÅøËæº„Åø
 			material[material.size() - 1].textrueIndex = LoadTextrue(filepath);
 		}
 	}
-	// ÉtÉ@ÉCÉãÇï¬Ç∂ÇÈ
+	// „Éï„Ç°„Ç§„É´„ÇíÈñâ„Åò„Çã
 	file.close();
 }
 
@@ -894,13 +895,13 @@ void DrawPolygon::Tiring(const int& polygonData, const float& uvScaleX, const fl
 
 	vertices[polygonData].vertBuff->Map(0, nullptr, (void**)&vertMap);
 
-	// ëSí∏ì_Ç…ëŒÇµÇƒ
+	// ÂÖ®È†ÇÁÇπ„Å´ÂØæ„Åó„Å¶
 	for (UINT i = 0; i < vertices[polygonData].vertices.size(); i++)
 	{
-		vertMap[i] = vertices[polygonData].vertices[i]; //ç¿ïWÇÉRÉsÅ[
+		vertMap[i] = vertices[polygonData].vertices[i]; //Â∫ßÊ®ô„Çí„Ç≥„Éî„Éº
 	}
 
-	// É}ÉbÉvÇâèú
+	// „Éû„ÉÉ„Éó„ÇíËß£Èô§
 	vertices[polygonData].vertBuff->Unmap(0, nullptr);
 }
 
@@ -912,7 +913,7 @@ void DrawPolygon::AutoTiring(const int& polygonData, const int& graphHandle)
 		return;
 	}
 
-	// ÉeÉNÉXÉ`ÉÉÉfÅ[É^éÊìæ
+	// „ÉÜ„ÇØ„Çπ„ÉÅ„É£„Éá„Éº„ÇøÂèñÂæó
 	D3D12_RESOURCE_DESC resDesc = textrueData[graphHandle].texbuff->GetDesc();
 	float left = 0.0f, right = 0.0f, top = 0.0f, bottom = 0.0f;
 
@@ -947,13 +948,13 @@ void DrawPolygon::AutoTiring(const int& polygonData, const int& graphHandle)
 
 	vertices[polygonData].vertBuff->Map(0, nullptr, (void**)&vertMap);
 
-	// ëSí∏ì_Ç…ëŒÇµÇƒ
+	// ÂÖ®È†ÇÁÇπ„Å´ÂØæ„Åó„Å¶
 	for (UINT i = 0; i < vertices[polygonData].vertices.size(); i++)
 	{
-		vertMap[i] = vertices[polygonData].vertices[i]; //ç¿ïWÇÉRÉsÅ[
+		vertMap[i] = vertices[polygonData].vertices[i]; //Â∫ßÊ®ô„Çí„Ç≥„Éî„Éº
 	}
 
-	// É}ÉbÉvÇâèú
+	// „Éû„ÉÉ„Éó„ÇíËß£Èô§
 	vertices[polygonData].vertBuff->Unmap(0, nullptr);
 }
 
@@ -965,7 +966,7 @@ void DrawPolygon::MoveUV(const int& polygonData, const int& graphHandle, DirectX
 		return;
 	}
 
-	// ÉeÉNÉXÉ`ÉÉÉfÅ[É^éÊìæ
+	// „ÉÜ„ÇØ„Çπ„ÉÅ„É£„Éá„Éº„ÇøÂèñÂæó
 	D3D12_RESOURCE_DESC resDesc = textrueData[graphHandle].texbuff->GetDesc();
 	DirectX::XMFLOAT2 addUV = { speed.x / resDesc.Width, speed.y / resDesc.Height };
 
@@ -977,13 +978,13 @@ void DrawPolygon::MoveUV(const int& polygonData, const int& graphHandle, DirectX
 
 	vertices[polygonData].vertBuff->Map(0, nullptr, (void**)&vertMap);
 
-	// ëSí∏ì_Ç…ëŒÇµÇƒ
+	// ÂÖ®È†ÇÁÇπ„Å´ÂØæ„Åó„Å¶
 	for (UINT i = 0; i < vertices[polygonData].vertices.size(); i++)
 	{
-		vertMap[i] = vertices[polygonData].vertices[i]; //ç¿ïWÇÉRÉsÅ[
+		vertMap[i] = vertices[polygonData].vertices[i]; //Â∫ßÊ®ô„Çí„Ç≥„Éî„Éº
 	}
 
-	// É}ÉbÉvÇâèú
+	// „Éû„ÉÉ„Éó„ÇíËß£Èô§
 	vertices[polygonData].vertBuff->Unmap(0, nullptr);
 }
 
@@ -996,16 +997,16 @@ int DrawPolygon::DrawPolygonInit()
 	hr = CreateConstBuffer(&index);
 	if (FAILED(hr))
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	if (isDrawPolygonInit == false)
 	{
 		isDrawPolygonInit = true;
 
-		if (LoadTextrue() == EoF)
+		if (LoadTextrue() == Engine::FUNCTION_ERROR)
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 	}
 
@@ -1020,7 +1021,7 @@ int DrawPolygon::DrawOBJInit()
 	hr = CreateConstBuffer(&index);
 	if (FAILED(hr))
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	if (isDrawOBJPolygonInit == false)
@@ -1040,7 +1041,7 @@ int DrawPolygon::Draw(
 		(graphHandle < 0 || (UINT)graphHandle > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	using namespace DirectX;
@@ -1057,9 +1058,9 @@ int DrawPolygon::Draw(
 	if (isInit == false)
 	{
 		int size = DrawPolygonInit();
-		if (size == EoF)
+		if (size == Engine::FUNCTION_ERROR)
 		{
-			return EoF;
+			return Engine::FUNCTION_ERROR;
 		}
 
 		objIndex.push_back({ size, graphHandle });
@@ -1075,7 +1076,7 @@ int DrawPolygon::Draw(
 
 	if (objIndex.size() <= 0)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	polygonCount++;
@@ -1101,7 +1102,7 @@ int DrawPolygon::Draw(
 
 	if (isOrthoGraphic == true)
 	{
-		mat *= objectData[isDepthWriteBan].matProjection[CommonData::Projection::ORTHOGRAPHIC];
+		mat *= Camera::matProjection[Camera::Projection::ORTHOGRAPHIC];
 		lightVec = {
 			-vertices[polygonData].vertices[0].normal.x,
 			-vertices[polygonData].vertices[0].normal.y,
@@ -1110,7 +1111,7 @@ int DrawPolygon::Draw(
 	}
 	else
 	{
-		mat *= objectData[isDepthWriteBan].matProjection[CommonData::Projection::PERSPECTIVE];
+		mat *= Camera::matProjection[Camera::Projection::PERSPECTIVE];
 		lightVec = light;
 	}
 
@@ -1118,41 +1119,38 @@ int DrawPolygon::Draw(
 
 	BaseDrawGraphics();
 
-	cmdList->SetPipelineState(objectData[isDepthWriteBan].pipelinestate[blendMode].Get());
-	cmdList->SetGraphicsRootSignature(objectData[isDepthWriteBan].rootsignature.Get());
-
 	ConstBufferData* constMap = nullptr;
-	obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //É}ÉbÉsÉìÉO
+	obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //„Éû„ÉÉ„Éî„É≥„Ç∞
 
 	constMap->color = color;
 	constMap->mat = obj[index.constant].matWorld * mat;
 	constMap->lightVec = lightVec;
-	obj[index.constant].constBuff->Unmap(0, nullptr); //É}ÉbÉsÉìÉOâèú
+	obj[index.constant].constBuff->Unmap(0, nullptr); //„Éû„ÉÉ„Éî„É≥„Ç∞Ëß£Èô§
 
-	// ÉfÉXÉNÉäÉvÉ^ÉqÅ[ÉvÇÉZÉbÉg
+	// „Éá„Çπ„ÇØ„É™„Éó„Çø„Éí„Éº„Éó„Çí„Çª„ÉÉ„Éà
 	ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	// íËêîÉoÉbÉtÉ@ÉrÉÖÅ[ÇÉZÉbÉg
+	// ÂÆöÊï∞„Éê„ÉÉ„Éï„Ç°„Éì„É•„Éº„Çí„Çª„ÉÉ„Éà
 	cmdList->SetGraphicsRootConstantBufferView(0, obj[index.constant].constBuff->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootDescriptorTable(1, textrueData[index.textrue].gpuDescHandle);
 
 	if (isFill == true)
 	{
-		// ÉvÉäÉ~ÉeÉBÉuå`èÛÇÃê›íË
+		// „Éó„É™„Éü„ÉÜ„Ç£„ÉñÂΩ¢Áä∂„ÅÆË®≠ÂÆö
 		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 	else
 	{
-		// ÉvÉäÉ~ÉeÉBÉuå`èÛÇÃê›íË
+		// „Éó„É™„Éü„ÉÜ„Ç£„ÉñÂΩ¢Áä∂„ÅÆË®≠ÂÆö
 		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	}
 
-	// í∏ì_ÉoÉbÉtÉ@ÇÃê›íË
+	// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÅÆË®≠ÂÆö
 	cmdList->IASetVertexBuffers(0, 1, &vertices[polygonData].vbView);
-	// ÉCÉìÉfÉbÉNÉXÉoÉbÉtÉ@ÉrÉÖÅ[ÇÃê›íË
+	// „Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éê„ÉÉ„Éï„Ç°„Éì„É•„Éº„ÅÆË®≠ÂÆö
 	cmdList->IASetIndexBuffer(&vertices[polygonData].ibView);
-	// ï`âÊÉRÉ}ÉìÉh
+	// ÊèèÁîª„Ç≥„Éû„É≥„Éâ
 	cmdList->DrawIndexedInstanced((UINT)vertices[polygonData].indices.size(), 1, 0, 0, 0);
 
 	return index.constant;
@@ -1165,7 +1163,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	using namespace DirectX;
@@ -1184,9 +1182,9 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 		if (isInit == false)
 		{
 			int size = DrawOBJInit();
-			if (size == EoF)
+			if (size == Engine::FUNCTION_ERROR)
 			{
-				return EoF;
+				return Engine::FUNCTION_ERROR;
 			}
 
 			objIndex.push_back({ size, (int)obj[i].material.textrueIndex });
@@ -1201,7 +1199,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 
 	if (objIndex.size() <= 0)
 	{
-		return EoF;
+		return Engine::FUNCTION_ERROR;
 	}
 
 	polygonCount++;
@@ -1232,7 +1230,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 
 	if (isOrthoGraphic == true)
 	{
-		mat *= materialData[isDepthWriteBan].matProjection[CommonData::Projection::ORTHOGRAPHIC];
+		mat *= Camera::matProjection[Camera::Projection::ORTHOGRAPHIC];
 		lightVec = {
 			-vertices[obj[object].polygonData].vertices[0].normal.x,
 			-vertices[obj[object].polygonData].vertices[0].normal.y,
@@ -1241,7 +1239,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 	}
 	else
 	{
-		mat *= materialData[isDepthWriteBan].matProjection[CommonData::Projection::PERSPECTIVE];
+		mat *= Camera::matProjection[Camera::Projection::PERSPECTIVE];
 		lightVec = {
 			-vertices[obj[object].polygonData].vertices[0].normal.x,
 			-vertices[obj[object].polygonData].vertices[0].normal.y,
@@ -1255,45 +1253,42 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 
 	static auto* cmdList = DirectXInit::GetCommandList();
 
-	cmdList->SetPipelineState(materialData[isDepthWriteBan].pipelinestate[blendMode].Get());
-	cmdList->SetGraphicsRootSignature(materialData[isDepthWriteBan].rootsignature.Get());
-
 	for (int i = static_cast<int>(parentIndex); i <= object; i++)
 	{
 		ConstBufferData* constMap = nullptr;
-		obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //É}ÉbÉsÉìÉO
+		obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //„Éû„ÉÉ„Éî„É≥„Ç∞
 
 		constMap->color = color;
 		constMap->mat = obj[index.constant].matWorld * mat;
 		constMap->lightVec = lightVec;
-		obj[index.constant].constBuff->Unmap(0, nullptr); //É}ÉbÉsÉìÉOâèú
+		obj[index.constant].constBuff->Unmap(0, nullptr); //„Éû„ÉÉ„Éî„É≥„Ç∞Ëß£Èô§
 
 		MaterialConstBufferData* materialConstMap = nullptr;
-		obj[index.constant].materialConstBuff->Map(0, nullptr, (void**)&materialConstMap); //É}ÉbÉsÉìÉO
+		obj[index.constant].materialConstBuff->Map(0, nullptr, (void**)&materialConstMap); //„Éû„ÉÉ„Éî„É≥„Ç∞
 
 		materialConstMap->ambient = obj[i].material.ambient;
 		materialConstMap->diffuse = obj[i].material.diffuse;
 		materialConstMap->specular = obj[i].material.specular;
 		materialConstMap->alpha = obj[i].material.alpha;
-		obj[index.constant].materialConstBuff->Unmap(0, nullptr); //É}ÉbÉsÉìÉOâèú
+		obj[index.constant].materialConstBuff->Unmap(0, nullptr); //„Éû„ÉÉ„Éî„É≥„Ç∞Ëß£Èô§
 
-		// ÉfÉXÉNÉäÉvÉ^ÉqÅ[ÉvÇÉZÉbÉg
+		// „Éá„Çπ„ÇØ„É™„Éó„Çø„Éí„Éº„Éó„Çí„Çª„ÉÉ„Éà
 		ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
 		cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-		// íËêîÉoÉbÉtÉ@ÉrÉÖÅ[ÇÉZÉbÉg
+		// ÂÆöÊï∞„Éê„ÉÉ„Éï„Ç°„Éì„É•„Éº„Çí„Çª„ÉÉ„Éà
 		cmdList->SetGraphicsRootConstantBufferView(0, obj[index.constant].constBuff->GetGPUVirtualAddress());
 		cmdList->SetGraphicsRootConstantBufferView(1, obj[index.constant].materialConstBuff->GetGPUVirtualAddress());
 		cmdList->SetGraphicsRootDescriptorTable(2, textrueData[obj[i].material.textrueIndex].gpuDescHandle);
 
-		// ÉvÉäÉ~ÉeÉBÉuå`èÛÇÃê›íË
+		// „Éó„É™„Éü„ÉÜ„Ç£„ÉñÂΩ¢Áä∂„ÅÆË®≠ÂÆö
 		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// í∏ì_ÉoÉbÉtÉ@ÇÃê›íË
+		// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÅÆË®≠ÂÆö
 		cmdList->IASetVertexBuffers(0, 1, &vertices[obj[i].polygonData].vbView);
-		// ÉCÉìÉfÉbÉNÉXÉoÉbÉtÉ@ÉrÉÖÅ[ÇÃê›íË
+		// „Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éê„ÉÉ„Éï„Ç°„Éì„É•„Éº„ÅÆË®≠ÂÆö
 		cmdList->IASetIndexBuffer(&vertices[obj[i].polygonData].ibView);
-		// ï`âÊÉRÉ}ÉìÉh
+		// ÊèèÁîª„Ç≥„Éû„É≥„Éâ
 		cmdList->DrawIndexedInstanced((UINT)vertices[obj[i].polygonData].indices.size(), 1, 0, 0, 0);
 	}
 
@@ -1322,7 +1317,7 @@ DirectX::XMFLOAT3 DrawPolygon::ScreenToWorld(int x, int y, float z)
 	XMMATRIX InvView, InvPrj, VP, InvViewport;
 
 	InvView = XMMatrixInverse(nullptr, Camera::matView[Camera::cameraNo]);
-	InvPrj = XMMatrixInverse(nullptr, objectData[isDepthWriteBan].matProjection[CommonData::Projection::PERSPECTIVE]);
+	InvPrj = XMMatrixInverse(nullptr, Camera::matProjection[Camera::Projection::PERSPECTIVE]);
 	VP = XMMatrixIdentity();
 	VP.r[0].m128_f32[0] =
 		static_cast<float>(DirectXInit::GetInstance()->windowWidth) / 2.0f;
@@ -1360,7 +1355,6 @@ void DrawPolygon::PolygonLoopEnd()
 
 void DrawPolygon::DataClear()
 {
-	Camera::matView.clear();
 	verticesCount.clear();
 	material.clear();
 }
@@ -1377,7 +1371,7 @@ void DrawPolygon::Circle(const XMFLOAT3& centerPos, const float& r, const size_t
 
 	for (size_t i = 0; i < divNum; i++)
 	{
-		/*í∏ì_ç¿ïW*/
+		/*È†ÇÁÇπÂ∫ßÊ®ô*/
 		v[i].pos.x = r * sinf(2 * XM_PI / divNum * i) + centerPos.x;
 		v[i].pos.y = r * cosf(2 * XM_PI / divNum * i) + centerPos.y;
 		v[i].pos.z = centerPos.z;
@@ -1404,20 +1398,20 @@ void DrawPolygon::Circle(const XMFLOAT3& centerPos, const float& r, const size_t
 
 		if (flag == true)
 		{
-			/*fillópÉCÉìÉfÉbÉNÉXÉfÅ[É^*/
+			/*fillÁî®„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„Çø*/
 			index[i * 3 + 0] = (unsigned short)(i + 1);
 			index[i * 3 + 1] = (unsigned short)(i + 0);
 			index[i * 3 + 2] = (unsigned short)(divNum);
 		}
 		else
 		{
-			/*lineópÉCÉìÉfÉbÉNÉXÉfÅ[É^*/
+			/*lineÁî®„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„Çø*/
 			index[i * 2 + 0] = (unsigned short)(i + 1);
 			index[i * 2 + 1] = (unsigned short)(i + 0);
 		}
 	}
 
-	// verticesÇÃdivNumî‘ñ⁄Ç…centerPosÇë„ì¸
+	// vertices„ÅÆdivNumÁï™ÁõÆ„Å´centerPos„Çí‰ª£ÂÖ•
 	v[divNum].pos = { centerPos.x, centerPos.y, centerPos.z };
 	v[divNum].normal = {};
 	v[divNum].uv = { 0.5f, 0.5f };
@@ -1427,16 +1421,16 @@ void DrawPolygon::Circle(const XMFLOAT3& centerPos, const float& r, const size_t
 		v[i].uv.y *= -1;
 	}
 
-	/*ÉCÉìÉfÉbÉNÉXÉfÅ[É^í≤êÆ*/
+	/*„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„ÇøË™øÊï¥*/
 	if (flag == true)
 	{
-		/*fillópÉCÉìÉfÉbÉNÉXÉfÅ[É^*/
-		index[(divNum - 1) * 3] = (unsigned short)0; //àÍî‘ç≈å„ÇÃéËëOÇÃóvëfÇ'0'Ç…íuÇ´ä∑Ç¶
+		/*fillÁî®„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„Çø*/
+		index[(divNum - 1) * 3] = (unsigned short)0; //‰∏ÄÁï™ÊúÄÂæå„ÅÆÊâãÂâç„ÅÆË¶ÅÁ¥†„Çí'0'„Å´ÁΩÆ„ÅçÊèõ„Åà
 	}
 	else
 	{
-		/*lineópÉCÉìÉfÉbÉNÉXÉfÅ[É^*/
-		index[(divNum - 1) * 2] = (unsigned short)0; //àÍî‘ç≈å„ÇÃóvëfÇ'0'Ç…íuÇ´ä∑Ç¶
+		/*lineÁî®„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„Éá„Éº„Çø*/
+		index[(divNum - 1) * 2] = (unsigned short)0; //‰∏ÄÁï™ÊúÄÂæå„ÅÆË¶ÅÁ¥†„Çí'0'„Å´ÁΩÆ„ÅçÊèõ„Åà
 	}
 
 	return;

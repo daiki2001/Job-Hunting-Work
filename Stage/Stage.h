@@ -22,6 +22,9 @@ private: //静的メンバ変数
 	static int wall_obj; //外壁のオブジェクト
 	static int door_obj; //ドアのオブジェクト
 
+public: //静的メンバ関数
+	static const bool IsGoal() { return block_mgr->GetGoal(); };
+
 public: //メンバ関数
 	// 初期化処理
 	void Init(DrawPolygon* const draw);

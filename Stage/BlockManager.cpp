@@ -25,7 +25,8 @@ BlockManager::Block::Block(const BlockManager::TypeId& typeId) :
 BlockManager::BlockManager() :
 	blockType{},
 	block{},
-	isOpen(true)
+	isOpen(true),
+	isGoal(false)
 {
 }
 
@@ -49,6 +50,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(BlockManager::TypeId::SWITCH, draw));
 	blockType.back().Create("Switch.obj");
+
+	blockType.push_back(BlockType(BlockManager::TypeId::GOAL, draw));
+	blockType.back().Create(L"Goal.png");
 }
 
 void BlockManager::Update()
@@ -67,7 +71,10 @@ void BlockManager::Update()
 		break;
 	case BlockManager::TypeId::SWITCH:
 		SwitchPush(playerPos);
+	case BlockManager::TypeId::GOAL:
+		isGoal = true;
 		break;
+	case BlockManager::TypeId::NONE:
 	default:
 		break;
 	}

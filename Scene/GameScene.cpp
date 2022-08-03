@@ -45,10 +45,10 @@ void GameScene::Update()
 	player->Update(Input::Get());
 	stage->Update();
 
-	/*if (Input::IsKeyTrigger(DIK_SPACE))
+	if (Stage::IsGoal())
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
-	}*/
+	}
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		player->Reset();

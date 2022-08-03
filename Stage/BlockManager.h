@@ -21,7 +21,8 @@ public: //サブクラス
 	{
 		NONE,
 		WALL,
-		SWITCH
+		SWITCH,
+		GOAL
 	};
 
 	class Block
@@ -43,6 +44,7 @@ private: //メンバ変数
 	std::vector<BlockType> blockType;
 	std::vector<Block> block;
 	bool isOpen;
+	bool isGoal;
 
 public: //メンバ関数
 	// 初期化処理
@@ -57,6 +59,7 @@ public: //メンバ関数
 
 	Block& GetBlock(const int& index) { return block[index]; };
 	const bool GetDoor() const { return isOpen; }
+	const bool GetGoal() const { return isGoal; }
 private:
 	// プレイヤーの押し戻し処理
 	void PlayerPushBack() const;

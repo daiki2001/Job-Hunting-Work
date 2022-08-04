@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
-#include "./Header/Input.h"
+#include "InputManager.h"
 #include "./Header/EngineGeneral.h"
 
 class Player final
@@ -38,7 +38,7 @@ public: //メンバ関数
 	// 初期化処理
 	void Init(DrawPolygon* const draw);
 	// 更新処理
-	void Update(const Input* const input);
+	void Update(const InputManager* const input);
 	// 描画処理
 	void Draw(const int& offsetX = 0, const int& offsetY = 0);
 
@@ -46,5 +46,5 @@ public: //メンバ関数
 
 	const Direction GetDirection() const { return direction; };
 private:
-	void Move(const Input* const input);
+	void Move(const InputManager* const input);
 };

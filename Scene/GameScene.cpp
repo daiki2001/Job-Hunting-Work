@@ -1,6 +1,6 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/Input.h"
+#include "InputManager.h"
 #include "./Header/Camera.h"
 #include "Player.h"
 #include "./Stage/Stage.h"
@@ -42,7 +42,7 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-	player->Update(Input::Get());
+	player->Update(InputManager::Get());
 	stage->Update();
 
 	if (Stage::IsGoal())

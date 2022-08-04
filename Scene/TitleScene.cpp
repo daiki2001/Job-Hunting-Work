@@ -1,6 +1,6 @@
 #include "TitleScene.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/Input.h"
+#include "InputManager.h"
 
 #include "./Header/Error.h"
 
@@ -29,7 +29,7 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_SPACE))
+	if (InputManager::Get()->DecisionTrigger())
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
 	}

@@ -25,7 +25,7 @@ BlockManager::Block::Block(const BlockManager::TypeId& typeId) :
 BlockManager::BlockManager() :
 	blockType{},
 	block{},
-	isOpen(true),
+	isOpen(false),
 	isGoal(false)
 {
 }
@@ -119,6 +119,19 @@ void BlockManager::Draw(const int& offsetX, const int& offsetY)
 		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f));
 #endif // _DEBUG
 	}
+}
+
+void BlockManager::Reset()
+{
+	for (size_t i = 0; i < block.size(); i++)
+	{
+		if (block[i].GetTypeId() == BlockManager::TypeId::SWITCH)
+		{
+			block[i].isSwitch = false;
+		}
+	}
+
+	isGoal = false;
 }
 
 int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)

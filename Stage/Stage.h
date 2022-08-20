@@ -32,6 +32,9 @@ public: //メンバ関数
 	void Update();
 	// 描画処理
 	void Draw(const int& offsetX = 0, const int& offsetY = 0);
+	// リセット処理
+	void Reset();
+
 	// ステージ読み込み
 	void LoadStage(const char* filePath = nullptr);
 };

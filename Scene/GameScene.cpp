@@ -18,6 +18,8 @@ GameScene::GameScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	background(Engine::FUNCTION_ERROR)
 {
 	Init();
+	player->Reset();
+	stage->Reset();
 }
 
 GameScene::~GameScene()
@@ -30,7 +32,11 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
-	background = draw->LoadTextrue((gameResourcesDir + L"background.png").c_str());
+	if (background == FUNCTION_ERROR)
+	{
+		background = draw->LoadTextrue((gameResourcesDir + L"background.png").c_str());
+	}
+
 	player->Init(draw);
 	stage->Init(draw);
 	stage->LoadStage("./Resources/Game/Stage/test.csv");

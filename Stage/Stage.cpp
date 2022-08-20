@@ -36,6 +36,11 @@ void Stage::Init(DrawPolygon* const draw)
 #endif // _DEBUG
 }
 
+void Stage::Reset()
+{
+	block_mgr->Reset();
+}
+
 void Stage::Update()
 {
 	block_mgr->Update();

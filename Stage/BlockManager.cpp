@@ -32,6 +32,8 @@ BlockManager::BlockManager() :
 
 BlockManager::~BlockManager()
 {
+	blockType.clear();
+	block.clear();
 }
 
 BlockManager* BlockManager::Get()
@@ -42,6 +44,9 @@ BlockManager* BlockManager::Get()
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
+	blockType.clear();
+	block.clear();
+
 	blockType.push_back(BlockType(BlockManager::TypeId::NONE, draw));
 	blockType.back().Create();
 

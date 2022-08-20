@@ -1,19 +1,19 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/BaseScene.h"
 
 class SettingScene : public BaseScene
 {
-public: //’è”
+public: //å®šæ•°
 	static const std::wstring settingResourcesDir;
 
-public: //ƒƒ“ƒoŠÖ”
-	SettingScene(SceneChenger* sceneChenger);
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
+	SettingScene(DrawPolygon* draw, SceneChenger* sceneChenger);
 	~SettingScene() override;
 
 	void Init() override;
 	void Update() override;
 	void Draw() override;
 
-private: //ƒƒ“ƒo•Ï”
-	int background; //”wŒi‰æ‘œ
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
+	int background; //èƒŒæ™¯ç”»åƒ
 };

@@ -10,8 +10,8 @@ ShaderManager* shaderMgr = ShaderManager::Get();
 DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
-EngineTestScene::EngineTestScene(SceneChenger* sceneChenger) :
-	BaseScene(sceneChenger),
+EngineTestScene::EngineTestScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
+	BaseScene(draw, sceneChenger),
 	fbxLoader(FbxLoader::GetInstance()),
 	background(FUNCTION_ERROR),
 	fbxModel(FUNCTION_ERROR),
@@ -41,7 +41,7 @@ void EngineTestScene::Init()
 	fbxLoader->GetModel(fbxModel2)->Init();
 
 	// 画像の読み込み
-	background = draw.LoadTextrue(L"./Resources/background.png");
+	background = draw->LoadTextrue(L"./Resources/background.png");
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = DEGREE_F * (0.0f);
@@ -170,7 +170,7 @@ void EngineTestScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	postEffect.PreDraw();
-	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
 
 	if (useShader < 2)
 	{
@@ -202,7 +202,7 @@ void EngineTestScene::Draw()
 		DirectDrawing::GetSpriteRootSignature(),
 		DirectDrawing::GetSpritePipelineState());
 	// 背景
-	draw.DrawTextrue(
+	draw->DrawTextrue(
 		0.0f,
 		0.0f,
 		static_cast<float>(w->windowWidth),
@@ -240,7 +240,7 @@ void EngineTestScene::Draw()
 		DirectDrawing::GetSpriteRootSignature(),
 		DirectDrawing::GetSpritePipelineState());
 	// 前景
-	draw.DrawString(
+	draw->DrawString(
 		10.0f,
 		10.0f,
 		2.0f,
@@ -251,5 +251,5 @@ void EngineTestScene::Draw()
 	w->ScreenFlip();
 
 	// ループの終了処理
-	draw.PolygonLoopEnd();
+	draw->PolygonLoopEnd();
 }

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "DebugText.h"
 #include <d3dx12.h>
 #include "./Header/Camera.h"
@@ -7,88 +7,91 @@
 
 class DrawPolygon final : public DebugText
 {
-public: // ƒƒ“ƒoŠÖ”
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	DrawPolygon();
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~DrawPolygon();
 
-	// OŠpŒ`‚Ìì¬
+	// ä¸‰è§’å½¢ã®ä½œæˆ
 	int CreateTriangle(const XMFLOAT3& vertex1, const DirectX::XMFLOAT2& uv1,
 					   const XMFLOAT3& vertex2, const DirectX::XMFLOAT2& uv2,
 					   const XMFLOAT3& vertex3, const DirectX::XMFLOAT2& uv3, const bool& isFill = true);
-	// ‹éŒ`‚Ìì¬
+	// çŸ©å½¢ã®ä½œæˆ
 	int CreateRect(const float& width, const float& height, const bool& isFill = true);
-	// ³‘½ŠpŒ`‚Ìì¬
+	// æ­£å¤šè§’å½¢ã®ä½œæˆ
 	int CreateCircle(const float& r, const size_t& divNum, const bool& isFill = true);
-	// ’¼•û‘Ì‚Ìì¬
+	// ç›´æ–¹ä½“ã®ä½œæˆ
 	int Create3Dbox(const float& width, const float& height, const float& depth, const bool& isFill = true);
-	// ³‘½Šp‚Ìì¬
+	// æ­£å¤šè§’éŒã®ä½œæˆ
 	int CreateCorn(const float& r, const float& h, const size_t& divNum, const bool& isFill = true);
-	// ³‘½Šp’Œ‚Ìì¬
+	// æ­£å¤šè§’æŸ±ã®ä½œæˆ
 	int CreateCylinder(const float& r, const float& h, const size_t& divNum, const bool& isFill = true);
-	// ‹…‘Ì‚Ìì¬
+	// çƒä½“ã®ä½œæˆ
 	int CreateSphere(const float& r, const size_t& divNum, const bool& isFill = true);
 
-	// objƒtƒ@ƒCƒ‹‚É‚æ‚éƒ‚ƒfƒ‹‚Ìì¬ifilePathFobjƒtƒ@ƒCƒ‹‚Ì–¼‘OAdirectoryPathFƒ‚ƒfƒ‹‚Ìƒtƒ@ƒCƒ‹‚ª‚ ‚éƒtƒHƒ‹ƒ_j
+	// objãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹ãƒ¢ãƒ‡ãƒ«ã®ä½œæˆï¼ˆfilePathï¼šobjãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰ã€directoryPathï¼šãƒ¢ãƒ‡ãƒ«ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ï¼‰
 	int CreateOBJModel(const char* filePath, const char* directoryPath);
 
-	// ƒeƒNƒXƒ`ƒƒ‚Ìƒ^ƒCƒŠƒ“ƒO
+	// è¨ˆç®—ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ãƒ»ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®å‰Šé™¤
+	int DeleteModelData(int* modelData);
+
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¿ã‚¤ãƒªãƒ³ã‚°
 	void Tiring(const int& polygonData, const float& uvScaleX, const float& uvScaleY);
-	// ƒeƒNƒXƒ`ƒƒ‚Ì©“®ƒ^ƒCƒŠƒ“ƒO
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®è‡ªå‹•ã‚¿ã‚¤ãƒªãƒ³ã‚°
 	void AutoTiring(const int& polygonData, const int& graphHandle);
-	// ƒeƒNƒXƒ`ƒƒ‚ÌˆÚ“®
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç§»å‹•
 	void MoveUV(const int& polygonData, const int& graphHandle, DirectX::XMFLOAT2 speed);
 
-	// ƒIƒuƒWƒFƒNƒg‚Ì•`‰æˆ—
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æç”»å‡¦ç†
 	int Draw(const int& polygonData, const XMFLOAT3& position, const XMMATRIX& rotation, const XMFLOAT3& scale,
 			 const XMFLOAT4& color, const int& graphHandle = 0, const bool& isFill = true,
 			 const bool& isOrthoGraphic = false, const bool& viewMultiFlag = true, Object* parent = nullptr);
 
-	// ƒ‚ƒfƒ‹‚Ì•`‰æˆ—
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»å‡¦ç†
 	int DrawOBJ(const int& object, const XMFLOAT3& position, const XMMATRIX& rotation, const XMFLOAT3& scale,
 				const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f },
 				const bool& isOrthoGraphic = false, const bool& viewMultiFlag = true, Object* parent = nullptr);
 
-	// ƒJƒƒ‰‚Ìì¬
+	// ã‚«ãƒ¡ãƒ©ã®ä½œæˆ
 	int CreateCamera(const XMFLOAT3& cameraPos, const XMFLOAT3& cameraTarget, const XMFLOAT3& upVector);
 
-	// ƒXƒNƒŠ[ƒ“À•W‚©‚çƒ[ƒ‹ƒhÀ•W‚ğ‹‚ß‚é
+	// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã‹ã‚‰ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’æ±‚ã‚ã‚‹
 	DirectX::XMFLOAT3 ScreenToWorld(int x, int y, float z);
-	// ƒrƒ…[s—ñ‚Ì‹ts—ñ‚ğæ“¾iˆÚ“®—Ê‚Í0ŒÅ’èj
+	// ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—ã®é€†è¡Œåˆ—ã‚’å–å¾—ï¼ˆç§»å‹•é‡ã¯0å›ºå®šï¼‰
 	DirectX::XMMATRIX InverseView();
 
-	// “à•”‚Ì‰Šú‰»—pŠÖ”
+	// å†…éƒ¨ã®åˆæœŸåŒ–ç”¨é–¢æ•°
 	void PolygonLoopEnd();
 private:
-	// •`‰æŠÖ”‚Ì‰Šú‰»
+	// æç”»é–¢æ•°ã®åˆæœŸåŒ–
 	int DrawPolygonInit();
 
-	// •`‰æŠÖ”‚Ì‰Šú‰»
+	// æç”»é–¢æ•°ã®åˆæœŸåŒ–
 	int DrawOBJInit();
 
-	// ƒ}ƒeƒŠƒAƒ‹“Ç‚İ‚İ
+	// ãƒãƒ†ãƒªã‚¢ãƒ«èª­ã¿è¾¼ã¿
 	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
 
-	/*’¸“_À•W‚ÆƒCƒ“ƒfƒbƒNƒXƒf[ƒ^ŒvZ—p*/
+	/*é ‚ç‚¹åº§æ¨™ã¨ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿è¨ˆç®—ç”¨*/
 	void Circle(const XMFLOAT3& centerPos, const float& r, const size_t& divNum,
 				const bool& flag, Vertex* v, unsigned short* index);
 
-	// ƒf[ƒ^‚ÌÁ‹
+	// ãƒ‡ãƒ¼ã‚¿ã®æ¶ˆå»
 	void DataClear();
 
-public: // ƒƒ“ƒo•Ï”
-	XMFLOAT3 light;    //ŒõŒ¹
+public: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	XMFLOAT3 light;    //å…‰æº
 private:
-	int polygonCount; //ƒIƒuƒWƒFƒNƒg‚Ì”
-	size_t loopCount; //ƒ‹[ƒv‚µ‚½‰ñ”
+	int polygonCount; //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ•°
+	size_t loopCount; //ãƒ«ãƒ¼ãƒ—ã—ãŸå›æ•°
 
-	XMFLOAT3 lightVec; //Œõü
+	XMFLOAT3 lightVec; //å…‰ç·š
 
-	size_t objModelCount; //objƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚¾ƒ‚ƒfƒ‹‚Ì”
+	size_t objModelCount; //objãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã ãƒ¢ãƒ‡ãƒ«ã®æ•°
 	vector<size_t> verticesCount; //
 	vector<Material> material;
 
-	// ŠÖ”‚Ì‰Šú‰»ƒtƒ‰ƒO
+	// é–¢æ•°ã®åˆæœŸåŒ–ãƒ•ãƒ©ã‚°
 	bool isDrawOBJPolygonInit = false;
 };

@@ -1,4 +1,4 @@
-#include "TitleScene.h"
+ï»¿#include "TitleScene.h"
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 
@@ -11,8 +11,8 @@ static const std::wstring backgroundFileName = L"background.png";
 
 const std::wstring TitleScene::titleResourcesDir = L"./Resources/Title/";
 
-TitleScene::TitleScene(SceneChenger* sceneChenger) :
-	BaseScene(sceneChenger),
+TitleScene::TitleScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
+	BaseScene(draw, sceneChenger),
 	background(Engine::FUNCTION_ERROR)
 {
 	Init();
@@ -20,11 +20,15 @@ TitleScene::TitleScene(SceneChenger* sceneChenger) :
 
 TitleScene::~TitleScene()
 {
+#ifdef _DEBUG
+	std::string msg = typeid(*this).name() + std::string("ã‹ã‚‰æŠœã‘ã¾ã—ãŸã€‚\n");
+	OutputDebugStringA(msg.c_str());
+#endif // _DEBUG
 }
 
 void TitleScene::Init()
 {
-	background = draw.LoadTextrue((titleResourcesDir + backgroundFileName).c_str());
+	background = draw->LoadTextrue((titleResourcesDir + backgroundFileName).c_str());
 }
 
 void TitleScene::Update()
@@ -40,11 +44,11 @@ void TitleScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
-	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
 
-	// ”wŒi
+	// èƒŒæ™¯
 	DirectDrawing::ChangeSpriteShader();
-	draw.DrawTextrue(
+	draw->DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f,
 		static_cast<float>(w->windowWidth),
@@ -53,12 +57,12 @@ void TitleScene::Draw()
 		background
 	);
 
-	// 3DƒIƒuƒWƒFƒNƒg
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
-	// ‘OŒi
+	// å‰æ™¯
 
 	w->ScreenFlip();
 
-	// ƒ‹[ƒv‚ÌI—¹ˆ—
-	draw.PolygonLoopEnd();
+	// ãƒ«ãƒ¼ãƒ—ã®çµ‚äº†å‡¦ç†
+	draw->PolygonLoopEnd();
 }

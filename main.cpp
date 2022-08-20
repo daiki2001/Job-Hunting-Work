@@ -1,15 +1,16 @@
-#include "./Header/DirectXInit.h"
+ï»¿#include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
 #include "./Header/Camera.h"
 #include "./Header/Input.h"
 #include "./Header/SceneManager.h"
 
-/*ƒEƒBƒ“ƒhƒEƒTƒCƒY*/
-constexpr int window_width = 1280; //‰¡•
-constexpr int window_height = 768; //c•
+/*ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º*/
+constexpr int window_width = 1280; //æ¨ªå¹…
+constexpr int window_height = 768; //ç¸¦å¹…
 
-constexpr WCHAR title[] = L"DirectXGame"; //ƒ^ƒCƒgƒ‹
+constexpr WCHAR title[] = L"DirectXGame"; //ã‚¿ã‚¤ãƒˆãƒ«
 
-constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //”wŒiF
+constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //èƒŒæ™¯è‰²
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
@@ -27,16 +28,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	w->SetWindowSize(window_width, window_height);
 	w->Init();
 
+	DrawPolygon draw;
 	Camera::Init();
 	Input::Init();
 
-	SceneManager sceneManager;
+	SceneManager sceneManager(&draw);
 
 	while (true)
 	{
 		if (w->WindowMessage() == -1) { break; }
 
-		/* XV */
+		/* æ›´æ–° */
 		Input::Update();
 
 		sceneManager.Loop();

@@ -1,4 +1,4 @@
-#include "SettingScene.h"
+ï»¿#include "SettingScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Input.h"
 
@@ -11,8 +11,8 @@ static const std::wstring backgroundFileName = L"background.png";
 
 const std::wstring SettingScene::settingResourcesDir = L"./Resources/Setting/";
 
-SettingScene::SettingScene(SceneChenger* sceneChenger) :
-	BaseScene(sceneChenger),
+SettingScene::SettingScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
+	BaseScene(draw, sceneChenger),
 	background(Engine::FUNCTION_ERROR)
 {
 	Init();
@@ -20,11 +20,15 @@ SettingScene::SettingScene(SceneChenger* sceneChenger) :
 
 SettingScene::~SettingScene()
 {
+#ifdef _DEBUG
+	std::string msg = typeid(*this).name() + std::string("ã‹ã‚‰æŠœã‘ã¾ã—ãŸã€‚\n");
+	OutputDebugStringA(msg.c_str());
+#endif // _DEBUG
 }
 
 void SettingScene::Init()
 {
-	background = draw.LoadTextrue((settingResourcesDir + backgroundFileName).c_str());
+	background = draw->LoadTextrue((settingResourcesDir + backgroundFileName).c_str());
 }
 
 void SettingScene::Update()
@@ -44,11 +48,11 @@ void SettingScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
-	draw.SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
 
-	// ”wŒi
+	// èƒŒæ™¯
 	DirectDrawing::ChangeSpriteShader();
-	draw.DrawTextrue(
+	draw->DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f,
 		static_cast<float>(w->windowWidth),
@@ -57,12 +61,12 @@ void SettingScene::Draw()
 		background
 	);
 
-	// 3DƒIƒuƒWƒFƒNƒg
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
-	// ‘OŒi
+	// å‰æ™¯
 
 	w->ScreenFlip();
 
-	// ƒ‹[ƒv‚ÌI—¹ˆ—
-	draw.PolygonLoopEnd();
+	// ãƒ«ãƒ¼ãƒ—ã®çµ‚äº†å‡¦ç†
+	draw->PolygonLoopEnd();
 }

@@ -25,6 +25,13 @@ constexpr void Swap(T* a, T* b)
 	*a = *b;
 	*b = tmp;
 }
+
+template <class T>
+void ContainerClear(T& std)
+{
+	std.clear();
+	std.shrink_to_fit();
+}
 } //Engine
 
 using namespace Engine;

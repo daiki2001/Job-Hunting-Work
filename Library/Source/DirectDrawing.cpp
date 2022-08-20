@@ -6,8 +6,6 @@
 #include "./Math/Collision/CollisionManager.h"
 #include "./Header/SafeDelete.h"
 
-#include "./Header/Error.h"
-
 namespace
 {
 ShaderManager* shaderMgr = ShaderManager::Get();
@@ -92,12 +90,19 @@ int DirectDrawing::inputLayout2d = Engine::FUNCTION_ERROR;
 
 void DirectDrawing::DataClear()
 {
-	sprite.clear();
-	spriteIndex.clear();
-	vertices.clear();
-	obj.clear();
-	objIndex.clear();
-	objSubset.clear();
+	ContainerClear(sprite);
+	ContainerClear(spriteIndex);
+	ContainerClear(vertices);
+	ContainerClear(obj);
+	ContainerClear(objIndex);
+	ContainerClear(objSubset);
+
+	/*'vertices'で開放漏れが発生している?*/
+	vector<VertexData>().swap(vertices);
+
+#ifdef _DEBUG
+	OutputDebugStringA("'DirectDrawing'のデータを削除しました。\n");
+#endif // _DEBUG
 }
 
 void DirectDrawing::ChangeOBJShader()
@@ -293,7 +298,7 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 	HRESULT hr = S_FALSE;
 
 	// 'vertexNum'が0以下なら生成せずにリターンする
-	if (vertices.size() <= 0 || vertices[vertices.size() - 1].vertices.size() <= 0)
+	if (vertices.size() <= 0 || vertices.back().vertices.size() <= 0)
 	{
 		return Engine::FUNCTION_ERROR;
 	}
@@ -304,7 +309,7 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 
 	// 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB;
-	sizeVB = static_cast<UINT>(sizeof(Vertex) * vertices[vertices.size() - 1].vertices.size());
+	sizeVB = static_cast<UINT>(sizeof(Vertex) * vertices.back().vertices.size());
 
 	hr = dev->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
@@ -312,23 +317,23 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 		&CD3DX12_RESOURCE_DESC::Buffer(sizeVB),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&vertices[vertices.size() - 1].vertBuff));
+		IID_PPV_ARGS(&vertices.back().vertBuff));
 	if (FAILED(hr))
 	{
 		return Engine::FUNCTION_ERROR;
 	}
 
-	vertices[vertices.size() - 1].vbView.BufferLocation = vertices[vertices.size() - 1].vertBuff->GetGPUVirtualAddress();
-	vertices[vertices.size() - 1].vbView.SizeInBytes = sizeVB;
-	vertices[vertices.size() - 1].vbView.StrideInBytes = sizeof(Vertex);
+	vertices.back().vbView.BufferLocation = vertices.back().vertBuff->GetGPUVirtualAddress();
+	vertices.back().vbView.SizeInBytes = sizeVB;
+	vertices.back().vbView.StrideInBytes = sizeof(Vertex);
 
 #pragma endregion //VertexBuffer
 
-	if (vertices[vertices.size() - 1].indices.size() <= 0)
+	if (vertices.back().indices.size() <= 0)
 	{
-		for (unsigned short i = 0; i < vertices[vertices.size() - 1].vertices.size(); i++)
+		for (unsigned short i = 0; i < vertices.back().vertices.size(); i++)
 		{
-			vertices[vertices.size() - 1].indices.push_back(i);
+			vertices.back().indices.push_back(i);
 		}
 	}
 
@@ -336,7 +341,7 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 
 	//インデックスデータ全体のサイズ
 	UINT sizeIB;
-	sizeIB = static_cast<UINT>(sizeof(unsigned short) * vertices[vertices.size() - 1].indices.size());
+	sizeIB = static_cast<UINT>(sizeof(unsigned short) * vertices.back().indices.size());
 
 	hr = dev->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //アップロード可能
@@ -344,7 +349,7 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 		&CD3DX12_RESOURCE_DESC::Buffer(sizeIB),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&vertices[vertices.size() - 1].indexBuff));
+		IID_PPV_ARGS(&vertices.back().indexBuff));
 	if (FAILED(hr))
 	{
 		return Engine::FUNCTION_ERROR;
@@ -352,37 +357,37 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 
 	// GPU上のバッファに対応した仮想メモリを取得
 	static unsigned short* indexMap = nullptr;
-	hr = vertices[vertices.size() - 1].indexBuff->Map(0, nullptr, (void**)&indexMap);
+	hr = vertices.back().indexBuff->Map(0, nullptr, (void**)&indexMap);
 
 	// 全インデックスに対して
-	for (size_t i = 0; i < vertices[vertices.size() - 1].indices.size(); i++)
+	for (size_t i = 0; i < vertices.back().indices.size(); i++)
 	{
-		indexMap[i] = vertices[vertices.size() - 1].indices[i]; //インデックスをコピー
+		indexMap[i] = vertices.back().indices[i]; //インデックスをコピー
 	}
 
 	// 繋がりを解除
-	vertices[vertices.size() - 1].indexBuff->Unmap(0, nullptr);
+	vertices.back().indexBuff->Unmap(0, nullptr);
 
-	vertices[vertices.size() - 1].ibView.BufferLocation = vertices[vertices.size() - 1].indexBuff->GetGPUVirtualAddress();
-	vertices[vertices.size() - 1].ibView.Format = DXGI_FORMAT_R16_UINT;
-	vertices[vertices.size() - 1].ibView.SizeInBytes = sizeIB;
+	vertices.back().ibView.BufferLocation = vertices.back().indexBuff->GetGPUVirtualAddress();
+	vertices.back().ibView.Format = DXGI_FORMAT_R16_UINT;
+	vertices.back().ibView.SizeInBytes = sizeIB;
 
 #pragma endregion //IndexBuffer
 
 #pragma region NormalVector
 
-	for (size_t i = 0; i < vertices[vertices.size() - 1].indices.size() / 3; i++)
+	for (size_t i = 0; i < vertices.back().indices.size() / 3; i++)
 	{
 		using namespace DirectX;
 
 		// 三角形のインデックスを取り出して、一時的な変数に入れる
-		unsigned short temp0 = vertices[vertices.size() - 1].indices[i * 3 + 0];
-		unsigned short temp1 = vertices[vertices.size() - 1].indices[i * 3 + 1];
-		unsigned short temp2 = vertices[vertices.size() - 1].indices[i * 3 + 2];
+		unsigned short temp0 = vertices.back().indices[i * 3 + 0];
+		unsigned short temp1 = vertices.back().indices[i * 3 + 1];
+		unsigned short temp2 = vertices.back().indices[i * 3 + 2];
 		// 三角形を構成する頂点座標をベクトルに代入
-		XMVECTOR p0 = XMLoadFloat3(&vertices[vertices.size() - 1].vertices[temp0].pos);
-		XMVECTOR p1 = XMLoadFloat3(&vertices[vertices.size() - 1].vertices[temp1].pos);
-		XMVECTOR p2 = XMLoadFloat3(&vertices[vertices.size() - 1].vertices[temp2].pos);
+		XMVECTOR p0 = XMLoadFloat3(&vertices.back().vertices[temp0].pos);
+		XMVECTOR p1 = XMLoadFloat3(&vertices.back().vertices[temp1].pos);
+		XMVECTOR p2 = XMLoadFloat3(&vertices.back().vertices[temp2].pos);
 		// p0→p1ベクトル、p0→p2ベクトルを計算(ベクトルの減算)
 		XMVECTOR v1 = XMVectorSubtract(p1, p0);
 		XMVECTOR v2 = XMVectorSubtract(p2, p0);
@@ -391,21 +396,21 @@ int DirectDrawing::CreateVertexAndIndexBuffer()
 		// 正規化
 		normal = XMVector3Normalize(normal);
 		// 求めた法線を頂点データに代入
-		XMStoreFloat3(&vertices[vertices.size() - 1].vertices[temp0].normal, normal);
-		XMStoreFloat3(&vertices[vertices.size() - 1].vertices[temp1].normal, normal);
-		XMStoreFloat3(&vertices[vertices.size() - 1].vertices[temp2].normal, normal);
+		XMStoreFloat3(&vertices.back().vertices[temp0].normal, normal);
+		XMStoreFloat3(&vertices.back().vertices[temp1].normal, normal);
+		XMStoreFloat3(&vertices.back().vertices[temp2].normal, normal);
 	}
 
-	hr = vertices[vertices.size() - 1].vertBuff->Map(0, nullptr, (void**)&vertMap);
+	hr = vertices.back().vertBuff->Map(0, nullptr, (void**)&vertMap);
 
 	// 全頂点に対して
-	for (UINT i = 0; i < vertices[vertices.size() - 1].vertices.size(); i++)
+	for (UINT i = 0; i < vertices.back().vertices.size(); i++)
 	{
-		vertMap[i] = vertices[vertices.size() - 1].vertices[i]; //座標をコピー
+		vertMap[i] = vertices.back().vertices[i]; //座標をコピー
 	}
 
 	// マップを解除
-	vertices[vertices.size() - 1].vertBuff->Unmap(0, nullptr);
+	vertices.back().vertBuff->Unmap(0, nullptr);
 
 #pragma endregion //NormalVector
 

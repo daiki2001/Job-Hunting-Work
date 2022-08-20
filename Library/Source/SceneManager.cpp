@@ -1,4 +1,4 @@
-#include "./Header/Scenemanager.h"
+ï»¿#include "./Header/Scenemanager.h"
 #include "./Header/Camera.h"
 #include "./Header/DirectXInit.h"
 
@@ -9,15 +9,16 @@
 
 #include "./Header/Error.h"
 
-SceneManager::SceneManager()
+SceneManager::SceneManager(DrawPolygon* draw) :
+	draw(draw)
 {
 	if (DirectXInit::EngineDebug)
 	{
-		sceneStack.push(std::make_shared<EngineTestScene>(this));
+		sceneStack.push(std::make_shared<EngineTestScene>(this->draw, this));
 	}
 	else
 	{
-		sceneStack.push(std::make_shared<TitleScene>(this));
+		sceneStack.push(std::make_shared<TitleScene>(this->draw, this));
 	}
 }
 
@@ -43,16 +44,16 @@ void SceneManager::SceneChenge(const SceneChenger::Scene scene, const bool stack
 	switch (scene)
 	{
 	case SceneChenger::Scene::Title:
-		sceneStack.push(make_shared<TitleScene>(this));
+		sceneStack.push(make_shared<TitleScene>(this->draw, this));
 		break;
 	case SceneChenger::Scene::Game:
-		sceneStack.push(make_shared<GameScene>(this));
+		sceneStack.push(make_shared<GameScene>(this->draw, this));
 		break;
 	case SceneChenger::Scene::Setting:
-		sceneStack.push(make_shared<SettingScene>(this));
+		sceneStack.push(make_shared<SettingScene>(this->draw, this));
 		break;
 	default:
-		Engine::ErrorLog("‘¶İ‚µ‚È‚¢ƒV[ƒ“‚ªŒÄ‚Î‚ê‚Ü‚µ‚½\n", true);
+		Engine::ErrorLog("å­˜åœ¨ã—ãªã„ã‚·ãƒ¼ãƒ³ãŒå‘¼ã°ã‚Œã¾ã—ãŸ\n", true);
 		break;
 	}
 }

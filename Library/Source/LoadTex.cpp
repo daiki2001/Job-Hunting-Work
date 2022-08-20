@@ -2,8 +2,6 @@
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
 
-#include "./Header/Error.h"
-
 TextrueCommon::TextrueCommon() :
 	metadata{},
 	scratchImg{},
@@ -75,14 +73,14 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 			(UINT16)texCommonData.metadata.mipLevels
 		);
 
-		textrueData.push_back({});
+		textrueData.emplace_back(Textrue{});
 		hr = dev->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
 			D3D12_HEAP_FLAG_NONE,
 			&texResDesc,
 			D3D12_RESOURCE_STATE_GENERIC_READ, //テクスチャ用指定
 			nullptr,
-			IID_PPV_ARGS(&textrueData[textrueData.size() - 1].texbuff)
+			IID_PPV_ARGS(&textrueData.back().texbuff)
 		);
 		if (FAILED(hr))
 		{
@@ -90,7 +88,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 		}
 
 		// テクスチャバッファにデータ転送
-		hr = textrueData[textrueData.size() - 1].texbuff->WriteToSubresource(
+		hr = textrueData.back().texbuff->WriteToSubresource(
 			0,
 			nullptr,                            //全領域へコピー
 			texCommonData.img->pixels,          //元データアドレス
@@ -103,7 +101,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 		}
 
 		// デスクリプタヒープの先頭ハンドル(CPU)を取得
-		textrueData[textrueData.size() - 1].cpuDescHandle =
+		textrueData.back().cpuDescHandle =
 			CD3DX12_CPU_DESCRIPTOR_HANDLE(
 				texCommonData.descHeap->GetCPUDescriptorHandleForHeapStart(),
 				(INT)(textrueData.size() - 1),
@@ -111,7 +109,7 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 			);
 
 		// デスクリプタヒープの先頭ハンドル(GPU)を取得
-		textrueData[textrueData.size() - 1].gpuDescHandle =
+		textrueData.back().gpuDescHandle =
 			CD3DX12_GPU_DESCRIPTOR_HANDLE(
 				texCommonData.descHeap->GetGPUDescriptorHandleForHeapStart(),
 				(INT)(textrueData.size() - 1),
@@ -125,9 +123,9 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 		srvDesc.Texture2D.MipLevels = 1;
 
 		dev->CreateShaderResourceView(
-			textrueData[textrueData.size() - 1].texbuff.Get(), //ビューと関連付けるバッファ
+			textrueData.back().texbuff.Get(), //ビューと関連付けるバッファ
 			&srvDesc, //テクスチャ設定情報
-			textrueData[textrueData.size() - 1].cpuDescHandle
+			textrueData.back().cpuDescHandle
 		);
 	}
 
@@ -141,8 +139,12 @@ void LoadTex::DataClear()
 		textrueCount--;
 	}
 
-	textrueData.clear();
+	ContainerClear(textrueData);
 	texCommonData = {};
+
+#ifdef _DEBUG
+	OutputDebugStringA("'LoadTex'のデータを削除しました。\n");
+#endif // _DEBUG
 }
 
 int LoadTex::DrawTextureInit()
@@ -199,7 +201,7 @@ int LoadTex::DrawTextrue(const float& posX, const float& posY, const float& widt
 			return FUNCTION_ERROR;
 		}
 
-		spriteIndex.push_back({ size, graphHandle });
+		spriteIndex.emplace_back(IndexData{ size, graphHandle });
 	}
 
 	if (spriteIndex.size() == 0)
@@ -325,7 +327,7 @@ int LoadTex::DrawCutTextrue(const float& posX, const float& posY, const float& w
 			return FUNCTION_ERROR;
 		}
 
-		spriteIndex.push_back({ size, graphHandle });
+		spriteIndex.emplace_back(IndexData{ size, graphHandle });
 	}
 
 	if (spriteIndex.size() == 0)

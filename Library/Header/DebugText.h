@@ -1,47 +1,50 @@
-#pragma once
+ï»¿#pragma once
 #include "LoadTex.h"
 
 class DebugText : public LoadTex
 {
-public: // ’è”
-	static const int fontWidth = 8;      //•¶š‚Ì‰¡•
-	static const int fontHeight = 16;    //•¶š‚Ìc•
-	static const int fontLineCount = 16; //ˆês‚ ‚½‚è‚Ì•¶š”
+public: // å®šæ•°
+	static const int fontWidth = 8;      //æ–‡å­—ã®æ¨ªå¹…
+	static const int fontHeight = 16;    //æ–‡å­—ã®ç¸¦å¹…
+	static const int fontLineCount = 16; //ä¸€è¡Œã‚ãŸã‚Šã®æ–‡å­—æ•°
 
-private: // Ã“Iƒƒ“ƒo•Ï”
-	static int fontTex;         //ƒtƒHƒ“ƒg‰æ‘œ
-	static UINT64 fontTexWidth; //ƒtƒHƒ“ƒg‰æ‘œ‚Ì‰¡•
-	static UINT fontTexHeight;  //ƒtƒHƒ“ƒg‰æ‘œ‚Ìc•
+private: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	static int fontTex;         //ãƒ•ã‚©ãƒ³ãƒˆç”»åƒ
+	static UINT64 fontTexWidth; //ãƒ•ã‚©ãƒ³ãƒˆç”»åƒã®æ¨ªå¹…
+	static UINT fontTexHeight;  //ãƒ•ã‚©ãƒ³ãƒˆç”»åƒã®ç¸¦å¹…
 
-public: // ƒƒ“ƒoŠÖ”
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	DebugText();
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~DebugText();
 
+	// åˆæœŸåŒ–
+	HRESULT Init();
+
 	/// <summary>
-	/// ƒfƒoƒbƒOƒeƒLƒXƒg
+	/// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆ
 	/// </summary>
-	/// <param name="posX, posY"> •¶š—ñ‚ğ•`‰æ‚·‚é—Ìˆæ‚Ì¶ã‚ÌÀ•W </param>
-	/// <param name="fontScale"> •¶š‚Ì‘å‚«‚³i”{—¦j </param>
-	/// <param name="color"> FiRGBAj </param>
-	/// <param name="text"> •`‰æ‚µ‚½‚¢‘®•t‚«•¶š—ñ‚ÌƒAƒhƒŒƒX </param>
-	/// <param name="..."> ‘®•t‚«•¶š—ñ‚É•t‚·‚éˆø” </param>
-	/// <returns> 0‚Å¬Œ÷ </returns>
+	/// <param name="posX, posY"> æ–‡å­—åˆ—ã‚’æç”»ã™ã‚‹é ˜åŸŸã®å·¦ä¸Šã®åº§æ¨™ </param>
+	/// <param name="fontScale"> æ–‡å­—ã®å¤§ãã•ï¼ˆå€ç‡ï¼‰ </param>
+	/// <param name="color"> è‰²ï¼ˆRGBAï¼‰ </param>
+	/// <param name="text"> æç”»ã—ãŸã„æ›¸å¼ä»˜ãæ–‡å­—åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ </param>
+	/// <param name="..."> æ›¸å¼ä»˜ãæ–‡å­—åˆ—ã«ä»˜éšã™ã‚‹å¼•æ•° </param>
+	/// <returns> 0ã§æˆåŠŸ </returns>
 	HRESULT DrawString(const float& posX, const float& posY, const float& fontScale,
 					   const XMFLOAT4& color, const char* text, ...);
 
-	// ƒ‹[ƒvI‚í‚èiƒfƒoƒbƒOƒeƒLƒXƒg”Åj
+	// ãƒ«ãƒ¼ãƒ—çµ‚ã‚ã‚Šï¼ˆãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆç‰ˆï¼‰
 	void TextLoopEnd();
 private:
-	// ƒf[ƒ^‚ÌÁ‹
+	// ãƒ‡ãƒ¼ã‚¿ã®æ¶ˆå»
 	void DataClear();
 
-	// ƒfƒoƒbƒOƒeƒLƒXƒg‚Ì‰Šú‰»
+	// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã®åˆæœŸåŒ–
 	HRESULT DrawStringInit();
 
-private: // ƒƒ“ƒo•Ï”
-	vector<int> fontIndex; //’è”ƒoƒbƒtƒ@
-	int charCount;         //•¶š”
+private: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	vector<int> fontIndex; //å®šæ•°ãƒãƒƒãƒ•ã‚¡
+	int charCount;         //æ–‡å­—æ•°
 
 };

@@ -37,6 +37,10 @@ void TitleScene::Update()
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
 	}
+	else if (Input::IsKeyTrigger(DIK_A))
+	{
+		sceneChenger->SceneChenge(SceneChenger::Scene::StageEditer, true);
+	}
 }
 
 void TitleScene::Draw()

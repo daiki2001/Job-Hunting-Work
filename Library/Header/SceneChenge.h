@@ -7,7 +7,8 @@ public: // サブクラス
 	{
 		Title,
 		Game,
-		Setting
+		Setting,
+		StageEditer
 	};
 
 public: // メンバ関数

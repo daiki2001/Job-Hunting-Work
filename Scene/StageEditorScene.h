@@ -26,5 +26,7 @@ private: //メンバ変数
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT];
 	int mapIndex;
 	int blockIndex;
+
 	int background; //背景画像
+	int cursor; //カーソル画像
 };

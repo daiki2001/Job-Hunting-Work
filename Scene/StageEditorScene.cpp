@@ -18,7 +18,8 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 	mapArray{},
 	mapIndex(0),
 	blockIndex(0),
-	background(Engine::FUNCTION_ERROR)
+	background(Engine::FUNCTION_ERROR),
+	cursor(Engine::FUNCTION_ERROR)
 {
 	Init();
 }
@@ -35,9 +36,14 @@ void StageEditorScene::Init()
 {
 	block_mgr->Init(draw);
 
+	// ”wŒi‰æ‘œ‚Ì“Ç‚Ýž‚Ý
 	if (background == FUNCTION_ERROR)
 	{
 		background = draw->LoadTextrue((resourcesDir + L"Game/background.png").c_str());
+	}
+	if (cursor == FUNCTION_ERROR)
+	{
+		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
 	}
 
 	// ŠO•Ç‚Ìƒ‚ƒfƒ‹‚Ì“Ç‚Ýž‚Ý
@@ -183,6 +189,10 @@ void StageEditorScene::Draw()
 
 	// ‘OŒi
 	DirectDrawing::ChangeSpriteShader();
+	draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + w->windowWidth / 2.0f,
+					  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
+					  64.0f, 64.0f, 0.0f, cursor);
+
 	//draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "X:%d, Y:%d", mapIndex % STAGE_WIDTH, mapIndex / STAGE_WIDTH);
 	draw->DrawString(0.0f, 32.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);

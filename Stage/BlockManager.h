@@ -58,6 +58,12 @@ public: //メンバ関数
 
 	// ブロックの生成処理
 	int CreateBlock(const BlockManager::TypeId& typeId);
+	// ブロックの切り替え処理
+	void ChengeBlock(const int& index, const BlockManager::TypeId& typeId);
+	// ブロックの削除処理
+	void DeleteBlock(const int& index);
+	// 全ブロックの削除処理
+	void AllDeleteBlock();
 
 	Block& GetBlock(const int& index) { return block[index]; };
 	const bool GetDoor() const { return isOpen; }

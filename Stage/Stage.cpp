@@ -77,6 +77,8 @@ void Stage::LoadStage(const char* filePath)
 		Load::LoadMapChip(mapArray, sizeof(mapArray) / sizeof(mapArray[0]), filePath);
 	}
 
+	block_mgr->AllDeleteBlock();
+
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
 		int x = i % stageWidth;
@@ -89,7 +91,7 @@ void Stage::LoadStage(const char* filePath)
 		}
 
 		auto& block = block_mgr->GetBlock(index);
-		block.pos.x = static_cast<float>(x);
-		block.pos.y = static_cast<float>(-y);
+		block.pos.x = static_cast<float>(x * 1.0f);
+		block.pos.y = static_cast<float>(-y * 1.0f);
 	}
 }

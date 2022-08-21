@@ -143,11 +143,26 @@ int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 			continue;
 		}
 
-		block.push_back(typeId);
+		block.emplace_back(typeId);
 		return static_cast<int>(block.size() - 1);
 	}
 
 	return Engine::FUNCTION_ERROR;
+}
+
+void BlockManager::ChengeBlock(const int& index, const BlockManager::TypeId& typeId)
+{
+	block.at(index) = Block(typeId);
+}
+
+void BlockManager::DeleteBlock(const int& index)
+{
+	block.erase(block.begin() + index);
+}
+
+void BlockManager::AllDeleteBlock()
+{
+	block.clear();
 }
 
 void BlockManager::PlayerPushBack() const

@@ -17,6 +17,7 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 	BaseScene(draw, sceneChenger),
 	mapArray{},
 	mapIndex(0),
+	blockIndex(0),
 	background(Engine::FUNCTION_ERROR)
 {
 	Init();
@@ -105,9 +106,24 @@ void StageEditorScene::Update()
 		}
 	}
 
+	if (inputMgr->SubLeftTrigger())
+	{
+		if (blockIndex > 0)
+		{
+			blockIndex -= 1;
+		}
+	}
+	if (inputMgr->SubRightTrigger())
+	{
+		if (blockIndex < BlockManager::TypeId::MAX - 1)
+		{
+			blockIndex += 1;
+		}
+	}
+
 	if (inputMgr->DecisionTrigger())
 	{
-		mapArray[mapIndex] = BlockManager::TypeId::WALL;
+		mapArray[mapIndex] = blockIndex;
 	}
 
 	for (size_t i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
@@ -168,7 +184,8 @@ void StageEditorScene::Draw()
 	// ‘OŒi
 	DirectDrawing::ChangeSpriteShader();
 	//draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	draw->DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "X:%d, Y:%d", mapIndex % STAGE_WIDTH, mapIndex / STAGE_WIDTH);
+	draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "X:%d, Y:%d", mapIndex % STAGE_WIDTH, mapIndex / STAGE_WIDTH);
+	draw->DrawString(0.0f, 32.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
 
 	w->ScreenFlip();
 

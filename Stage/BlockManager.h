@@ -22,7 +22,8 @@ public: //サブクラス
 		NONE,
 		WALL,
 		SWITCH,
-		GOAL
+		GOAL,
+		MAX
 	};
 
 	class Block

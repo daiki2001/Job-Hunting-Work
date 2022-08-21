@@ -25,5 +25,6 @@ public: //ƒƒ“ƒoŠÖ”
 private: //ƒƒ“ƒo•Ï”
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT];
 	int mapIndex;
+	int blockIndex;
 	int background; //”wŒi‰æ‘œ
 };

@@ -194,7 +194,6 @@ void StageEditorScene::Draw()
 					  64.0f, 64.0f, 0.0f, cursor);
 
 	//draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "X:%d, Y:%d", mapIndex % STAGE_WIDTH, mapIndex / STAGE_WIDTH);
 	draw->DrawString(0.0f, 32.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
 
 	w->ScreenFlip();

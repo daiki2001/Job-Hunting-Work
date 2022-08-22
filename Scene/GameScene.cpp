@@ -62,6 +62,7 @@ void GameScene::Update()
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		player->Reset();
+		stage->Reset();
 	}
 }
 

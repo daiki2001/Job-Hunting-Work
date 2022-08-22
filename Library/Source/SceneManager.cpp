@@ -6,6 +6,7 @@
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/SettingScene.h"
+#include "../Scene/StageEditorScene.h"
 
 #include "./Header/Error.h"
 
@@ -51,6 +52,9 @@ void SceneManager::SceneChenge(const SceneChenger::Scene scene, const bool stack
 		break;
 	case SceneChenger::Scene::Setting:
 		sceneStack.push(make_shared<SettingScene>(this->draw, this));
+		break;
+	case SceneChenger::Scene::StageEditer:
+		sceneStack.push(make_shared<StageEditorScene>(this->draw, this));
 		break;
 	default:
 		Engine::ErrorLog("存在しないシーンが呼ばれました\n", true);

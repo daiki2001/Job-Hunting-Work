@@ -172,6 +172,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SettingScene.cpp" />
+    <ClCompile Include="Scene\StageEditorScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Stage\BlockType.cpp" />
     <ClCompile Include="Stage\BlockManager.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SettingScene.h" />
+    <ClInclude Include="Scene\StageEditorScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Stage\BlockType.h" />
     <ClInclude Include="Stage\BlockManager.h" />

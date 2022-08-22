@@ -2,24 +2,18 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
-#include "Player.h"
-#include "./Stage/Stage.h"
-
-namespace
-{
-static Player* player = Player::Get();
-static Stage* stage = Stage::Get();
-}
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
+Player* GameScene::player = Player::Get();
 
 GameScene::GameScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	BaseScene(draw, sceneChenger),
+	stage{},
 	background(Engine::FUNCTION_ERROR)
 {
 	Init();
 	player->Reset();
-	stage->Reset();
+	stage.Reset();
 }
 
 GameScene::~GameScene()
@@ -38,8 +32,8 @@ void GameScene::Init()
 	}
 
 	player->Init(draw);
-	stage->Init(draw);
-	stage->LoadStage("./Resources/Game/Stage/test.csv");
+	stage.Init(draw);
+	stage.LoadArea("./Resources/Game/Stage/test.csv");
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -53,16 +47,16 @@ void GameScene::Init()
 void GameScene::Update()
 {
 	player->Update(InputManager::Get());
-	stage->Update();
+	stage.Update();
 
-	if (Stage::IsGoal())
+	if (Area::IsGoal())
 	{
 		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
 	}
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		player->Reset();
-		stage->Reset();
+		stage.Reset();
 	}
 }
 
@@ -92,7 +86,7 @@ void GameScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage->Draw();
+	stage.Draw();
 	player->Draw();
 
 	// 前景

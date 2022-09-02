@@ -76,6 +76,7 @@ void BlockManager::Update()
 		break;
 	case BlockManager::TypeId::SWITCH:
 		SwitchPush(playerPos);
+		break;
 	case BlockManager::TypeId::GOAL:
 		isGoal = true;
 		break;

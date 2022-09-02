@@ -9,19 +9,18 @@ InputManager* inputMgr = InputManager::Get();
 }
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
-BlockManager* StageEditorScene::block_mgr = BlockManager::Get();
-int StageEditorScene::wall_obj = FUNCTION_ERROR;
-int StageEditorScene::door_obj = FUNCTION_ERROR;
 
 StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	BaseScene(draw, sceneChenger),
+	stage{},
 	mapArray{},
 	mapIndex(0),
-	blockIndex(0),
+	blockIndex(1),
 	background(Engine::FUNCTION_ERROR),
 	cursor(Engine::FUNCTION_ERROR)
 {
 	Init();
+	stage.Reset();
 }
 
 StageEditorScene::~StageEditorScene()
@@ -34,35 +33,25 @@ StageEditorScene::~StageEditorScene()
 
 void StageEditorScene::Init()
 {
-	block_mgr->Init(draw);
+	stage.Init(draw);
 
 	// 背景画像の読み込み
 	if (background == FUNCTION_ERROR)
 	{
-		background = draw->LoadTextrue((resourcesDir + L"Game/background.png").c_str());
+		background = draw->LoadTextrue((resourcesDir + L"./Game/background.png").c_str());
 	}
 	if (cursor == FUNCTION_ERROR)
 	{
 		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
 	}
 
-	// 外壁のモデルの読み込み
-	if (wall_obj == FUNCTION_ERROR)
-	{
-		wall_obj = draw->CreateOBJModel("./Resources/Game/Wall.obj", "./Resources/Game/");
-	}
-	if (door_obj == FUNCTION_ERROR)
-	{
-		door_obj = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
-	}
-
-	block_mgr->AllDeleteBlock();
-	for (size_t i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
+	Area::GetBlockManager()->AllDeleteBlock();
+	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
 		mapArray[i] = BlockManager::TypeId::NONE;
-		block_mgr->CreateBlock(BlockManager::TypeId(mapArray[i]));
-		block_mgr->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
-		block_mgr->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
+		Area::GetBlockManager()->CreateBlock(BlockManager::TypeId(mapArray[i]));
+		Area::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
+		Area::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
 	}
 
 	mapIndex = 0;
@@ -132,13 +121,13 @@ void StageEditorScene::Update()
 		mapArray[mapIndex] = blockIndex;
 	}
 
-	for (size_t i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
+	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
-		if (BlockManager::TypeId(mapArray[i]) != block_mgr->GetBlock(i).GetTypeId())
+		if (BlockManager::TypeId(mapArray[i]) != Area::GetBlockManager()->GetBlock(i).GetTypeId())
 		{
-			block_mgr->ChengeBlock(i, BlockManager::TypeId(mapArray[i]));
-			block_mgr->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
-			block_mgr->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
+			Area::GetBlockManager()->ChengeBlock(i, BlockManager::TypeId(mapArray[i]));
+			Area::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
+			Area::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
 		}
 	}
 }
@@ -172,20 +161,7 @@ void StageEditorScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	// 外壁の描画
-	DirectDrawing::ChangeMaterialShader();
-	draw->DrawOBJ(wall_obj, Vector3(-7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(0 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(1 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(2 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(3 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-
-	if (block_mgr->GetDoor() == false)
-	{
-		DirectDrawing::ChangeOBJShader();
-		draw->Draw(door_obj, Vector3(0.0f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(11.0f, 1.0f, 2.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	}
-
-	block_mgr->Draw();
+	stage.Draw();
 
 	// 前景
 	DirectDrawing::ChangeSpriteShader();
@@ -193,8 +169,7 @@ void StageEditorScene::Draw()
 					  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
 					  64.0f, 64.0f, 0.0f, cursor);
 
-	//draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	draw->DrawString(0.0f, 32.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
+	draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
 
 	w->ScreenFlip();
 

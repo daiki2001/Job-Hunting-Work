@@ -2,24 +2,19 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
-#include "Player.h"
-#include "./Stage/Stage.h"
-
-namespace
-{
-static Player* player = Player::Get();
-static Stage* stage = Stage::Get();
-}
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
+Player* GameScene::player = Player::Get();
+bool GameScene::isClear = false;
 
 GameScene::GameScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	BaseScene(draw, sceneChenger),
-	background(Engine::FUNCTION_ERROR)
+	stage{},
+	background(Engine::FUNCTION_ERROR),
+	clear(Engine::FUNCTION_ERROR)
 {
 	Init();
-	player->Reset();
-	stage->Reset();
+	Reset();
 }
 
 GameScene::~GameScene()
@@ -36,10 +31,14 @@ void GameScene::Init()
 	{
 		background = draw->LoadTextrue((gameResourcesDir + L"background.png").c_str());
 	}
+	if (clear == FUNCTION_ERROR)
+	{
+		clear = draw->LoadTextrue((gameResourcesDir + L"Clear.png").c_str());
+	}
 
 	player->Init(draw);
-	stage->Init(draw);
-	stage->LoadStage("./Resources/Game/Stage/test.csv");
+	stage.Init(draw);
+	stage.LoadArea("./Resources/Game/Stage/test.csv");
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -52,17 +51,27 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-	player->Update(InputManager::Get());
-	stage->Update();
-
-	if (Stage::IsGoal())
+	if (isClear)
 	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
+		if (InputManager::Get()->DecisionTrigger())
+		{
+			sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
+		}
 	}
+	else
+	{
+		player->Update(InputManager::Get());
+		stage.Update();
+
+		if (Area::IsGoal())
+		{
+			isClear = true;
+		}
+	}
+
 	if (Input::IsKeyTrigger(DIK_R))
 	{
-		player->Reset();
-		stage->Reset();
+		Reset();
 	}
 }
 
@@ -92,16 +101,30 @@ void GameScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage->Draw();
+	stage.Draw();
 	player->Draw();
 
 	// 前景
 	DirectDrawing::ChangeSpriteShader();
-	draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	draw->DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
+	if (isClear)
+	{
+		draw->DrawTextrue(w->windowWidth / 2.0f, w->windowHeight / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear, DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	}
+	else
+	{
+		draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
+	}
 
 	w->ScreenFlip();
 
 	// ループの終了処理
 	draw->PolygonLoopEnd();
+}
+
+void GameScene::Reset()
+{
+	isClear = false;
+	player->Reset();
+	stage.Reset();
 }

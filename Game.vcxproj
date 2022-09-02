@@ -177,6 +177,7 @@
     <ClCompile Include="Stage\BlockType.cpp" />
     <ClCompile Include="Stage\BlockManager.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
+    <ClCompile Include="Stage\Area.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Stage\BlockType.h" />
     <ClInclude Include="Stage\BlockManager.h" />
     <ClInclude Include="Stage\Stage.h" />
+    <ClInclude Include="Stage\Area.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Game\background.png" />

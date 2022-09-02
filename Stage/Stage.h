@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
-#include "BlockManager.h"
+#include "Area.h"
 #include "./Header/EngineGeneral.h"
 
 class Stage final
@@ -23,7 +23,9 @@ private: //静的メンバ変数
 	static int door_obj; //ドアのオブジェクト
 
 public: //静的メンバ関数
-	static const bool IsGoal() { return block_mgr->GetGoal(); };
+	static const bool IsGoal() { return block_mgr->GetGoal(); }
+
+	static BlockManager* GetBlockManager() { return block_mgr; }
 
 public: //メンバ関数
 	// 初期化処理

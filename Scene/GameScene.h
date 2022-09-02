@@ -10,10 +10,12 @@ public: //定数
 	
 public: //静的メンバ変数
 	static Player* player;
+	static bool isClear;
 
 private: //メンバ変数
 	Area stage;
 	int background; //背景画像
+	int clear;
 
 public: //メンバ関数
 	GameScene(DrawPolygon* draw, SceneChenger* sceneChenger);
@@ -22,4 +24,6 @@ public: //メンバ関数
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+private:
+	void Reset();
 };

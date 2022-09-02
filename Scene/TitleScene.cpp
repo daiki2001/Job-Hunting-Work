@@ -139,7 +139,7 @@ void TitleScene::Draw()
 	draw->DrawTextrue(
 		w->windowWidth / 2.0f,
 		w->windowHeight / 2.0f + 150.0f,
-		352.0f,
+		144.0f,
 		64.0f,
 		0.0f,
 		start

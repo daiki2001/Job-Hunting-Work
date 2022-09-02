@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
-#include "BlockManager.h"
+#include "Area.h"
 #include "./Header/EngineGeneral.h"
 
 class Stage final

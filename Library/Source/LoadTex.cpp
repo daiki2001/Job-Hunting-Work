@@ -51,83 +51,95 @@ int LoadTex::LoadTextrue(const wchar_t* fileName)
 		}
 	}
 
-	if (fileName != nullptr)
+	if (fileName == nullptr)
 	{
-		textrueCount++;
-
-		// WICテクスチャのロード
-		LoadFromWICFile(
-			fileName,
-			DirectX::WIC_FLAGS_IGNORE_SRGB,
-			&texCommonData.metadata,
-			texCommonData.scratchImg
-		);
-
-		texCommonData.img = texCommonData.scratchImg.GetImage(0, 0, 0);
-
-		texResDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-			texCommonData.metadata.format,
-			texCommonData.metadata.width,
-			(UINT)texCommonData.metadata.height,
-			(UINT16)texCommonData.metadata.arraySize,
-			(UINT16)texCommonData.metadata.mipLevels
-		);
-
-		textrueData.emplace_back(Textrue{});
-		hr = dev->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
-			D3D12_HEAP_FLAG_NONE,
-			&texResDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ, //テクスチャ用指定
-			nullptr,
-			IID_PPV_ARGS(&textrueData.back().texbuff)
-		);
-		if (FAILED(hr))
-		{
-			return FUNCTION_ERROR;
-		}
-
-		// テクスチャバッファにデータ転送
-		hr = textrueData.back().texbuff->WriteToSubresource(
-			0,
-			nullptr,                            //全領域へコピー
-			texCommonData.img->pixels,          //元データアドレス
-			(UINT)texCommonData.img->rowPitch,  //1ラインサイズ
-			(UINT)texCommonData.img->slicePitch //一枚サイズ
-		);
-		if (FAILED(hr))
-		{
-			return FUNCTION_ERROR;
-		}
-
-		// デスクリプタヒープの先頭ハンドル(CPU)を取得
-		textrueData.back().cpuDescHandle =
-			CD3DX12_CPU_DESCRIPTOR_HANDLE(
-				texCommonData.descHeap->GetCPUDescriptorHandleForHeapStart(),
-				(INT)(textrueData.size() - 1),
-				dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
-			);
-
-		// デスクリプタヒープの先頭ハンドル(GPU)を取得
-		textrueData.back().gpuDescHandle =
-			CD3DX12_GPU_DESCRIPTOR_HANDLE(
-				texCommonData.descHeap->GetGPUDescriptorHandleForHeapStart(),
-				(INT)(textrueData.size() - 1),
-				dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
-			);
-
-		// シェーダリソースビュー設定
-		srvDesc.Format = texCommonData.metadata.format;
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; //2Dテクスチャ
-		srvDesc.Texture2D.MipLevels = 1;
-
-		dev->CreateShaderResourceView(
-			textrueData.back().texbuff.Get(), //ビューと関連付けるバッファ
-			&srvDesc, //テクスチャ設定情報
-			textrueData.back().cpuDescHandle
-		);
+		return FUNCTION_ERROR;
 	}
+
+	for (size_t i = 0; i < textrueData.size(); i++)
+	{
+		if (fileName == textrueData.at(i).name)
+		{
+			return static_cast<int>(i);
+		}
+	}
+
+	textrueCount++;
+
+	// WICテクスチャのロード
+	LoadFromWICFile(
+		fileName,
+		DirectX::WIC_FLAGS_IGNORE_SRGB,
+		&texCommonData.metadata,
+		texCommonData.scratchImg
+	);
+
+	texCommonData.img = texCommonData.scratchImg.GetImage(0, 0, 0);
+
+	texResDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+		texCommonData.metadata.format,
+		texCommonData.metadata.width,
+		(UINT)texCommonData.metadata.height,
+		(UINT16)texCommonData.metadata.arraySize,
+		(UINT16)texCommonData.metadata.mipLevels
+	);
+
+	textrueData.emplace_back(Textrue{});
+	textrueData.back().name = fileName;
+
+	hr = dev->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
+		D3D12_HEAP_FLAG_NONE,
+		&texResDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, //テクスチャ用指定
+		nullptr,
+		IID_PPV_ARGS(&textrueData.back().texbuff)
+	);
+	if (FAILED(hr))
+	{
+		return FUNCTION_ERROR;
+	}
+
+	// テクスチャバッファにデータ転送
+	hr = textrueData.back().texbuff->WriteToSubresource(
+		0,
+		nullptr,                            //全領域へコピー
+		texCommonData.img->pixels,          //元データアドレス
+		(UINT)texCommonData.img->rowPitch,  //1ラインサイズ
+		(UINT)texCommonData.img->slicePitch //一枚サイズ
+	);
+	if (FAILED(hr))
+	{
+		return FUNCTION_ERROR;
+	}
+
+	// デスクリプタヒープの先頭ハンドル(CPU)を取得
+	textrueData.back().cpuDescHandle =
+		CD3DX12_CPU_DESCRIPTOR_HANDLE(
+			texCommonData.descHeap->GetCPUDescriptorHandleForHeapStart(),
+			(INT)(textrueData.size() - 1),
+			dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+		);
+
+	// デスクリプタヒープの先頭ハンドル(GPU)を取得
+	textrueData.back().gpuDescHandle =
+		CD3DX12_GPU_DESCRIPTOR_HANDLE(
+			texCommonData.descHeap->GetGPUDescriptorHandleForHeapStart(),
+			(INT)(textrueData.size() - 1),
+			dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+		);
+
+	// シェーダリソースビュー設定
+	srvDesc.Format = texCommonData.metadata.format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; //2Dテクスチャ
+	srvDesc.Texture2D.MipLevels = 1;
+
+	dev->CreateShaderResourceView(
+		textrueData.back().texbuff.Get(), //ビューと関連付けるバッファ
+		&srvDesc, //テクスチャ設定情報
+		textrueData.back().cpuDescHandle
+	);
 
 	return static_cast<int>(textrueData.size() - 1);
 }

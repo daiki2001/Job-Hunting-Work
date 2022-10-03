@@ -2,6 +2,7 @@
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
 #include "./Header/EngineGeneral.h"
+#include <vector>
 
 class Stage final
 {
@@ -18,18 +19,17 @@ private: //エイリアス
 
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static BlockManager* block_mgr;
-	static int wall_obj; //外壁のオブジェクト
-	static int door_obj; //ドアのオブジェクト
+	static std::vector<Area> area; //各部屋の情報
 
 public: //静的メンバ関数
-	static const bool IsGoal() { return block_mgr->GetGoal(); }
+	// 静的初期化処理
+	static void StaticInit(DrawPolygon* const draw);
 
-	static BlockManager* GetBlockManager() { return block_mgr; }
+	static const bool IsGoal() { return Area::IsGoal(); }
 
 public: //メンバ関数
 	// 初期化処理
-	void Init(DrawPolygon* const draw);
+	void Init();
 	// 更新処理
 	void Update();
 	// 描画処理

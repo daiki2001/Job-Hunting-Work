@@ -1,4 +1,4 @@
-#include "StageEditorScene.h"
+ï»¿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
@@ -26,16 +26,16 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 StageEditorScene::~StageEditorScene()
 {
 #ifdef _DEBUG
-	std::string msg = typeid(*this).name() + std::string("‚©‚ç”²‚¯‚Ü‚µ‚½B\n");
+	std::string msg = typeid(*this).name() + std::string("ã‹ã‚‰æŠœã‘ã¾ã—ãŸã€‚\n");
 	OutputDebugStringA(msg.c_str());
 #endif // _DEBUG
 }
 
 void StageEditorScene::Init()
 {
-	stage.Init(draw);
+	stage.StaticInit(draw);
 
-	// ”wŒi‰æ‘œ‚Ì“Ç‚Ýž‚Ý
+	// èƒŒæ™¯ç”»åƒã®èª­ã¿è¾¼ã¿
 	if (background == FUNCTION_ERROR)
 	{
 		background = draw->LoadTextrue((resourcesDir + L"./Game/background.png").c_str());
@@ -142,7 +142,7 @@ void StageEditorScene::Draw()
 	w->ClearScreen();
 	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
 
-	// ”wŒi
+	// èƒŒæ™¯
 	DirectDrawing::ChangeSpriteShader();
 	for (int y = 0; y * 128 < w->windowHeight; y++)
 	{
@@ -160,10 +160,10 @@ void StageEditorScene::Draw()
 		}
 	}
 
-	// 3DƒIƒuƒWƒFƒNƒg
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	stage.Draw();
 
-	// ‘OŒi
+	// å‰æ™¯
 	DirectDrawing::ChangeSpriteShader();
 	draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + w->windowWidth / 2.0f,
 					  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
@@ -173,6 +173,6 @@ void StageEditorScene::Draw()
 
 	w->ScreenFlip();
 
-	// ƒ‹[ƒv‚ÌI—¹ˆ—
+	// ãƒ«ãƒ¼ãƒ—ã®çµ‚äº†å‡¦ç†
 	draw->PolygonLoopEnd();
 }

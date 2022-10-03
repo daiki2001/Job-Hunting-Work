@@ -37,7 +37,7 @@ void GameScene::Init()
 	}
 
 	player->Init(draw);
-	stage.Init(draw);
+	stage.StaticInit(draw);
 	stage.LoadArea("./Resources/Game/Stage/test.csv");
 
 	Camera::targetRadius = 10.0f;

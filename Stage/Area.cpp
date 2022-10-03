@@ -1,4 +1,5 @@
-#include "Area.h"
+ï»¿#include "Area.h"
+#include "Door.h"
 
 namespace
 {
@@ -8,26 +9,33 @@ static int debugTex = FUNCTION_ERROR;
 DrawPolygon* Area::draw = nullptr;
 BlockManager* Area::block_mgr = BlockManager::Get();
 int Area::wall_obj = FUNCTION_ERROR;
-int Area::door_obj = FUNCTION_ERROR;
 
-Area::Area()
+Area::Area() :
+	door{}
 {
+	door[DoorNum::UP].Init(Vector3(11.0f, 1.0f, 2.0f), Door::DoorStatus::CLOSE);
+	door[DoorNum::DOWN].Init(Vector3(11.0f, 1.0f, 2.0f), Door::DoorStatus::ENTRANCE);
+	door[DoorNum::LEFT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
+	door[DoorNum::RIGHT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
 }
 
 Area::~Area()
 {
 }
 
-void Area::Init(DrawPolygon* const draw)
+void Area::StaticInit(DrawPolygon* const draw)
 {
-	this->draw = draw;
-	block_mgr->Init(draw);
-	// ŠO•Ç‚Ìƒ‚ƒfƒ‹‚Ì“Ç‚Ýž‚Ý
-	wall_obj = draw->CreateOBJModel("./Resources/Game/Wall.obj", "./Resources/Game/");
-	door_obj = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
-#ifdef _DEBUG
-	debugTex = draw->LoadTextrue(L"./lib/white1x1.png");
-#endif // _DEBUG
+	if (draw != nullptr)
+	{
+		Area::draw = draw;
+	}
+	block_mgr->Init(Area::draw);
+	// å¤–å£ã®ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
+	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall.obj", "./Resources/Game/");
+//#ifdef _DEBUG
+	debugTex = Area::draw->LoadTextrue(L"./lib/white1x1.png");
+//#endif // _DEBUG
+	Door::StaticInit(draw);
 }
 
 void Area::Reset()
@@ -38,24 +46,31 @@ void Area::Reset()
 void Area::Update()
 {
 	block_mgr->Update();
+
+	if (block_mgr->GetDoor())
+	{
+		for (size_t i = 0; i < sizeof(door) / sizeof(door[0]); i++)
+		{
+			door[i].Open();
+		}
+	}
 }
 
 void Area::Draw(const int& offsetX, const int& offsetY)
 {
 	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
 
-	// ŠO•Ç‚Ì•`‰æ
+	// å¤–å£ã®æç”»
 	DirectDrawing::ChangeMaterialShader();
 	draw->DrawOBJ(wall_obj, Vector3(-7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(0 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(-7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(1 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(2 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(3 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
 
-	if (block_mgr->GetDoor() == false)
-	{
-		DirectDrawing::ChangeOBJShader();
-		draw->Draw(door_obj, Vector3(0.0f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(11.0f, 1.0f, 2.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), debugTex);
-	}
+	door[DoorNum::UP].Draw(Vector3(0.0f, +4.5f, 0.0f) + offset);
+	door[DoorNum::DOWN].Draw(Vector3(0.0f, -4.5f, 0.0f) + offset);
+	door[DoorNum::LEFT].Draw(Vector3(-8.5f, 0.0f, 0.0f) + offset);
+	door[DoorNum::RIGHT].Draw(Vector3(+8.5f, 0.0f, 0.0f) + offset);
 
 	block_mgr->Draw(offsetX, -offsetY);
 }

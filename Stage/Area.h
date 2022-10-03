@@ -1,37 +1,51 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "BlockManager.h"
+#include "Door.h"
 #include "./Header/EngineGeneral.h"
 
 class Area
 {
-private: //ƒGƒCƒŠƒAƒX
+private: //ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	using Vector3 = Math::Vector3;
 
-private: //Ã“Iƒƒ“ƒo•Ï”
+public: //ã‚µãƒ–ã‚¯ãƒ©ã‚¹
+	enum DoorNum
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT
+	};
+
+private: //é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 	static DrawPolygon* draw;
 	static BlockManager* block_mgr;
-	static int wall_obj; //ŠO•Ç‚ÌƒIƒuƒWƒFƒNƒg
-	static int door_obj; //ƒhƒA‚ÌƒIƒuƒWƒFƒNƒg
+	static int wall_obj; //å¤–å£ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
-public: //Ã“Iƒƒ“ƒoŠÖ”
+public: //é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	// é™çš„åˆæœŸåŒ–å‡¦ç†
+	static void StaticInit(DrawPolygon* const draw);
 	static const bool IsGoal() { return block_mgr->GetGoal(); }
 
 	static BlockManager* GetBlockManager() { return block_mgr; }
 
-public: //ƒƒ“ƒoŠÖ”
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
+	Door door[4];
+
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
 	Area();
 	~Area();
 
-	// ‰Šú‰»ˆ—
-	void Init(DrawPolygon* const draw);
-	// XVˆ—
+	// åˆæœŸåŒ–å‡¦ç†
+	void Init() {}
+	// æ›´æ–°å‡¦ç†
 	void Update();
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Draw(const int& offsetX = 0, const int& offsetY = 0);
-	// ƒŠƒZƒbƒgˆ—
+	// ãƒªã‚»ãƒƒãƒˆå‡¦ç†
 	void Reset();
 
-	// ƒXƒe[ƒW“Ç‚İ‚İ
+	// ã‚¹ãƒ†ãƒ¼ã‚¸èª­ã¿è¾¼ã¿
 	void LoadArea(const char* filePath = nullptr);
 };

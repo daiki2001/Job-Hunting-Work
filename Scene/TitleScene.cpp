@@ -38,7 +38,7 @@ void TitleScene::Init()
 	}
 	if (buttonBack == FUNCTION_ERROR)
 	{
-		buttonBack = draw->LoadTextrue(L"./lib/white1x1.png");
+		buttonBack = draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
 	}
 	if (start == FUNCTION_ERROR)
 	{

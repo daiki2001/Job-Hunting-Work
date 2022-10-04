@@ -27,7 +27,7 @@ HRESULT DebugText::Init()
 	if (fontTex == FUNCTION_ERROR)
 	{
 		// デバッグテキスト用のテキスト画像の読み込み
-		fontTex = LoadTextrue(L"./lib/DebugTextFont.png");
+		fontTex = LoadTextrue(L"./Resources/Engine/DebugTextFont.png");
 		if (fontTex == FUNCTION_ERROR)
 		{
 			return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);

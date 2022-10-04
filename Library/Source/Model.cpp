@@ -1,9 +1,9 @@
-#include "./Header/Model.h"
+ï»¿#include "./Header/Model.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/FbxLoader.h"
 #include "./ShaderMgr/ShaderManager.h"
 
-/*ƒVƒF[ƒ_—p*/
+/*ã‚·ã‚§ãƒ¼ãƒ€ç”¨*/
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
 
@@ -60,9 +60,9 @@ Model::~Model()
 HRESULT Model::CreateGraphicsPipeline()
 {
 	HRESULT hr = S_FALSE;
-	ComPtr<ID3DBlob> vsBlob;    //’¸“_ƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg
-	ComPtr<ID3DBlob> psBlob;    //ƒsƒNƒZƒ‹ƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg
-	ComPtr<ID3DBlob> errorBlob; //ƒGƒ‰[ƒIƒuƒWƒFƒNƒg
+	ComPtr<ID3DBlob> vsBlob;    //é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	ComPtr<ID3DBlob> psBlob;    //ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	ComPtr<ID3DBlob> errorBlob; //ã‚¨ãƒ©ãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 	static bool isInit = false;
 
@@ -73,11 +73,13 @@ HRESULT Model::CreateGraphicsPipeline()
 
 	isInit = true;
 
-	// ŠeíƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹‚Æ“Ç‚İ‚İ
-	defaultShader = shaderMgr->CreateShader(L"./lib/Shaders/FBXVS.hlsl", L"./lib/Shaders/FBXPS.hlsl");
-	colorShader = shaderMgr->CreateShader(shaderMgr->GetShader(defaultShader).GetVertex(), L"./lib/Shaders/color.hlsl");
+	// å„ç¨®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã¨èª­ã¿è¾¼ã¿
+	defaultShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "FBXVS.hlsl").c_str(),
+											StringToWString(shadersDirectory + "FBXPS.hlsl").c_str());
+	colorShader = shaderMgr->CreateShader(shaderMgr->GetShader(defaultShader).GetVertex(),
+										  StringToWString(shadersDirectory + "color.hlsl").c_str());
 
-	// ’¸“_ƒŒƒCƒAƒEƒg
+	// é ‚ç‚¹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
 	inputLayout = shaderMgr->CreateInputLayout();
 	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
 	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
@@ -88,17 +90,17 @@ HRESULT Model::CreateGraphicsPipeline()
 	defaultGPipeline = shaderMgr->CreateGPipeline(defaultShader, inputLayout);
 	colorGPipeline = shaderMgr->CreateGPipeline(colorShader, inputLayout);
 
-	// ƒfƒXƒNƒŠƒvƒ^ƒŒƒ“ƒW
+	// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ¬ãƒ³ã‚¸
 	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {};
-	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 ƒŒƒWƒXƒ^
+	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 ãƒ¬ã‚¸ã‚¹ã‚¿
 
-	// ƒ‹[ƒgƒpƒ‰ƒ[ƒ^
+	// ãƒ«ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 	CD3DX12_ROOT_PARAMETER rootparams[3] = {};
-	// CBViÀ•W•ÏŠ·s—ñ—pj
+	// CBVï¼ˆåº§æ¨™å¤‰æ›è¡Œåˆ—ç”¨ï¼‰
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-	// SRViƒeƒNƒXƒ`ƒƒj
+	// SRVï¼ˆãƒ†ã‚¯ã‚¹ãƒãƒ£ï¼‰
 	rootparams[1].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	// CBViƒXƒLƒjƒ“ƒO—pj
+	// CBVï¼ˆã‚¹ã‚­ãƒ‹ãƒ³ã‚°ç”¨ï¼‰
 	rootparams[2].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
 
 	rootSignature = shaderMgr->CreateRootSignature(defaultGPipeline, _countof(rootparams), rootparams);
@@ -108,14 +110,14 @@ HRESULT Model::CreateGraphicsPipeline()
 		auto& defaultGpipeline = shaderMgr->GetGraphicsPipeline(defaultGPipeline, static_cast<ShaderManager::BlendMode>(i));
 		auto& colorGpipeline = shaderMgr->GetGraphicsPipeline(colorGPipeline, static_cast<ShaderManager::BlendMode>(i));
 
-		// ƒuƒŒƒ“ƒhƒXƒe[ƒg‚Ìİ’è
+		// ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š
 		defaultGpipeline.BlendState.RenderTarget[1] = defaultGpipeline.BlendState.RenderTarget[0];
 		colorGpipeline.BlendState = colorGpipeline.BlendState;
 
-		// ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒg‚Ìİ’è
-		defaultGpipeline.NumRenderTargets = 2;    // •`‰æ‘ÎÛ‚Í1‚Â
-		defaultGpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0`255w’è‚ÌRGBA
-		defaultGpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0`255w’è‚ÌRGBA
+		// ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®è¨­å®š
+		defaultGpipeline.NumRenderTargets = 2;    // æç”»å¯¾è±¡ã¯1ã¤
+		defaultGpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0ï½255æŒ‡å®šã®RGBA
+		defaultGpipeline.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM; // 0ï½255æŒ‡å®šã®RGBA
 		colorGpipeline.NumRenderTargets = defaultGpipeline.NumRenderTargets;
 		colorGpipeline.RTVFormats[0] = defaultGpipeline.RTVFormats[0];
 		colorGpipeline.RTVFormats[1] = defaultGpipeline.RTVFormats[1];
@@ -200,12 +202,12 @@ int Model::Update(DirectX::XMFLOAT4 color)
 	{
 		for (int i = 0; i < bones.size(); i++)
 		{
-			// ¡‚Ìp¨s—ñ‚ğæ“¾
+			// ä»Šã®å§¿å‹¢è¡Œåˆ—ã‚’å–å¾—
 			FbxAMatrix fbxCurrentPose =
 				bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(currentTime);
-			// Matrix4Œ^‚É•ÏŠ·
+			// Matrix4å‹ã«å¤‰æ›
 			Matrix4 matCurrentPose = FbxLoader::ConvertMatrixFromFbx(fbxCurrentPose);
-			// ‡¬‚µ‚ÄƒXƒLƒjƒ“ƒOs—ñ‚É
+			// åˆæˆã—ã¦ã‚¹ã‚­ãƒ‹ãƒ³ã‚°è¡Œåˆ—ã«
 			constMapSkin->bones[i] =
 				modelTrans *
 				bones[i].invInitPose *
@@ -222,32 +224,32 @@ void Model::Draw()
 {
 	static ID3D12GraphicsCommandList* cmdList = DirectXInit::GetCommandList();
 
-#pragma region ƒIƒuƒWƒFƒNƒg
-	// ƒvƒŠƒ~ƒeƒBƒuŒ`ó‚Ìİ’è
+#pragma region ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	// ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–å½¢çŠ¶ã®è¨­å®š
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// ’è”ƒoƒbƒtƒ@ƒrƒ…[‚ğƒZƒbƒg
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	cmdList->SetGraphicsRootConstantBufferView(0, constBuff->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootConstantBufferView(2, constBuffSkin->GetGPUVirtualAddress());
-#pragma endregion //ƒIƒuƒWƒFƒNƒg
+#pragma endregion //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
-#pragma region ƒ‚ƒfƒ‹
-	// ’¸“_ƒoƒbƒtƒ@‚Ìİ’è
+#pragma region ãƒ¢ãƒ‡ãƒ«
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒrƒ…[‚Ìİ’è
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã®è¨­å®š
 	cmdList->IASetIndexBuffer(&ibView);
 
-	// ƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚ğƒZƒbƒg
+	// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã‚’ã‚»ãƒƒãƒˆ
 	ID3D12DescriptorHeap* ppHeaps[] = { descHeapSRV.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-	// ƒVƒF[ƒ_[ƒŠƒ\[ƒXƒrƒ…[‚ğƒZƒbƒg
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒªã‚½ãƒ¼ã‚¹ãƒ“ãƒ¥ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	cmdList->SetGraphicsRootDescriptorTable(
 		1,
 		descHeapSRV->GetGPUDescriptorHandleForHeapStart()
 	);
 
-	// •`‰æƒRƒ}ƒ“ƒh
+	// æç”»ã‚³ãƒãƒ³ãƒ‰
 	cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
-#pragma endregion //ƒ‚ƒfƒ‹
+#pragma endregion //ãƒ¢ãƒ‡ãƒ«
 
 }
 
@@ -266,11 +268,11 @@ HRESULT Model::CreateBuffers()
 	HRESULT hr = S_FALSE;
 
 #pragma region CreateVertexBuffer
-	// ’¸“_ƒf[ƒ^‘S‘Ì‚ÌƒTƒCƒY
+	// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿å…¨ä½“ã®ã‚µã‚¤ã‚º
 	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUvSkin) * vertices.size());
-	// ’¸“_ƒoƒbƒtƒ@‚Ì¶¬
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	hr = dev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ƒAƒbƒvƒ[ƒh‰Â”\
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å¯èƒ½
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(sizeVB),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -281,28 +283,28 @@ HRESULT Model::CreateBuffers()
 		return hr;
 	}
 
-	// ’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒf[ƒ^“]‘—
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒ‡ãƒ¼ã‚¿è»¢é€
 	VertexPosNormalUvSkin* vertMap = nullptr;
 	hr = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	if (SUCCEEDED(hr))
 	{
 		std::copy(vertices.begin(), vertices.end(), vertMap);
-		// ƒ}ƒbƒv‚ğ‰ğœ
+		// ãƒãƒƒãƒ—ã‚’è§£é™¤
 		vertBuff->Unmap(0, nullptr);
 	}
 
-	// ’¸“_ƒoƒbƒtƒ@ƒrƒ…[‚Ìì¬
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã®ä½œæˆ
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(vertices[0]);
 #pragma endregion //CreateVertexBuffer
 
 #pragma region CreateIndexBuffer
-	// ’¸“_ƒCƒ“ƒfƒbƒNƒXƒf[ƒ^‘S‘Ì‚ÌƒTƒCƒY
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿å…¨ä½“ã®ã‚µã‚¤ã‚º
 	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * indices.size());
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ì¶¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	hr = dev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ƒAƒbƒvƒ[ƒh‰Â”\
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å¯èƒ½
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(sizeIB),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -313,28 +315,28 @@ HRESULT Model::CreateBuffers()
 		return hr;
 	}
 
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ö‚Ìƒf[ƒ^“]‘—
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒ‡ãƒ¼ã‚¿è»¢é€
 	unsigned short* indexMap = nullptr;
 	hr = indexBuff->Map(0, nullptr, (void**)&indexMap);
 	if (SUCCEEDED(hr))
 	{
 		std::copy(indices.begin(), indices.end(), indexMap);
-		// ƒ}ƒbƒv‚ğ‰ğœ
+		// ãƒãƒƒãƒ—ã‚’è§£é™¤
 		indexBuff->Unmap(0, nullptr);
 	}
 
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒrƒ…[‚Ìì¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã®ä½œæˆ
 	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
 	ibView.Format = DXGI_FORMAT_R16_UINT;
 	ibView.SizeInBytes = sizeIB;
 #pragma endregion //CreateIndexBuffer
 
 #pragma region CreateTexBuffer
-	// ƒeƒNƒXƒ`ƒƒ‰æ‘œƒf[ƒ^
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ç”»åƒãƒ‡ãƒ¼ã‚¿
 	const DirectX::Image* img = scratchImg.GetImage(0, 0, 0);
 	assert(img);
 
-	// ƒŠƒ\[ƒXİ’è
+	// ãƒªã‚½ãƒ¼ã‚¹è¨­å®š
 	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
 		metadata.format,
 		metadata.width,
@@ -343,7 +345,7 @@ HRESULT Model::CreateBuffers()
 		static_cast<UINT16>(metadata.mipLevels)
 	);
 
-	// ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@‚Ì¶¬
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	hr = dev->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,
 								 D3D12_MEMORY_POOL_L0),
@@ -358,7 +360,7 @@ HRESULT Model::CreateBuffers()
 		return hr;
 	}
 
-	// ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@‚Éƒf[ƒ^“]‘—
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è»¢é€
 	hr = texBuff->WriteToSubresource(
 		0,
 		nullptr,
@@ -369,7 +371,7 @@ HRESULT Model::CreateBuffers()
 #pragma endregion //CreateTexBuffer
 
 #pragma region CreateSRV
-	// SRV—pƒfƒXƒNƒŠƒvƒ^ƒq[ƒv‚ğ¶¬
+	// SRVç”¨ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã‚’ç”Ÿæˆ
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -380,7 +382,7 @@ HRESULT Model::CreateBuffers()
 		return hr;
 	}
 
-	// ƒVƒF[ƒ_[ƒŠƒ\[ƒXƒrƒ…[‚Ìì¬
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒªã‚½ãƒ¼ã‚¹ãƒ“ãƒ¥ãƒ¼ã®ä½œæˆ
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	D3D12_RESOURCE_DESC resDesc = texBuff->GetDesc();
 
@@ -404,9 +406,9 @@ HRESULT Model::CreateConstBuffer()
 	HRESULT hr = S_FALSE;
 
 	hr = dev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ƒAƒbƒvƒ[ƒh‰Â”\
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å¯èƒ½
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xFF) & ~0xFF), //ƒŠƒ\[ƒXİ’è
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xFF) & ~0xFF), //ãƒªã‚½ãƒ¼ã‚¹è¨­å®š
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
@@ -429,9 +431,9 @@ HRESULT Model::CreateConstBuffer()
 	}
 
 	hr = dev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ƒAƒbƒvƒ[ƒh‰Â”\
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), //ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å¯èƒ½
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xFF) & ~0xFF), //ƒŠƒ\[ƒXİ’è
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xFF) & ~0xFF), //ãƒªã‚½ãƒ¼ã‚¹è¨­å®š
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffSkin));
@@ -455,19 +457,19 @@ HRESULT Model::CreateConstBuffer()
 
 void Model::PlayAnimation()
 {
-	// 0”Ô‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğæ“¾
+	// 0ç•ªã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å–å¾—
 	FbxAnimStack* animStack = fbxScene->GetSrcObject<FbxAnimStack>(0);
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì–¼‘Oæ“¾
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åå‰å–å¾—
 	const char* animStackName = animStack->GetName();
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌŠÔî•ñ
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ™‚é–“æƒ…å ±
 	FbxTakeInfo* takeInfo = fbxScene->GetTakeInfo(animStackName);
 
-	// ŠJnŠÔæ“¾
+	// é–‹å§‹æ™‚é–“å–å¾—
 	startTime = takeInfo->mLocalTimeSpan.GetStart();
-	// I—¹ŠÔæ“¾
+	// çµ‚äº†æ™‚é–“å–å¾—
 	endTime = takeInfo->mLocalTimeSpan.GetStop();
-	// ŠJnŠÔ‚É‡‚í‚¹‚é
+	// é–‹å§‹æ™‚é–“ã«åˆã‚ã›ã‚‹
 	currentTime = startTime;
-	// Ä¶’†ó‘Ô‚É‚·‚é
+	// å†ç”Ÿä¸­çŠ¶æ…‹ã«ã™ã‚‹
 	isPlay = true;
 }

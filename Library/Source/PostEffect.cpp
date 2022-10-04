@@ -277,7 +277,8 @@ HRESULT PostEffect::CreateGraphicsPipelineState()
 	auto dev = DirectXInit::GetDevice();
 
 	// 各種シェーダーのコンパイルと読み込み
-	shader = shaderMgr->CreateShader(L"./lib/Shaders/PostEffectTestVS.hlsl", L"./lib/Shaders/PostEffectTestPS.hlsl");
+	shader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "PostEffectTestVS.hlsl").c_str(),
+									 StringToWString(shadersDirectory + "PostEffectTestPS.hlsl").c_str());
 
 	// 頂点レイアウト
 	inputLayout = DirectDrawing::Get2dInputLayout();

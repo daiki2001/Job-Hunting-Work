@@ -12,7 +12,7 @@ void Door::StaticInit(DrawPolygon* draw)
 {
 	Door::draw = draw;
 	door_obj = Door::draw->Create3Dbox(1.0f, 1.0f, 1.0f);
-	debugTex = Door::draw->LoadTextrue(L"./lib/white1x1.png");
+	debugTex = Door::draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
 }
 
 Door::Door() :

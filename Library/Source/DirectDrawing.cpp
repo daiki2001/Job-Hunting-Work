@@ -172,7 +172,8 @@ void DirectDrawing::DrawingInit()
 	isDrawingInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	objShader = shaderMgr->CreateShader(L"./lib/Shaders/ObjectVS.hlsl", L"./lib/Shaders/ObjectPS.hlsl");
+	objShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "ObjectVS.hlsl").c_str(),
+										StringToWString(shadersDirectory + "ObjectPS.hlsl").c_str());
 
 	// 頂点レイアウト
 	if (inputLayout3d ==Engine::FUNCTION_ERROR)
@@ -212,7 +213,8 @@ void DirectDrawing::MaterialInit()
 	isMaterialInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	materialShader = shaderMgr->CreateShader(L"./lib/Shaders/MaterialVS.hlsl", L"./lib/Shaders/MaterialPS.hlsl");
+	materialShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "MaterialVS.hlsl").c_str(),
+											 StringToWString(shadersDirectory + "MaterialPS.hlsl").c_str());
 
 	// 頂点レイアウト
 	if (inputLayout3d == Engine::FUNCTION_ERROR)
@@ -256,7 +258,8 @@ void DirectDrawing::SpriteDrawingInit()
 	isSpriteDrawingInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	spriteShader = shaderMgr->CreateShader(L"./lib/Shaders/SpriteVS.hlsl", L"./lib/Shaders/SpritePS.hlsl");
+	spriteShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "SpriteVS.hlsl").c_str(),
+										   StringToWString(shadersDirectory + "SpritePS.hlsl").c_str());
 
 	// 頂点レイアウト
 	inputLayout2d = shaderMgr->CreateInputLayout();

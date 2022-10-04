@@ -10,7 +10,7 @@ public: //サブクラス
 		OPEN,
 		CLOSE,
 		WALL,
-		ENTRANCE
+		ENTRANCE = -1
 	};
 
 private: //静的メンバ変数

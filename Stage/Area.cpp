@@ -1,5 +1,6 @@
 ﻿#include "Area.h"
 #include "Door.h"
+#include <stdio.h>
 
 namespace
 {
@@ -75,19 +76,35 @@ void Area::Draw(const int& offsetX, const int& offsetY)
 	block_mgr->Draw(offsetX, -offsetY);
 }
 
-void Area::LoadArea(const char* filePath)
+int Area::LoadArea(const char* filePath)
 {
 	static const int stageWidth = 15;
 	static const int stageHeight = 7;
-	int mapArray[stageWidth * stageHeight] = { BlockManager::TypeId::NONE };
-
-	if (filePath != nullptr)
+	if (filePath == nullptr)
 	{
-		Load::LoadMapChip(mapArray, sizeof(mapArray) / sizeof(mapArray[0]), filePath);
+		OutputDebugStringA("ファイル名が間違っています。\n");
+		return FUNCTION_ERROR;
 	}
 
+	int mapArray[stageWidth * stageHeight] = { BlockManager::TypeId::NONE };
+	int doorSetting[4] = { Door::DoorStatus::OPEN };
+	FILE* fileHandle;
+	errno_t err;
+
+	err = fopen_s(&fileHandle, filePath, "r");
+	if (err != 0)
+	{
+		OutputDebugStringA("ファイルが開けません。\n");
+		return err;
+	}
+
+	Load::LoadMapChip(fileHandle, doorSetting, 4, -2);
+	Load::LoadMapChip(fileHandle, mapArray, sizeof(mapArray) / sizeof(mapArray[0]));
+
+	fclose(fileHandle);
 	block_mgr->AllDeleteBlock();
 
+	/*マップの設定*/
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
 		int x = i % stageWidth;
@@ -102,5 +119,23 @@ void Area::LoadArea(const char* filePath)
 		auto& block = block_mgr->GetBlock(index);
 		block.pos.x = static_cast<float>(x * 1.0f);
 		block.pos.y = static_cast<float>(-y * 1.0f);
+	}
+	/*ドアの設定*/
+	for (int i = 0; i < 4; i++)
+	{
+		static Vector3 size = Vector3(11.0f, 1.0f, 2.0f);
+
+		if (i == DoorNum::UP || i == DoorNum::DOWN)
+		{
+			size.x = 11.0f;
+			size.y = 1.0f;
+		}
+		else if (i == DoorNum::LEFT || i == DoorNum::RIGHT)
+		{
+			size.x = 1.0f;
+			size.y = 3.0f;
+		}
+
+		door[i].Init(size, Door::DoorStatus(doorSetting[i]));
 	}
 }

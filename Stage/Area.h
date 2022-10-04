@@ -47,5 +47,5 @@ public: //メンバ関数
 	void Reset();
 
 	// ステージ読み込み
-	void LoadArea(const char* filePath = nullptr);
+	int LoadArea(const char* filePath = nullptr);
 };

@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
-#include "./Header/EngineGeneral.h"
 #include <vector>
+#include "./Header/EngineGeneral.h"
 
 class Stage final
 {
@@ -17,15 +17,32 @@ private:
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 
+public: //サブクラス
+	struct Room
+	{
+		Area area = {}; //部屋の情報
+		int connection[4] = { -1, -1, -1, -1 }; //どの部屋と繋がっているか
+	};
+
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static std::vector<Area> area; //各部屋の情報
+	static Player* player;         //プレイヤー
+	static std::vector<Room> room; //各部屋の情報
+	static int nowRoom; //プレイヤーが現在いる部屋
 
 public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
 
-	static const bool IsGoal() { return Area::IsGoal(); }
+	static int MoveUpRoom();
+	static int MoveDownRoom();
+	static int MoveLeftRoom();
+	static int MoveRightRoom();
+
+	static const bool IsGoal();
+
+	static BlockManager* GetBlockManager() { return room.at(nowRoom).area.GetBlockManager(); }
+	static Door::DoorStatus GetDoorStatus(const Area::DoorNum& num) { return room.at(nowRoom).area.GetDoorStatus(num); }
 
 public: //メンバ関数
 	// 初期化処理
@@ -38,5 +55,5 @@ public: //メンバ関数
 	void Reset();
 
 	// ステージ読み込み
-	void LoadStage(const char* filePath = nullptr);
+	int LoadStage(const char* filePath = nullptr);
 };

@@ -1,10 +1,12 @@
 ﻿#include "Stage.h"
 
 DrawPolygon* Stage::draw = nullptr;
-std::vector<Area> Stage::area;
+std::vector<Stage::Room> Stage::room;
+int Stage::nowRoom = 0;
 
 Stage::Stage()
 {
+	Init();
 }
 
 Stage::~Stage()
@@ -25,35 +27,156 @@ void Stage::StaticInit(DrawPolygon* const draw)
 
 void Stage::Init()
 {
+	nowRoom = 0;
 }
 
 void Stage::Update()
 {
-	for (size_t i = 0; i < area.size(); i++)
-	{
-		area.at(i).Update();
-	}
+	room.at(nowRoom).area.Update();
 }
 
 void Stage::Draw(const int& offsetX, const int& offsetY)
 {
-	for (size_t i = 0; i < area.size(); i++)
-	{
-		area.at(i).Draw(offsetX, offsetY);
-	}
+	room.at(nowRoom).area.Draw(offsetX, offsetY);
 }
 
 void Stage::Reset()
 {
-	for (size_t i = 0; i < area.size(); i++)
+	nowRoom = 0;
+
+	for (size_t i = 0; i < room.size(); i++)
 	{
-		area.at(i).Reset();
+		room.at(i).area.Reset();
 	}
 }
 
-void Stage::LoadStage(const char* filePath)
+int Stage::LoadStage(const char* filePath)
 {
-	area.clear();
-	area.emplace_back();
-	area.back().LoadArea(filePath);
+	if (filePath == nullptr)
+	{
+		OutputDebugStringA("ファイル名が間違っています。\n");
+		return FUNCTION_ERROR;
+	}
+
+	room.clear();
+
+	FILE* fileHandle;
+	errno_t err;
+	char string[256] = { 0 };
+
+	int roomNum = 0;
+
+	err = fopen_s(&fileHandle, filePath, "r");
+	if (err != 0)
+	{
+		OutputDebugStringA("ファイルが開けません。\n");
+		return err;
+	}
+
+	if (fgets(string, 256, fileHandle) == nullptr)
+	{
+		OutputDebugStringA("ファイルが読み込めません。\n");
+		return FUNCTION_ERROR;
+	}
+
+	bool isMinus = false;
+	for (int i = 0; string[i] != '\0'; i++)
+	{
+		if (string[i] == ',' || string[i] == '\n')
+		{
+			break;
+		}
+		else if (string[i] == '-')
+		{
+			isMinus = true;
+		}
+		else if (string[i] >= '0' && string[i] <= '9')
+		{
+			roomNum *= 10;
+
+			if (isMinus == true)
+			{
+				roomNum -= string[i] - '0';
+			}
+			else
+			{
+				roomNum += string[i] - '0';
+			}
+		}
+	}
+
+	for (size_t i = 0; i < roomNum; i++)
+	{
+		room.emplace_back();
+		Load::LoadMapChip(fileHandle, room.at(i).connection, 4, -2);
+		room.back().area.LoadArea(fileHandle);
+	}
+
+	fclose(fileHandle);
+	return 0;
+}
+
+int Stage::MoveUpRoom()
+{
+	if (room.at(nowRoom).connection[Area::DoorNum::UP] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room.at(nowRoom).connection[Area::DoorNum::UP];
+
+	return 0;
+}
+
+int Stage::MoveDownRoom()
+{
+	if (room.at(nowRoom).connection[Area::DoorNum::DOWN] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room.at(nowRoom).connection[Area::DoorNum::DOWN];
+
+	return 0;
+}
+
+int Stage::MoveLeftRoom()
+{
+	if (room.at(nowRoom).connection[Area::DoorNum::LEFT] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room.at(nowRoom).connection[Area::DoorNum::LEFT];
+
+	return 0;
+}
+
+int Stage::MoveRightRoom()
+{
+	if (room.at(nowRoom).connection[Area::DoorNum::RIGHT] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room.at(nowRoom).connection[Area::DoorNum::RIGHT];
+
+	return 0;
+}
+
+const bool Stage::IsGoal()
+{
+	static bool reslut = false;
+	reslut = false;
+
+	for (size_t i = 0; i < room.size(); i++)
+	{
+		if (room.at(i).area.IsGoal())
+		{
+			reslut = true;
+			break;
+		}
+	}
+
+	return reslut;
 }

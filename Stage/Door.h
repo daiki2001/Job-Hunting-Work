@@ -35,4 +35,6 @@ public: //メンバ関数
 	void Draw(const Math::Vector3& offset);
 
 	void Open() { if (status == DoorStatus::CLOSE)status = DoorStatus::OPEN; }
+
+	DoorStatus GetStatus() { return status; }
 };

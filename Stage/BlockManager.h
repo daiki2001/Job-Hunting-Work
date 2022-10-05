@@ -1,18 +1,11 @@
 ﻿#pragma once
 #include "BlockType.h"
+#include "../Player.h"
 #include <vector>
 #include "./Header/EngineGeneral.h"
 
-class BlockManager final
+class BlockManager
 {
-public: //シングルトン化
-	static BlockManager* Get();
-private:
-	BlockManager();
-	BlockManager(const BlockManager&) = delete;
-	~BlockManager();
-	BlockManager operator=(const BlockManager&) = delete;
-
 public: //エイリアス
 	using Vector3 = Math::Vector3;
 
@@ -41,6 +34,9 @@ public: //サブクラス
 		const TypeId GetTypeId() const { return typeId; }
 	};
 
+private: //静的メンバ変数
+	static Player* player;
+
 private: //メンバ変数
 	std::vector<BlockType> blockType;
 	std::vector<Block> block;
@@ -48,6 +44,9 @@ private: //メンバ変数
 	bool isGoal;
 
 public: //メンバ関数
+	BlockManager();
+	~BlockManager();
+
 	// 初期化処理
 	void Init(DrawPolygon* const draw);
 	// 更新処理

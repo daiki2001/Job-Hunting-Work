@@ -5,11 +5,11 @@
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 Player* GameScene::player = Player::Get();
+Stage* GameScene::stage = Stage::Get();
 bool GameScene::isClear = false;
 
 GameScene::GameScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	BaseScene(draw, sceneChenger),
-	stage{},
 	background(Engine::FUNCTION_ERROR),
 	clear(Engine::FUNCTION_ERROR)
 {
@@ -37,8 +37,8 @@ void GameScene::Init()
 	}
 
 	player->Init(draw);
-	stage.StaticInit(draw);
-	stage.LoadArea("./Resources/Game/Stage/test.csv");
+	stage->StaticInit(draw);
+	stage->LoadStage("./Resources/Game/Stage/test.csv");
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -61,18 +61,20 @@ void GameScene::Update()
 	else
 	{
 		player->Update(InputManager::Get());
-		stage.Update();
+		stage->Update();
 
-		if (Area::IsGoal())
+		if (Stage::IsGoal())
 		{
 			isClear = true;
 		}
 	}
 
+#ifdef _DEBUG
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		Reset();
 	}
+#endif // _DEBUG
 }
 
 void GameScene::Draw()
@@ -101,7 +103,7 @@ void GameScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage.Draw();
+	stage->Draw();
 	player->Draw();
 
 	// 前景
@@ -126,5 +128,5 @@ void GameScene::Reset()
 {
 	isClear = false;
 	player->Reset();
-	stage.Reset();
+	stage->Reset();
 }

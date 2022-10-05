@@ -1,19 +1,19 @@
 ﻿#pragma once
 #include "./Header/BaseScene.h"
 #include "../Player.h"
-#include "../Stage/Area.h"
+#include "../Stage/Stage.h"
 
 class GameScene :  public BaseScene
 {
 public: //定数
 	static const std::wstring gameResourcesDir;
 	
-public: //静的メンバ変数
+private: //静的メンバ変数
 	static Player* player;
+	static Stage* stage;
 	static bool isClear;
 
 private: //メンバ変数
-	Area stage;
 	int background; //背景画像
 	int clear;
 

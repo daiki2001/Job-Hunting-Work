@@ -9,10 +9,10 @@ InputManager* inputMgr = InputManager::Get();
 }
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
+Stage* StageEditorScene::stage = Stage::Get();
 
 StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	BaseScene(draw, sceneChenger),
-	stage{},
 	mapArray{},
 	mapIndex(0),
 	blockIndex(1),
@@ -20,7 +20,7 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 	cursor(Engine::FUNCTION_ERROR)
 {
 	Init();
-	stage.Reset();
+	stage->Reset();
 }
 
 StageEditorScene::~StageEditorScene()
@@ -33,7 +33,7 @@ StageEditorScene::~StageEditorScene()
 
 void StageEditorScene::Init()
 {
-	stage.StaticInit(draw);
+	stage->StaticInit(draw);
 
 	// 背景画像の読み込み
 	if (background == FUNCTION_ERROR)
@@ -45,13 +45,13 @@ void StageEditorScene::Init()
 		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
 	}
 
-	Area::GetBlockManager()->AllDeleteBlock();
+	Stage::GetBlockManager()->AllDeleteBlock();
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
 		mapArray[i] = BlockManager::TypeId::NONE;
-		Area::GetBlockManager()->CreateBlock(BlockManager::TypeId(mapArray[i]));
-		Area::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
-		Area::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
+		Stage::GetBlockManager()->CreateBlock(BlockManager::TypeId(mapArray[i]));
+		Stage::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
+		Stage::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
 	}
 
 	mapIndex = 0;
@@ -123,11 +123,11 @@ void StageEditorScene::Update()
 
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
-		if (BlockManager::TypeId(mapArray[i]) != Area::GetBlockManager()->GetBlock(i).GetTypeId())
+		if (BlockManager::TypeId(mapArray[i]) != Stage::GetBlockManager()->GetBlock(i).GetTypeId())
 		{
-			Area::GetBlockManager()->ChengeBlock(i, BlockManager::TypeId(mapArray[i]));
-			Area::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
-			Area::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
+			Stage::GetBlockManager()->ChengeBlock(i, BlockManager::TypeId(mapArray[i]));
+			Stage::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
+			Stage::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
 		}
 	}
 }
@@ -161,7 +161,7 @@ void StageEditorScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage.Draw();
+	stage->Draw();
 
 	// 前景
 	DirectDrawing::ChangeSpriteShader();

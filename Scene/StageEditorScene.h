@@ -1,26 +1,26 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/BaseScene.h"
-#include "../Stage/Area.h"
+#include "../Stage/Stage.h"
 
 class StageEditorScene : public BaseScene
 {
-public: //’è”
+public: //å®šæ•°
 	static const int STAGE_WIDTH = 15;
 	static const int STAGE_HEIGHT = 7;
 	static const std::wstring resourcesDir;
 
-public: //Ã“Iƒƒ“ƒo•Ï”
+private: //é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	static Stage* stage;
 
-private: //ƒƒ“ƒo•Ï”
-	Area stage;
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT];
 	int mapIndex;
 	int blockIndex;
 
-	int background; //”wŒi‰æ‘œ
-	int cursor; //ƒJ[ƒ\ƒ‹‰æ‘œ
+	int background; //èƒŒæ™¯ç”»åƒ
+	int cursor; //ã‚«ãƒ¼ã‚½ãƒ«ç”»åƒ
 
-public: //ƒƒ“ƒoŠÖ”
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
 	StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger);
 	~StageEditorScene() override;
 

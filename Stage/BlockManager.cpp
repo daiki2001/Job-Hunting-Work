@@ -1,12 +1,6 @@
 ﻿#include "BlockManager.h"
-#include "Player.h"
 
-#include "./Header/Error.h"
-
-namespace
-{
-static Player* player = Player::Get();
-}
+Player* BlockManager::player = Player::Get();
 
 BlockManager::Block::Block(const BlockManager::TypeId& typeId) :
 	pos(0.0f, 0.0f, 0.0f),
@@ -34,12 +28,6 @@ BlockManager::~BlockManager()
 {
 	blockType.clear();
 	block.clear();
-}
-
-BlockManager* BlockManager::Get()
-{
-	static BlockManager instance = {};
-	return &instance;
 }
 
 void BlockManager::Init(DrawPolygon* const draw)

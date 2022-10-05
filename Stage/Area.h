@@ -2,6 +2,7 @@
 #include "./Header/DrawPolygon.h"
 #include "BlockManager.h"
 #include "Door.h"
+#include <stdio.h>
 #include "./Header/EngineGeneral.h"
 
 class Area
@@ -20,17 +21,14 @@ public: //サブクラス
 
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static BlockManager* block_mgr;
 	static int wall_obj; //外壁のオブジェクト
 
 public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
-	static const bool IsGoal() { return block_mgr->GetGoal(); }
-
-	static BlockManager* GetBlockManager() { return block_mgr; }
 
 private: //メンバ変数
+	BlockManager block_mgr;
 	Door door[4];
 
 public: //メンバ関数
@@ -47,5 +45,10 @@ public: //メンバ関数
 	void Reset();
 
 	// ステージ読み込み
-	int LoadArea(const char* filePath = nullptr);
+	int LoadArea(FILE* fileHandle);
+
+	const bool IsGoal() { return block_mgr.GetGoal(); }
+
+	BlockManager* GetBlockManager() { return &block_mgr; }
+	Door::DoorStatus GetDoorStatus(const DoorNum& num) { return door[num].GetStatus(); }
 };

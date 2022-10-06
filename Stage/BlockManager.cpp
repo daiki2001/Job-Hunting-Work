@@ -25,12 +25,15 @@ BlockManager::Block::Block(const BlockManager::TypeId& typeId) :
 BlockManager::BlockManager() :
 	blockType{},
 	block{},
-	isOpen(true)
+	isOpen(false),
+	isGoal(false)
 {
 }
 
 BlockManager::~BlockManager()
 {
+	blockType.clear();
+	block.clear();
 }
 
 BlockManager* BlockManager::Get()
@@ -41,6 +44,9 @@ BlockManager* BlockManager::Get()
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
+	blockType.clear();
+	block.clear();
+
 	blockType.push_back(BlockType(BlockManager::TypeId::NONE, draw));
 	blockType.back().Create();
 
@@ -49,6 +55,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(BlockManager::TypeId::SWITCH, draw));
 	blockType.back().Create("Switch.obj");
+
+	blockType.push_back(BlockType(BlockManager::TypeId::GOAL, draw));
+	blockType.back().Create(L"Goal.png");
 }
 
 void BlockManager::Update()
@@ -68,6 +77,10 @@ void BlockManager::Update()
 	case BlockManager::TypeId::SWITCH:
 		SwitchPush(playerPos);
 		break;
+	case BlockManager::TypeId::GOAL:
+		isGoal = true;
+		break;
+	case BlockManager::TypeId::NONE:
 	default:
 		break;
 	}
@@ -109,6 +122,19 @@ void BlockManager::Draw(const int& offsetX, const int& offsetY)
 	}
 }
 
+void BlockManager::Reset()
+{
+	for (size_t i = 0; i < block.size(); i++)
+	{
+		if (block[i].GetTypeId() == BlockManager::TypeId::SWITCH)
+		{
+			block[i].isSwitch = false;
+		}
+	}
+
+	isGoal = false;
+}
+
 int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 {
 	for (size_t i = 0; i < blockType.size(); i++)
@@ -118,11 +144,26 @@ int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 			continue;
 		}
 
-		block.push_back(typeId);
+		block.emplace_back(typeId);
 		return static_cast<int>(block.size() - 1);
 	}
 
 	return Engine::FUNCTION_ERROR;
+}
+
+void BlockManager::ChengeBlock(const int& index, const BlockManager::TypeId& typeId)
+{
+	block.at(index) = Block(typeId);
+}
+
+void BlockManager::DeleteBlock(const int& index)
+{
+	block.erase(block.begin() + index);
+}
+
+void BlockManager::AllDeleteBlock()
+{
+	block.clear();
 }
 
 void BlockManager::PlayerPushBack() const
@@ -162,7 +203,7 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 		surroundingBlock.push_back(Engine::FUNCTION_ERROR);
 	}
 
-	for (int i = 0, j = 0; i < block.size(); i++)
+	for (int i = 0, j = 0; i < static_cast<int>(block.size()); i++)
 	{
 		if (static_cast<int>(block[i].pos.x) == static_cast<int>(player->pos.x) &&
 			static_cast<int>(block[i].pos.y) == static_cast<int>(player->pos.y))

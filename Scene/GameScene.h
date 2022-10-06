@@ -1,19 +1,29 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/BaseScene.h"
+#include "../Player.h"
+#include "../Stage/Area.h"
 
 class GameScene :  public BaseScene
 {
-public: //’è”
+public: //å®šæ•°
 	static const std::wstring gameResourcesDir;
+	
+public: //é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
+	static Player* player;
+	static bool isClear;
 
-public: //ƒƒ“ƒoŠÖ”
-	GameScene(SceneChenger* sceneChenger);
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
+	Area stage;
+	int background; //èƒŒæ™¯ç”»åƒ
+	int clear;
+
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
+	GameScene(DrawPolygon* draw, SceneChenger* sceneChenger);
 	~GameScene() override;
 
 	void Init() override;
 	void Update() override;
 	void Draw() override;
-
-private: //ƒƒ“ƒo•Ï”
-	int background; //”wŒi‰æ‘œ
+private:
+	void Reset();
 };

@@ -1,4 +1,4 @@
-#include "./Header/Audio.h"
+ï»¿#include "./Header/Audio.h"
 #include <fstream>
 #include <cassert>
 
@@ -25,14 +25,14 @@ HRESULT Audio::Init()
 {
 	HRESULT hr = S_FALSE;
 
-	// xAudioƒGƒ“ƒWƒ“‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬
+	// xAudioã‚¨ãƒ³ã‚¸ãƒ³ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆ
 	hr = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hr))
 	{
 		return hr;
 	}
 
-	// ƒ}ƒXƒ^[ƒ{ƒCƒX‚ğ¶¬
+	// ãƒã‚¹ã‚¿ãƒ¼ãƒœã‚¤ã‚¹ã‚’ç”Ÿæˆ
 	hr = xAudio2->CreateMasteringVoice(&masterVoice);
 	if (FAILED(hr))
 	{
@@ -46,53 +46,53 @@ int Audio::SoundLoadWave(const char* filePath)
 {
 	using namespace std;
 
-	// ƒtƒ@ƒCƒ‹“ü—ÍƒXƒgƒŠ[ƒ€‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	// ãƒ•ã‚¡ã‚¤ãƒ«å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	ifstream file;
-	// .wavƒtƒ@ƒCƒ‹‚ğƒoƒCƒiƒŠƒ‚[ƒh‚ÅŠJ‚­
+	// .wavãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒã‚¤ãƒŠãƒªãƒ¢ãƒ¼ãƒ‰ã§é–‹ã
 	file.open(filePath, ios_base::binary);
-	// ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“¸”s‚ğŒŸo‚·‚é
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³å¤±æ•—ã‚’æ¤œå‡ºã™ã‚‹
 	if (file.fail())
 	{
 		return Engine::FUNCTION_ERROR;
 	}
 
-	// RIFFƒwƒbƒ_[‚Ì“Ç‚İ‚İ
+	// RIFFãƒ˜ãƒƒãƒ€ãƒ¼ã®èª­ã¿è¾¼ã¿
 	Audio::RiffHeader riff = {};
 	file.read((char*)&riff, sizeof(riff));
-	// ƒtƒ@ƒCƒ‹‚ªRIFF‚©ƒ`ƒFƒbƒN
+	// ãƒ•ã‚¡ã‚¤ãƒ«ãŒRIFFã‹ãƒã‚§ãƒƒã‚¯
 	if (strncmp(riff.chunk.id, "RIFF", 4) != 0)
 	{
 		assert(0);
 	}
-	// ƒ^ƒCƒv‚ªWAVE‚©ƒ`ƒFƒbƒN
+	// ã‚¿ã‚¤ãƒ—ãŒWAVEã‹ãƒã‚§ãƒƒã‚¯
 	if (strncmp(riff.type, "WAVE", 4) != 0)
 	{
 		assert(0);
 	}
 
-	// Formatƒ`ƒƒƒ“ƒN‚Ì“Ç‚İ‚İ
+	// Formatãƒãƒ£ãƒ³ã‚¯ã®èª­ã¿è¾¼ã¿
 	Audio::FormatChunk format = {};
-	// ƒ`ƒƒƒ“ƒNƒwƒbƒ_[‚ÌŠm”F
+	// ãƒãƒ£ãƒ³ã‚¯ãƒ˜ãƒƒãƒ€ãƒ¼ã®ç¢ºèª
 	file.read((char*)&format, sizeof(Audio::Chunk));
-	// ƒ`ƒƒƒ“ƒNƒwƒbƒ_[‚ÌŠm”F
+	// ãƒãƒ£ãƒ³ã‚¯ãƒ˜ãƒƒãƒ€ãƒ¼ã®ç¢ºèª
 	if (strncmp(format.chunk.id, "fmt ", 4) != 0)
 	{
 		assert(0);
 	}
 
-	// ƒ`ƒƒƒ“ƒN–{‘Ì‚Ì“Ç‚İ‚İ
+	// ãƒãƒ£ãƒ³ã‚¯æœ¬ä½“ã®èª­ã¿è¾¼ã¿
 	assert(format.chunk.size <= sizeof(format.fmt));
 	file.read((char*)&format.fmt, format.chunk.size);
 
-	// Dataƒ`ƒƒƒ“ƒN‚Ì“Ç‚İ‚İ
+	// Dataãƒãƒ£ãƒ³ã‚¯ã®èª­ã¿è¾¼ã¿
 	Audio::Chunk data = {};
 	file.read((char*)&data, sizeof(data));
-	// JUNKƒ`ƒƒƒ“ƒN‚©LISTƒ`ƒƒƒ“ƒN‚ğŒŸo‚µ‚½ê‡
+	// JUNKãƒãƒ£ãƒ³ã‚¯ã‹LISTãƒãƒ£ãƒ³ã‚¯ã‚’æ¤œå‡ºã—ãŸå ´åˆ
 	if (strncmp(data.id, "JUNK", 4) == 0 || strncmp(data.id, "LIST", 4) == 0)
 	{
-		// “Ç‚İæ‚èˆÊ’u‚ğJUNKƒ`ƒƒƒ“ƒN‚ÌI‚í‚è‚Ü‚Åi‚ß‚é
+		// èª­ã¿å–ã‚Šä½ç½®ã‚’JUNKãƒãƒ£ãƒ³ã‚¯ã®çµ‚ã‚ã‚Šã¾ã§é€²ã‚ã‚‹
 		file.seekg(data.size, ios_base::cur);
-		// Ä“Ç‚İ‚İ
+		// å†èª­ã¿è¾¼ã¿
 		file.read((char*)&data, sizeof(data));
 	}
 
@@ -101,14 +101,14 @@ int Audio::SoundLoadWave(const char* filePath)
 		assert(0);
 	}
 
-	// Dataƒ`ƒƒƒ“ƒN‚Ìƒf[ƒ^•”i”gŒ`ƒf[ƒ^j‚Ì“Ç‚İ‚İ
+	// Dataãƒãƒ£ãƒ³ã‚¯ã®ãƒ‡ãƒ¼ã‚¿éƒ¨ï¼ˆæ³¢å½¢ãƒ‡ãƒ¼ã‚¿ï¼‰ã®èª­ã¿è¾¼ã¿
 	char* pBuffer = new char[data.size];
 	file.read(pBuffer, data.size);
 
-	// waveƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚é
+	// waveãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹
 	file.close();
 
-	// return‚·‚éˆ×‚Ì‰¹ºƒf[ƒ^
+	// returnã™ã‚‹ç‚ºã®éŸ³å£°ãƒ‡ãƒ¼ã‚¿
 	soundDatas.push_back({});
 
 	soundDatas[soundDatas.size() - 1].wfex = format.fmt;
@@ -118,22 +118,22 @@ int Audio::SoundLoadWave(const char* filePath)
 	return static_cast<int>(soundDatas.size()) - 1;
 }
 
-void Audio::SoundPlayWave(const int& soundData)
+void Audio::SoundPlayWave(int soundData)
 {
 	HRESULT hr;
 
-	// ”gŒ`ƒtƒH[ƒ}ƒbƒg‚ğŒ³‚ÉSourceVoice‚ğ¶¬
+	// æ³¢å½¢ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å…ƒã«SourceVoiceã‚’ç”Ÿæˆ
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
 	hr = xAudio2->CreateSourceVoice(&pSourceVoice, &soundDatas[soundData].wfex);
 	assert(SUCCEEDED(hr));
 
-	// Ä¶‚·‚é”gŒ`ƒf[ƒ^‚Ìİ’è
+	// å†ç”Ÿã™ã‚‹æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundDatas[soundData].pBuffer;
 	buf.AudioBytes = soundDatas[soundData].bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 
-	// ”gŒ`ƒf[ƒ^‚ÌÄ¶
+	// æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ã®å†ç”Ÿ
 	hr = pSourceVoice->SubmitSourceBuffer(&buf);
 	if (FAILED(hr))
 	{
@@ -146,9 +146,9 @@ void Audio::SoundPlayWave(const int& soundData)
 	}
 }
 
-void Audio::SoundUnload(const int& soundData)
+void Audio::SoundUnload(int soundData)
 {
-	// ƒoƒbƒtƒ@‚Ìƒƒ‚ƒŠ‚ğ‰ğ•ú
+	// ãƒãƒƒãƒ•ã‚¡ã®ãƒ¡ãƒ¢ãƒªã‚’è§£æ”¾
 	delete[] soundDatas[soundData].pBuffer;
 
 	soundDatas[soundData].pBuffer = 0;

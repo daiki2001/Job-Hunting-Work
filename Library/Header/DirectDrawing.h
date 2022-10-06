@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Math/EngineMath.h"
+#include "./Header/EngineGeneral.h"
 #include "./Math/Collision/CollisionInfo.h"
 #include <vector>
 #include <wrl.h>
@@ -35,7 +35,7 @@ private: // エイリアス
 	// Microsoft::WRL::を省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public:
+public: // メンバ変数
 	std::vector<Vertex> vertices;    //頂点データ
 	ComPtr<ID3D12Resource> vertBuff; //頂点バッファの生成
 	D3D12_VERTEX_BUFFER_VIEW vbView = {}; //頂点バッファビューの作成
@@ -43,6 +43,13 @@ public:
 	std::vector<unsigned short> indices; //インデックスデータ
 	ComPtr<ID3D12Resource> indexBuff;    //インデックスバッファの設定
 	D3D12_INDEX_BUFFER_VIEW ibView = {};      //インデックスバッファビューの作成
+
+public: // メンバ関数
+	~VertexData()
+	{
+		ContainerClear(vertices);
+		ContainerClear(indices);
+	}
 };
 
 // 頂点データ構造体(スプライト用)
@@ -97,20 +104,6 @@ struct CommonData
 class Object
 {
 	/*配列にして使うことが前提*/
-public: // メンバ関数
-	Object();
-	virtual ~Object();
-
-	// 初期化
-	virtual void Init();
-	// 更新
-	virtual void Update();
-
-	// コライダーの設定
-	void SetCollider(BaseCollider* collider);
-	// 衝突時コールバック関数
-	virtual void OnCollision(const CollisionInfo& info) {}
-
 public: // メンバ変数
 	int polygonData; //頂点情報の要素番号
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //定数バッファ
@@ -126,6 +119,20 @@ public: // メンバ変数
 
 	const char* name = nullptr; //クラス名(デバッグ用)
 	BaseCollider* collider = nullptr; //コライダー
+
+public: // メンバ関数
+	Object();
+	virtual ~Object();
+
+	// 初期化
+	virtual void Init();
+	// 更新
+	virtual void Update();
+
+	// コライダーの設定
+	void SetCollider(BaseCollider* collider);
+	// 衝突時コールバック関数
+	virtual void OnCollision(const CollisionInfo& info) {}
 };
 
 // マテリアル
@@ -149,6 +156,13 @@ struct Material
 		alpha = 1.0f;
 
 		textrueIndex = 0;
+	}
+
+	// デストラクタ
+	~Material()
+	{
+		ContainerClear(name);
+		ContainerClear(textureFilename);
 	}
 };
 
@@ -243,6 +257,10 @@ private:
 	static int inputLayout2d; //2dデータのインプットレイアウト
 
 public: // 静的メンバ関数
+	static void ChangeOBJShader();
+	static void ChangeMaterialShader();
+	static void ChangeSpriteShader();
+
 	static int GetObjShader() { return objShader; }
 	static int GetObjGraphicPipeline() { return objGraphicPipeline; }
 	static int GetObjRootSignature() { return objRootSignature; }

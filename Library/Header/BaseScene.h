@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "DrawPolygon.h"
 #include "SceneChenge.h"
 
@@ -6,7 +6,7 @@ class BaseScene
 {
 public:
 	BaseScene() = delete;
-	BaseScene(SceneChenger* sceneChenger);
+	BaseScene(DrawPolygon* draw, SceneChenger* sceneChenger);
 	virtual ~BaseScene();
 
 	virtual void Init() = 0;
@@ -14,6 +14,6 @@ public:
 	virtual void Draw() = 0;
 
 protected:
+	DrawPolygon* draw;
 	SceneChenger* sceneChenger;
-	DrawPolygon draw;
 };

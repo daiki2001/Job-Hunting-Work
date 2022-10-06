@@ -3,7 +3,7 @@
 #include "./Header/Camera.h"
 
 /*static変数の初期化*/
-int DebugText::fontTex = -1;
+int DebugText::fontTex = FUNCTION_ERROR;
 UINT64 DebugText::fontTexWidth = {};
 UINT DebugText::fontTexHeight = {};
 
@@ -12,11 +12,35 @@ DebugText::DebugText() :
 	fontIndex{},
 	charCount(-1)
 {
+	Init();
 }
 
 DebugText::~DebugText()
 {
 	DataClear();
+}
+
+HRESULT DebugText::Init()
+{
+	HRESULT hr = S_FALSE;
+
+	if (fontTex == FUNCTION_ERROR)
+	{
+		// デバッグテキスト用のテキスト画像の読み込み
+		fontTex = LoadTextrue(L"./Resources/Engine/DebugTextFont.png");
+		if (fontTex == FUNCTION_ERROR)
+		{
+			return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+		}
+
+		// テクスチャデータ取得
+		D3D12_RESOURCE_DESC resDesc = textrueData[fontTex].texbuff->GetDesc();
+
+		fontTexWidth = resDesc.Width;
+		fontTexHeight = resDesc.Height;
+	}
+
+	return S_OK;
 }
 
 HRESULT DebugText::DrawStringInit()
@@ -34,27 +58,14 @@ HRESULT DebugText::DrawStringInit()
 		isInit = true;
 		fontIndex.push_back({});
 
-		fontIndex[0] = CreateSprite();
-		if (fontIndex[0] == -1)
+		fontIndex.back() = CreateSprite();
+		if (fontIndex.back() == FUNCTION_ERROR)
 		{
 			return S_FALSE;
 		}
-
-		// デバッグテキスト用のテキスト画像の読み込み
-		fontTex = LoadTextrue(L"./lib/DebugTextFont.png");
-		if (fontTex == -1)
-		{
-			return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-		}
-
-		// テクスチャデータ取得
-		D3D12_RESOURCE_DESC resDesc = textrueData[fontTex].texbuff->GetDesc();
-
-		fontTexWidth = resDesc.Width;
-		fontTexHeight = resDesc.Height;
-
-		return S_OK;
 	}
+
+	return S_OK;
 }
 
 HRESULT DebugText::DrawString(const float& posX, const float& posY,
@@ -177,7 +188,7 @@ HRESULT DebugText::DrawString(const float& posX, const float& posY,
 		if (isInit == false)
 		{
 			fontIndex.push_back(CreateSprite());
-			if (fontIndex[fontIndex.size() - 1] == -1)
+			if (fontIndex.back() == FUNCTION_ERROR)
 			{
 				return S_FALSE;
 			}
@@ -276,5 +287,10 @@ void DebugText::TextLoopEnd()
 
 void DebugText::DataClear()
 {
-	fontIndex.clear();
+	ContainerClear(fontIndex);
+	fontTex = FUNCTION_ERROR;
+
+#ifdef _DEBUG
+	OutputDebugStringA("'DebugText'のデータを削除しました。\n");
+#endif // _DEBUG
 }

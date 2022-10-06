@@ -6,13 +6,17 @@
 /*定数*/
 namespace Engine
 {
-static const std::string libraryDirectory = "./lib/";             //ライブラリディレクトリ
-static const std::string defaultTextureFileName = "white1x1.png"; //デフォルト画像
+static const std::string resourcesDirectory = "./Resources/";               //リソースディレクトリ
+static const std::string shadersDirectory = resourcesDirectory + "shaders/"; //シェーダーディレクトリ
+static const std::string defaultTextureFileName = "white1x1.png";           //デフォルト画像
 } //Engine
 
 /*関数*/
 namespace Engine
 {
+std::wstring StringToWString(const std::string& s);
+std::string WStringToString(const std::wstring& s);
+
 // ディレクトリを含んだファイルパスからディレクトリパスを抽出する
 std::string ExtractDirectory(const std::string& path);
 // ディレクトリを含んだファイルパスからファイル名を抽出する
@@ -24,6 +28,13 @@ constexpr void Swap(T* a, T* b)
 	T tmp = *a;
 	*a = *b;
 	*b = tmp;
+}
+
+template <class T>
+void ContainerClear(T& std)
+{
+	std.clear();
+	std.shrink_to_fit();
 }
 } //Engine
 

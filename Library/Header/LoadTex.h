@@ -2,6 +2,7 @@
 #include "DirectDrawing.h"
 #include <DirectXTex.h>
 #include <d3dx12.h>
+#include <string>
 
 // テクスチャ全体のデータをまとめた構造体
 struct TextrueCommon
@@ -19,6 +20,7 @@ struct TextrueCommon
 // テクスチャ一枚分のデータをまとめた構造体
 struct Textrue
 {
+	std::wstring name;
 	Microsoft::WRL::ComPtr<ID3D12Resource> texbuff; //テクスチャバッファ
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandle; //CPU側のハンドル

@@ -57,6 +57,18 @@
     <ClCompile Include="Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\StageEditorScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage\Area.cpp">
+      <Filter>Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage\Door.cpp">
+      <Filter>Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\GameScene.h">
@@ -79,6 +91,18 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\StageEditorScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage\Area.h">
+      <Filter>Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage\Door.h">
+      <Filter>Stage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <d3d12.h>
 #include <wrl.h>
 #include <fbxsdk.h>
@@ -10,77 +10,77 @@
 
 struct Node
 {
-	std::string name;                      //–¼‘O
-	Engine::Math::Vector3 position;        //ƒ[ƒJƒ‹À•W
-	Engine::Math::Matrix4 rotation;        //ƒ[ƒJƒ‹‰ñ“]s—ñ
-	Engine::Math::Vector3 scaling;         //ƒ[ƒJƒ‹ƒXƒP[ƒ‹
-	Engine::Math::Matrix4 transform;       //ƒ[ƒJƒ‹•ÏŠ·s—ñ
-	Engine::Math::Matrix4 globalTransform; //ƒOƒ[ƒoƒ‹•ÏŠ·s—ñ
-	Node* parent;                          //eƒm[ƒh
+	std::string name;                      //åå‰
+	Engine::Math::Vector3 position;        //ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™
+	Engine::Math::Matrix4 rotation;        //ãƒ­ãƒ¼ã‚«ãƒ«å›è»¢è¡Œåˆ—
+	Engine::Math::Vector3 scaling;         //ãƒ­ãƒ¼ã‚«ãƒ«ã‚¹ã‚±ãƒ¼ãƒ«
+	Engine::Math::Matrix4 transform;       //ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ›è¡Œåˆ—
+	Engine::Math::Matrix4 globalTransform; //ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ›è¡Œåˆ—
+	Node* parent;                          //è¦ªãƒãƒ¼ãƒ‰
 
 	Node();
 };
 
-class Model
+__declspec(align(16)) class Model
 {
-private: // ƒGƒCƒŠƒAƒX
+private: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	using Vector3 = Engine::Math::Vector3;
 	using Matrix4 = Engine::Math::Matrix4;
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	template<class T> using vector = std::vector<T>;
 
-public: // ƒtƒŒƒ“ƒhƒNƒ‰ƒX
+public: // ãƒ•ãƒ¬ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹
 	friend class FbxLoader;
 
-public: // ’è”
+public: // å®šæ•°
 	static const int MAX_BONE_INDICES = 4;
 	static const int MAX_BONE = 32;
 
-public: // ƒTƒuƒNƒ‰ƒX
-	// ’¸“_ƒf[ƒ^\‘¢‘Ì
+public: // ã‚µãƒ–ã‚¯ãƒ©ã‚¹
+	// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 	struct VertexPosNormalUvSkin
 	{
-		Vector3 pos;          //xyzÀ•W
-		Vector3 normal;       //–@üƒxƒNƒgƒ‹
-		DirectX::XMFLOAT2 uv; //uvÀ•W
+		Vector3 pos;          //xyzåº§æ¨™
+		Vector3 normal;       //æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«
+		DirectX::XMFLOAT2 uv; //uvåº§æ¨™
 
-		UINT boneIndex[MAX_BONE_INDICES];   //ƒ{[ƒ“ ”Ô†
-		float boneWeight[MAX_BONE_INDICES]; //ƒ{[ƒ“ d‚İ
+		UINT boneIndex[MAX_BONE_INDICES];   //ãƒœãƒ¼ãƒ³ ç•ªå·
+		float boneWeight[MAX_BONE_INDICES]; //ãƒœãƒ¼ãƒ³ é‡ã¿
 	};
-	// ’è”ƒoƒbƒtƒ@—pƒf[ƒ^\‘¢‘Ì
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”¨ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 	struct ConstBufferData
 	{
-		Matrix4 viewProj;  //ƒrƒ…[ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ
-		Matrix4 world;     //ƒ[ƒ‹ƒhs—ñ
-		DirectX::XMFLOAT4 color; //Fî•ñ
-		Vector3 cameraPos; //ƒJƒƒ‰À•W
+		Matrix4 viewProj;  //ãƒ“ãƒ¥ãƒ¼ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³è¡Œåˆ—
+		Matrix4 world;     //ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—
+		DirectX::XMFLOAT4 color; //è‰²æƒ…å ±
+		Vector3 cameraPos; //ã‚«ãƒ¡ãƒ©åº§æ¨™
 	};
-	// ƒ{[ƒ“\‘¢‘Ì
+	// ãƒœãƒ¼ãƒ³æ§‹é€ ä½“
 	struct Bone
 	{
-		std::string name = {};                          //–¼‘O
-		Matrix4 invInitPose = Engine::Math::Identity(); //‰Šúp¨‚Ì‹ts—ñ
-		FbxCluster* fbxCluster = nullptr;               //ƒNƒ‰ƒXƒ^[
+		std::string name = {};                          //åå‰
+		Matrix4 invInitPose = Engine::Math::Identity(); //åˆæœŸå§¿å‹¢ã®é€†è¡Œåˆ—
+		FbxCluster* fbxCluster = nullptr;               //ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼
 	};
-	// ’è”ƒoƒbƒtƒ@—pƒf[ƒ^\‘¢‘Ì(ƒXƒLƒjƒ“ƒO)
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”¨ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“(ã‚¹ã‚­ãƒ‹ãƒ³ã‚°)
 	struct ConstBufferDataSkin
 	{
-		Matrix4 bones[MAX_BONE]; //ƒ{[ƒ“‚ÌƒXƒLƒjƒ“ƒOs—ñ
+		Matrix4 bones[MAX_BONE]; //ãƒœãƒ¼ãƒ³ã®ã‚¹ã‚­ãƒ‹ãƒ³ã‚°è¡Œåˆ—
 	};
 
-private: // Ã“Iƒƒ“ƒo•Ï”
+private: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 	static ID3D12Device* dev;
 
-	static int defaultShader;        //ƒVƒF[ƒ_[
-	static int colorShader;          //ƒVƒF[ƒ_[
-	static int inputLayout;          //ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg
-	static int defaultGPipeline;     //ƒOƒ‰ƒtƒBƒbƒNƒpƒCƒvƒ‰ƒCƒ“
-	static int colorGPipeline;       //ƒOƒ‰ƒtƒBƒbƒNƒpƒCƒvƒ‰ƒCƒ“
-	static int rootSignature;        //ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ
-	static int defaultPipelineState; //ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg
-	static int colorPipelineState;   //ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg
+	static int defaultShader;        //ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	static int colorShader;          //ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	static int inputLayout;          //ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
+	static int defaultGPipeline;     //ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
+	static int colorGPipeline;       //ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
+	static int rootSignature;        //ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£
+	static int defaultPipelineState; //ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆ
+	static int colorPipelineState;   //ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆ
 
-public: // Ã“Iƒƒ“ƒoŠÖ”
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
 	static HRESULT CreateGraphicsPipeline();
 
 	static int GetDefaultShaderShader() { return defaultShader; }
@@ -95,62 +95,62 @@ public: // Ã“Iƒƒ“ƒoŠÖ”
 	static void ChangeDefaultShader();
 	static void ChangeColorShader();
 
-public: // ƒƒ“ƒo•Ï”
-	Vector3 pos;   //ƒ[ƒJƒ‹À•W
-	Matrix4 rota;  //‰ñ“]s—ñ
-	Vector3 scale; //ƒXƒP[ƒ‹
-	Matrix4 world; //ƒ[ƒ‹ƒhs—ñ
+public: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	Vector3 pos;   //ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™
+	Matrix4 rota;  //å›è»¢è¡Œåˆ—
+	Vector3 scale; //ã‚¹ã‚±ãƒ¼ãƒ«
+	Matrix4 world; //ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—
 
-	FbxTime frameTime;   //1ƒtƒŒ[ƒ€‚ÌŠÔ
-	FbxTime startTime;   //ƒAƒjƒ[ƒVƒ‡ƒ“ŠJnŠÔ
-	FbxTime endTime;     //ƒAƒjƒ[ƒVƒ‡ƒ“I—¹ŠÔ
-	FbxTime currentTime; //Œ»İŠÔ
-	bool isPlay;         //ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶’†
+	FbxTime frameTime;   //1ãƒ•ãƒ¬ãƒ¼ãƒ ã®æ™‚é–“
+	FbxTime startTime;   //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–‹å§‹æ™‚é–“
+	FbxTime endTime;     //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†æ™‚é–“
+	FbxTime currentTime; //ç¾åœ¨æ™‚é–“
+	bool isPlay;         //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿä¸­
 private:
-	std::string name;      //ƒ‚ƒfƒ‹–¼
-	std::string directory; //ƒ‚ƒfƒ‹‚ª‚ ‚éƒfƒBƒŒƒNƒgƒŠƒpƒX
-	vector<Node> nodes;    //ƒm[ƒh”z—ñ
+	std::string name;      //ãƒ¢ãƒ‡ãƒ«å
+	std::string directory; //ãƒ¢ãƒ‡ãƒ«ãŒã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒ‘ã‚¹
+	vector<Node> nodes;    //ãƒãƒ¼ãƒ‰é…åˆ—
 
-	Node* meshNode;                         //ƒƒbƒVƒ…‚ğ‚Âƒm[ƒh
-	vector<VertexPosNormalUvSkin> vertices; //’¸“_ƒf[ƒ^”z—ñ
-	vector<unsigned short> indices;         //’¸“_ƒCƒ“ƒfƒbƒNƒX”z—ñ
+	Node* meshNode;                         //ãƒ¡ãƒƒã‚·ãƒ¥ã‚’æŒã¤ãƒãƒ¼ãƒ‰
+	vector<VertexPosNormalUvSkin> vertices; //é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿é…åˆ—
+	vector<unsigned short> indices;         //é ‚ç‚¹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹é…åˆ—
 
-	ComPtr<ID3D12Resource> vertBuff;          //’¸“_ƒoƒbƒtƒ@
-	ComPtr<ID3D12Resource> indexBuff;         //ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@
-	ComPtr<ID3D12Resource> texBuff;           //ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@
-	D3D12_VERTEX_BUFFER_VIEW vbView;          //’¸“_ƒoƒbƒtƒ@ƒrƒ…[
-	D3D12_INDEX_BUFFER_VIEW ibView;           //ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒrƒ…[
-	ComPtr<ID3D12Resource> constBuff;         //’è”ƒoƒbƒtƒ@
-	ComPtr<ID3D12Resource> constBuffSkin;     //’è”ƒoƒbƒtƒ@(ƒXƒLƒ“)
-	ComPtr<ID3D12DescriptorHeap> descHeapSRV; //SRV—pƒfƒXƒNƒŠƒvƒ^ƒq[ƒv
+	ComPtr<ID3D12Resource> vertBuff;          //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+	ComPtr<ID3D12Resource> indexBuff;         //ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡
+	ComPtr<ID3D12Resource> texBuff;           //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡
+	D3D12_VERTEX_BUFFER_VIEW vbView;          //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼
+	D3D12_INDEX_BUFFER_VIEW ibView;           //ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼
+	ComPtr<ID3D12Resource> constBuff;         //å®šæ•°ãƒãƒƒãƒ•ã‚¡
+	ComPtr<ID3D12Resource> constBuffSkin;     //å®šæ•°ãƒãƒƒãƒ•ã‚¡(ã‚¹ã‚­ãƒ³)
+	ComPtr<ID3D12DescriptorHeap> descHeapSRV; //SRVç”¨ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—
 
-	Vector3 ambient;                  //ƒAƒ“ƒrƒGƒ“ƒgŒW”
-	Vector3 diffuse;                  //ƒfƒBƒtƒ…[ƒYŒW”
-	DirectX::TexMetadata metadata;    //ƒeƒNƒXƒ`ƒƒƒƒ^ƒf[ƒ^
-	DirectX::ScratchImage scratchImg; //ƒXƒNƒ‰ƒbƒ`ƒCƒ[ƒW
+	Vector3 ambient;                  //ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆä¿‚æ•°
+	Vector3 diffuse;                  //ãƒ‡ã‚£ãƒ•ãƒ¥ãƒ¼ã‚ºä¿‚æ•°
+	DirectX::TexMetadata metadata;    //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ¡ã‚¿ãƒ‡ãƒ¼ã‚¿
+	DirectX::ScratchImage scratchImg; //ã‚¹ã‚¯ãƒ©ãƒƒãƒã‚¤ãƒ¡ãƒ¼ã‚¸
 
-	vector<Bone> bones; //ƒ{[ƒ“”z—ñ
+	vector<Bone> bones; //ãƒœãƒ¼ãƒ³é…åˆ—
 
-	FbxScene* fbxScene; //FBXƒV[ƒ“
+	FbxScene* fbxScene; //FBXã‚·ãƒ¼ãƒ³
 
-public: // ƒƒ“ƒoŠÖ”
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
 	Model();
 	~Model();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Init();
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	int Update(DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f });
-	// •`‰æ
+	// æç”»
 	void Draw();
-	// I—¹ˆ—
+	// çµ‚äº†å‡¦ç†
 	void Finalize();
 
-	// Šeíƒoƒbƒtƒ@‚Ì¶¬
+	// å„ç¨®ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	HRESULT CreateBuffers();
 	HRESULT CreateConstBuffer();
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ŠJn
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–‹å§‹
 	void PlayAnimation();
 
 	const Matrix4& GetModelTransform() { return meshNode->globalTransform; }

@@ -98,7 +98,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\fbx_sdk\lib\win32_lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -135,7 +135,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\fbx_sdk\lib\x64_lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -167,23 +167,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SettingScene.cpp" />
+    <ClCompile Include="Scene\StageEditorScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Stage\BlockType.cpp" />
     <ClCompile Include="Stage\BlockManager.cpp" />
+    <ClCompile Include="Stage\Door.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
+    <ClCompile Include="Stage\Area.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SettingScene.h" />
+    <ClInclude Include="Scene\StageEditorScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Stage\BlockType.h" />
     <ClInclude Include="Stage\BlockManager.h" />
+    <ClInclude Include="Stage\Door.h" />
     <ClInclude Include="Stage\Stage.h" />
+    <ClInclude Include="Stage\Area.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Game\background.png" />

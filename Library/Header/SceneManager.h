@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "SceneChenge.h"
 #include "BaseScene.h"
 #include <memory>
@@ -6,14 +6,16 @@
 
 class SceneManager : public SceneChenger
 {
-public: // ƒƒ“ƒoŠÖ”
-	SceneManager();
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	SceneManager() = delete;
+	SceneManager(DrawPolygon* draw);
 	~SceneManager() {}
 
 	void Loop() const;
 	void SceneChenge(const SceneChenger::Scene scene, const bool stackClear) override;
 	int PopScene() override;
 
-private: // ƒƒ“ƒo•Ï”
+private: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	DrawPolygon* draw;
 	std::stack<std::shared_ptr<BaseScene>> sceneStack;
 };

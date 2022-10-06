@@ -200,7 +200,7 @@ int PostEffect::PreDraw()
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvH[2] = {};
-	for (int i = 0; i < texBuff.size(); i++)
+	for (int i = 0; i < static_cast<int>(texBuff.size()); i++)
 	{
 		// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
 		rtvH[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(
@@ -257,7 +257,7 @@ int PostEffect::PostDraw()
 	static auto cmdList = DirectXInit::GetCommandList();
 	static auto renderTex = RenderTexture::Get();
 
-	for (int i = 0; i < texBuff.size(); i++)
+	for (size_t i = 0; i < texBuff.size(); i++)
 	{
 		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 			texBuff[i].Get(),
@@ -277,7 +277,8 @@ HRESULT PostEffect::CreateGraphicsPipelineState()
 	auto dev = DirectXInit::GetDevice();
 
 	// 各種シェーダーのコンパイルと読み込み
-	shader = shaderMgr->CreateShader(L"./lib/Shaders/PostEffectTestVS.hlsl", L"./lib/Shaders/PostEffectTestPS.hlsl");
+	shader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "PostEffectTestVS.hlsl").c_str(),
+									 StringToWString(shadersDirectory + "PostEffectTestPS.hlsl").c_str());
 
 	// 頂点レイアウト
 	inputLayout = DirectDrawing::Get2dInputLayout();

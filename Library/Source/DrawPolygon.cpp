@@ -6,11 +6,11 @@
 #include <sstream>
 #include <string>
 
-#include "./Header/Error.h"
-
 namespace
 {
 ShaderManager* shaderMgr = ShaderManager::Get();
+
+static const VertexData defaultVertexData{};
 }
 
 DrawPolygon::DrawPolygon() :
@@ -36,26 +36,26 @@ int DrawPolygon::CreateTriangle(
 	const XMFLOAT3& vertex3, const DirectX::XMFLOAT2& uv3,
 	const bool& isFill)
 {
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
-	vertices[vertices.size() - 1].vertices.push_back({ vertex1, {}, uv1 });
-	vertices[vertices.size() - 1].vertices.push_back({ vertex2, {}, uv2 });
-	vertices[vertices.size() - 1].vertices.push_back({ vertex3, {}, uv3 });
+	vertices.back().vertices.emplace_back(Vertex{ vertex1, {}, uv1 });
+	vertices.back().vertices.emplace_back(Vertex{ vertex2, {}, uv2 });
+	vertices.back().vertices.emplace_back(Vertex{ vertex3, {}, uv3 });
 
 	if (isFill == true)
 	{
-		vertices[vertices.size() - 1].indices.push_back(0);
-		vertices[vertices.size() - 1].indices.push_back(1);
-		vertices[vertices.size() - 1].indices.push_back(2);
+		vertices.back().indices.emplace_back(0);
+		vertices.back().indices.emplace_back(1);
+		vertices.back().indices.emplace_back(2);
 	}
 	else
 	{
-		vertices[vertices.size() - 1].indices.push_back(0);
-		vertices[vertices.size() - 1].indices.push_back(1);
-		vertices[vertices.size() - 1].indices.push_back(1);
-		vertices[vertices.size() - 1].indices.push_back(2);
-		vertices[vertices.size() - 1].indices.push_back(2);
-		vertices[vertices.size() - 1].indices.push_back(0);
+		vertices.back().indices.emplace_back(0);
+		vertices.back().indices.emplace_back(1);
+		vertices.back().indices.emplace_back(1);
+		vertices.back().indices.emplace_back(2);
+		vertices.back().indices.emplace_back(2);
+		vertices.back().indices.emplace_back(0);
 	}
 
 	return CreateVertexAndIndexBuffer();
@@ -63,34 +63,34 @@ int DrawPolygon::CreateTriangle(
 
 int DrawPolygon::CreateRect(const float& width, const float& height, const bool& isFill)
 {
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, 0.0f }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, 0.0f }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, 0.0f }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, 0.0f }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, 0.0f }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, 0.0f }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, 0.0f }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, 0.0f }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, 0.0f }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, 0.0f }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, 0.0f }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, 0.0f }, {}, { 1.0f, 1.0f } });
 
 	if (isFill == true)
 	{
-		vertices[vertices.size() - 1].indices.push_back(0);
-		vertices[vertices.size() - 1].indices.push_back(1);
-		vertices[vertices.size() - 1].indices.push_back(2);
-		vertices[vertices.size() - 1].indices.push_back(4);
-		vertices[vertices.size() - 1].indices.push_back(3);
-		vertices[vertices.size() - 1].indices.push_back(5);
+		vertices.back().indices.emplace_back(0);
+		vertices.back().indices.emplace_back(1);
+		vertices.back().indices.emplace_back(2);
+		vertices.back().indices.emplace_back(4);
+		vertices.back().indices.emplace_back(3);
+		vertices.back().indices.emplace_back(5);
 	}
 	else
 	{
-		vertices[vertices.size() - 1].indices.push_back(0);
-		vertices[vertices.size() - 1].indices.push_back(1);
-		vertices[vertices.size() - 1].indices.push_back(3);
-		vertices[vertices.size() - 1].indices.push_back(5);
-		vertices[vertices.size() - 1].indices.push_back(5);
-		vertices[vertices.size() - 1].indices.push_back(2);
-		vertices[vertices.size() - 1].indices.push_back(4);
-		vertices[vertices.size() - 1].indices.push_back(0);
+		vertices.back().indices.emplace_back(0);
+		vertices.back().indices.emplace_back(1);
+		vertices.back().indices.emplace_back(3);
+		vertices.back().indices.emplace_back(5);
+		vertices.back().indices.emplace_back(5);
+		vertices.back().indices.emplace_back(2);
+		vertices.back().indices.emplace_back(4);
+		vertices.back().indices.emplace_back(0);
 	}
 
 	return CreateVertexAndIndexBuffer();
@@ -98,7 +98,7 @@ int DrawPolygon::CreateRect(const float& width, const float& height, const bool&
 
 int DrawPolygon::CreateCircle(const float& r, const size_t& divNum, const bool& isFill)
 {
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
 	Vertex* v = (Vertex*)malloc(sizeof(Vertex) * (divNum + 1));
 	size_t indexSize = divNum * (2 + (size_t)isFill);
@@ -108,19 +108,19 @@ int DrawPolygon::CreateCircle(const float& r, const size_t& divNum, const bool& 
 
 	for (size_t i = 0; i < divNum + 1; i++)
 	{
-		vertices[vertices.size() - 1].vertices.push_back(v[i]);
+		vertices.back().vertices.emplace_back(v[i]);
 	}
 	for (size_t i = 0; i < indexSize; i++)
 	{
-		vertices[vertices.size() - 1].indices.push_back(index[i]);
+		vertices.back().indices.emplace_back(index[i]);
 	}
 
 	free(v);
 	free(index);
 
-	for (size_t i = 0; i < vertices[vertices.size() - 1].vertices.size(); i++)
+	for (size_t i = 0; i < vertices.back().vertices.size(); i++)
 	{
-		vertices[vertices.size() - 1].vertices[i].pos.x *= -1;
+		vertices.back().vertices[i].pos.x *= -1;
 	}
 
 	return CreateVertexAndIndexBuffer();
@@ -128,75 +128,75 @@ int DrawPolygon::CreateCircle(const float& r, const size_t& divNum, const bool& 
 
 int DrawPolygon::Create3Dbox(const float& width, const float& height, const float& depth, const bool& isFill)
 {
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
 	// 前
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
 	// 後ろ
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
 	// 左
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
 	// 右
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, +depth / 2 }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, -depth / 2 }, {}, { 1.0f, 1.0f } });
 	// 上
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, -height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
 	// 下
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
-	vertices[vertices.size() - 1].vertices.push_back({ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, -depth / 2 }, {}, { 0.0f, 1.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { +width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 0.0f } });
+	vertices.back().vertices.emplace_back(Vertex{ { -width / 2, +height / 2, +depth / 2 }, {}, { 1.0f, 1.0f } });
 
 	if (isFill == true)
 	{
 		for (unsigned short i = 0; i < 6; i++)
 		{
-			vertices[vertices.size() - 1].indices.push_back(0 + 3 * 2 * i);
-			vertices[vertices.size() - 1].indices.push_back(1 + 3 * 2 * i);
-			vertices[vertices.size() - 1].indices.push_back(2 + 3 * 2 * i);
-			vertices[vertices.size() - 1].indices.push_back(4 + 3 * 2 * i);
-			vertices[vertices.size() - 1].indices.push_back(3 + 3 * 2 * i);
-			vertices[vertices.size() - 1].indices.push_back(5 + 3 * 2 * i);
+			vertices.back().indices.emplace_back(0 + 3 * 2 * i);
+			vertices.back().indices.emplace_back(1 + 3 * 2 * i);
+			vertices.back().indices.emplace_back(2 + 3 * 2 * i);
+			vertices.back().indices.emplace_back(4 + 3 * 2 * i);
+			vertices.back().indices.emplace_back(3 + 3 * 2 * i);
+			vertices.back().indices.emplace_back(5 + 3 * 2 * i);
 		}
 	}
 	else
 	{
 		for (unsigned short i = 0; i < 6; i++)
 		{
-			vertices[vertices.size() - 1].indices.push_back(0 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(1 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(3 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(5 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(5 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(2 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(4 + 2 * 4 * i);
-			vertices[vertices.size() - 1].indices.push_back(0 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(0 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(1 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(3 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(5 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(5 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(2 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(4 + 2 * 4 * i);
+			vertices.back().indices.emplace_back(0 + 2 * 4 * i);
 		}
 	}
 
@@ -205,7 +205,7 @@ int DrawPolygon::Create3Dbox(const float& width, const float& height, const floa
 
 int DrawPolygon::CreateCorn(const float& r, const float& h, const size_t& divNum, const bool& isFill)
 {
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
 	Vertex* v = (Vertex*)malloc(sizeof(Vertex) * (divNum + 1));
 	size_t indexSize = divNum * (2 + (size_t)isFill);
@@ -215,58 +215,58 @@ int DrawPolygon::CreateCorn(const float& r, const float& h, const size_t& divNum
 
 	for (size_t i = 0; i < divNum + 1; i++)
 	{
-		vertices[vertices.size() - 1].vertices.push_back(v[i]);
+		vertices.back().vertices.emplace_back(v[i]);
 	}
 	for (size_t i = 0; i < indexSize; i++)
 	{
-		vertices[vertices.size() - 1].indices.push_back(index[i]);
+		vertices.back().indices.emplace_back(index[i]);
 	}
 
 	free(v);
 	free(index);
 
-	size_t size = vertices[vertices.size() - 1].vertices.size();
+	size_t size = vertices.back().vertices.size();
 
 	for (size_t i = 0; i < divNum; i++)
 	{
-		vertices[vertices.size() - 1].vertices.push_back(vertices[vertices.size() - 1].vertices[i + 0]);
-		vertices[vertices.size() - 1].vertices.push_back(vertices[vertices.size() - 1].vertices[i + 1]);
-		vertices[vertices.size() - 1].vertices.push_back({
+		vertices.back().vertices.emplace_back(vertices.back().vertices[i + 0]);
+		vertices.back().vertices.emplace_back(vertices.back().vertices[i + 1]);
+		vertices.back().vertices.emplace_back(Vertex{
 			{
-				vertices[vertices.size() - 1].vertices[divNum].pos.x,
-				vertices[vertices.size() - 1].vertices[divNum].pos.y,
-				vertices[vertices.size() - 1].vertices[divNum].pos.z + h
+				vertices.back().vertices[divNum].pos.x,
+				vertices.back().vertices[divNum].pos.y,
+				vertices.back().vertices[divNum].pos.z + h
 			},
-			vertices[vertices.size() - 1].vertices[divNum].normal,
-			vertices[vertices.size() - 1].vertices[divNum].uv,
+			vertices.back().vertices[divNum].normal,
+			vertices.back().vertices[divNum].uv,
 			});
 
 		if (isFill == true)
 		{
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 0 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 1 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 2 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 0 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 1 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 2 + size));
 		}
 		else
 		{
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 0 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 1 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 1 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 2 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 2 + size));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 3 + 0 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 0 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 1 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 1 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 2 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 2 + size));
+			vertices.back().indices.emplace_back((unsigned short)(i * 3 + 0 + size));
 		}
 	}
 
-	vertices[vertices.size() - 1].vertices[divNum * 3 - 2 + size] =
-		vertices[vertices.size() - 1].vertices[0];
+	vertices.back().vertices[divNum * 3 - 2 + size] =
+		vertices.back().vertices[0];
 
 	return CreateVertexAndIndexBuffer();
 }
 
 int DrawPolygon::CreateCylinder(const float& r, const float& h, const size_t& divNum, const bool& isFill)
 {
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
 	Vertex* v = (Vertex*)malloc(sizeof(Vertex) * (divNum + 1));
 	size_t indexSize = divNum * (2 + (size_t)isFill);
@@ -276,63 +276,63 @@ int DrawPolygon::CreateCylinder(const float& r, const float& h, const size_t& di
 
 	for (size_t i = 0; i < divNum + 1; i++)
 	{
-		vertices[vertices.size() - 1].vertices.push_back(v[i]);
+		vertices.back().vertices.emplace_back(v[i]);
 	}
 	for (size_t i = 0; i < indexSize; i++)
 	{
-		vertices[vertices.size() - 1].indices.push_back(index[i]);
+		vertices.back().indices.emplace_back(index[i]);
 	}
 
-	size_t size1 = vertices[vertices.size() - 1].vertices.size();
+	size_t size1 = vertices.back().vertices.size();
 
 	Circle({ 0, 0, 0.0f }, r, divNum, isFill, v, index);
 
 	for (size_t i = 0; i < divNum + 1; i++)
 	{
-		vertices[vertices.size() - 1].vertices.push_back(v[i]);
+		vertices.back().vertices.emplace_back(v[i]);
 	}
 	for (size_t i = 0; i < indexSize; i++)
 	{
-		vertices[vertices.size() - 1].indices.push_back(index[i] + (unsigned short)size1);
+		vertices.back().indices.emplace_back(index[i] + (unsigned short)size1);
 	}
 
 	free(v);
 	free(index);
 
-	size_t size2 = vertices[vertices.size() - 1].vertices.size();
+	size_t size2 = vertices.back().vertices.size();
 
 	for (size_t i = 0; i < divNum; i++)
 	{
-		vertices[vertices.size() - 1].vertices.push_back(vertices[vertices.size() - 1].vertices[i + 0]);
-		vertices[vertices.size() - 1].vertices.push_back(vertices[vertices.size() - 1].vertices[i + 1]);
-		vertices[vertices.size() - 1].vertices.push_back(vertices[vertices.size() - 1].vertices[i + 0 + size1]);
-		vertices[vertices.size() - 1].vertices.push_back(vertices[vertices.size() - 1].vertices[i + 1 + size1]);
+		vertices.back().vertices.emplace_back(vertices.back().vertices[i + 0]);
+		vertices.back().vertices.emplace_back(vertices.back().vertices[i + 1]);
+		vertices.back().vertices.emplace_back(vertices.back().vertices[i + 0 + size1]);
+		vertices.back().vertices.emplace_back(vertices.back().vertices[i + 1 + size1]);
 
 		if (isFill == true)
 		{
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 1 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 0 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 3 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 1 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 0 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 3 + size2));
 
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 3 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 0 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 2 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 3 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 0 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 2 + size2));
 		}
 		else
 		{
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 0 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 1 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 2 + size2));
-			vertices[vertices.size() - 1].indices.push_back((unsigned short)(i * 4 + 3 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 0 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 1 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 2 + size2));
+			vertices.back().indices.emplace_back((unsigned short)(i * 4 + 3 + size2));
 		}
 	}
 
-	vertices[vertices.size() - 1].vertices[divNum * 4 - 3 + size2] = vertices[vertices.size() - 1].vertices[0];
-	vertices[vertices.size() - 1].vertices[divNum * 4 - 1 + size2] = vertices[vertices.size() - 1].vertices[0 + size1];
+	vertices.back().vertices[divNum * 4 - 3 + size2] = vertices.back().vertices[0];
+	vertices.back().vertices[divNum * 4 - 1 + size2] = vertices.back().vertices[0 + size1];
 
 	for (size_t i = 0; i < size1 - 1; i++)
 	{
-		vertices[vertices.size() - 1].vertices[i].pos.x *= -1;
+		vertices.back().vertices[i].pos.x *= -1;
 	}
 
 	return CreateVertexAndIndexBuffer();
@@ -342,10 +342,10 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 {
 	using namespace DirectX;
 
-	vertices.push_back(VertexData());
+	vertices.emplace_back(defaultVertexData);
 
 	// 変数省略
-	auto& vert = vertices[vertices.size() - 1];
+	auto& vert = vertices.back();
 
 	size_t sizeV = vert.vertices.size();
 	size_t oldsizeV = sizeV;
@@ -385,13 +385,13 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 			{
 				for (size_t i = 0; i < divNum; i++)
 				{
-					vert.vertices.push_back(v[i + 0]);
-					vert.vertices.push_back(v[i + 1]);
-					vert.vertices.push_back(v[divNum]);
+					vert.vertices.emplace_back(v[i + 0]);
+					vert.vertices.emplace_back(v[i + 1]);
+					vert.vertices.emplace_back(v[divNum]);
 
-					vert.indices.push_back((unsigned short)(i * 3 + 1 + sizeV));
-					vert.indices.push_back((unsigned short)(i * 3 + 0 + sizeV));
-					vert.indices.push_back((unsigned short)(i * 3 + 2 + sizeV));
+					vert.indices.emplace_back((unsigned short)(i * 3 + 1 + sizeV));
+					vert.indices.emplace_back((unsigned short)(i * 3 + 0 + sizeV));
+					vert.indices.emplace_back((unsigned short)(i * 3 + 2 + sizeV));
 				}
 				vert.vertices[(divNum * 3 - 2) + sizeV] = v[0];
 			}
@@ -399,17 +399,17 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 			{
 				for (size_t j = 0; j < divNum + 1; j++)
 				{
-					vert.vertices.push_back(v[j]);
+					vert.vertices.emplace_back(v[j]);
 				}
 
 				for (size_t j = 0; j < divNum; j++)
 				{
-					vert.indices.push_back((unsigned short)((j + 0) + sizeV));
-					vert.indices.push_back((unsigned short)((j + 1) + sizeV));
-					vert.indices.push_back((unsigned short)((j + 1) + sizeV));
-					vert.indices.push_back((unsigned short)(divNum + sizeV));
-					vert.indices.push_back((unsigned short)(divNum + sizeV));
-					vert.indices.push_back((unsigned short)((j + 0) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 0) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 1) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 1) + sizeV));
+					vert.indices.emplace_back((unsigned short)(divNum + sizeV));
+					vert.indices.emplace_back((unsigned short)(divNum + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 0) + sizeV));
 				}
 				vert.indices[(divNum * 6 - 4) + sizeV] = (unsigned short)sizeV;
 				vert.indices[(divNum * 6 - 5) + sizeV] = (unsigned short)sizeV;
@@ -423,26 +423,26 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 				{
 					if (i == 2)
 					{
-						vert.vertices.push_back(v[j + 0]);
-						vert.vertices.push_back(v[j + 1]);
-						vert.vertices.push_back(vert.vertices[j * 3 + 0 + oldsizeV]);
-						vert.vertices.push_back(vert.vertices[j * 3 + 1 + oldsizeV]);
+						vert.vertices.emplace_back(v[j + 0]);
+						vert.vertices.emplace_back(v[j + 1]);
+						vert.vertices.emplace_back(vert.vertices[j * 3 + 0 + oldsizeV]);
+						vert.vertices.emplace_back(vert.vertices[j * 3 + 1 + oldsizeV]);
 					}
 					else
 					{
-						vert.vertices.push_back(v[j + 0]);
-						vert.vertices.push_back(v[j + 1]);
-						vert.vertices.push_back(vert.vertices[j * 4 + 0 + oldsizeV]);
-						vert.vertices.push_back(vert.vertices[j * 4 + 1 + oldsizeV]);
+						vert.vertices.emplace_back(v[j + 0]);
+						vert.vertices.emplace_back(v[j + 1]);
+						vert.vertices.emplace_back(vert.vertices[j * 4 + 0 + oldsizeV]);
+						vert.vertices.emplace_back(vert.vertices[j * 4 + 1 + oldsizeV]);
 					}
 
-					vert.indices.push_back((unsigned short)((j * 4 + 1) + sizeV));
-					vert.indices.push_back((unsigned short)((j * 4 + 0) + sizeV));
-					vert.indices.push_back((unsigned short)((j * 4 + 3) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j * 4 + 1) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j * 4 + 0) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j * 4 + 3) + sizeV));
 
-					vert.indices.push_back((unsigned short)((j * 4 + 3) + sizeV));
-					vert.indices.push_back((unsigned short)((j * 4 + 0) + sizeV));
-					vert.indices.push_back((unsigned short)((j * 4 + 2) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j * 4 + 3) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j * 4 + 0) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j * 4 + 2) + sizeV));
 				}
 				vert.vertices[divNum * 4 + sizeV - 1] = vert.vertices[oldsizeV];
 				vert.vertices[divNum * 4 + sizeV - 3] = v[0];
@@ -451,12 +451,12 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 			{
 				for (size_t j = 0; j < divNum; j++)
 				{
-					vert.vertices.push_back(v[j]);
+					vert.vertices.emplace_back(v[j]);
 
-					vert.indices.push_back((unsigned short)((j + 0) + oldsizeV));
-					vert.indices.push_back((unsigned short)((j + 0) + sizeV));
-					vert.indices.push_back((unsigned short)((j + 0) + sizeV));
-					vert.indices.push_back((unsigned short)((j + 1) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 0) + oldsizeV));
+					vert.indices.emplace_back((unsigned short)((j + 0) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 0) + sizeV));
+					vert.indices.emplace_back((unsigned short)((j + 1) + sizeV));
 				}
 				vert.indices[(divNum * 4 - 1) + sizeI] = (unsigned short)sizeV;
 			}
@@ -473,13 +473,13 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 	{
 		for (size_t i = 0; i < divNum; i++)
 		{
-			vert.vertices.push_back(v[i + 0]);
-			vert.vertices.push_back(v[i + 1]);
-			vert.vertices.push_back(v[divNum]);
+			vert.vertices.emplace_back(v[i + 0]);
+			vert.vertices.emplace_back(v[i + 1]);
+			vert.vertices.emplace_back(v[divNum]);
 
-			vert.indices.push_back((unsigned short)(i * 3 + 0 + sizeV));
-			vert.indices.push_back((unsigned short)(i * 3 + 1 + sizeV));
-			vert.indices.push_back((unsigned short)(i * 3 + 2 + sizeV));
+			vert.indices.emplace_back((unsigned short)(i * 3 + 0 + sizeV));
+			vert.indices.emplace_back((unsigned short)(i * 3 + 1 + sizeV));
+			vert.indices.emplace_back((unsigned short)(i * 3 + 2 + sizeV));
 		}
 		vert.vertices[(divNum * 3 - 2) + sizeV] = v[0];
 	}
@@ -489,16 +489,16 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 		{
 			if (divNum == 3)
 			{
-				vert.indices.push_back((unsigned short)((i + 0) + oldsizeV));
-				vert.indices.push_back((unsigned short)(divNum + 1 + oldsizeV));
+				vert.indices.emplace_back((unsigned short)((i + 0) + oldsizeV));
+				vert.indices.emplace_back((unsigned short)(divNum + 1 + oldsizeV));
 			}
 			else
 			{
-				vert.indices.push_back((unsigned short)((i + 0) + oldsizeV));
-				vert.indices.push_back((unsigned short)(divNum + oldsizeV));
+				vert.indices.emplace_back((unsigned short)((i + 0) + oldsizeV));
+				vert.indices.emplace_back((unsigned short)(divNum + oldsizeV));
 			}
 		}
-		vert.vertices.push_back(v[divNum]);
+		vert.vertices.emplace_back(v[divNum]);
 	}
 
 	free(v);
@@ -509,7 +509,7 @@ int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& 
 
 int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 {
-	if (filePath == nullptr) { return Engine::FUNCTION_ERROR; }
+	if (filePath == nullptr) { return FUNCTION_ERROR; }
 
 	using namespace std;
 	using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -590,7 +590,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 				if (isFaceStart == false)
 				{
 					isFaceStart = true;
-					vertices.push_back(VertexData());
+					vertices.emplace_back(defaultVertexData);
 				}
 
 				// 頂点インデックス1個分の文字列をストリームに変換して解析しやすくする
@@ -600,7 +600,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 				auto resultIter = std::find(index_string.begin(), index_string.end(), '/');
 				auto temp = std::distance(index_string.begin(), ++resultIter);
 				// 変数省略
-				auto& vert = vertices[vertices.size() - 1];
+				auto& vert = vertices.back();
 
 				if (index_string[temp] == '/')
 				{
@@ -668,11 +668,11 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			}
 			if (materialIndex >= material.size())
 			{
-				return Engine::FUNCTION_ERROR;
+				return FUNCTION_ERROR;
 			}
 
 			isFaceStart = false;
-			obj.push_back({});
+			obj.emplace_back(OBJData{});
 			if (parent == nullptr)
 			{
 				parent = &obj[obj.size() - 1];
@@ -707,7 +707,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			IID_PPV_ARGS(&vertices[i].vertBuff));
 		if (FAILED(hr))
 		{
-			return Engine::FUNCTION_ERROR;
+			return FUNCTION_ERROR;
 		}
 
 		hr = vertices[i].vertBuff->Map(0, nullptr, (void**)&vertMap);
@@ -742,7 +742,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			IID_PPV_ARGS(&vertices[i].indexBuff));
 		if (FAILED(hr))
 		{
-			return Engine::FUNCTION_ERROR;
+			return FUNCTION_ERROR;
 		}
 
 		// GPU上のバッファに対応した仮想メモリを取得
@@ -806,7 +806,7 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 		assert(0);
 	}
 
-	material.clear();
+	ContainerClear(material);
 
 	// 1行ずつ読み込む
 	std::string line;
@@ -828,7 +828,7 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 		// 先頭文字列がnewmtlならマテリアル名
 		if (key == "newmtl")
 		{
-			material.push_back({});
+			material.emplace_back(Material{});
 			// マテリアル名読み込み
 			line_stream >> material[material.size() - 1].name;
 		}
@@ -878,6 +878,23 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 	}
 	// ファイルを閉じる
 	file.close();
+}
+
+int DrawPolygon::DeleteModelData(int* modelData)
+{
+	if (*modelData < 0 || *modelData >= static_cast<int>(vertices.size()))
+	{
+		return FUNCTION_ERROR;
+	}
+
+	for (size_t i = 0; i < obj.size(); i++)
+	{
+		if (*modelData == obj[i].polygonData)
+		{
+		}
+	}
+
+		return 0;
 }
 
 void DrawPolygon::Tiring(const int& polygonData, const float& uvScaleX, const float& uvScaleY)
@@ -997,16 +1014,16 @@ int DrawPolygon::DrawPolygonInit()
 	hr = CreateConstBuffer(&index);
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	if (isDrawPolygonInit == false)
 	{
 		isDrawPolygonInit = true;
 
-		if (LoadTextrue() == Engine::FUNCTION_ERROR)
+		if (LoadTextrue() == FUNCTION_ERROR)
 		{
-			return Engine::FUNCTION_ERROR;
+			return FUNCTION_ERROR;
 		}
 	}
 
@@ -1021,7 +1038,7 @@ int DrawPolygon::DrawOBJInit()
 	hr = CreateConstBuffer(&index);
 	if (FAILED(hr))
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	if (isDrawOBJPolygonInit == false)
@@ -1041,7 +1058,7 @@ int DrawPolygon::Draw(
 		(graphHandle < 0 || (UINT)graphHandle > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	using namespace DirectX;
@@ -1058,12 +1075,12 @@ int DrawPolygon::Draw(
 	if (isInit == false)
 	{
 		int size = DrawPolygonInit();
-		if (size == Engine::FUNCTION_ERROR)
+		if (size == FUNCTION_ERROR)
 		{
-			return Engine::FUNCTION_ERROR;
+			return FUNCTION_ERROR;
 		}
 
-		objIndex.push_back({ size, graphHandle });
+		objIndex.emplace_back(IndexData{ size, graphHandle });
 
 		if (isFill == false)
 		{
@@ -1076,7 +1093,7 @@ int DrawPolygon::Draw(
 
 	if (objIndex.size() <= 0)
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	polygonCount++;
@@ -1163,7 +1180,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount)/* ||
 		(parent < -1 && (parent != -1 && (size_t)parent >= obj.size()))*/)
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	using namespace DirectX;
@@ -1182,12 +1199,12 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 		if (isInit == false)
 		{
 			int size = DrawOBJInit();
-			if (size == Engine::FUNCTION_ERROR)
+			if (size == FUNCTION_ERROR)
 			{
-				return Engine::FUNCTION_ERROR;
+				return FUNCTION_ERROR;
 			}
 
-			objIndex.push_back({ size, (int)obj[i].material.textrueIndex });
+			objIndex.emplace_back(IndexData{ size, (int)obj[i].material.textrueIndex });
 		}
 
 		if (obj[i].parent != nullptr)
@@ -1199,7 +1216,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 
 	if (objIndex.size() <= 0)
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	polygonCount++;
@@ -1299,7 +1316,7 @@ int DrawPolygon::CreateCamera(const XMFLOAT3& cameraPos, const XMFLOAT3& cameraT
 {
 	using namespace DirectX;
 
-	Camera::matView.push_back(Camera::CreateCamera(
+	Camera::matView.emplace_back(Camera::CreateCamera(
 		XMLoadFloat3(&cameraPos),
 		XMLoadFloat3(&cameraTarget),
 		XMLoadFloat3(&upVector)
@@ -1355,8 +1372,12 @@ void DrawPolygon::PolygonLoopEnd()
 
 void DrawPolygon::DataClear()
 {
-	verticesCount.clear();
-	material.clear();
+	ContainerClear(verticesCount);
+	ContainerClear(material);
+
+#ifdef _DEBUG
+	OutputDebugStringA("'DrawPolygon'のデータを削除しました。\n");
+#endif // _DEBUG
 }
 
 void DrawPolygon::Circle(const XMFLOAT3& centerPos, const float& r, const size_t& divNum,

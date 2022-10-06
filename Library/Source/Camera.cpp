@@ -81,12 +81,12 @@ void Camera::Update()
 	SetCamera(pos, target, upVec);
 }
 
-DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
+Engine::Math::Matrix4 Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
 
 	XMVECTOR x, y, z;
-	XMMATRIX mat = {};
+	Matrix4 mat = {};
 
 	z = target - pos;
 	z = XMVector3Normalize(z);
@@ -115,12 +115,12 @@ DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& targ
 	return mat;
 }
 
-DirectX::XMMATRIX Camera::CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
+Engine::Math::Matrix4 Camera::CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
 
 	XMVECTOR x, y, z, d;
-	XMMATRIX mat = {};
+	Matrix4 mat = {};
 
 	y = XMVector3Normalize(upVector);
 	d = target - pos;
@@ -154,7 +154,7 @@ int Camera::ChangeCamera(const size_t& cameraNo)
 	return 0;
 }
 
-void Camera::SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Math::Vector3& cameraTarget, const Engine::Math::Vector3& upVector)
+void Camera::SetCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector)
 {
 	using namespace DirectX;
 
@@ -165,7 +165,7 @@ void Camera::SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Mat
 	);
 }
 
-int Camera::SetNear(const float& nearClip)
+int Camera::SetNear(float nearClip)
 {
 	using namespace DirectX;
 
@@ -201,7 +201,7 @@ int Camera::SetNear(const float& nearClip)
 	return 0;
 }
 
-int Camera::SetFar(const float& farClip)
+int Camera::SetFar(float farClip)
 {
 	using namespace DirectX;
 

@@ -1,35 +1,44 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
-#include "Area.h"
+#include "BlockManager.h"
+#include "Door.h"
 #include "./Header/EngineGeneral.h"
-#include <vector>
 
-class Stage final
+class Area
 {
-public: //シングルトン化
-	static Stage* Get();
-private:
-	Stage();
-	Stage(const Stage&) = delete;
-	~Stage();
-	Stage operator=(const Stage&) = delete;
-
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 
+public: //サブクラス
+	enum DoorNum
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT
+	};
+
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static std::vector<Area> area; //各部屋の情報
+	static BlockManager* block_mgr;
+	static int wall_obj; //外壁のオブジェクト
 
 public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
+	static const bool IsGoal() { return block_mgr->GetGoal(); }
 
-	static const bool IsGoal() { return Area::IsGoal(); }
+	static BlockManager* GetBlockManager() { return block_mgr; }
+
+private: //メンバ変数
+	Door door[4];
 
 public: //メンバ関数
+	Area();
+	~Area();
+
 	// 初期化処理
-	void Init();
+	void Init() {}
 	// 更新処理
 	void Update();
 	// 描画処理
@@ -38,5 +47,5 @@ public: //メンバ関数
 	void Reset();
 
 	// ステージ読み込み
-	void LoadStage(const char* filePath = nullptr);
+	void LoadArea(const char* filePath = nullptr);
 };

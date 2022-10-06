@@ -150,7 +150,7 @@ bool DirectInput::CheckHitGamepad(DirectInput::GamepadInputType inputType, const
 	}
 
 	// ボタンの入力があるかどうか
-	if (inputType >= 0 && inputType <= 32)
+	if (inputType >= 0 && inputType <= 31)
 	{
 		if (gamepad.rgbButtons[inputType])
 		{

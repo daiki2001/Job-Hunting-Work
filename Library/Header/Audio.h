@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <xaudio2.h>
 #include <wrl.h>
 #include <vector>
@@ -7,32 +7,32 @@
 
 class Audio
 {
-public: // ƒTƒuƒNƒ‰ƒX
+public: // ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 
-	// ƒ`ƒƒƒ“ƒNƒwƒbƒ_
+	// ãƒãƒ£ãƒ³ã‚¯ãƒ˜ãƒƒãƒ€
 	struct Chunk
 	{
-		char id[4]; //ƒ`ƒƒƒ“ƒN–ˆ‚ÌID
-		INT32 size; //ƒ`ƒƒƒ“ƒNƒTƒCƒY
+		char id[4]; //ãƒãƒ£ãƒ³ã‚¯æ¯ã®ID
+		INT32 size; //ãƒãƒ£ãƒ³ã‚¯ã‚µã‚¤ã‚º
 	};
-	// RIFFƒwƒbƒ_ƒ`ƒƒƒ“ƒN
+	// RIFFãƒ˜ãƒƒãƒ€ãƒãƒ£ãƒ³ã‚¯
 	struct RiffHeader
 	{
 		Chunk chunk;  //"RIFF"
 		char type[4]; //"WAVE"
 	};
-	// FMTƒwƒbƒ_ƒ`ƒƒƒ“ƒN
+	// FMTãƒ˜ãƒƒãƒ€ãƒãƒ£ãƒ³ã‚¯
 	struct FormatChunk
 	{
 		Chunk chunk;      //"fmt"
-		WAVEFORMATEX fmt; //”gŒ`ƒtƒH[ƒ}ƒbƒg
+		WAVEFORMATEX fmt; //æ³¢å½¢ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 	};
-	// ‰¹ºƒf[ƒ^
+	// éŸ³å£°ãƒ‡ãƒ¼ã‚¿
 	struct SoundData
 	{
-		WAVEFORMATEX wfex;       //”gŒ`ƒtƒH[ƒ}ƒbƒg
-		BYTE* pBuffer;           //ƒoƒbƒtƒ@‚Ìæ“ªƒAƒhƒŒƒX
-		unsigned int bufferSize; //ƒoƒbƒtƒ@‚ÌƒTƒCƒY
+		WAVEFORMATEX wfex;       //æ³¢å½¢ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+		BYTE* pBuffer;           //ãƒãƒƒãƒ•ã‚¡ã®å…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹
+		unsigned int bufferSize; //ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚º
 	};
 
 private:
@@ -45,14 +45,14 @@ public:
 	Audio();
 	~Audio();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	HRESULT Init();
 
-	// ‰¹ºƒf[ƒ^‚Ì“Ç‚İ‚İ
+	// éŸ³å£°ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
 	int SoundLoadWave(const char* filePath);
-	// ‰¹ºƒf[ƒ^‚ÌÄ¶
-	void SoundPlayWave(const int& soundData);
+	// éŸ³å£°ãƒ‡ãƒ¼ã‚¿ã®å†ç”Ÿ
+	void SoundPlayWave(int soundData);
 private:
-	// ‰¹ºƒf[ƒ^‚ÌŠJ•ú
-	void SoundUnload(const int& soundData);
+	// éŸ³å£°ãƒ‡ãƒ¼ã‚¿ã®é–‹æ”¾
+	void SoundUnload(int soundData);
 };

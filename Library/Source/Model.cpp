@@ -200,7 +200,7 @@ int Model::Update(DirectX::XMFLOAT4 color)
 	hr = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
 	if (SUCCEEDED(hr))
 	{
-		for (int i = 0; i < bones.size(); i++)
+		for (size_t i = 0; i < bones.size(); i++)
 		{
 			// 今の姿勢行列を取得
 			FbxAMatrix fbxCurrentPose =
@@ -420,7 +420,7 @@ HRESULT Model::CreateConstBuffer()
 	hr = constBuff->Map(0, nullptr, (void**)&constMap);
 	if (SUCCEEDED(hr))
 	{
-		for (int i = 0; i < bones.size(); i++)
+		for (size_t i = 0; i < bones.size(); i++)
 		{
 			constMap->viewProj = Math::Identity();
 			constMap->world = Math::Identity();

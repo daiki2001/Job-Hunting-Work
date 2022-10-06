@@ -203,7 +203,7 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 		surroundingBlock.push_back(Engine::FUNCTION_ERROR);
 	}
 
-	for (int i = 0, j = 0; i < block.size(); i++)
+	for (int i = 0, j = 0; i < static_cast<int>(block.size()); i++)
 	{
 		if (static_cast<int>(block[i].pos.x) == static_cast<int>(player->pos.x) &&
 			static_cast<int>(block[i].pos.y) == static_cast<int>(player->pos.y))

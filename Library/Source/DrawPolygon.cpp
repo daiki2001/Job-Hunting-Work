@@ -882,7 +882,7 @@ void DrawPolygon::LoadMaterial(const std::string& directoryPath, const std::stri
 
 int DrawPolygon::DeleteModelData(int* modelData)
 {
-	if (*modelData < 0 || *modelData >= vertices.size())
+	if (*modelData < 0 || *modelData >= static_cast<int>(vertices.size()))
 	{
 		return FUNCTION_ERROR;
 	}

@@ -200,7 +200,7 @@ int PostEffect::PreDraw()
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvH[2] = {};
-	for (int i = 0; i < texBuff.size(); i++)
+	for (int i = 0; i < static_cast<int>(texBuff.size()); i++)
 	{
 		// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
 		rtvH[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(
@@ -257,7 +257,7 @@ int PostEffect::PostDraw()
 	static auto cmdList = DirectXInit::GetCommandList();
 	static auto renderTex = RenderTexture::Get();
 
-	for (int i = 0; i < texBuff.size(); i++)
+	for (size_t i = 0; i < texBuff.size(); i++)
 	{
 		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 			texBuff[i].Get(),

@@ -14,7 +14,6 @@ private:
 
 private: // エイリアス
 	using XMVECTOR = DirectX::XMVECTOR;
-	using XMMATRIX = DirectX::XMMATRIX;
 	using Vector3 = Engine::Math::Vector3;
 	using Matrix4 = Engine::Math::Matrix4;
 
@@ -27,29 +26,6 @@ public: // サブクラス
 
 public: // 定数
 	static const size_t MAIN_CAMERA;
-
-public: // 静的メンバ関数
-	// 初期化処理
-	static void Init();
-	// 更新処理
-	static void Update();
-
-	// キャラクタ姿勢行列の生成
-	static DirectX::XMMATRIX CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);
-	// キャラクタ姿勢束縛行列の生成
-	static DirectX::XMMATRIX CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);
-
-	// カメラの切り替え
-	static int ChangeCamera(const size_t& cameraNo);
-	// カメラの設定
-	static void SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Math::Vector3& cameraTarget, const Engine::Math::Vector3& upVector);
-	// カメラの取得
-	static Matrix4 GetMatView() { return matView[cameraNo]; };
-
-	// ニアクリップ距離の設定
-	static int SetNear(const float& nearClip);
-	// ファークリップ距離の設定
-	static int SetFar(const float& farClip);
 
 public: // 静的メンバ変数
 	static float targetRadius; //注視点からの距離
@@ -66,4 +42,27 @@ public: // 静的メンバ変数
 private:
 	static float nearClip; //ニアクリップ距離
 	static float farClip;  //ファークリップ距離
+
+public: // 静的メンバ関数
+	// 初期化処理
+	static void Init();
+	// 更新処理
+	static void Update();
+
+	// キャラクタ姿勢行列の生成
+	static Matrix4 CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);
+	// キャラクタ姿勢束縛行列の生成
+	static Matrix4 CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector);
+
+	// カメラの切り替え
+	static int ChangeCamera(const size_t& cameraNo);
+	// カメラの設定
+	static void SetCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector);
+	// カメラの取得
+	static Matrix4 GetMatView() { return matView[cameraNo]; };
+
+	// ニアクリップ距離の設定
+	static int SetNear(float nearClip);
+	// ファークリップ距離の設定
+	static int SetFar(float farClip);
 };

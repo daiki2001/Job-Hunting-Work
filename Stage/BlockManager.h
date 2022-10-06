@@ -14,8 +14,9 @@ public: //サブクラス
 	{
 		NONE,
 		WALL,
-		SWITCH,
 		GOAL,
+		SWITCH,
+		KEY,
 		MAX
 	};
 
@@ -39,7 +40,7 @@ private: //静的メンバ変数
 
 private: //メンバ変数
 	std::vector<BlockType> blockType;
-	std::vector<Block> block;
+	std::vector<Block> blocks;
 	bool isOpen;
 	bool isGoal;
 
@@ -65,7 +66,7 @@ public: //メンバ関数
 	// 全ブロックの削除処理
 	void AllDeleteBlock();
 
-	Block& GetBlock(const int& index) { return block[index]; };
+	Block& GetBlock(const int& index) { return blocks[index]; };
 	const bool GetDoor() const { return isOpen; }
 	const bool GetGoal() const { return isGoal; }
 private:

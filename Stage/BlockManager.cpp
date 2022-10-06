@@ -18,7 +18,7 @@ BlockManager::Block::Block(const BlockManager::TypeId& typeId) :
 
 BlockManager::BlockManager() :
 	blockType{},
-	block{},
+	blocks{},
 	isOpen(false),
 	isGoal(false)
 {
@@ -27,13 +27,13 @@ BlockManager::BlockManager() :
 BlockManager::~BlockManager()
 {
 	blockType.clear();
-	block.clear();
+	blocks.clear();
 }
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
 	blockType.clear();
-	block.clear();
+	blocks.clear();
 
 	blockType.push_back(BlockType(BlockManager::TypeId::NONE, draw));
 	blockType.back().Create();
@@ -41,11 +41,18 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.push_back(BlockType(BlockManager::TypeId::WALL, draw));
 	blockType.back().Create(L"WallBlock.png");
 
+	blockType.push_back(BlockType(BlockManager::TypeId::GOAL, draw));
+	blockType.back().Create(L"Goal.png");
+
 	blockType.push_back(BlockType(BlockManager::TypeId::SWITCH, draw));
 	blockType.back().Create("Switch.obj");
 
-	blockType.push_back(BlockType(BlockManager::TypeId::GOAL, draw));
-	blockType.back().Create(L"Goal.png");
+	blockType.push_back(BlockType(BlockManager::TypeId::KEY, draw));
+	blockType.back().Create("key.obj",
+							Math::Identity()
+							/*Math::rotateZ(Math::PI_F / 2) * Math::rotateX(Math::PI_F / 2)*/,
+							{ 0.5f, 0.5f, 0.5f },
+							{ 1.0f, 1.0f, 0.0f, 1.0f });
 }
 
 void BlockManager::Update()
@@ -68,15 +75,18 @@ void BlockManager::Update()
 	case BlockManager::TypeId::GOAL:
 		isGoal = true;
 		break;
+	case BlockManager::TypeId::KEY:
+		//isGoal = true;
+		break;
 	case BlockManager::TypeId::NONE:
 	default:
 		break;
 	}
 
 	isOpen = true;
-	for (size_t i = 0; i < block.size(); i++)
+	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		if (block[i].isSwitch == false)
+		if (blocks[i].isSwitch == false)
 		{
 			isOpen = false;
 			break;
@@ -86,37 +96,19 @@ void BlockManager::Update()
 
 void BlockManager::Draw(const int& offsetX, const int& offsetY)
 {
-	for (size_t i = 0; i < block.size(); i++)
+	for (size_t i = 0; i < blocks.size(); i++)
 	{
-#ifdef _DEBUG
-		//DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		//switch (block[i].GetTypeId())
-		//{
-		//case BlockManager::TypeId::SWITCH:
-		//	color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-		//	break;
-		//case BlockManager::TypeId::NONE:
-		//case BlockManager::TypeId::WALL:
-		//default:
-		//	color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-		//	break;
-		//}
-
-		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f));
-#else
-		blockType[block[i].GetTypeId()].Draw(block[i].pos + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f));
-#endif // _DEBUG
+		blockType[blocks[i].GetTypeId()].Draw(blocks[i].pos + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f));
 	}
 }
 
 void BlockManager::Reset()
 {
-	for (size_t i = 0; i < block.size(); i++)
+	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		if (block[i].GetTypeId() == BlockManager::TypeId::SWITCH)
+		if (blocks[i].GetTypeId() == BlockManager::TypeId::SWITCH)
 		{
-			block[i].isSwitch = false;
+			blocks[i].isSwitch = false;
 		}
 	}
 
@@ -132,8 +124,8 @@ int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 			continue;
 		}
 
-		block.emplace_back(typeId);
-		return static_cast<int>(block.size() - 1);
+		blocks.emplace_back(typeId);
+		return static_cast<int>(blocks.size() - 1);
 	}
 
 	return Engine::FUNCTION_ERROR;
@@ -141,17 +133,17 @@ int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 
 void BlockManager::ChengeBlock(const int& index, const BlockManager::TypeId& typeId)
 {
-	block.at(index) = Block(typeId);
+	blocks[index] = Block(typeId);
 }
 
 void BlockManager::DeleteBlock(const int& index)
 {
-	block.erase(block.begin() + index);
+	blocks.erase(blocks.begin() + index);
 }
 
 void BlockManager::AllDeleteBlock()
 {
-	block.clear();
+	blocks.clear();
 }
 
 void BlockManager::PlayerPushBack() const
@@ -177,7 +169,7 @@ void BlockManager::PlayerPushBack() const
 
 void BlockManager::SwitchPush(const size_t& blockNo)
 {
-	block[blockNo].isSwitch = true;
+	blocks[blockNo].isSwitch = true;
 }
 
 int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* surroundingBlockType)
@@ -191,10 +183,10 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 		surroundingBlock.push_back(Engine::FUNCTION_ERROR);
 	}
 
-	for (int i = 0, j = 0; i < block.size(); i++)
+	for (int i = 0, j = 0; i < blocks.size(); i++)
 	{
-		if (static_cast<int>(block[i].pos.x) == static_cast<int>(player->pos.x) &&
-			static_cast<int>(block[i].pos.y) == static_cast<int>(player->pos.y))
+		if (static_cast<int>(blocks[i].pos.x) == static_cast<int>(player->pos.x) &&
+			static_cast<int>(blocks[i].pos.y) == static_cast<int>(player->pos.y))
 		{
 			playerPos = i;
 		}
@@ -202,7 +194,7 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 		if (i == 0)
 		{
 			for (int y = static_cast<int>(player->pos.y) - radius;
-				 (y < static_cast<int>(player->pos.y) + radius) && (y < static_cast<int>(block[i].pos.y));
+				 (y < static_cast<int>(player->pos.y) + radius) && (y < static_cast<int>(blocks[i].pos.y));
 				 y++)
 			{
 				for (int x = 0; x < radius * 2 + 1; x++)
@@ -212,10 +204,10 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 			}
 		}
 
-		if (block[i].pos.x == block[0].pos.x)
+		if (blocks[i].pos.x == blocks[0].pos.x)
 		{
 			for (int x = static_cast<int>(player->pos.x) - radius;
-				 (x < static_cast<int>(player->pos.x) + radius) && (x < static_cast<int>(block[i].pos.x));
+				 (x < static_cast<int>(player->pos.x) + radius) && (x < static_cast<int>(blocks[i].pos.x));
 				 x++)
 			{
 				j++;
@@ -227,18 +219,18 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 			break;
 		}
 
-		if ((static_cast<int>(block[i].pos.x) >= static_cast<int>(player->pos.x) - radius &&
-			 static_cast<int>(block[i].pos.x) <= static_cast<int>(player->pos.x) + radius) &&
-			(static_cast<int>(block[i].pos.y) >= static_cast<int>(player->pos.y) - radius &&
-			 static_cast<int>(block[i].pos.y) <= static_cast<int>(player->pos.y) + radius))
+		if ((static_cast<int>(blocks[i].pos.x) >= static_cast<int>(player->pos.x) - radius &&
+			 static_cast<int>(blocks[i].pos.x) <= static_cast<int>(player->pos.x) + radius) &&
+			(static_cast<int>(blocks[i].pos.y) >= static_cast<int>(player->pos.y) - radius &&
+			 static_cast<int>(blocks[i].pos.y) <= static_cast<int>(player->pos.y) + radius))
 		{
 			surroundingBlock[j++] = i;
 		}
 
-		if (block[i].pos.x == block[block.size() - 1].pos.x)
+		if (blocks[i].pos.x == blocks[blocks.size() - 1].pos.x)
 		{
 			for (int x = static_cast<int>(player->pos.x) + radius;
-				 (x > static_cast<int>(player->pos.x) - radius) && (x > static_cast<int>(block[i].pos.x) / BlockType::WIDTH);
+				 (x > static_cast<int>(player->pos.x) - radius) && (x > static_cast<int>(blocks[i].pos.x) / BlockType::WIDTH);
 				 x--)
 			{
 				j++;
@@ -258,7 +250,7 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 			surroundingBlockType[i] = BlockManager::TypeId::WALL;
 			continue;
 		}
-		surroundingBlockType[i] = block[surroundingBlock[i]].GetTypeId();
+		surroundingBlockType[i] = blocks[surroundingBlock[i]].GetTypeId();
 	}
 
 	return playerPos;

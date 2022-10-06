@@ -32,12 +32,12 @@ void Stage::Init()
 
 void Stage::Update()
 {
-	room.at(nowRoom).area.Update();
+	room[nowRoom].area.Update();
 }
 
 void Stage::Draw(const int& offsetX, const int& offsetY)
 {
-	room.at(nowRoom).area.Draw(offsetX, offsetY);
+	room[nowRoom].area.Draw(offsetX, offsetY);
 }
 
 void Stage::Reset()
@@ -46,7 +46,7 @@ void Stage::Reset()
 
 	for (size_t i = 0; i < room.size(); i++)
 	{
-		room.at(i).area.Reset();
+		room[i].area.Reset();
 	}
 }
 
@@ -108,7 +108,7 @@ int Stage::LoadStage(const char* filePath)
 	for (size_t i = 0; i < roomNum; i++)
 	{
 		room.emplace_back();
-		Load::LoadMapChip(fileHandle, room.at(i).connection, 4, -2);
+		Load::LoadMapChip(fileHandle, room[i].connection, 4, -2);
 		room.back().area.LoadArea(fileHandle);
 	}
 
@@ -118,48 +118,48 @@ int Stage::LoadStage(const char* filePath)
 
 int Stage::MoveUpRoom()
 {
-	if (room.at(nowRoom).connection[Area::DoorNum::UP] == -1)
+	if (room[nowRoom].connection[Area::DoorNum::UP] == -1)
 	{
 		return FUNCTION_ERROR;
 	}
 
-	nowRoom = room.at(nowRoom).connection[Area::DoorNum::UP];
+	nowRoom = room[nowRoom].connection[Area::DoorNum::UP];
 
 	return 0;
 }
 
 int Stage::MoveDownRoom()
 {
-	if (room.at(nowRoom).connection[Area::DoorNum::DOWN] == -1)
+	if (room[nowRoom].connection[Area::DoorNum::DOWN] == -1)
 	{
 		return FUNCTION_ERROR;
 	}
 
-	nowRoom = room.at(nowRoom).connection[Area::DoorNum::DOWN];
+	nowRoom = room[nowRoom].connection[Area::DoorNum::DOWN];
 
 	return 0;
 }
 
 int Stage::MoveLeftRoom()
 {
-	if (room.at(nowRoom).connection[Area::DoorNum::LEFT] == -1)
+	if (room[nowRoom].connection[Area::DoorNum::LEFT] == -1)
 	{
 		return FUNCTION_ERROR;
 	}
 
-	nowRoom = room.at(nowRoom).connection[Area::DoorNum::LEFT];
+	nowRoom = room[nowRoom].connection[Area::DoorNum::LEFT];
 
 	return 0;
 }
 
 int Stage::MoveRightRoom()
 {
-	if (room.at(nowRoom).connection[Area::DoorNum::RIGHT] == -1)
+	if (room[nowRoom].connection[Area::DoorNum::RIGHT] == -1)
 	{
 		return FUNCTION_ERROR;
 	}
 
-	nowRoom = room.at(nowRoom).connection[Area::DoorNum::RIGHT];
+	nowRoom = room[nowRoom].connection[Area::DoorNum::RIGHT];
 
 	return 0;
 }
@@ -171,7 +171,7 @@ const bool Stage::IsGoal()
 
 	for (size_t i = 0; i < room.size(); i++)
 	{
-		if (room.at(i).area.IsGoal())
+		if (room[i].area.IsGoal())
 		{
 			reslut = true;
 			break;

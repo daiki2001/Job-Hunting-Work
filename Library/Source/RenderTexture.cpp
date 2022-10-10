@@ -19,8 +19,8 @@ RenderTexture* RenderTexture::Get()
 	return &instance;
 }
 
-HRESULT RenderTexture::CreateRenderTexture(std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>* const texBuff,
-										   Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>* descHeapSRV, const UINT& texCount)
+HRESULT RenderTexture::CreateRenderTexture(vector<ComPtr<ID3D12Resource>>* const texBuff,
+										   ComPtr<ID3D12DescriptorHeap>* descHeapSRV, const UINT& texCount)
 {
 	HRESULT hr = S_FALSE;
 	DirectXInit* w = DirectXInit::GetInstance();
@@ -118,8 +118,8 @@ HRESULT RenderTexture::CreateRenderTexture(std::vector<Microsoft::WRL::ComPtr<ID
 	return hr;
 }
 
-HRESULT RenderTexture::CreateRTV(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>* descHeapRTV,
-								 const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> texBuff)
+HRESULT RenderTexture::CreateRTV(ComPtr<ID3D12DescriptorHeap>* descHeapRTV,
+								 const vector<ComPtr<ID3D12Resource>>& texBuff)
 {
 	HRESULT hr = S_FALSE;
 	auto dev = DirectXInit::GetDevice();

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Header/EngineGeneral.h"
 #include "./Math/Collision/CollisionInfo.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include <vector>
 #include <wrl.h>
 #include <d3dx12.h>
@@ -9,21 +10,14 @@
 /*DirectDrawingのバージョン指定*/
 #define DIRECTDRAWING_VERSION 0x0001
 
-/*ブレンドモード*/
-#define BLENDMODE_NOBLEND (0) //ノーブレンド
-#define BLENDMODE_ALPHA   (1) //αブレンド
-#define BLENDMODE_ADD     (2) //加算合成
-#define BLENDMODE_SUB     (3) //減算合成
-#define BLENDMODE_INV     (4) //色反転合成
-
 class BaseCollider;
 
 // 頂点データ構造体
 struct Vertex
 {
-	DirectX::XMFLOAT3 pos;    //xyz座標
-	DirectX::XMFLOAT3 normal; //法線ベクトル
-	DirectX::XMFLOAT2 uv;     //uv座標
+	Math::Vector3 pos;    //xyz座標
+	Math::Vector3 normal; //法線ベクトル
+	DirectX::XMFLOAT2 uv; //uv座標
 };
 
 // 1オブジェクトの頂点情報をまとめた構造体
@@ -55,32 +49,32 @@ public: // メンバ関数
 // 頂点データ構造体(スプライト用)
 struct SpriteVertex
 {
-	DirectX::XMFLOAT3 pos; //xyz座標
-	DirectX::XMFLOAT2 uv;  //uv座標
+	Math::Vector3 pos;    //xyz座標
+	DirectX::XMFLOAT2 uv; //uv座標
 };
 
 // 定数バッファ用データ構造体
 struct ConstBufferData
 {
-	DirectX::XMFLOAT4 color;    //色 (RGBA)
-	DirectX::XMMATRIX mat;      //3D変換行列
-	DirectX::XMFLOAT3 lightVec; //光源へのベクトル
+	DirectX::XMFLOAT4 color; //色 (RGBA)
+	Math::Matrix4 mat;       //3D変換行列
+	Math::Vector3 lightVec;  //光源へのベクトル
 };
 // 定数バッファ用データ構造体(マテリアル)
 struct MaterialConstBufferData
 {
-	DirectX::XMFLOAT3 ambient;  //アンビエント係数
-	float pad1;                 //パディング
-	DirectX::XMFLOAT3 diffuse;  //ディフューズ係数
-	float pad2;                 //パディング
-	DirectX::XMFLOAT3 specular; //スペキュラー係数
-	float alpha;                //アルファ
+	Math::Vector3 ambient;  //アンビエント係数
+	float pad1;             //パディング
+	Math::Vector3 diffuse;  //ディフューズ係数
+	float pad2;             //パディング
+	Math::Vector3 specular; //スペキュラー係数
+	float alpha;            //アルファ
 };
 // 定数バッファ用データ構造体(スプライト用)
 struct SpriteConstBufferData
 {
 	DirectX::XMFLOAT4 color; //色 (RGBA)
-	DirectX::XMMATRIX mat;   //3D変換行列
+	Math::Matrix4 mat;       //3D変換行列
 };
 
 // ディスクリプタハンドル
@@ -108,12 +102,12 @@ public: // メンバ変数
 	int polygonData; //頂点情報の要素番号
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //定数バッファ
 
-	DirectX::XMFLOAT3 position; //座標
-	DirectX::XMMATRIX rotation; //回転行列
-	DirectX::XMFLOAT3 scale;    //スケール
-	DirectX::XMFLOAT4 color;    //色
+	Math::Vector3 position;  //座標
+	Math::Matrix4 rotation;  //回転行列
+	Math::Vector3 scale;     //スケール
+	DirectX::XMFLOAT4 color; //色
 
-	DirectX::XMMATRIX matWorld; //ワールド行列
+	Math::Matrix4 matWorld; //ワールド行列
 
 	Object* parent; //親の要素番号
 
@@ -139,9 +133,9 @@ public: // メンバ関数
 struct Material
 {
 	std::string name;            //マテリアル名
-	DirectX::XMFLOAT3 ambient;   //アンビエント影響度
-	DirectX::XMFLOAT3 diffuse;   //ディフューズ影響度
-	DirectX::XMFLOAT3 specular;  //スペキュラー影響度
+	Math::Vector3 ambient;       //アンビエント影響度
+	Math::Vector3 diffuse;       //ディフューズ影響度
+	Math::Vector3 specular;      //スペキュラー影響度
 	float alpha;                 //アルファ
 	std::string textureFilename; //テクスチャファイル名
 
@@ -202,10 +196,10 @@ struct Sprite
 	D3D12_VERTEX_BUFFER_VIEW vbView;                  //頂点バッファビュー
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff; //定数バッファ
 
-	DirectX::XMMATRIX matWorld = DirectX::XMMatrixIdentity(); //ワールド行列
+	Math::Matrix4 matWorld = DirectX::XMMatrixIdentity(); //ワールド行列
 	DirectX::XMFLOAT4 color = { 1, 1, 1, 1 }; //色 (RGBA)
 
-	DirectX::XMFLOAT3 pos = { 0, 0, 0 }; //座標
+	Math::Vector3 pos = { 0, 0, 0 }; //座標
 	float rotation = 0.0f; //回転角
 	DirectX::XMFLOAT2 size = { 0.000000001f, 0.000000001f }; //大きさ
 
@@ -218,10 +212,12 @@ struct Sprite
 
 class DirectDrawing
 {
-protected: // エイリアス
+public: // エイリアス
+	using BlendMode = ShaderManager::BlendMode;
+protected:
 	// DirectX::を省略
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMMATRIX = DirectX::XMMATRIX;
+	using Vector3 = Math::Vector3;
+	using Matrix4 = Math::Matrix4;
 	// std::を省略
 	template<class T> using vector = std::vector<T>;
 	// Microsoft::WRL::を省略
@@ -313,7 +309,7 @@ public: // メンバ関数
 	/// <param name="rota"> 回転行列 </param>
 	/// <param name="scale"> スケール </param>
 	/// <returns> オブジェクトデータの要素番号 </returns>
-	int CreateNullConstant(const XMFLOAT3& pos, const XMMATRIX& rota, const XMFLOAT3& scale);
+	int CreateNullConstant(const Vector3& pos, const Matrix4& rota, const Vector3& scale);
 	/// <summary>
 	/// 定数バッファの更新
 	/// </summary>
@@ -323,13 +319,13 @@ public: // メンバ関数
 	/// <param name="objectIndex"> オブジェクトデータの要素番号 </param>
 	/// <param name="polygonData"> 頂点情報の要素番号 </param>
 	/// <param name="parent"> 親の要素番号 </param>
-	void UpdataConstant(const XMFLOAT3& pos, const XMMATRIX& rota, const XMFLOAT3& scale,
-						const DirectX::XMFLOAT4& color, const int& objectIndex,
-						const int& polygonData = -1, Object* parent = nullptr);
+	void UpdataConstant(const Vector3& pos, const Matrix4& rota, const Vector3& scale,
+						const DirectX::XMFLOAT4& color, int objectIndex, int polygonData = -1,
+						Object* parent = nullptr);
 	// 描画の際のブレンドモードをセットする
 	int SetDrawBlendMode(int blendMode);
 
-	inline OBJData* GetObjData(int object)
+	OBJData* GetObjData(int object)
 	{
 		if (object < 0 || object >= (int)obj.size()) { return nullptr; }
 		return &obj[object];

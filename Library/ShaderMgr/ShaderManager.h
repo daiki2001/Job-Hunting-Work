@@ -28,8 +28,8 @@ public: //サブクラス
 		InputLayout();
 		~InputLayout() = default;
 
-		D3D12_INPUT_LAYOUT_DESC GetInputLayout() const { return  { inputLayout.data(), static_cast<UINT>(inputLayout.size()) }; }
-		void PushInputLayout(LPCSTR SemanticName, DXGI_FORMAT Format);
+		D3D12_INPUT_LAYOUT_DESC GetInputLayout() const { return { inputLayout.data(), static_cast<UINT>(inputLayout.size()) }; }
+		void PushInputLayout(const LPCSTR& SemanticName, const DXGI_FORMAT& Format);
 		void PopInputLayout() { inputLayout.pop_back(); }
 	};
 
@@ -74,24 +74,24 @@ public: //メンバ関数
 	// インプットレイアウトの生成
 	int CreateInputLayout() { inputLayouts.push_back({}); return static_cast<int>(inputLayouts.size() - 1); }
 	// グラフィックパイプラインの生成
-	int CreateGPipeline(const int& shaderIndex, const int& inputLayoutIndex);
+	int CreateGPipeline(int shaderIndex, int inputLayoutIndex);
 	// ルートシグネチャの生成
-	int CreateRootSignature(const int& gPipelineIndex, const UINT& numParameters, const D3D12_ROOT_PARAMETER* _pParameters);
+	int CreateRootSignature(int gPipelineIndex, const UINT& numParameters, const D3D12_ROOT_PARAMETER* _pParameters);
 	// パイプラインステートの生成
-	int CreatePipelineState(const int& gPipelineIndex);
+	int CreatePipelineState(int gPipelineIndex);
 
-	int ChangePipelineState(ID3D12GraphicsCommandList* cmdList, const int& rootSignatureIndex, const int& pipelineStateIndex);
-	int ChangePipelineState(ID3D12GraphicsCommandList* cmdList, ID3D12RootSignature* rootSignature, const int& pipelineStateIndex);
+	int ChangePipelineState(ID3D12GraphicsCommandList* cmdList, int rootSignatureIndex, int pipelineStateIndex);
+	int ChangePipelineState(ID3D12GraphicsCommandList* cmdList, ID3D12RootSignature* rootSignature, int pipelineStateIndex);
 
-	Shaders& GetShader(const int& index) { return shaders.at(index); }
-	InputLayout& GetInputLayout(const int& index) { return inputLayouts.at(index); }
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(const int& index)
+	Shaders& GetShader(int index) { return shaders.at(index); }
+	InputLayout& GetInputLayout(int index) { return inputLayouts.at(index); }
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(int index)
 	{ return gPipelines[blendMode].at(index); }
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(const int& index, const BlendMode& blendMode)
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(int index, const BlendMode& blendMode)
 	{ return gPipelines[blendMode].at(index); }
-	ID3D12RootSignature* GetRootSignature(const int& index) const { return rootSignature.at(index).Get(); }
-	ID3D12PipelineState* GetPipelineState(const int& index) const
+	ID3D12RootSignature* GetRootSignature(int index) const { return rootSignature.at(index).Get(); }
+	ID3D12PipelineState* GetPipelineState(int index) const
 	{ return pipelineState[blendMode].at(index).Get(); }
-	ID3D12PipelineState* GetPipelineState(const int& index, const BlendMode& blendMode) const
+	ID3D12PipelineState* GetPipelineState(int index, const BlendMode& blendMode) const
 	{ return pipelineState[blendMode].at(index).Get(); }
 };

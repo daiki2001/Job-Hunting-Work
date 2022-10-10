@@ -170,7 +170,7 @@ void EngineTestScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	postEffect.PreDraw();
-	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	if (useShader < 2)
 	{

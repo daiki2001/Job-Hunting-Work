@@ -1,12 +1,12 @@
-#pragma once
+﻿#pragma once
 #include <DirectXMath.h>
 
-// �C���N���[�h�t�@�C��
+// インクルードファイル
 #include "./Math/Vector3.h"
 #include "./Math/Matrix4.h"
 #include "./Math/Easing.h"
 
-/*�萔*/
+/*定数*/
 namespace Engine
 {
 namespace Math
@@ -16,20 +16,28 @@ static constexpr float PI_F = static_cast<float>(PI);
 static constexpr double DEGREE = PI / 180.0;
 static constexpr float DEGREE_F = static_cast<float>(DEGREE);
 
-static constexpr float gravity = 9.8f; //�d�͉����x
+static constexpr float gravity = 9.8f; //重力加速度
 } //Math
 } //Engine
 
-/*�֐�*/
+/*関数*/
 namespace Engine
 {
 namespace Math
 {
+/*XMFLOAT2のオペレーター演算子のオーバーロード*/
+// XMFLOAT2の==演算子
+bool operator==(const DirectX::XMFLOAT2& a, const DirectX::XMFLOAT2& b);
+// XMFLOAT2の!=演算子
+bool operator!=(const DirectX::XMFLOAT2& a, const DirectX::XMFLOAT2& b);
+/*XMFLOAT4のオペレーター演算子のオーバーロード*/
+// XMFLOAT4の==演算子
 bool operator==(const DirectX::XMFLOAT4& a, const DirectX::XMFLOAT4& b);
+// XMFLOAT4の!=演算子
 bool operator!=(const DirectX::XMFLOAT4& a, const DirectX::XMFLOAT4& b);
 
 template <class T>
-T LockRatio(const float& x)
+T LockRatio(float x)
 {
 	return T();
 }

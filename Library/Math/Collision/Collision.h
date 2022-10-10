@@ -1,38 +1,41 @@
-#pragma once
+ï»¿#pragma once
 #include "CollisionPrimitive.h"
 #include "./Math/EngineMath.h"
 
 namespace Collision
 {
-using XMMATRIX = DirectX::XMMATRIX;
 using Vector3 = Engine::Math::Vector3;
+using Matrix4 = Engine::Math::Matrix4;
 
-// ‹…‘Ì“¯m‚Ì“–‚½‚è”»’è
+// çƒä½“åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
 bool IsSphereToSphereCollision(const Sphere& sphere1, const Sphere& sphere2, Vector3* inter = nullptr);
 
-// ‹…‘Ì‚Æ•½–Ê‚Ì“–‚½‚è”»’è
+// çƒä½“ã¨å¹³é¢ã®å½“ãŸã‚Šåˆ¤å®š
 bool IsSphereToPlaneCollision(const Sphere& sphere, const Plane& plane);
 
-// ‹…‘Ì‚ÆOŠpŒ`‚Ì“–‚½‚è”»’è
+// çƒä½“ã¨ä¸‰è§’å½¢ã®å½“ãŸã‚Šåˆ¤å®š
 bool IsSphereToTriangleCollision(const Sphere& sphere, const Triangle& triangle);
 
-// ƒŒƒC‚Æ‹…‘Ì‚Ì“–‚½‚è”»’è
+// ãƒ¬ã‚¤ã¨çƒä½“ã®å½“ãŸã‚Šåˆ¤å®š
 bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distance = nullptr, Vector3* inter = nullptr);
 
-// ƒŒƒC‚Æ•½–Ê‚Ì“–‚½‚è”»’è
+// ãƒ¬ã‚¤ã¨å¹³é¢ã®å½“ãŸã‚Šåˆ¤å®š
 bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance = nullptr, Vector3* inter = nullptr);
 
-// ƒŒƒC‚ÆOŠpŒ`‚Ì“–‚½‚è”»’è
+// ãƒ¬ã‚¤ã¨ä¸‰è§’å½¢ã®å½“ãŸã‚Šåˆ¤å®š
 bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* distance = nullptr, Vector3* inter = nullptr);
 
-// ’¼•û‘Ì“¯m‚Ì“–‚½‚è”»’è
-bool IsOBBToOBBCollision(const Vector3& pos1, const XMMATRIX& rotation1, const Vector3& scale1, const Vector3& pos2, const XMMATRIX& rotation2, const Vector3& scale2);
+// ç›´æ–¹ä½“åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
+bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Vector3& scale1,
+						 const Vector3& pos2, const Matrix4& rotation2, const Vector3& scale2);
 
-// ‹…‘ÌƒXƒC[ƒv
-// “–‚½‚Á‚Ä‚¢‚½‚çÕ“Ë‚µ‚½ŠÔ‚ğ0~1‚ÌŠÔ‚Å•Ô‚·A“–‚½‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç-1‚ğ•Ô‚·
-float sphereSwept(const Vector3& pos1, const Vector3& speed1, const float& r1, const Vector3& pos2, const Vector3& speed2, const float& r2);
+// çƒä½“ã‚¹ã‚¤ãƒ¼ãƒ—
+// å½“ãŸã£ã¦ã„ãŸã‚‰è¡çªã—ãŸæ™‚é–“ã‚’0~1ã®é–“ã§è¿”ã™ã€å½“ãŸã£ã¦ã„ãªã‹ã£ãŸã‚‰-1ã‚’è¿”ã™
+float sphereSwept(const Vector3& pos1, const Vector3& speed1, float r1,
+				  const Vector3& pos2, const Vector3& speed2, float r2);
 
-// Õ“Ë—\‘ª
-// ” ‚Ìê‡‚ÍAVector3(‰¡•, ‚‚³, ‰œs).Length() / 2‚ğ“ü‚ê‚ê‚Îg‚¦‚Ü‚·
-bool IsPredictCollisionBall(const Vector3& pos1, const Vector3& speed1, const float& r1, const Vector3& pos2, const Vector3& speed2, const float& r2);
+// è¡çªäºˆæ¸¬
+// ç®±ã®å ´åˆã¯ã€Vector3(æ¨ªå¹…, é«˜ã•, å¥¥è¡Œ).Length() / 2ã‚’å…¥ã‚Œã‚Œã°ä½¿ãˆã¾ã™
+bool IsPredictCollisionBall(const Vector3& pos1, const Vector3& speed1, float r1,
+							const Vector3& pos2, const Vector3& speed2, float r2);
 } //Collision

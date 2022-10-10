@@ -1,19 +1,18 @@
 ﻿#include "./Header/Camera.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/Error.h"
 
 const size_t Camera::MAIN_CAMERA = 0;
 
 float Camera::targetRadius = 150.0f;
-float Camera::longitude = Engine::Math::DEGREE_F * (-90.0f);
-float Camera::latitude = Engine::Math::DEGREE_F * (0.0f);
+float Camera::longitude = Math::DEGREE_F * (-90.0f);
+float Camera::latitude = Math::DEGREE_F * (0.0f);
 
-Engine::Math::Vector3 Camera::pos = {};
-Engine::Math::Vector3 Camera::target = { 0.0f, 50.0f, 0.0f };
-Engine::Math::Vector3 Camera::upVec = { 0.0f, 1.0f, 0.0f };
+Math::Vector3 Camera::pos = {};
+Math::Vector3 Camera::target = { 0.0f, 50.0f, 0.0f };
+Math::Vector3 Camera::upVec = { 0.0f, 1.0f, 0.0f };
 
-Engine::Math::Matrix4 Camera::matProjection[2] = {};
-std::vector<Engine::Math::Matrix4> Camera::matView = {};
+Math::Matrix4 Camera::matProjection[2] = {};
+std::vector<Math::Matrix4> Camera::matView = {};
 size_t Camera::cameraNo = Camera::MAIN_CAMERA;
 
 float Camera::nearClip = 0.1f;
@@ -33,7 +32,7 @@ Camera::Camera()
 void Camera::Init()
 {
 	using namespace DirectX;
-	using namespace Engine::Math;
+	using namespace Math;
 
 	matProjection[Projection::ORTHOGRAPHIC] =
 		XMMatrixOrthographicOffCenterLH(
@@ -81,7 +80,7 @@ void Camera::Update()
 	SetCamera(pos, target, upVec);
 }
 
-Engine::Math::Matrix4 Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
+Math::Matrix4 Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
 
@@ -115,7 +114,7 @@ Engine::Math::Matrix4 Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& 
 	return mat;
 }
 
-Engine::Math::Matrix4 Camera::CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
+Math::Matrix4 Camera::CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
 
@@ -147,7 +146,7 @@ int Camera::ChangeCamera(const size_t& cameraNo)
 {
 	if (cameraNo < 0 || cameraNo >= matView.size())
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	Camera::cameraNo = cameraNo;
@@ -176,7 +175,7 @@ int Camera::SetNear(float nearClip)
 
 	if (nearClip <= 0.0f || nearClip == Camera::farClip)
 	{
-		return Engine::ErrorLog("nearClipの値がおかしいです。");
+		return ErrorLog("nearClipの値がおかしいです。");
 	}
 
 	Camera::nearClip = nearClip;
@@ -212,7 +211,7 @@ int Camera::SetFar(float farClip)
 
 	if (farClip <= 0.0f || Camera::nearClip == farClip)
 	{
-		return Engine::ErrorLog("farClipの値がおかしいです。");
+		return ErrorLog("farClipの値がおかしいです。");
 	}
 
 	Camera::farClip = farClip;

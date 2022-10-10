@@ -6,7 +6,9 @@
 class BlockType
 {
 public: //エイリアス
+	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using Vector3 = Math::Vector3;
+	using Matrix4 = Math::Matrix4;
 
 public: //定数
 	static const int WIDTH;
@@ -20,24 +22,21 @@ private: //メンバ変数
 	int typeId;
 	int graph;
 	int blockBox;
-	Math::Matrix4 rotation;
-	Math::Vector3 scale;
-	DirectX::XMFLOAT4 color;
+	Matrix4 rotation;
+	Vector3 scale;
+	XMFLOAT4 color;
 
 public: //メンバ関数
-	BlockType(const int& typeId, DrawPolygon* const draw);
+	BlockType(int typeId, DrawPolygon* const draw);
 	virtual ~BlockType();
 
 	// 生成処理
-	virtual int Create(const wchar_t* filename = nullptr, const Math::Matrix4& rotation = Math::Identity(),
-					   const Math::Vector3& scale = { 1.0f, 1.0f, 1.0f }, const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
-	virtual int Create(const char* filename, const Math::Matrix4& rotation = Math::Identity(),
-					   const Math::Vector3& scale = { 1.0f, 1.0f, 1.0f }, const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	virtual int Create(const wchar_t* filename = nullptr, const Matrix4& rotation = Math::Identity(),
+					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	virtual int Create(const char* filename, const Matrix4& rotation = Math::Identity(),
+					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	// 描画処理
 	void Draw(const Vector3& pos);
-#ifdef _DEBUG
-	void Draw(const Vector3& pos, const DirectX::XMFLOAT4& color);
-#endif // _DEBUG
 
 	// IDの取得
 	const int GetId() const { return typeId; }

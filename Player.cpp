@@ -34,7 +34,7 @@ void Player::Update(const InputManager* const input)
 	Move(input);
 }
 
-void Player::Draw(const int& offsetX, const int& offsetY)
+void Player::Draw(int offsetX, int offsetY)
 {
 	DirectDrawing::ChangeOBJShader();
 	draw->Draw(

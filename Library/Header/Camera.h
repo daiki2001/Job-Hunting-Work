@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Math/EngineMath.h"
+#include "./Header/EngineGeneral.h"
 #include <vector>
 
 class Camera final
@@ -14,8 +14,8 @@ private:
 
 private: // エイリアス
 	using XMVECTOR = DirectX::XMVECTOR;
-	using Vector3 = Engine::Math::Vector3;
-	using Matrix4 = Engine::Math::Matrix4;
+	using Vector3 = Math::Vector3;
+	using Matrix4 = Math::Matrix4;
 
 public: // サブクラス
 	enum Projection

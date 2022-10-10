@@ -1,5 +1,6 @@
 ﻿#pragma once
 #define DIRECTINPUT_VERSION 0x0800 //DirectInputのバージョン指定
+
 #include <dinput.h>
 #include <vector>
 
@@ -68,6 +69,21 @@ public: // サブクラス
 public: // 定数
 	static const LONG DEADZONE; //スティック入力の無効範囲
 
+private: // 静的メンバ変数
+	// DirectInputインターフェース
+	static IDirectInput8* dinput;
+	// キーボードデバイス
+	static IDirectInputDevice8* devkeyborad;
+	// ゲームパッドデバイス
+	static std::vector<IDirectInputDevice8*> devgamepad;
+
+	// キーボードの入力情報
+	static BYTE key[256];
+	// ゲームパッドの入力情報
+	static std::vector<DIJOYSTATE> gamepads;
+
+	static std::vector<DIDEVICEINSTANCE> parameter;
+
 public: // 静的メンバ関数
 	// 初期化
 	static int Init();
@@ -79,9 +95,9 @@ public: // 静的メンバ関数
 	// 特定のキーボードの入力状態の取得
 	static bool CheckHitKey(int keyCode);
 	// 特定のゲームパッドの入力状態の取得
-	static bool CheckHitGamepad(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad);
+	static bool CheckHitGamepad(const GamepadInputType& inputType, const DIJOYSTATE& gamepad);
 	// 特定のゲームパッドのアナログスティックの入力状態の取得
-	static bool CheckHitGamepadAnalogStick(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad);
+	static bool CheckHitGamepadAnalogStick(const GamepadInputType& inputType, const DIJOYSTATE& gamepad);
 	// 全ての入力デバイスの状態の取得
 	static int CheckHitAll(int CheckType = CHECKINPUT_ALL);
 	// キーボードデバイスの入力状態の取得
@@ -100,20 +116,4 @@ private:
 	static HRESULT CreateGamePadDevice();
 	// プロパティの設定
 	static HRESULT SetUpGamePadProperty(const size_t& gamepadNo = 0);
-
-private: // 静的メンバ変数
-	// DirectInputインターフェース
-	static IDirectInput8* dinput;
-	// キーボードデバイス
-	static IDirectInputDevice8* devkeyborad;
-	// ゲームパッドデバイス
-	static std::vector<IDirectInputDevice8*> devgamepad;
-
-	// キーボードの入力情報
-	static BYTE key[256];
-	// ゲームパッドの入力情報
-	static std::vector<DIJOYSTATE> gamepads;
-
-	static std::vector<DIDEVICEINSTANCE> parameter;
-
 };

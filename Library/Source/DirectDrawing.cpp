@@ -1,6 +1,5 @@
 ﻿#include "./Header/DirectDrawing.h"
 #include "./Header/DirectXInit.h"
-#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Camera.h"
 #include "./Math/Collision/BaseCollider.h"
 #include "./Math/Collision/CollisionManager.h"
@@ -154,7 +153,7 @@ int DirectDrawing::Init()
 	MaterialInit();
 	SpriteDrawingInit();
 
-	return CreateNullConstant(XMFLOAT3(), XMMATRIX(), XMFLOAT3(1, 1, 1));
+	return CreateNullConstant(Vector3(), Matrix4(), Vector3(1, 1, 1));
 }
 
 void DirectDrawing::DrawingInit()
@@ -474,7 +473,7 @@ HRESULT DirectDrawing::CreateConstBuffer(int* objIndex)
 	return hr;
 }
 
-int DirectDrawing::CreateNullConstant(const XMFLOAT3& pos, const XMMATRIX& rota, const XMFLOAT3& scale)
+int DirectDrawing::CreateNullConstant(const Vector3& pos, const Matrix4& rota, const Vector3& scale)
 {
 	using namespace DirectX;
 
@@ -504,8 +503,8 @@ int DirectDrawing::CreateNullConstant(const XMFLOAT3& pos, const XMMATRIX& rota,
 }
 
 void DirectDrawing::UpdataConstant(
-	const XMFLOAT3& pos, const DirectX::XMMATRIX& rota, const XMFLOAT3& scale,
-	const DirectX::XMFLOAT4& color, const int& objectIndex, const int& polygonData,
+	const Vector3& pos, const DirectX::XMMATRIX& rota, const Vector3& scale,
+	const DirectX::XMFLOAT4& color, int objectIndex, int polygonData,
 	Object* parent)
 {
 	if ((objectIndex < 0 || static_cast<size_t>(objectIndex) >= obj.size()) ||

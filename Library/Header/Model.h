@@ -10,13 +10,13 @@
 
 struct Node
 {
-	std::string name;                      //名前
-	Engine::Math::Vector3 position;        //ローカル座標
-	Engine::Math::Matrix4 rotation;        //ローカル回転行列
-	Engine::Math::Vector3 scaling;         //ローカルスケール
-	Engine::Math::Matrix4 transform;       //ローカル変換行列
-	Engine::Math::Matrix4 globalTransform; //グローバル変換行列
-	Node* parent;                          //親ノード
+	std::string name;              //名前
+	Math::Vector3 position;        //ローカル座標
+	Math::Matrix4 rotation;        //ローカル回転行列
+	Math::Vector3 scaling;         //ローカルスケール
+	Math::Matrix4 transform;       //ローカル変換行列
+	Math::Matrix4 globalTransform; //グローバル変換行列
+	Node* parent;                  //親ノード
 
 	Node();
 };
@@ -24,8 +24,8 @@ struct Node
 __declspec(align(16)) class Model
 {
 private: // エイリアス
-	using Vector3 = Engine::Math::Vector3;
-	using Matrix4 = Engine::Math::Matrix4;
+	using Vector3 = Math::Vector3;
+	using Matrix4 = Math::Matrix4;
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	template<class T> using vector = std::vector<T>;
 
@@ -50,17 +50,17 @@ public: // サブクラス
 	// 定数バッファ用データ構造体
 	struct ConstBufferData
 	{
-		Matrix4 viewProj;  //ビュープロジェクション行列
-		Matrix4 world;     //ワールド行列
+		Matrix4 viewProj;        //ビュープロジェクション行列
+		Matrix4 world;           //ワールド行列
 		DirectX::XMFLOAT4 color; //色情報
-		Vector3 cameraPos; //カメラ座標
+		Vector3 cameraPos;       //カメラ座標
 	};
 	// ボーン構造体
 	struct Bone
 	{
-		std::string name = {};                          //名前
-		Matrix4 invInitPose = Engine::Math::Identity(); //初期姿勢の逆行列
-		FbxCluster* fbxCluster = nullptr;               //クラスター
+		std::string name = {};                  //名前
+		Matrix4 invInitPose = Math::Identity(); //初期姿勢の逆行列
+		FbxCluster* fbxCluster = nullptr;       //クラスター
 	};
 	// 定数バッファ用データ構造体(スキニング)
 	struct ConstBufferDataSkin
@@ -140,7 +140,7 @@ public: // メンバ関数
 	// 初期化
 	void Init();
 	// 更新処理
-	int Update(DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	int Update(const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	// 描画
 	void Draw();
 	// 終了処理

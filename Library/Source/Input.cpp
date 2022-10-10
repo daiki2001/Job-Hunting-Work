@@ -47,18 +47,18 @@ bool Input::IsKeyReturn(int keyCode)
 	return !keys[keyCode] && oldKeys[keyCode];
 }
 
-bool Input::IsGamepad(DirectInput::GamepadInputType gamepadType)
+bool Input::IsGamepad(const DirectInput::GamepadInputType& gamepadType)
 {
 	return input->CheckHitGamepad(gamepadType, gamepad);
 }
 
-bool Input::IsGamepadTrigger(DirectInput::GamepadInputType gamepadType)
+bool Input::IsGamepadTrigger(const DirectInput::GamepadInputType& gamepadType)
 {
 	return input->CheckHitGamepad(gamepadType, gamepad) &&
 		!input->CheckHitGamepad(gamepadType, oldGamepad);
 }
 
-bool Input::IsGamepadReturn(DirectInput::GamepadInputType gamepadType)
+bool Input::IsGamepadReturn(const DirectInput::GamepadInputType& gamepadType)
 {
 	return !input->CheckHitGamepad(gamepadType, gamepad) &&
 		input->CheckHitGamepad(gamepadType, oldGamepad);

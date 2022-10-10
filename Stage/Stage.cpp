@@ -35,7 +35,7 @@ void Stage::Update()
 	room[nowRoom].area.Update();
 }
 
-void Stage::Draw(const int& offsetX, const int& offsetY)
+void Stage::Draw(int offsetX, int offsetY)
 {
 	room[nowRoom].area.Draw(offsetX, offsetY);
 }
@@ -64,7 +64,7 @@ int Stage::LoadStage(const char* filePath)
 	errno_t err;
 	char string[256] = { 0 };
 
-	int roomNum = 0;
+	size_t roomNum = 0;
 
 	err = fopen_s(&fileHandle, filePath, "r");
 	if (err != 0)
@@ -79,29 +79,16 @@ int Stage::LoadStage(const char* filePath)
 		return FUNCTION_ERROR;
 	}
 
-	bool isMinus = false;
 	for (int i = 0; string[i] != '\0'; i++)
 	{
 		if (string[i] == ',' || string[i] == '\n')
 		{
 			break;
 		}
-		else if (string[i] == '-')
-		{
-			isMinus = true;
-		}
 		else if (string[i] >= '0' && string[i] <= '9')
 		{
 			roomNum *= 10;
-
-			if (isMinus == true)
-			{
-				roomNum -= string[i] - '0';
-			}
-			else
-			{
-				roomNum += string[i] - '0';
-			}
+			roomNum += string[i] - '0';
 		}
 	}
 

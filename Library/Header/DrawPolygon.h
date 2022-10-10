@@ -7,6 +7,21 @@
 
 class DrawPolygon final : public DebugText
 {
+public: // メンバ変数
+	Vector3 light;    //光源
+private:
+	int polygonCount; //オブジェクトの数
+	size_t loopCount; //ループした回数
+
+	Vector3 lightVec; //光線
+
+	size_t objModelCount; //objファイルから読み込んだモデルの数
+	vector<size_t> verticesCount; //
+	vector<Material> material;
+
+	// 関数の初期化フラグ
+	bool isDrawOBJPolygonInit = false;
+
 public: // メンバ関数
 	// コンストラクタ
 	DrawPolygon();
@@ -14,21 +29,22 @@ public: // メンバ関数
 	~DrawPolygon();
 
 	// 三角形の作成
-	int CreateTriangle(const XMFLOAT3& vertex1, const DirectX::XMFLOAT2& uv1,
-					   const XMFLOAT3& vertex2, const DirectX::XMFLOAT2& uv2,
-					   const XMFLOAT3& vertex3, const DirectX::XMFLOAT2& uv3, const bool& isFill = true);
+	int CreateTriangle(const Vector3& vertex1, const DirectX::XMFLOAT2& uv1,
+					   const Vector3& vertex2, const DirectX::XMFLOAT2& uv2,
+					   const Vector3& vertex3, const DirectX::XMFLOAT2& uv3,
+					   bool isFill = true);
 	// 矩形の作成
-	int CreateRect(const float& width, const float& height, const bool& isFill = true);
+	int CreateRect(float width, float height, bool isFill = true);
 	// 正多角形の作成
-	int CreateCircle(const float& r, const size_t& divNum, const bool& isFill = true);
+	int CreateCircle(float r, const size_t& divNum, bool isFill = true);
 	// 直方体の作成
-	int Create3Dbox(const float& width, const float& height, const float& depth, const bool& isFill = true);
+	int Create3Dbox(float width, float height, float depth, bool isFill = true);
 	// 正多角錐の作成
-	int CreateCorn(const float& r, const float& h, const size_t& divNum, const bool& isFill = true);
+	int CreateCorn(float r, float h, const size_t& divNum, bool isFill = true);
 	// 正多角柱の作成
-	int CreateCylinder(const float& r, const float& h, const size_t& divNum, const bool& isFill = true);
+	int CreateCylinder(float r, float h, const size_t& divNum, bool isFill = true);
 	// 球体の作成
-	int CreateSphere(const float& r, const size_t& divNum, const bool& isFill = true);
+	int CreateSphere(float r, const size_t& divNum, bool isFill = true);
 
 	// objファイルによるモデルの作成（filePath：objファイルの名前、directoryPath：モデルのファイルがあるフォルダ）
 	int CreateOBJModel(const char* filePath, const char* directoryPath);
@@ -37,24 +53,24 @@ public: // メンバ関数
 	int DeleteModelData(int* modelData);
 
 	// テクスチャのタイリング
-	void Tiring(const int& polygonData, const float& uvScaleX, const float& uvScaleY);
+	void Tiring(int polygonData, float uvScaleX, float uvScaleY);
 	// テクスチャの自動タイリング
-	void AutoTiring(const int& polygonData, const int& graphHandle);
+	void AutoTiring(int polygonData, int graphHandle);
 	// テクスチャの移動
-	void MoveUV(const int& polygonData, const int& graphHandle, DirectX::XMFLOAT2 speed);
+	void MoveUV(int polygonData, int graphHandle, DirectX::XMFLOAT2 speed);
 
 	// オブジェクトの描画処理
-	int Draw(const int& polygonData, const XMFLOAT3& position, const XMMATRIX& rotation, const XMFLOAT3& scale,
-			 const XMFLOAT4& color, const int& graphHandle = 0, const bool& isFill = true,
-			 const bool& isOrthoGraphic = false, const bool& viewMultiFlag = true, Object* parent = nullptr);
+	int Draw(int polygonData, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
+			 const XMFLOAT4& color, int graphHandle = 0, bool isFill = true,
+			 bool isOrthoGraphic = false, bool viewMultiFlag = true, Object* parent = nullptr);
 
 	// モデルの描画処理
-	int DrawOBJ(const int& object, const XMFLOAT3& position, const XMMATRIX& rotation, const XMFLOAT3& scale,
+	int DrawOBJ(int object, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
 				const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f },
-				const bool& isOrthoGraphic = false, const bool& viewMultiFlag = true, Object* parent = nullptr);
+				bool isOrthoGraphic = false, bool viewMultiFlag = true, Object* parent = nullptr);
 
 	// カメラの作成
-	int CreateCamera(const XMFLOAT3& cameraPos, const XMFLOAT3& cameraTarget, const XMFLOAT3& upVector);
+	int CreateCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector);
 
 	// スクリーン座標からワールド座標を求める
 	DirectX::XMFLOAT3 ScreenToWorld(int x, int y, float z);
@@ -74,24 +90,9 @@ private:
 	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
 
 	/*頂点座標とインデックスデータ計算用*/
-	void Circle(const XMFLOAT3& centerPos, const float& r, const size_t& divNum,
-				const bool& flag, Vertex* v, unsigned short* index);
+	void Circle(const Vector3& centerPos, float r, const size_t& divNum,
+				bool flag, Vertex* v, unsigned short* index);
 
 	// データの消去
 	void DataClear();
-
-public: // メンバ変数
-	XMFLOAT3 light;    //光源
-private:
-	int polygonCount; //オブジェクトの数
-	size_t loopCount; //ループした回数
-
-	XMFLOAT3 lightVec; //光線
-
-	size_t objModelCount; //objファイルから読み込んだモデルの数
-	vector<size_t> verticesCount; //
-	vector<Material> material;
-
-	// 関数の初期化フラグ
-	bool isDrawOBJPolygonInit = false;
 };

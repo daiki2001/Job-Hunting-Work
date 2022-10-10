@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/DirectDrawing.h"
 #include "./Header/DrawPolygon.h"
 
 class TestObject final : private OBJData
 {
-public: // ƒVƒ“ƒOƒ‹ƒgƒ“‰»
+public: // ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
 	static TestObject* Get();
 private:
 	TestObject();
@@ -12,27 +12,27 @@ private:
 	~TestObject() override;
 	TestObject operator=(const TestObject&) = delete;
 
-public: // ’è”
-	static const float sphereRadius; //ƒIƒuƒWƒFƒNƒg‚Ì‘å‚«‚³
+public: // å®šæ•°
+	static const float sphereRadius; //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å¤§ãã•
 
-public: // ƒƒ“ƒoŠÖ”
-	// ‰Šú‰»
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–
 	void Init() override;
-	// XV
+	// æ›´æ–°
 	void Update() override;
-	// •`‰æ
+	// æç”»
 	void Draw();
 
-	// Õ“ËƒR[ƒ‹ƒoƒbƒNŠÖ”
+	// è¡çªæ™‚ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°
 	void OnCollision(const CollisionInfo& info) override;
 
 	int CreateModel(const char* filePath = nullptr, const char* directoryPath = nullptr);
-	inline void SetModel(const int& objectData) { object = objectData; }
-	inline void SetDraw(DrawPolygon* draw) { this->draw = draw; }
+	void SetModel(int objectData) { object = objectData; }
+	void SetDraw(DrawPolygon* draw) { this->draw = draw; }
 
-private: // ƒƒ“ƒo•Ï”
-	DrawPolygon* draw; //•`‰æ—pƒIƒuƒWƒFƒNƒg
+private: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	DrawPolygon* draw; //æç”»ç”¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
-	int object; //ƒIƒuƒWƒFƒNƒg
+	int object; //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	bool isObj;
 };

@@ -40,7 +40,7 @@ public: //メンバ関数
 	// 更新処理
 	void Update(const InputManager* const input);
 	// 描画処理
-	void Draw(const int& offsetX = 0, const int& offsetY = 0);
+	void Draw(int offsetX = 0, int offsetY = 0);
 
 	void Reset();
 

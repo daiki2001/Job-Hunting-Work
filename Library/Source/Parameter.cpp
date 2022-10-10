@@ -2,7 +2,7 @@
 
 std::map<const char*, int> Parameter::param = {};
 
-void Parameter::Set(const char* key, const int& vel)
+void Parameter::Set(const char* key, int vel)
 {
 	param[key] = vel;
 }

@@ -2,11 +2,11 @@
 
 Player* BlockManager::player = Player::Get();
 
-BlockManager::Block::Block(const BlockManager::TypeId& typeId) :
+BlockManager::Block::Block(const TypeId& typeId) :
 	pos(0.0f, 0.0f, 0.0f),
 	typeId(typeId)
 {
-	if (this->typeId == BlockManager::TypeId::SWITCH)
+	if (this->typeId == TypeId::SWITCH)
 	{
 		this->isSwitch = false;
 	}
@@ -35,19 +35,19 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.clear();
 	blocks.clear();
 
-	blockType.push_back(BlockType(BlockManager::TypeId::NONE, draw));
+	blockType.push_back(BlockType(TypeId::NONE, draw));
 	blockType.back().Create();
 
-	blockType.push_back(BlockType(BlockManager::TypeId::WALL, draw));
+	blockType.push_back(BlockType(TypeId::WALL, draw));
 	blockType.back().Create(L"WallBlock.png");
 
-	blockType.push_back(BlockType(BlockManager::TypeId::GOAL, draw));
+	blockType.push_back(BlockType(TypeId::GOAL, draw));
 	blockType.back().Create(L"Goal.png");
 
-	blockType.push_back(BlockType(BlockManager::TypeId::SWITCH, draw));
+	blockType.push_back(BlockType(TypeId::SWITCH, draw));
 	blockType.back().Create("Switch.obj");
 
-	blockType.push_back(BlockType(BlockManager::TypeId::KEY, draw));
+	blockType.push_back(BlockType(TypeId::KEY, draw));
 	blockType.back().Create("key.obj",
 							Math::Identity()
 							/*Math::rotateZ(Math::PI_F / 2) * Math::rotateX(Math::PI_F / 2)*/,
@@ -59,26 +59,26 @@ void BlockManager::Update()
 {
 	static const int width = 1; //playerSurroundingsBlockの横幅
 	static const int size = width * width; //playerSurroundingsBlockの大きさ
-	static TypeId playerSurroundingsBlock[size] = { BlockManager::TypeId::NONE };
+	static TypeId playerSurroundingsBlock[size] = { TypeId::NONE };
 	static const int playerBlock = (width - 1) * (width - 1); //プレイヤーがいる場所のブロック(playerSurroundingsBlock基準)
 
 	const int playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
 
 	switch (playerSurroundingsBlock[playerBlock])
 	{
-	case BlockManager::TypeId::WALL:
+	case TypeId::WALL:
 		PlayerPushBack();
 		break;
-	case BlockManager::TypeId::SWITCH:
+	case TypeId::SWITCH:
 		SwitchPush(playerPos);
 		break;
-	case BlockManager::TypeId::GOAL:
+	case TypeId::GOAL:
 		isGoal = true;
 		break;
-	case BlockManager::TypeId::KEY:
+	case TypeId::KEY:
 		//isGoal = true;
 		break;
-	case BlockManager::TypeId::NONE:
+	case TypeId::NONE:
 	default:
 		break;
 	}
@@ -94,7 +94,7 @@ void BlockManager::Update()
 	}
 }
 
-void BlockManager::Draw(const int& offsetX, const int& offsetY)
+void BlockManager::Draw(int offsetX, int offsetY)
 {
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
@@ -106,7 +106,7 @@ void BlockManager::Reset()
 {
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		if (blocks[i].GetTypeId() == BlockManager::TypeId::SWITCH)
+		if (blocks[i].GetTypeId() == TypeId::SWITCH)
 		{
 			blocks[i].isSwitch = false;
 		}
@@ -115,7 +115,7 @@ void BlockManager::Reset()
 	isGoal = false;
 }
 
-int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
+int BlockManager::CreateBlock(const TypeId& typeId)
 {
 	for (size_t i = 0; i < blockType.size(); i++)
 	{
@@ -131,12 +131,12 @@ int BlockManager::CreateBlock(const BlockManager::TypeId& typeId)
 	return Engine::FUNCTION_ERROR;
 }
 
-void BlockManager::ChengeBlock(const int& index, const BlockManager::TypeId& typeId)
+void BlockManager::ChengeBlock(int index, const TypeId& typeId)
 {
 	blocks[index] = Block(typeId);
 }
 
-void BlockManager::DeleteBlock(const int& index)
+void BlockManager::DeleteBlock(int index)
 {
 	blocks.erase(blocks.begin() + index);
 }
@@ -172,7 +172,7 @@ void BlockManager::SwitchPush(const size_t& blockNo)
 	blocks[blockNo].isSwitch = true;
 }
 
-int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* surroundingBlockType)
+int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType)
 {
 	const int size = (radius * 2 + 1) * (radius * 2 + 1);
 	std::vector<int> surroundingBlock = {};
@@ -183,7 +183,7 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 		surroundingBlock.push_back(Engine::FUNCTION_ERROR);
 	}
 
-	for (int i = 0, j = 0; i < static_cast<int>(block.size()); i++)
+	for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
 	{
 		if (static_cast<int>(blocks[i].pos.x) == static_cast<int>(player->pos.x) &&
 			static_cast<int>(blocks[i].pos.y) == static_cast<int>(player->pos.y))
@@ -247,7 +247,7 @@ int BlockManager::GetSurroundingBlock(const int& radius, BlockManager::TypeId* s
 	{
 		if (surroundingBlock[i] < 0)
 		{
-			surroundingBlockType[i] = BlockManager::TypeId::WALL;
+			surroundingBlockType[i] = TypeId::WALL;
 			continue;
 		}
 		surroundingBlockType[i] = blocks[surroundingBlock[i]].GetTypeId();

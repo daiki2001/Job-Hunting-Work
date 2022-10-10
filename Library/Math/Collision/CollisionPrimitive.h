@@ -19,7 +19,7 @@ public:
 	float radius = 1.0f;
 
 	Sphere() = default;
-	Sphere(Vector3 pos, float r) :
+	Sphere(const Vector3& pos, float r) :
 		BaseCollision()
 	{
 		center = pos;
@@ -38,7 +38,7 @@ public:
 	float distance = 0.0f;
 
 	Plane() = default;
-	Plane(Engine::Math::Matrix4 rotation, float distance) :
+	Plane(const Engine::Math::Matrix4& rotation, float distance) :
 		BaseCollision()
 	{
 		this->distance = distance;
@@ -63,7 +63,7 @@ public:
 
 public:
 	Triangle() = default;
-	Triangle(Vector3 p0, Vector3 p1, Vector3 p2) :
+	Triangle(const Vector3& p0, const Vector3& p1, const Vector3& p2) :
 		BaseCollision()
 	{
 		this->p0 = p0;
@@ -88,7 +88,7 @@ public:
 	Vector3 dir = Vector3(1.0f, 0.0f, 0.0f);
 
 	Ray() = default;
-	Ray(Vector3 start, Vector3 dir) :
+	Ray(const Vector3& start, const Vector3& dir) :
 		BaseCollision()
 	{
 		this->start = start;

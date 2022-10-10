@@ -5,10 +5,11 @@ const int BlockType::HEIGHT = 32;
 const std::string BlockType::blockResourcesDir = "./Resources/Game/Block/";
 DrawPolygon* BlockType::draw = nullptr;
 
-BlockType::BlockType(const int& typeId, DrawPolygon* const draw) :
+BlockType::BlockType(int typeId, DrawPolygon* const draw) :
 	typeId(typeId),
 	graph(FUNCTION_ERROR),
 	blockBox(FUNCTION_ERROR),
+	rotation(Math::Identity()),
 	scale(1.0f, 1.0f, 1.0f),
 	color(1.0f, 1.0f, 1.0f, 1.0f)
 {
@@ -22,8 +23,8 @@ BlockType::~BlockType()
 {
 }
 
-int BlockType::Create(const wchar_t* filename, const Math::Matrix4& rotation,
-					  const Math::Vector3& scale, const DirectX::XMFLOAT4& color)
+int BlockType::Create(const wchar_t* filename, const Matrix4& rotation,
+					  const Vector3& scale, const XMFLOAT4& color)
 {
 	if (filename == nullptr)
 	{
@@ -48,8 +49,8 @@ int BlockType::Create(const wchar_t* filename, const Math::Matrix4& rotation,
 	return graph;
 }
 
-int BlockType::Create(const char* filename, const Math::Matrix4& rotation,
-					  const Math::Vector3& scale, const DirectX::XMFLOAT4& color)
+int BlockType::Create(const char* filename, const Matrix4& rotation,
+					  const Vector3& scale, const XMFLOAT4& color)
 {
 	graph = FUNCTION_ERROR;
 
@@ -87,26 +88,3 @@ void BlockType::Draw(const Vector3& pos)
 		draw->Draw(blockBox, pos, rotation, scale, color, graph);
 	}
 }
-
-#ifdef _DEBUG
-void BlockType::Draw(const Vector3& pos, const DirectX::XMFLOAT4& color)
-{
-	// 'typeId'が0(None)は描画しない
-	if (typeId == 0)
-	{
-		return;
-	}
-
-	if (graph == FUNCTION_ERROR)
-	{
-		// 'graph'が'FUNCTION_ERROR'の時
-		draw->DrawOBJ(blockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), color);
-	}
-	else
-	{
-		// 'graph'が'FUNCTION_ERROR'でない時
-		draw->Draw(blockBox, pos, Math::Identity(), Vector3(1.0f, 1.0f, 1.0f), color, graph);
-	}
-}
-#endif // _DEBUG
-

@@ -31,10 +31,10 @@ DrawPolygon::~DrawPolygon()
 }
 
 int DrawPolygon::CreateTriangle(
-	const XMFLOAT3& vertex1, const DirectX::XMFLOAT2& uv1,
-	const XMFLOAT3& vertex2, const DirectX::XMFLOAT2& uv2,
-	const XMFLOAT3& vertex3, const DirectX::XMFLOAT2& uv3,
-	const bool& isFill)
+	const Vector3& vertex1, const DirectX::XMFLOAT2& uv1,
+	const Vector3& vertex2, const DirectX::XMFLOAT2& uv2,
+	const Vector3& vertex3, const DirectX::XMFLOAT2& uv3,
+	bool isFill)
 {
 	vertices.emplace_back(defaultVertexData);
 
@@ -61,7 +61,7 @@ int DrawPolygon::CreateTriangle(
 	return CreateVertexAndIndexBuffer();
 }
 
-int DrawPolygon::CreateRect(const float& width, const float& height, const bool& isFill)
+int DrawPolygon::CreateRect(float width, float height, bool isFill)
 {
 	vertices.emplace_back(defaultVertexData);
 
@@ -96,7 +96,7 @@ int DrawPolygon::CreateRect(const float& width, const float& height, const bool&
 	return CreateVertexAndIndexBuffer();
 }
 
-int DrawPolygon::CreateCircle(const float& r, const size_t& divNum, const bool& isFill)
+int DrawPolygon::CreateCircle(float r, const size_t& divNum, bool isFill)
 {
 	vertices.emplace_back(defaultVertexData);
 
@@ -126,7 +126,7 @@ int DrawPolygon::CreateCircle(const float& r, const size_t& divNum, const bool& 
 	return CreateVertexAndIndexBuffer();
 }
 
-int DrawPolygon::Create3Dbox(const float& width, const float& height, const float& depth, const bool& isFill)
+int DrawPolygon::Create3Dbox(float width, float height, float depth, bool isFill)
 {
 	vertices.emplace_back(defaultVertexData);
 
@@ -203,7 +203,7 @@ int DrawPolygon::Create3Dbox(const float& width, const float& height, const floa
 	return CreateVertexAndIndexBuffer();
 }
 
-int DrawPolygon::CreateCorn(const float& r, const float& h, const size_t& divNum, const bool& isFill)
+int DrawPolygon::CreateCorn(float r, float h, const size_t& divNum, bool isFill)
 {
 	vertices.emplace_back(defaultVertexData);
 
@@ -239,7 +239,7 @@ int DrawPolygon::CreateCorn(const float& r, const float& h, const size_t& divNum
 			},
 			vertices.back().vertices[divNum].normal,
 			vertices.back().vertices[divNum].uv,
-			});
+											  });
 
 		if (isFill == true)
 		{
@@ -264,7 +264,7 @@ int DrawPolygon::CreateCorn(const float& r, const float& h, const size_t& divNum
 	return CreateVertexAndIndexBuffer();
 }
 
-int DrawPolygon::CreateCylinder(const float& r, const float& h, const size_t& divNum, const bool& isFill)
+int DrawPolygon::CreateCylinder(float r, float h, const size_t& divNum, bool isFill)
 {
 	vertices.emplace_back(defaultVertexData);
 
@@ -338,7 +338,7 @@ int DrawPolygon::CreateCylinder(const float& r, const float& h, const size_t& di
 	return CreateVertexAndIndexBuffer();
 }
 
-int DrawPolygon::CreateSphere(const float& r, const size_t& divNum, const bool& isFill)
+int DrawPolygon::CreateSphere(float r, const size_t& divNum, bool isFill)
 {
 	using namespace DirectX;
 
@@ -520,8 +520,8 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 	const string modelPath = filePath;
 	file.open(modelPath);
 
-	vector<XMFLOAT3> positions; //頂点座標
-	vector<XMFLOAT3> normals; //法線ベクトル
+	vector<Vector3> positions;  //頂点座標
+	vector<Vector3> normals;    //法線ベクトル
 	vector<XMFLOAT2> texcoords; //テクスチャUV
 
 	bool isFaceStart = false;
@@ -546,7 +546,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 		if (key == "v")
 		{
 			// X,Y,Z座標読み込み
-			XMFLOAT3 pos{};
+			Vector3 pos{};
 			line_stream >> pos.x;
 			line_stream >> pos.y;
 			line_stream >> pos.z;
@@ -571,7 +571,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 		if (key == "vn")
 		{
 			// X,Y,Z成分読み込み
-			XMFLOAT3 normal{};
+			Vector3 normal{};
 			line_stream >> normal.x;
 			line_stream >> normal.y;
 			line_stream >> normal.z;
@@ -609,7 +609,7 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 					// 頂点データの追加
 					Vertex vertex{};
 					vertex.pos = positions[indexPos - 1Ui64];
-					vertex.normal = XMFLOAT3();
+					vertex.normal = Vector3();
 					vertex.uv = XMFLOAT2();
 					vert.vertices.emplace_back(vertex);
 				}
@@ -894,10 +894,10 @@ int DrawPolygon::DeleteModelData(int* modelData)
 		}
 	}
 
-		return 0;
+	return 0;
 }
 
-void DrawPolygon::Tiring(const int& polygonData, const float& uvScaleX, const float& uvScaleY)
+void DrawPolygon::Tiring(int polygonData, float uvScaleX, float uvScaleY)
 {
 	if (polygonData < 0 || (size_t)polygonData >= vertices.size())
 	{
@@ -922,7 +922,7 @@ void DrawPolygon::Tiring(const int& polygonData, const float& uvScaleX, const fl
 	vertices[polygonData].vertBuff->Unmap(0, nullptr);
 }
 
-void DrawPolygon::AutoTiring(const int& polygonData, const int& graphHandle)
+void DrawPolygon::AutoTiring(int polygonData, int graphHandle)
 {
 	if ((polygonData < 0 || (size_t)polygonData >= vertices.size()) ||
 		(graphHandle < 0 || (size_t)graphHandle >= textrueData.size()))
@@ -975,7 +975,7 @@ void DrawPolygon::AutoTiring(const int& polygonData, const int& graphHandle)
 	vertices[polygonData].vertBuff->Unmap(0, nullptr);
 }
 
-void DrawPolygon::MoveUV(const int& polygonData, const int& graphHandle, DirectX::XMFLOAT2 speed)
+void DrawPolygon::MoveUV(int polygonData, int graphHandle, DirectX::XMFLOAT2 speed)
 {
 	if ((polygonData < 0 || (size_t)polygonData >= vertices.size()) ||
 		(graphHandle < 0 || (size_t)graphHandle >= textrueData.size()))
@@ -1050,9 +1050,9 @@ int DrawPolygon::DrawOBJInit()
 }
 
 int DrawPolygon::Draw(
-	const int& polygonData, const XMFLOAT3& position, const XMMATRIX& rotation, const XMFLOAT3& scale,
-	const XMFLOAT4& color, const int& graphHandle, const bool& isFill,
-	const bool& isOrthoGraphic, const bool& viewMultiFlag, Object* parent)
+	int polygonData, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
+	const XMFLOAT4& color, int graphHandle, bool isFill,
+	bool isOrthoGraphic, bool viewMultiFlag, Object* parent)
 {
 	if ((polygonData < 0 || (size_t)polygonData >= vertices.size()) ||
 		(graphHandle < 0 || (UINT)graphHandle > textrueCount)/* ||
@@ -1173,8 +1173,8 @@ int DrawPolygon::Draw(
 	return index.constant;
 }
 
-int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMATRIX& rotation, const XMFLOAT3& scale,
-	const XMFLOAT4& color, const bool& isOrthoGraphic, const bool& viewMultiFlag, Object* parent)
+int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
+						 const XMFLOAT4& color, bool isOrthoGraphic, bool viewMultiFlag, Object* parent)
 {
 	if ((obj[object].polygonData < 0 || (size_t)obj[object].polygonData >= vertices.size()) ||
 		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount)/* ||
@@ -1312,7 +1312,7 @@ int DrawPolygon::DrawOBJ(const int& object, const XMFLOAT3& position, const XMMA
 	return static_cast<int>(parentIndex);
 }
 
-int DrawPolygon::CreateCamera(const XMFLOAT3& cameraPos, const XMFLOAT3& cameraTarget, const XMFLOAT3& upVector)
+int DrawPolygon::CreateCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector)
 {
 	using namespace DirectX;
 
@@ -1380,8 +1380,8 @@ void DrawPolygon::DataClear()
 #endif // _DEBUG
 }
 
-void DrawPolygon::Circle(const XMFLOAT3& centerPos, const float& r, const size_t& divNum,
-	const bool& flag, Vertex* v, unsigned short* index)
+void DrawPolygon::Circle(const Vector3& centerPos, float r, const size_t& divNum,
+						 bool flag, Vertex* v, unsigned short* index)
 {
 	using namespace DirectX;
 

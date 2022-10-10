@@ -57,9 +57,10 @@ void Area::Update()
 	}
 }
 
-void Area::Draw(const int& offsetX, const int& offsetY)
+void Area::Draw(int offsetX, int offsetY)
 {
-	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
+	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) +
+		Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
 
 	// 外壁の描画
 	DirectDrawing::ChangeMaterialShader();

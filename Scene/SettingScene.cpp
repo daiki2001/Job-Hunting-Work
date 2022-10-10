@@ -2,8 +2,6 @@
 #include "./Header/DirectXInit.h"
 #include "./Header/Input.h"
 
-#include "./Header/Error.h"
-
 namespace
 {
 static const std::wstring backgroundFileName = L"background.png";
@@ -48,7 +46,7 @@ void SettingScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
-	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();

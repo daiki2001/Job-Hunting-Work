@@ -1,14 +1,15 @@
-#pragma once
+ï»¿#pragma once
 #include <d3d12.h>
 #include <wrl.h>
 #include <vector>
 
 class RenderTexture final
 {
-private: //ƒGƒCƒŠƒAƒX
+private: //ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	template<class T> using vector = std::vector<T>;
 
-public: //ƒVƒ“ƒOƒ‹ƒgƒ“‰»
+public: //ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
 	static RenderTexture* Get();
 private:
 	RenderTexture();
@@ -16,14 +17,14 @@ private:
 	~RenderTexture();
 	RenderTexture operator=(const RenderTexture&) = delete;
 
-public: //Ã“Iƒƒ“ƒo•Ï”
+public: //é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 	static float clearColor[4];
 
-public: //ƒƒ“ƒoŠÖ”
-	// ƒŒƒ“ƒ_[ƒeƒNƒXƒ`ƒƒ‚Ì¶¬
-	HRESULT CreateRenderTexture(std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>* const texBuff,
-								Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>* descHeapSRV, const UINT& texCount = 1);
-	// ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgƒrƒ…[‚Ì¶¬
-	HRESULT CreateRTV(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>* descHeapRTV,
-					  const std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> texBuff);
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
+	// ãƒ¬ãƒ³ãƒ€ãƒ¼ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç”Ÿæˆ
+	HRESULT CreateRenderTexture(vector<ComPtr<ID3D12Resource>>* const texBuff,
+								ComPtr<ID3D12DescriptorHeap>* descHeapSRV, const UINT& texCount = 1);
+	// ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ã®ç”Ÿæˆ
+	HRESULT CreateRTV(ComPtr<ID3D12DescriptorHeap>* descHeapRTV,
+					  const vector<ComPtr<ID3D12Resource>>& texBuff);
 };

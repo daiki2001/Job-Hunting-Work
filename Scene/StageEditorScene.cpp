@@ -140,7 +140,7 @@ void StageEditorScene::Draw()
 	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f);
 
 	w->ClearScreen();
-	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();

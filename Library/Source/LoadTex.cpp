@@ -184,9 +184,9 @@ int LoadTex::DrawTextureInit()
 	return size;
 }
 
-int LoadTex::DrawTextrue(const float& posX, const float& posY, const float& width, const float& height,
-						 const float& angle, const int& graphHandle, const DirectX::XMFLOAT2& anchorpoint,
-						 const XMFLOAT4& color, const int& parent)
+int LoadTex::DrawTextrue(float posX, float posY, float width, float height, float angle,
+						 int graphHandle, const DirectX::XMFLOAT2& anchorpoint,
+						 const XMFLOAT4& color, int parent)
 {
 	using namespace DirectX;
 	using namespace Engine;
@@ -310,9 +310,9 @@ int LoadTex::DrawTextrue(const float& posX, const float& posY, const float& widt
 	return index.constant;
 }
 
-int LoadTex::DrawCutTextrue(const float& posX, const float& posY, const float& width, const float& height,
-							const DirectX::XMFLOAT2& texPos, const DirectX::XMFLOAT2& texSize, const float& angle,
-							const int& graphHandle, const DirectX::XMFLOAT2& anchorpoint, const XMFLOAT4& color, const int& parent)
+int LoadTex::DrawCutTextrue(float posX, float posY, float width, float height,
+							const DirectX::XMFLOAT2& texPos, const DirectX::XMFLOAT2& texSize, float angle,
+							int graphHandle, const DirectX::XMFLOAT2& anchorpoint, const XMFLOAT4& color, int parent)
 {
 	using namespace DirectX;
 	using namespace Engine;

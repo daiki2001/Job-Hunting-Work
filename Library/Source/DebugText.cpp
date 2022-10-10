@@ -68,8 +68,8 @@ HRESULT DebugText::DrawStringInit()
 	return S_OK;
 }
 
-HRESULT DebugText::DrawString(const float& posX, const float& posY,
-							  const float& fontScale, const XMFLOAT4& color, const char* text, ...)
+HRESULT DebugText::DrawString(float posX, float posY, float fontScale, const XMFLOAT4& color,
+							  const char* text, ...)
 {
 	using namespace DirectX;
 

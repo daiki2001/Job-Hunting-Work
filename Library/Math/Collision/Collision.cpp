@@ -2,7 +2,8 @@
 
 namespace
 {
-void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle& triangle, Engine::Math::Vector3* closest)
+void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle& triangle,
+							 Engine::Math::Vector3* closest)
 {
 	using namespace Engine::Math;
 
@@ -128,7 +129,8 @@ bool IsSphereToTriangleCollision(const Sphere& sphere, const Triangle& triangle)
 	return true;
 }
 
-bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distance, Vector3* inter)
+bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distance,
+							Vector3* inter)
 {
 	Vector3 m = ray.start - sphere.center;
 	float b = m.Dot(ray.dir);
@@ -169,7 +171,8 @@ bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distanc
 	return true;
 }
 
-bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance, Vector3* inter)
+bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance,
+						   Vector3* inter)
 {
 	// 面法線とレイの方向ベクトルの内積
 	float d1 = plane.normal.Dot(ray.dir);
@@ -199,7 +202,8 @@ bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance, 
 	return true;
 }
 
-bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* distance, Vector3* inter)
+bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* distance,
+							  Vector3* inter)
 {
 	// 三角形が乗っている平面を算出
 	Plane plane;
@@ -253,7 +257,8 @@ bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* d
 	return true;
 }
 
-bool IsOBBToOBBCollision(const Vector3& pos1, const XMMATRIX& rotation1, const Vector3& scale1, const Vector3& pos2, const XMMATRIX& rotation2, const Vector3& scale2)
+bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Vector3& scale1,
+						 const Vector3& pos2, const Matrix4& rotation2, const Vector3& scale2)
 {
 	using namespace DirectX;
 
@@ -440,7 +445,8 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const XMMATRIX& rotation1, const V
 	return true;
 }
 
-float sphereSwept(const Vector3& pos1, const Vector3& speed1, const float& r1, const Vector3& pos2, const Vector3& speed2, const float& r2)
+float sphereSwept(const Vector3& pos1, const Vector3& speed1, float r1,
+				  const Vector3& pos2, const Vector3& speed2, float r2)
 {
 	static const float noHit = -1.0f;
 
@@ -513,7 +519,7 @@ float sphereSwept(const Vector3& pos1, const Vector3& speed1, const float& r1, c
 	}
 }
 
-bool IsPredictCollisionBall(const Vector3& pos1, const Vector3& speed1, const float& r1, const Vector3& pos2, const Vector3& speed2, const float& r2)
+bool IsPredictCollisionBall(const Vector3& pos1, const Vector3& speed1, float r1, const Vector3& pos2, const Vector3& speed2, float r2)
 {
 	// 二点間の距離
 	static Vector3 distance{};

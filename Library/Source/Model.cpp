@@ -159,7 +159,7 @@ void Model::Init()
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);
 }
 
-int Model::Update(DirectX::XMFLOAT4 color)
+int Model::Update(const DirectX::XMFLOAT4& color)
 {
 	using namespace Math;
 
@@ -250,7 +250,6 @@ void Model::Draw()
 	// 描画コマンド
 	cmdList->DrawIndexedInstanced((UINT)indices.size(), 1, 0, 0, 0);
 #pragma endregion //モデル
-
 }
 
 void Model::Finalize()

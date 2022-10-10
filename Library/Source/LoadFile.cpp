@@ -5,13 +5,13 @@ namespace Engine
 {
 namespace Load
 {
-int LoadMapChip(const char* filePath, int* mapArray, const size_t& mapSize, int LoadStopNumber)
+int LoadMapChip(const char* filePath, int* mapArray, int mapSize, int LoadStopNumber)
 {
 	if (filePath == nullptr)
 	{
 		return Engine::FUNCTION_ERROR;
 	}
-	for (size_t i = 0; i < mapSize; i++)
+	for (int i = 0; i < mapSize; i++)
 	{
 		mapArray[i] = 0;
 	}
@@ -76,9 +76,9 @@ int LoadMapChip(const char* filePath, int* mapArray, const size_t& mapSize, int 
 	return 0;
 }
 
-int LoadMapChip(FILE* fileHandle, int* mapArray, const size_t& mapSize, int LoadStopNumber)
+int LoadMapChip(FILE* fileHandle, int* mapArray, int mapSize, int LoadStopNumber)
 {
-	for (size_t i = 0; i < mapSize; i++)
+	for (int i = 0; i < mapSize; i++)
 	{
 		mapArray[i] = 0;
 	}

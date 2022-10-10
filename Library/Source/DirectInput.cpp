@@ -142,7 +142,7 @@ bool DirectInput::CheckHitKey(int keyCode)
 	return false;
 }
 
-bool DirectInput::CheckHitGamepad(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad)
+bool DirectInput::CheckHitGamepad(const GamepadInputType& inputType, const DIJOYSTATE& gamepad)
 {
 	if (GamepadInputUpdate() != 0)
 	{
@@ -158,9 +158,9 @@ bool DirectInput::CheckHitGamepad(DirectInput::GamepadInputType inputType, const
 		}
 	}
 	// 十字キーの入力があるかどうか
-	if (inputType >= DirectInput::GamepadInputType::PAD_POV_UP && inputType <= DirectInput::GamepadInputType::PAD_POV_UP_LEFT)
+	if (inputType >= GamepadInputType::PAD_POV_UP && inputType <= GamepadInputType::PAD_POV_UP_LEFT)
 	{
-		int pov = inputType - DirectInput::GamepadInputType::PAD_POV_UP;
+		int pov = inputType - GamepadInputType::PAD_POV_UP;
 		return gamepad.rgdwPOV[0] == pov * 4500;
 	}
 	// アナログスティックの入力があるかどうか
@@ -172,9 +172,9 @@ bool DirectInput::CheckHitGamepad(DirectInput::GamepadInputType inputType, const
 	return false;
 }
 
-bool DirectInput::CheckHitGamepadAnalogStick(DirectInput::GamepadInputType inputType, const DIJOYSTATE& gamepad)
+bool DirectInput::CheckHitGamepadAnalogStick(const GamepadInputType& inputType, const DIJOYSTATE& gamepad)
 {
-	if (inputType < DirectInput::GamepadInputType::PAD_TRIGGER_LEFT)
+	if (inputType < GamepadInputType::PAD_TRIGGER_LEFT)
 	{
 		return false;
 	}
@@ -182,45 +182,45 @@ bool DirectInput::CheckHitGamepadAnalogStick(DirectInput::GamepadInputType input
 	static const int deadZoneMax = DEADZONE / 2;
 	static const int deadZoneMin = -deadZoneMax;
 
-	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_UP)
+	if (inputType == GamepadInputType::PAD_LSTICK_UP)
 	{
 		return gamepad.lY < deadZoneMin;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_RIGHT)
+	if (inputType == GamepadInputType::PAD_LSTICK_RIGHT)
 	{
 		return gamepad.lX > deadZoneMax;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_DOWN)
+	if (inputType == GamepadInputType::PAD_LSTICK_DOWN)
 	{
 		return gamepad.lY > deadZoneMax;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_LSTICK_LEFT)
+	if (inputType == GamepadInputType::PAD_LSTICK_LEFT)
 	{
 		return gamepad.lX < deadZoneMin;
 	}
 
-	if (inputType == DirectInput::GamepadInputType::PAD_TRIGGER_LEFT)
+	if (inputType == GamepadInputType::PAD_TRIGGER_LEFT)
 	{
 		return gamepad.lZ > deadZoneMax;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_TRIGGER_RIGHT)
+	if (inputType == GamepadInputType::PAD_TRIGGER_RIGHT)
 	{
 		return gamepad.lZ < deadZoneMin;
 	}
 
-	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_UP)
+	if (inputType == GamepadInputType::PAD_RSTICK_UP)
 	{
 		return gamepad.lRy < deadZoneMin;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_RIGHT)
+	if (inputType == GamepadInputType::PAD_RSTICK_RIGHT)
 	{
 		return gamepad.lRx > deadZoneMax;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_DOWN)
+	if (inputType == GamepadInputType::PAD_RSTICK_DOWN)
 	{
 		return gamepad.lRy > deadZoneMax;
 	}
-	if (inputType == DirectInput::GamepadInputType::PAD_RSTICK_LEFT)
+	if (inputType == GamepadInputType::PAD_RSTICK_LEFT)
 	{
 		return gamepad.lRx < deadZoneMin;
 	}

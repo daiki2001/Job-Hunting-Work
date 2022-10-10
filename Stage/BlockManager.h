@@ -53,20 +53,20 @@ public: //メンバ関数
 	// 更新処理
 	void Update();
 	// 描画処理
-	void Draw(const int& offsetX = 0, const int& offsetY = 0);
+	void Draw(int offsetX = 0, int offsetY = 0);
 	// リセット処理
 	void Reset();
 
 	// ブロックの生成処理
-	int CreateBlock(const BlockManager::TypeId& typeId);
+	int CreateBlock(const TypeId& typeId);
 	// ブロックの切り替え処理
-	void ChengeBlock(const int& index, const BlockManager::TypeId& typeId);
+	void ChengeBlock(int index, const TypeId& typeId);
 	// ブロックの削除処理
-	void DeleteBlock(const int& index);
+	void DeleteBlock(int index);
 	// 全ブロックの削除処理
 	void AllDeleteBlock();
 
-	Block& GetBlock(const int& index) { return blocks[index]; };
+	Block& GetBlock(int index) { return blocks[index]; };
 	const bool GetDoor() const { return isOpen; }
 	const bool GetGoal() const { return isGoal; }
 private:
@@ -81,5 +81,5 @@ private:
 	/// <param name="radius"> 0を指定するとプレイヤーがいる場所のブロックだけ渡す </param>
 	/// <param name="surroundingBlockType"> 要素番号をまとめた配列 </param>
 	/// <returns> プレイヤーが踏んでいるブロックの要素番号 </returns>
-	int GetSurroundingBlock(const int& radius, BlockManager::TypeId* surroundingBlockType);
+	int GetSurroundingBlock(int radius, TypeId* surroundingBlockType);
 };

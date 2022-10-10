@@ -4,6 +4,9 @@
 
 class Door
 {
+private: //エイリアス
+	using Vector3 = Math::Vector3;
+
 public: //サブクラス
 	enum DoorStatus
 	{
@@ -22,7 +25,7 @@ public: //静的メンバ関数
 	static void StaticInit(DrawPolygon* draw);
 
 private: //メンバ変数
-	Math::Vector3 size;
+	Vector3 size;
 	DoorStatus status;
 
 public: //メンバ関数
@@ -30,9 +33,9 @@ public: //メンバ関数
 	~Door() = default;
 
 	// 初期化
-	void Init(const Math::Vector3& size, const DoorStatus& status);
+	void Init(const Vector3& size, const DoorStatus& status);
 	// 描画
-	void Draw(const Math::Vector3& offset);
+	void Draw(const Vector3& offset);
 
 	void Open() { if (status == DoorStatus::CLOSE)status = DoorStatus::OPEN; }
 

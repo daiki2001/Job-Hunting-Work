@@ -1,25 +1,25 @@
-#pragma once
+ï»¿#pragma once
 #include "BaseCollider.h"
 #include "CollisionPrimitive.h"
 #include "./Math/EngineMath.h"
 
 class SphereCollider : public BaseCollider
 {
-private: // ƒGƒCƒŠƒAƒX
+private: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	using Vector3 = Engine::Math::Vector3;
 
-public: // ƒƒ“ƒoŠÖ”
-	SphereCollider(const Vector3& offset = {0.0f, 0.0f, 0.0f}, const float& radius = 1.0f);
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	SphereCollider(const Vector3& offset = {0.0f, 0.0f, 0.0f}, float radius = 1.0f);
 
-	// XV
+	// æ›´æ–°
 	void Update() override;
 
-	// ”¼Œa‚Ìİ’è
-	inline void SetRadius(const float& radius) { this->radius = radius; }
+	// åŠå¾„ã®è¨­å®š
+	void SetRadius(float radius) { this->radius = radius; }
 
-public: // ƒƒ“ƒo•Ï”
+public: // ãƒ¡ãƒ³ãƒå¤‰æ•°
 	Sphere sphere;
 private:
-	Vector3 offset; //ƒIƒuƒWƒFƒNƒg’†S‚©‚ç‚ÌƒIƒtƒZƒbƒg
-	float radius; //”¼Œa
+	Vector3 offset; //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆä¸­å¿ƒã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ
+	float radius; //åŠå¾„
 };

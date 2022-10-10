@@ -14,7 +14,7 @@ namespace Load
 /// <param name="mapSize"> mapArrayのサイズ </param>
 /// <param name="LoadStopNumber"> ここに指定された値がヒットすると読み込みを終了する </param>
 /// <returns> 0で成功、0以外で失敗 </returns>
-int LoadMapChip(const char* filePath, int* mapArray, const size_t& mapSize, int LoadStopNumber = -1);
+int LoadMapChip(const char* filePath, int* mapArray, int mapSize, int LoadStopNumber = -1);
 
 /// <summary>
 /// マップチップのファイル読み込み
@@ -24,6 +24,6 @@ int LoadMapChip(const char* filePath, int* mapArray, const size_t& mapSize, int 
 /// <param name="mapSize"> mapArrayのサイズ </param>
 /// <param name="LoadStopNumber"> ここに指定された値がヒットすると読み込みを終了する </param>
 /// <returns> 0で成功、0以外で失敗 </returns>
-int LoadMapChip(FILE* fileHandle, int* mapArray, const size_t& mapSize, int LoadStopNumber = -1);
+int LoadMapChip(FILE* fileHandle, int* mapArray, int mapSize, int LoadStopNumber = -1);
 } //Load
 } //Engine

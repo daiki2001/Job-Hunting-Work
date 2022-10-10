@@ -1,30 +1,30 @@
-#pragma once
+ï»¿#pragma once
 #include "CollisionTypes.h"
 #include "./Header/DirectDrawing.h"
 #include "./Math/Collision/CollisionInfo.h"
 
 class BaseCollider
 {
-private: // ƒGƒCƒŠƒAƒX
+private: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	using ShapeType = Collision::ShapeType;
 
-public: // ƒƒ“ƒoŠÖ”
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
 	BaseCollider() {}
 	virtual ~BaseCollider() {}
 
-	// XV
+	// æ›´æ–°
 	virtual void Update() = 0;
-	// Œ`óƒ^ƒCƒv‚Ìæ“¾
+	// å½¢çŠ¶ã‚¿ã‚¤ãƒ—ã®å–å¾—
 	inline ShapeType GetShapeType() const { return shapeType; }
 
-	// ƒIƒuƒWƒFƒNƒg‚Ìƒf[ƒ^‚Ìİ’è
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	inline void SetObject(Object* objectData) { this->objectData = objectData; }
-	// ƒIƒuƒWƒFƒNƒg‚Ìƒf[ƒ^‚Ìæ“¾
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 	inline Object* GetObject() const { return objectData; }
-	// Õ“ËƒR[ƒ‹ƒoƒbƒNŠÖ”
+	// è¡çªæ™‚ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°
 	inline void OnCollision(const CollisionInfo& info) { objectData->OnCollision(info); }
 
-protected: // ƒƒ“ƒo•Ï”
-	Object* objectData = nullptr;                            //ƒIƒuƒWƒFƒNƒg‚Ìƒf[ƒ^
-	ShapeType shapeType = ShapeType::SHAPE_UNKNOWN; //Œ`óƒ^ƒCƒv
+protected: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	Object* objectData = nullptr;                   //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ‡ãƒ¼ã‚¿
+	ShapeType shapeType = ShapeType::SHAPE_UNKNOWN; //å½¢çŠ¶ã‚¿ã‚¤ãƒ—
 };

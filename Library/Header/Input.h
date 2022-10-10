@@ -16,24 +16,6 @@ private:
 	// 代入演算子の削除
 	const Input& operator=(const Input& obj) = delete;
 
-public: // 静的メンバ関数
-	// 初期化
-	static void Init();
-	// 更新
-	static void Update();
-	// キーが押されているかどうか
-	static bool IsKey(int key);
-	// キーが押されたかどうか
-	static bool IsKeyTrigger(int key);
-	// キーから離れたかどうか
-	static bool IsKeyReturn(int key);
-	// キーが押されているかどうか
-	static bool IsGamepad(DirectInput::GamepadInputType gamepadType);
-	// キーが押されたかどうか
-	static bool IsGamepadTrigger(DirectInput::GamepadInputType gamepadType);
-	// キーから離れたかどうか
-	static bool IsGamepadReturn(DirectInput::GamepadInputType gamepadType);
-
 private: // 静的メンバ変数
 	// 入力デバイス
 	static DirectInput* input;
@@ -46,4 +28,21 @@ private: // 静的メンバ変数
 	// 1ループ(フレーム)前のゲームパッド情報
 	static DIJOYSTATE oldGamepad;
 
+public: // 静的メンバ関数
+	// 初期化
+	static void Init();
+	// 更新
+	static void Update();
+	// キーが押されているかどうか
+	static bool IsKey(int key);
+	// キーが押されたかどうか
+	static bool IsKeyTrigger(int key);
+	// キーから離れたかどうか
+	static bool IsKeyReturn(int key);
+	// キーが押されているかどうか
+	static bool IsGamepad(const DirectInput::GamepadInputType& gamepadType);
+	// キーが押されたかどうか
+	static bool IsGamepadTrigger(const DirectInput::GamepadInputType& gamepadType);
+	// キーから離れたかどうか
+	static bool IsGamepadReturn(const DirectInput::GamepadInputType& gamepadType);
 };

@@ -8,8 +8,8 @@ class PostEffect
 {
 private: //エイリアス
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	using Vector3 = Engine::Math::Vector3;
-	using Matrix4 = Engine::Math::Matrix4;
+	using Vector3 = Math::Vector3;
+	using Matrix4 = Math::Matrix4;
 	
 private: //定数
 		

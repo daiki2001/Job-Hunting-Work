@@ -12,7 +12,7 @@ public: // メンバ関数
 	~SceneManager() {}
 
 	void Loop() const;
-	void SceneChenge(const SceneChenger::Scene scene, const bool stackClear) override;
+	void SceneChenge(const SceneChenger::Scene& scene, bool stackClear) override;
 	int PopScene() override;
 
 private: // メンバ変数

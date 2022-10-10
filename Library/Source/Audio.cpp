@@ -17,7 +17,7 @@ Audio::~Audio()
 
 	for (size_t i = 0; i < soundDatas.size(); i++)
 	{
-		SoundUnload(static_cast<const int>(i));
+		SoundUnload(static_cast<int>(i));
 	}
 }
 

@@ -123,7 +123,7 @@ void StageEditorScene::Update()
 
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
-		if (BlockManager::TypeId(mapArray[i]) != Stage::GetBlockManager()->GetBlock(i).GetTypeId())
+		if (static_cast<BlockManager::TypeId>(mapArray[i]) != Stage::GetBlockManager()->GetBlock(i).typeId)
 		{
 			Stage::GetBlockManager()->ChengeBlock(i, BlockManager::TypeId(mapArray[i]));
 			Stage::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;

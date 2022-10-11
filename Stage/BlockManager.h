@@ -7,6 +7,7 @@
 class BlockManager
 {
 public: //エイリアス
+	template<class T> using vector = std::vector<T>;
 	using Vector3 = Math::Vector3;
 
 public: //サブクラス
@@ -25,24 +26,22 @@ public: //サブクラス
 	public: //メンバ変数
 		Vector3 pos; //座標
 		bool isSwitch;
-	private:
 		TypeId typeId;
 
 	public: //メンバ関数
 		Block(const TypeId& typeId);
 		~Block() = default;
-
-		const TypeId GetTypeId() const { return typeId; }
 	};
 
 private: //静的メンバ変数
 	static Player* player;
 
 private: //メンバ変数
-	std::vector<BlockType> blockType;
-	std::vector<Block> blocks;
+	vector<BlockType> blockType;
+	vector<Block> blocks;
 	bool isOpen;
 	bool isGoal;
+	vector<int> keyInitPos;
 
 public: //メンバ関数
 	BlockManager();

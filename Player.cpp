@@ -7,7 +7,8 @@ Player::Player() :
 	pos{},
 	direction(Player::Direction::UP),
 	object(Engine::FUNCTION_ERROR),
-	graph(Engine::FUNCTION_ERROR)
+	graph(Engine::FUNCTION_ERROR),
+	keyCount(0)
 {
 	Reset();
 }
@@ -52,6 +53,7 @@ void Player::Draw(int offsetX, int offsetY)
 void Player::Reset()
 {
 	pos = { 7.0f, -6.0f, 0.0f };
+	keyCount = 0;
 }
 
 void Player::Move(const InputManager* const input)

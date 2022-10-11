@@ -20,7 +20,8 @@ BlockManager::BlockManager() :
 	blockType{},
 	blocks{},
 	isOpen(false),
-	isGoal(false)
+	isGoal(false),
+	keyInitPos{}
 {
 }
 
@@ -28,6 +29,7 @@ BlockManager::~BlockManager()
 {
 	blockType.clear();
 	blocks.clear();
+	keyInitPos.clear();
 }
 
 void BlockManager::Init(DrawPolygon* const draw)
@@ -49,9 +51,8 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(TypeId::KEY, draw));
 	blockType.back().Create("key.obj",
-							Math::Identity()
-							/*Math::rotateZ(Math::PI_F / 2) * Math::rotateX(Math::PI_F / 2)*/,
-							{ 0.5f, 0.5f, 0.5f },
+							Math::rotateZ(-Math::PI_F / 4),
+							scale_xyz(0.25f),
 							{ 1.0f, 1.0f, 0.0f, 1.0f });
 }
 
@@ -76,7 +77,9 @@ void BlockManager::Update()
 		isGoal = true;
 		break;
 	case TypeId::KEY:
-		//isGoal = true;
+		player->AcquisitionKey();
+		keyInitPos.push_back(playerPos);
+		blocks[playerPos].typeId = TypeId::NONE;
 		break;
 	case TypeId::NONE:
 	default:
@@ -96,9 +99,11 @@ void BlockManager::Update()
 
 void BlockManager::Draw(int offsetX, int offsetY)
 {
+	Vector3 offset = { static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f };
+
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		blockType[blocks[i].GetTypeId()].Draw(blocks[i].pos + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f));
+		blockType[blocks[i].typeId].Draw(blocks[i].pos + offset);
 	}
 }
 
@@ -106,13 +111,19 @@ void BlockManager::Reset()
 {
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		if (blocks[i].GetTypeId() == TypeId::SWITCH)
+		if (blocks[i].typeId == TypeId::SWITCH)
 		{
 			blocks[i].isSwitch = false;
 		}
 	}
 
 	isGoal = false;
+
+	for (size_t i = 0; i < keyInitPos.size(); i++)
+	{
+		blocks[keyInitPos[i]].typeId = TypeId::KEY;
+	}
+	keyInitPos.clear();
 }
 
 int BlockManager::CreateBlock(const TypeId& typeId)
@@ -250,7 +261,7 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType)
 			surroundingBlockType[i] = TypeId::WALL;
 			continue;
 		}
-		surroundingBlockType[i] = blocks[surroundingBlock[i]].GetTypeId();
+		surroundingBlockType[i] = blocks[surroundingBlock[i]].typeId;
 	}
 
 	return playerPos;

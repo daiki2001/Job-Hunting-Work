@@ -114,8 +114,14 @@ void GameScene::Draw()
 	}
 	else
 	{
-		draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-		draw->DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
+		//draw->DrawTextrue(0.0f, (32.0f * 0.0f), 144.0f, (32.0f * 1.0f), 0.0f, 0,
+		//				  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawString(0.0f, (32.0f * 0.0f), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "WASD:MOVE");
+		//draw->DrawTextrue(0.0f, (32.0f * 1.0f), 144.0f, (32.0f * 2.0f), 0.0f, 0,
+		//				  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawString(0.0f, (32.0f * 1.0f), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "KeyCount:%d", player->GetKeyCount());
 	}
 
 	w->ScreenFlip();

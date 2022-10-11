@@ -1,8 +1,11 @@
 ﻿#include "Area.h"
 #include "Door.h"
+#include "InputManager.h"
 
 namespace
 {
+static InputManager* input = InputManager::Get();
+
 static int debugTex = FUNCTION_ERROR;
 }
 
@@ -11,14 +14,20 @@ int Area::wall_obj = FUNCTION_ERROR;
 
 Area::Area() :
 	block_mgr{},
-	door{}
+	door{},
+	doorInit{}
 {
 	block_mgr.Init(Area::draw);
 
-	door[DoorNum::UP].Init(Vector3(11.0f, 1.0f, 2.0f), Door::DoorStatus::CLOSE);
-	door[DoorNum::DOWN].Init(Vector3(11.0f, 1.0f, 2.0f), Door::DoorStatus::ENTRANCE);
+	door[DoorNum::UP].Init(Vector3(3.0f, 1.0f, 2.0f), Door::DoorStatus::CLOSE);
+	door[DoorNum::DOWN].Init(Vector3(3.0f, 1.0f, 2.0f), Door::DoorStatus::CLOSE);
 	door[DoorNum::LEFT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
 	door[DoorNum::RIGHT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		doorInit[i] = door[i];
+	}
 }
 
 Area::~Area()
@@ -32,7 +41,7 @@ void Area::StaticInit(DrawPolygon* const draw)
 		Area::draw = draw;
 	}
 	// 外壁のモデルの読み込み
-	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall.obj", "./Resources/Game/");
+	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall/Wall.obj", "./Resources/Game/Wall/");
 //#ifdef _DEBUG
 	debugTex = Area::draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
 //#endif // _DEBUG
@@ -42,6 +51,11 @@ void Area::StaticInit(DrawPolygon* const draw)
 void Area::Reset()
 {
 	block_mgr.Reset();
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		door[i] = doorInit[i];
+	}
 }
 
 void Area::Update()
@@ -55,6 +69,32 @@ void Area::Update()
 			door[i].Open();
 		}
 	}
+
+	if (input->DecisionTrigger() && Player::Get()->GetKeyCount() > 0)
+	{
+		int playerPos = block_mgr.GetSurroundingBlock(0, nullptr);
+
+		if (playerPos % 15 == 0 && playerPos / 15 >= 2 && playerPos / 15 <= 4)
+		{
+			door[DoorNum::LEFT].KeyOpen();
+			Player::Get()->UseKey();
+		}
+		if (playerPos % 15 == 14 && playerPos / 15 >= 2 && playerPos / 15 <= 4)
+		{
+			door[DoorNum::RIGHT].KeyOpen();
+			Player::Get()->UseKey();
+		}
+		if (playerPos >= 6 && playerPos <= 8)
+		{
+			door[DoorNum::UP].KeyOpen();
+			Player::Get()->UseKey();
+		}
+		if (playerPos >= 96 && playerPos <= 98)
+		{
+			door[DoorNum::DOWN].KeyOpen();
+			Player::Get()->UseKey();
+		}
+	}
 }
 
 void Area::Draw(int offsetX, int offsetY)
@@ -64,10 +104,7 @@ void Area::Draw(int offsetX, int offsetY)
 
 	// 外壁の描画
 	DirectDrawing::ChangeMaterialShader();
-	draw->DrawOBJ(wall_obj, Vector3(-7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(0 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(1 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(2 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(3 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
+	DrawWall(offset);
 
 	door[DoorNum::UP].Draw(Vector3(0.0f, +4.5f, 0.0f) + offset);
 	door[DoorNum::DOWN].Draw(Vector3(0.0f, -4.5f, 0.0f) + offset);
@@ -109,11 +146,11 @@ int Area::LoadArea(FILE* fileHandle)
 	/*ドアの設定*/
 	for (int i = 0; i < 4; i++)
 	{
-		static Vector3 size = Vector3(11.0f, 1.0f, 2.0f);
+		static Vector3 size = Vector3(3.0f, 1.0f, 2.0f);
 
 		if (i % 4 <= 1)
 		{
-			size.x = 11.0f;
+			size.x = 3.0f;
 			size.y = 1.0f;
 		}
 		else if (i % 4 <= 3)
@@ -123,7 +160,36 @@ int Area::LoadArea(FILE* fileHandle)
 		}
 
 		door[i].Init(size, Door::DoorStatus(doorSetting[i]));
+		doorInit[i] = door[i];
 	}
 
 	return 0;
+}
+
+void Area::DrawWall(const Vector3& offset)
+{
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+
+	draw->DrawOBJ(wall_obj, Vector3(-6.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-6.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+6.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+6.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+
+	draw->DrawOBJ(wall_obj, Vector3(-4.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-4.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+4.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+4.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+
+	draw->DrawOBJ(wall_obj, Vector3(-2.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
 }

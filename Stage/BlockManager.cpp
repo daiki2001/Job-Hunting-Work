@@ -183,7 +183,7 @@ void BlockManager::SwitchPush(const size_t& blockNo)
 	blocks[blockNo].isSwitch = true;
 }
 
-int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType)
+int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const
 {
 	const int size = (radius * 2 + 1) * (radius * 2 + 1);
 	std::vector<int> surroundingBlock = {};
@@ -252,6 +252,11 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType)
 		{
 			break;
 		}
+	}
+
+	if (surroundingBlockType == nullptr)
+	{
+		return playerPos;
 	}
 
 	for (int i = 0; i < size; i++)

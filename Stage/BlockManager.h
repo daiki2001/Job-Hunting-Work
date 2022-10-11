@@ -65,14 +65,12 @@ public: //メンバ関数
 	// 全ブロックの削除処理
 	void AllDeleteBlock();
 
-	Block& GetBlock(int index) { return blocks[index]; };
+	Block& GetBlock(int index)
+	{
+		return blocks[index];
+	};
 	const bool GetDoor() const { return isOpen; }
 	const bool GetGoal() const { return isGoal; }
-private:
-	// プレイヤーの押し戻し処理
-	void PlayerPushBack() const;
-	// スイッチが押された時の処理
-	void SwitchPush(const size_t& blockNo);
 
 	/// <summary>
 	/// プレイヤーの周囲のブロックを取得する
@@ -80,5 +78,10 @@ private:
 	/// <param name="radius"> 0を指定するとプレイヤーがいる場所のブロックだけ渡す </param>
 	/// <param name="surroundingBlockType"> 要素番号をまとめた配列 </param>
 	/// <returns> プレイヤーが踏んでいるブロックの要素番号 </returns>
-	int GetSurroundingBlock(int radius, TypeId* surroundingBlockType);
+	int GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const;
+private:
+	// プレイヤーの押し戻し処理
+	void PlayerPushBack() const;
+	// スイッチが押された時の処理
+	void SwitchPush(const size_t& blockNo);
 };

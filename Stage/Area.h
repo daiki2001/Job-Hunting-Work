@@ -27,9 +27,12 @@ public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
 
+	static int GetWallObj() { return wall_obj; }
+
 private: //メンバ変数
 	BlockManager block_mgr;
 	Door door[4];
+	Door doorInit[4];
 
 public: //メンバ関数
 	Area();
@@ -51,4 +54,6 @@ public: //メンバ関数
 
 	BlockManager* GetBlockManager() { return &block_mgr; }
 	Door::DoorStatus GetDoorStatus(const DoorNum& num) { return door[num].GetStatus(); }
+private:
+	void DrawWall(const Vector3& offset);
 };

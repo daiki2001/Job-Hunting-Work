@@ -23,6 +23,10 @@ void Stage::StaticInit(DrawPolygon* const draw)
 {
 	Stage::draw = draw;
 	Area::StaticInit(Stage::draw);
+	if (room.size() == 0)
+	{
+		room.emplace_back();
+	}
 }
 
 void Stage::Init()

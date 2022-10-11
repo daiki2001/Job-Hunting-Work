@@ -45,13 +45,17 @@ void StageEditorScene::Init()
 		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
 	}
 
-	Stage::GetBlockManager()->AllDeleteBlock();
-	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
+	auto blockMgr = Stage::GetBlockManager();
+	if (blockMgr != nullptr)
 	{
-		mapArray[i] = BlockManager::TypeId::NONE;
-		Stage::GetBlockManager()->CreateBlock(BlockManager::TypeId(mapArray[i]));
-		Stage::GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
-		Stage::GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
+		blockMgr->AllDeleteBlock();
+		for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
+		{
+			mapArray[i] = BlockManager::TypeId::NONE;
+			blockMgr->CreateBlock(BlockManager::TypeId(mapArray[i]));
+			blockMgr->GetBlock(i).pos.x = static_cast<float>(i % STAGE_WIDTH) * 1.0f;
+			blockMgr->GetBlock(i).pos.y = static_cast<float>(i / STAGE_WIDTH) * -1.0f;
+		}
 	}
 
 	mapIndex = 0;

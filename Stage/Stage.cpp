@@ -1,17 +1,12 @@
 ﻿#include "Stage.h"
 
-namespace
-{
-static int debugTex = FUNCTION_ERROR;
-}
-
 DrawPolygon* Stage::draw = nullptr;
-BlockManager* Stage::block_mgr = BlockManager::Get();
-int Stage::wall_obj = FUNCTION_ERROR;
-int Stage::door_obj = FUNCTION_ERROR;
+std::vector<Stage::Room> Stage::room;
+int Stage::nowRoom = 0;
 
 Stage::Stage()
 {
+	Init();
 }
 
 Stage::~Stage()
@@ -24,74 +19,155 @@ Stage* Stage::Get()
 	return &instance;
 }
 
-void Stage::Init(DrawPolygon* const draw)
+void Stage::StaticInit(DrawPolygon* const draw)
 {
-	this->draw = draw;
-	block_mgr->Init(draw);
-	// 外壁のモデルの読み込み
-	wall_obj = draw->CreateOBJModel("./Resources/Game/Wall.obj", "./Resources/Game/");
-	door_obj = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
-#ifdef _DEBUG
-	debugTex = draw->LoadTextrue(L"./lib/white1x1.png");
-#endif // _DEBUG
+	Stage::draw = draw;
+	Area::StaticInit(Stage::draw);
+	if (room.size() == 0)
+	{
+		room.emplace_back();
+	}
 }
 
-void Stage::Reset()
+void Stage::Init()
 {
-	block_mgr->Reset();
+	nowRoom = 0;
 }
 
 void Stage::Update()
 {
-	block_mgr->Update();
+	room[nowRoom].area.Update();
 }
 
-void Stage::Draw(const int& offsetX, const int& offsetY)
+void Stage::Draw(int offsetX, int offsetY)
 {
-	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) + Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
-
-	// 外壁の描画
-	DirectDrawing::ChangeMaterialShader();
-	draw->DrawOBJ(wall_obj, Vector3(-7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(0 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(1 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+7.5f, -3.5f, 0.0f) + offset, Math::rotateZ(2 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+7.5f, +3.5f, 0.0f) + offset, Math::rotateZ(3 * Math::DEGREE_F * 90.0f), Vector3(2.0f, 2.0f, 2.0f));
-
-	if (block_mgr->GetDoor() == false)
-	{
-		DirectDrawing::ChangeOBJShader();
-		draw->Draw(door_obj, Vector3(0.0f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(11.0f, 1.0f, 2.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), debugTex);
-	}
-
-	block_mgr->Draw(offsetX, -offsetY);
+	room[nowRoom].area.Draw(offsetX, offsetY);
 }
 
-void Stage::LoadStage(const char* filePath)
+void Stage::Reset()
 {
-	static const int stageWidth = 15;
-	static const int stageHeight = 7;
-	int mapArray[stageWidth * stageHeight] = { BlockManager::TypeId::NONE };
+	nowRoom = 0;
 
-	if (filePath != nullptr)
+	for (size_t i = 0; i < room.size(); i++)
 	{
-		Load::LoadMapChip(mapArray, sizeof(mapArray) / sizeof(mapArray[0]), filePath);
+		room[i].area.Reset();
+	}
+}
+
+int Stage::LoadStage(const char* filePath)
+{
+	if (filePath == nullptr)
+	{
+		OutputDebugStringA("ファイル名が間違っています。\n");
+		return FUNCTION_ERROR;
 	}
 
-	block_mgr->AllDeleteBlock();
+	room.clear();
 
-	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
+	FILE* fileHandle;
+	errno_t err;
+	char string[256] = { 0 };
+
+	size_t roomNum = 0;
+
+	err = fopen_s(&fileHandle, filePath, "r");
+	if (err != 0)
 	{
-		int x = i % stageWidth;
-		int y = i / stageWidth;
-		int index = block_mgr->CreateBlock(BlockManager::TypeId(mapArray[i]));
+		OutputDebugStringA("ファイルが開けません。\n");
+		return err;
+	}
 
-		if (index == Engine::FUNCTION_ERROR)
+	if (fgets(string, 256, fileHandle) == nullptr)
+	{
+		OutputDebugStringA("ファイルが読み込めません。\n");
+		return FUNCTION_ERROR;
+	}
+
+	for (int i = 0; string[i] != '\0'; i++)
+	{
+		if (string[i] == ',' || string[i] == '\n')
 		{
-			continue;
+			break;
 		}
-
-		auto& block = block_mgr->GetBlock(index);
-		block.pos.x = static_cast<float>(x * 1.0f);
-		block.pos.y = static_cast<float>(-y * 1.0f);
+		else if (string[i] >= '0' && string[i] <= '9')
+		{
+			roomNum *= 10;
+			roomNum += string[i] - '0';
+		}
 	}
+
+	for (size_t i = 0; i < roomNum; i++)
+	{
+		room.emplace_back();
+		Load::LoadMapChip(fileHandle, room[i].connection, 4, -2);
+		room.back().area.LoadArea(fileHandle);
+	}
+
+	fclose(fileHandle);
+	return 0;
+}
+
+int Stage::MoveUpRoom()
+{
+	if (room[nowRoom].connection[Area::DoorNum::UP] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room[nowRoom].connection[Area::DoorNum::UP];
+
+	return 0;
+}
+
+int Stage::MoveDownRoom()
+{
+	if (room[nowRoom].connection[Area::DoorNum::DOWN] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room[nowRoom].connection[Area::DoorNum::DOWN];
+
+	return 0;
+}
+
+int Stage::MoveLeftRoom()
+{
+	if (room[nowRoom].connection[Area::DoorNum::LEFT] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room[nowRoom].connection[Area::DoorNum::LEFT];
+
+	return 0;
+}
+
+int Stage::MoveRightRoom()
+{
+	if (room[nowRoom].connection[Area::DoorNum::RIGHT] == -1)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = room[nowRoom].connection[Area::DoorNum::RIGHT];
+
+	return 0;
+}
+
+const bool Stage::IsGoal()
+{
+	static bool reslut = false;
+	reslut = false;
+
+	for (size_t i = 0; i < room.size(); i++)
+	{
+		if (room[i].area.IsGoal())
+		{
+			reslut = true;
+			break;
+		}
+	}
+
+	return reslut;
 }

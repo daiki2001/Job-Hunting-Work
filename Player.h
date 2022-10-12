@@ -34,17 +34,25 @@ private:
 	int object;          //プレイヤーのオブジェクト
 	int graph;           //画像
 
+	unsigned int keyCount;
+
 public: //メンバ関数
 	// 初期化処理
 	void Init(DrawPolygon* const draw);
 	// 更新処理
 	void Update(const InputManager* const input);
 	// 描画処理
-	void Draw(const int& offsetX = 0, const int& offsetY = 0);
-
+	void Draw(int offsetX = 0, int offsetY = 0);
+	// リセット
 	void Reset();
 
-	const Direction GetDirection() const { return direction; };
+	// 鍵の獲得
+	void AcquisitionKey() { keyCount++; }
+	// 鍵の使用
+	void UseKey() { if(keyCount > 0) keyCount--; }
+
+	const Direction GetDirection() const { return direction; }
+	const unsigned int GetKeyCount() const { return keyCount; }
 private:
 	void Move(const InputManager* const input);
 };

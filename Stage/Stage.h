@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
+#include <vector>
 #include "./Header/EngineGeneral.h"
 
 class Stage final
@@ -16,27 +17,51 @@ private:
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 
+public: //サブクラス
+	struct Room
+	{
+		Area area = {}; //部屋の情報
+		int connection[4] = { -1, -1, -1, -1 }; //どの部屋と繋がっているか
+	};
+
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static BlockManager* block_mgr;
-	static int wall_obj; //外壁のオブジェクト
-	static int door_obj; //ドアのオブジェクト
+	static Player* player;         //プレイヤー
+	static std::vector<Room> room; //各部屋の情報
+	static int nowRoom; //プレイヤーが現在いる部屋
 
 public: //静的メンバ関数
-	static const bool IsGoal() { return block_mgr->GetGoal(); }
+	// 静的初期化処理
+	static void StaticInit(DrawPolygon* const draw);
 
-	static BlockManager* GetBlockManager() { return block_mgr; }
+	static int MoveUpRoom();
+	static int MoveDownRoom();
+	static int MoveLeftRoom();
+	static int MoveRightRoom();
+
+	static const bool IsGoal();
+
+	static BlockManager* GetBlockManager()
+	{
+		if (room.size() == 0) return nullptr;
+		return room[nowRoom].area.GetBlockManager();
+	}
+	static Door::DoorStatus GetDoorStatus(const Area::DoorNum& num)
+	{
+		if (room.size() == 0) return Door::DoorStatus::OPEN;
+		return room[nowRoom].area.GetDoorStatus(num);
+	}
 
 public: //メンバ関数
 	// 初期化処理
-	void Init(DrawPolygon* const draw);
+	void Init();
 	// 更新処理
 	void Update();
 	// 描画処理
-	void Draw(const int& offsetX = 0, const int& offsetY = 0);
+	void Draw(int offsetX = 0, int offsetY = 0);
 	// リセット処理
 	void Reset();
 
 	// ステージ読み込み
-	void LoadStage(const char* filePath = nullptr);
+	int LoadStage(const char* filePath = nullptr);
 };

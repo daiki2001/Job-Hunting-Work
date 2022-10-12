@@ -7,12 +7,11 @@ class Parameter final
 {
 private:
 	Parameter() {}
-	~Parameter() {}
-public:
 	Parameter(const Parameter&) = delete;
+	~Parameter() {}
 	Parameter operator=(const Parameter&) = delete;
-
-	static void Set(const char* key, const int& vel);
+public:
+	static void Set(const char* key, int vel);
 	static int Get(const char* key);
 
 private:

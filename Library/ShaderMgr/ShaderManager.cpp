@@ -10,7 +10,7 @@ ShaderManager::InputLayout::InputLayout() :
 {
 }
 
-void ShaderManager::InputLayout::PushInputLayout(LPCSTR SemanticName, DXGI_FORMAT Format)
+void ShaderManager::InputLayout::PushInputLayout(const LPCSTR& SemanticName, const DXGI_FORMAT& Format)
 {
 	inputLayout.push_back({
 		SemanticName,                               //セマンティック名
@@ -90,7 +90,7 @@ int ShaderManager::CreateShader(const Shaders::Shader& veatex, const Shaders::Sh
 	return static_cast<int>(shaders.size() - 1);
 }
 
-int ShaderManager::CreateGPipeline(const int& shaderIndex, const int& inputLayoutIndex)
+int ShaderManager::CreateGPipeline(int shaderIndex, int inputLayoutIndex)
 {
 	if (shaderIndex < 0 || inputLayoutIndex < 0)
 	{
@@ -170,7 +170,7 @@ int ShaderManager::CreateGPipeline(const int& shaderIndex, const int& inputLayou
 	return static_cast<int>(gPipelines[0].size() - 1);
 }
 
-int ShaderManager::CreateRootSignature(const int& gPipelineIndex, const UINT& numParameters, const D3D12_ROOT_PARAMETER* _pParameters)
+int ShaderManager::CreateRootSignature(int gPipelineIndex, const UINT& numParameters, const D3D12_ROOT_PARAMETER* _pParameters)
 {
 	if (gPipelineIndex < 0)
 	{
@@ -227,7 +227,7 @@ int ShaderManager::CreateRootSignature(const int& gPipelineIndex, const UINT& nu
 	return static_cast<int>(rootSignature.size() - 1);
 }
 
-int ShaderManager::CreatePipelineState(const int& gPipelineIndex)
+int ShaderManager::CreatePipelineState(int gPipelineIndex)
 {
 	if (gPipelineIndex < 0)
 	{
@@ -248,7 +248,7 @@ int ShaderManager::CreatePipelineState(const int& gPipelineIndex)
 	return static_cast<int>(pipelineState[0].size() - 1);
 }
 
-int ShaderManager::ChangePipelineState(ID3D12GraphicsCommandList* cmdList, const int& rootSignatureIndex, const int& pipelineStateIndex)
+int ShaderManager::ChangePipelineState(ID3D12GraphicsCommandList* cmdList, int rootSignatureIndex, int pipelineStateIndex)
 {
 	if (cmdList == nullptr || rootSignatureIndex < 0 || pipelineStateIndex < 0)
 	{
@@ -263,7 +263,7 @@ int ShaderManager::ChangePipelineState(ID3D12GraphicsCommandList* cmdList, const
 	return 0;
 }
 
-int ShaderManager::ChangePipelineState(ID3D12GraphicsCommandList* cmdList, ID3D12RootSignature* rootSignature, const int& pipelineStateIndex)
+int ShaderManager::ChangePipelineState(ID3D12GraphicsCommandList* cmdList, ID3D12RootSignature* rootSignature, int pipelineStateIndex)
 {
 	if (cmdList == nullptr || rootSignature == nullptr || pipelineStateIndex < 0)
 	{

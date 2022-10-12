@@ -15,7 +15,8 @@ SceneManager::SceneManager(DrawPolygon* draw) :
 {
 	if (DirectXInit::EngineDebug)
 	{
-		sceneStack.push(std::make_shared<EngineTestScene>(this->draw, this));
+		std::shared_ptr<EngineTestScene> heep(new EngineTestScene(this->draw, this));
+		sceneStack.push(std::move(heep));
 	}
 	else
 	{
@@ -30,7 +31,7 @@ void SceneManager::Loop() const
 	sceneStack.top()->Draw();
 }
 
-void SceneManager::SceneChenge(const SceneChenger::Scene scene, const bool stackClear)
+void SceneManager::SceneChenge(const SceneChenger::Scene& scene, bool stackClear)
 {
 	using namespace std;
 

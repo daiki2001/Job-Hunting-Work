@@ -1,76 +1,77 @@
-#pragma once
+ï»¿#pragma once
 #include "DirectDrawing.h"
 #include <DirectXTex.h>
 #include <d3dx12.h>
+#include <string>
 
-// ƒeƒNƒXƒ`ƒƒ‘S‘Ì‚Ìƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+// ãƒ†ã‚¯ã‚¹ãƒãƒ£å…¨ä½“ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 struct TextrueCommon
 {
-	DirectX::XMFLOAT4 noneTextrue[1]; //‰æ‘œ–³‚µ—p
+	DirectX::XMFLOAT4 noneTextrue[1]; //ç”»åƒç„¡ã—ç”¨
 	DirectX::TexMetadata metadata;
 	DirectX::ScratchImage scratchImg;
 	const DirectX::Image* img;
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descHeap; //srvê—p‚ÌƒfƒBƒXƒNƒŠƒvƒ^ƒq[ƒv
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descHeap; //srvå°‚ç”¨ã®ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—
 
 	TextrueCommon();
 };
 
-// ƒeƒNƒXƒ`ƒƒˆê–‡•ª‚Ìƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì
+// ãƒ†ã‚¯ã‚¹ãƒãƒ£ä¸€æšåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã¾ã¨ã‚ãŸæ§‹é€ ä½“
 struct Textrue
 {
-	Microsoft::WRL::ComPtr<ID3D12Resource> texbuff; //ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@
+	std::wstring name;
+	Microsoft::WRL::ComPtr<ID3D12Resource> texbuff; //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandle; //CPU‘¤‚Ìƒnƒ“ƒhƒ‹
-	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandle; //GPU‘¤‚Ìƒnƒ“ƒhƒ‹
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandle; //CPUå´ã®ãƒãƒ³ãƒ‰ãƒ«
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuDescHandle; //GPUå´ã®ãƒãƒ³ãƒ‰ãƒ«
 };
 
 class LoadTex : public DirectDrawing
 {
-	/*namespace–¼È—ª*/
+	/*namespaceåçœç•¥*/
 protected:
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 
-	/*ƒƒ“ƒo•Ï”*/
+	/*ãƒ¡ãƒ³ãƒå¤‰æ•°*/
 protected:
 	static UINT textrueCount;
 
-	/*ƒƒ“ƒo•Ï”*/
+	/*ãƒ¡ãƒ³ãƒå¤‰æ•°*/
 protected:
 	vector<Textrue> textrueData;
 	TextrueCommon texCommonData;
 private:
 	UINT spriteCount;
 
-	// ŠÖ”‚Ì‰Šú‰»ƒtƒ‰ƒO
+	// é–¢æ•°ã®åˆæœŸåŒ–ãƒ•ãƒ©ã‚°
 	bool isLoadTextrueInit = false;
 	bool isDrawTextrueInit = false;
 
-	/*ƒƒ“ƒoŠÖ”*/
+	/*ãƒ¡ãƒ³ãƒé–¢æ•°*/
 public:
 	LoadTex();
 	~LoadTex();
 
-	// ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@‚Ì¶¬
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	int LoadTextrue(const wchar_t* fileName = nullptr);
 
-	// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æ
-	int DrawTextrue(const float& posX, const float& posY, const float& width, const float& height,
-					const float& angle = 0, const int& graphHandle = 0,
-					const DirectX::XMFLOAT2& anchorpoint = { 0.5f, 0.5f }, const XMFLOAT4& color = { 1, 1, 1, 1 },
-					const int& parent = -1);
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”»
+	int DrawTextrue(float posX, float posY, float width, float height, float angle = 0,
+					int graphHandle = 0, const DirectX::XMFLOAT2& anchorpoint = { 0.5f, 0.5f },
+					const XMFLOAT4& color = { 1, 1, 1, 1 }, int parent = -1);
 
-	// ƒXƒvƒ‰ƒCƒg‚ÌØ‚èo‚µ•`‰æ
-	int DrawCutTextrue(const float& posX, const float& posY, const float& width, const float& height,
-					   const DirectX::XMFLOAT2& texPos, const DirectX::XMFLOAT2& texSize, const float& angle = 0,
-					   const int& graphHandle = 0, const DirectX::XMFLOAT2& anchorpoint = { 0.5f, 0.5f },
-					   const XMFLOAT4& color = { 1, 1, 1, 1 }, const int& parent = -1);
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®åˆ‡ã‚Šå‡ºã—æç”»
+	int DrawCutTextrue(float posX, float posY, float width, float height,
+					   const DirectX::XMFLOAT2& texPos, const DirectX::XMFLOAT2& texSize, float angle = 0,
+					   int graphHandle = 0, const DirectX::XMFLOAT2& anchorpoint = { 0.5f, 0.5f },
+					   const XMFLOAT4& color = { 1, 1, 1, 1 }, int parent = -1);
 
-	// “à•”‚Ì‰Šú‰»—pŠÖ”
+	// å†…éƒ¨ã®åˆæœŸåŒ–ç”¨é–¢æ•°
 	void LoopEnd();
 
 	int DrawTextureInit();
 private:
-	// ƒf[ƒ^‚ÌÁ‹
+	// ãƒ‡ãƒ¼ã‚¿ã®æ¶ˆå»
 	void DataClear();
 };

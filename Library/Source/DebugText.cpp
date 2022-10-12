@@ -27,7 +27,7 @@ HRESULT DebugText::Init()
 	if (fontTex == FUNCTION_ERROR)
 	{
 		// デバッグテキスト用のテキスト画像の読み込み
-		fontTex = LoadTextrue(L"./lib/DebugTextFont.png");
+		fontTex = LoadTextrue(L"./Resources/Engine/DebugTextFont.png");
 		if (fontTex == FUNCTION_ERROR)
 		{
 			return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
@@ -68,8 +68,8 @@ HRESULT DebugText::DrawStringInit()
 	return S_OK;
 }
 
-HRESULT DebugText::DrawString(const float& posX, const float& posY,
-							  const float& fontScale, const XMFLOAT4& color, const char* text, ...)
+HRESULT DebugText::DrawString(float posX, float posY, float fontScale, const XMFLOAT4& color,
+							  const char* text, ...)
 {
 	using namespace DirectX;
 

@@ -5,11 +5,11 @@
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 Player* GameScene::player = Player::Get();
+Stage* GameScene::stage = Stage::Get();
 bool GameScene::isClear = false;
 
 GameScene::GameScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
 	BaseScene(draw, sceneChenger),
-	stage{},
 	background(Engine::FUNCTION_ERROR),
 	clear(Engine::FUNCTION_ERROR)
 {
@@ -37,8 +37,8 @@ void GameScene::Init()
 	}
 
 	player->Init(draw);
-	stage.Init(draw);
-	stage.LoadArea("./Resources/Game/Stage/test.csv");
+	stage->StaticInit(draw);
+	stage->LoadStage("./Resources/Game/Stage/test.csv");
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -61,18 +61,24 @@ void GameScene::Update()
 	else
 	{
 		player->Update(InputManager::Get());
-		stage.Update();
+		stage->Update();
 
-		if (Area::IsGoal())
+		if (Stage::IsGoal())
 		{
 			isClear = true;
 		}
 	}
 
+#ifdef _DEBUG
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		Reset();
 	}
+	if (Input::IsKeyTrigger(DIK_F1))
+	{
+		stage->LoadStage("./Resources/Game/Stage/test.csv");
+	}
+#endif // _DEBUG
 }
 
 void GameScene::Draw()
@@ -80,7 +86,7 @@ void GameScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
-	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();
@@ -101,7 +107,7 @@ void GameScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage.Draw();
+	stage->Draw();
 	player->Draw();
 
 	// 前景
@@ -112,8 +118,14 @@ void GameScene::Draw()
 	}
 	else
 	{
-		draw->DrawTextrue(0, 0, 144.0f, 32.0f, 0.0f, 0, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-		draw->DrawString(0, 0, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "WASD:MOVE");
+		//draw->DrawTextrue(0.0f, (32.0f * 0.0f), 144.0f, (32.0f * 1.0f), 0.0f, 0,
+		//				  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawString(0.0f, (32.0f * 0.0f), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "WASD:MOVE");
+		//draw->DrawTextrue(0.0f, (32.0f * 1.0f), 144.0f, (32.0f * 2.0f), 0.0f, 0,
+		//				  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawString(0.0f, (32.0f * 1.0f), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "KeyCount:%d", player->GetKeyCount());
 	}
 
 	w->ScreenFlip();
@@ -126,5 +138,5 @@ void GameScene::Reset()
 {
 	isClear = false;
 	player->Reset();
-	stage.Reset();
+	stage->Reset();
 }

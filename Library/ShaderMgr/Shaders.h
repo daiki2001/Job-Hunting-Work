@@ -1,71 +1,71 @@
-#pragma once
+ï»¿#pragma once
 #include <d3d12.h>
 #include <wrl.h>
 #include <string>
 
 class Shaders
 {
-private: //ƒGƒCƒŠƒAƒX
+private: //ã‚¨ã‚¤ãƒªã‚¢ã‚¹
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public: //ƒTƒuƒNƒ‰ƒX
+public: //ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 	enum ShaderType
 	{
-		VERTEX_SHADER,   //’¸“_ƒVƒF[ƒ_[
-		PIXLE_SHADER,    //ƒsƒNƒZƒ‹ƒVƒF[ƒ_[
-		DOMAIN_SHADER,   //ƒhƒƒCƒ“ƒVƒF[ƒ_[
-		HULL_SHADER,     //ƒnƒ‹ƒVƒF[ƒ_[
-		GEOMETRY_SHADER, //ƒWƒIƒƒgƒŠƒVƒF[ƒ_[
-		COMPUTE_SHADER   //ƒRƒ“ƒsƒ…[ƒgƒVƒF[ƒ_[
+		VERTEX_SHADER,   //é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+		PIXLE_SHADER,    //ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+		DOMAIN_SHADER,   //ãƒ‰ãƒ¡ã‚¤ãƒ³ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+		HULL_SHADER,     //ãƒãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+		GEOMETRY_SHADER, //ã‚¸ã‚ªãƒ¡ãƒˆãƒªã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+		COMPUTE_SHADER   //ã‚³ãƒ³ãƒ”ãƒ¥ãƒ¼ãƒˆã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
 	};
 
 	class Shader
 	{
-	private: //Ã“Iƒƒ“ƒo•Ï”
+	private: //é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 		static ComPtr<ID3DBlob> errorBlob;
 
-	private: //ƒƒ“ƒo•Ï”
+	private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
 		ComPtr<ID3DBlob> shaderBlob;
 		std::wstring fileName;
 
-	public: //ƒƒ“ƒoŠÖ”
+	public: //ãƒ¡ãƒ³ãƒé–¢æ•°
 		Shader();
 		~Shader() = default;
 
-		int CompileShader(LPCWSTR pFileName, ShaderType shaderType);
+		int CompileShader(const LPCWSTR& pFileName, const ShaderType& shaderType);
 		std::wstring GetFileName() const { return fileName; }
 		ID3DBlob* GetShaderBlob() const { return shaderBlob.Get(); }
 	};
 
-private: //ƒƒ“ƒo•Ï”
-	Shader vertexShader = {};   //’¸“_ƒVƒF[ƒ_[
-	Shader pixleShader = {};    //ƒsƒNƒZƒ‹ƒVƒF[ƒ_[
-	Shader domainShader = {};   //ƒhƒƒCƒ“ƒVƒF[ƒ_[
-	Shader hullShader = {};     //ƒnƒ‹ƒVƒF[ƒ_[
-	Shader geometryShader = {}; //ƒWƒIƒƒgƒŠƒVƒF[ƒ_[
-	Shader computeShader = {};  //ƒRƒ“ƒsƒ…[ƒgƒVƒF[ƒ_[
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
+	Shader vertexShader = {};   //é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	Shader pixleShader = {};    //ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	Shader domainShader = {};   //ãƒ‰ãƒ¡ã‚¤ãƒ³ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	Shader hullShader = {};     //ãƒãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	Shader geometryShader = {}; //ã‚¸ã‚ªãƒ¡ãƒˆãƒªã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	Shader computeShader = {};  //ã‚³ãƒ³ãƒ”ãƒ¥ãƒ¼ãƒˆã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
 
-public: //ƒƒ“ƒoŠÖ”
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
 	Shaders() = default;
 	~Shaders() = default;
 
-	// ’¸“_ƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹
-	int CompileVertexShader(LPCWSTR pFileName)
+	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+	int CompileVertexShader(const LPCWSTR& pFileName)
 	{ return vertexShader.CompileShader(pFileName, ShaderType::VERTEX_SHADER); }
-	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹
-	int CompilePixleShader(LPCWSTR pFileName)
+	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+	int CompilePixleShader(const LPCWSTR& pFileName)
 	{ return pixleShader.CompileShader(pFileName, ShaderType::PIXLE_SHADER); }
-	// ƒhƒƒCƒ“ƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹
-	int CompileDomainShader(LPCWSTR pFileName)
+	// ãƒ‰ãƒ¡ã‚¤ãƒ³ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+	int CompileDomainShader(const LPCWSTR& pFileName)
 	{ return domainShader.CompileShader(pFileName, ShaderType::DOMAIN_SHADER); }
-	// ƒnƒ‹ƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹
-	int CompileHullShader(LPCWSTR pFileName)
+	// ãƒãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+	int CompileHullShader(const LPCWSTR& pFileName)
 	{ return hullShader.CompileShader(pFileName, ShaderType::HULL_SHADER); }
-	// ƒWƒIƒƒgƒŠƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹
-	int CompileGeometryShader(LPCWSTR pFileName)
+	// ã‚¸ã‚ªãƒ¡ãƒˆãƒªã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+	int CompileGeometryShader(const LPCWSTR& pFileName)
 	{ return geometryShader.CompileShader(pFileName, ShaderType::GEOMETRY_SHADER); }
-	// ƒRƒ“ƒsƒ…[ƒgƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹
-	int CompileComputeShader(LPCWSTR pFileName)
+	// ã‚³ãƒ³ãƒ”ãƒ¥ãƒ¼ãƒˆã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
+	int CompileComputeShader(const LPCWSTR& pFileName)
 	{ return computeShader.CompileShader(pFileName, ShaderType::COMPUTE_SHADER); }
 
 	Shader GetVertex() const { return vertexShader; }

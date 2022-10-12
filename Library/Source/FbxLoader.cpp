@@ -1,9 +1,5 @@
 ﻿#include "./Header/FbxLoader.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/EngineGeneral.h"
-
-#include "./Header/Error.h"
-#include <memory>
 
 FbxLoader::FbxLoader() :
 	device(nullptr),
@@ -83,7 +79,8 @@ int FbxLoader::LoadModelFromFile(const string& modelPath)
 	fbxImporter->Import(fbxScene);
 
 	// モデル生成
-	models.push_back(std::make_unique<Model>());
+	std::unique_ptr<Model> heep(new Model());
+	models.push_back(std::move(heep));
 	models.back()->name = modelName;
 	models.back()->directory = directoryPath;
 	// FBXノードの数を取得
@@ -102,7 +99,7 @@ int FbxLoader::LoadModelFromFile(const string& modelPath)
 
 Model* FbxLoader::GetModel(int index)
 {
-	if (index < 0 || index >= models.size())
+	if (index < 0 || index >= static_cast<int>(models.size()))
 	{
 		return nullptr;
 	}
@@ -343,7 +340,7 @@ void FbxLoader::ParseMaterial(Model* model, FbxNode* fbxNode)
 		// テクスチャがない場合は白テクスチャを貼る
 		if (textureLoaded == false)
 		{
-			LoadTexture(model, libraryDirectory + defaultTextureFileName);
+			LoadTexture(model, resourcesDirectory + "Engine/" + defaultTextureFileName);
 		}
 	}
 }
@@ -358,7 +355,7 @@ void FbxLoader::LoadTexture(Model* model, const string& fullpath)
 	ScratchImage& scratchImg = model->scratchImg;
 	// ユニコード文字列に変換
 	wchar_t wfilepath[128];
-	MultiByteToWideChar(CP_ACP, 0, fullpath.c_str(), -1, wfilepath, _countof(wfilepath));
+	MultiByteToWideChar(CP_UTF8, 0, fullpath.c_str(), -1, wfilepath, _countof(wfilepath));
 	hr = LoadFromWICFile(wfilepath, WIC_FLAGS_NONE, &metadata, scratchImg);
 	ErrorLog("テクスチャの読み込み失敗\n", FAILED(hr));
 }
@@ -374,7 +371,7 @@ void FbxLoader::ParseSkin(Model* model, FbxMesh* fbxMesh)
 	if (fbxSkin == nullptr)
 	{
 		// 各頂点についての処理
-		for (int i = 0; i < model->vertices.size(); i++)
+		for (size_t i = 0; i < model->vertices.size(); i++)
 		{
 			// 最初のボーンの影響度を100%にする
 			model->vertices[i].boneIndex[0] = 0;
@@ -452,7 +449,7 @@ void FbxLoader::ParseSkin(Model* model, FbxMesh* fbxMesh)
 	// 頂点配列書き換え用の参照
 	auto& vertices = model->vertices;
 	// 各頂点についての処理
-	for (int i = 0; i < vertices.size(); i++)
+	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		// 頂点のウェイトから最も大きい4つを選択
 		auto& weightList = weightLists[i];

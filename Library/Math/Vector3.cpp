@@ -15,7 +15,7 @@ Vector3::Vector3(float x, float y, float z) :
 {
 }
 
-Vector3::Vector3(XMFLOAT3 v) :
+Vector3::Vector3(const XMFLOAT3& v) :
 	DirectX::XMFLOAT3(v)
 {
 }

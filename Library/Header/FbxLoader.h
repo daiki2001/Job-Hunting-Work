@@ -5,8 +5,9 @@
 #include <d3dx12.h>
 #include <string>
 #include "Model.h"
+#include <memory>
 
-#include "./Math/EngineMath.h"
+#include "EngineGeneral.h"
 
 class FbxLoader
 {

@@ -1,19 +1,18 @@
 ﻿#include "./Header/Camera.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/Error.h"
 
 const size_t Camera::MAIN_CAMERA = 0;
 
 float Camera::targetRadius = 150.0f;
-float Camera::longitude = Engine::Math::DEGREE_F * (-90.0f);
-float Camera::latitude = Engine::Math::DEGREE_F * (0.0f);
+float Camera::longitude = Math::DEGREE_F * (-90.0f);
+float Camera::latitude = Math::DEGREE_F * (0.0f);
 
-Engine::Math::Vector3 Camera::pos = {};
-Engine::Math::Vector3 Camera::target = { 0.0f, 50.0f, 0.0f };
-Engine::Math::Vector3 Camera::upVec = { 0.0f, 1.0f, 0.0f };
+Math::Vector3 Camera::pos = {};
+Math::Vector3 Camera::target = { 0.0f, 50.0f, 0.0f };
+Math::Vector3 Camera::upVec = { 0.0f, 1.0f, 0.0f };
 
-Engine::Math::Matrix4 Camera::matProjection[2] = {};
-std::vector<Engine::Math::Matrix4> Camera::matView = {};
+Math::Matrix4 Camera::matProjection[2] = {};
+std::vector<Math::Matrix4> Camera::matView = {};
 size_t Camera::cameraNo = Camera::MAIN_CAMERA;
 
 float Camera::nearClip = 0.1f;
@@ -33,7 +32,7 @@ Camera::Camera()
 void Camera::Init()
 {
 	using namespace DirectX;
-	using namespace Engine::Math;
+	using namespace Math;
 
 	matProjection[Projection::ORTHOGRAPHIC] =
 		XMMatrixOrthographicOffCenterLH(
@@ -81,12 +80,12 @@ void Camera::Update()
 	SetCamera(pos, target, upVec);
 }
 
-DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
+Math::Matrix4 Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
 
 	XMVECTOR x, y, z;
-	XMMATRIX mat = {};
+	Matrix4 mat = {};
 
 	z = target - pos;
 	z = XMVector3Normalize(z);
@@ -115,12 +114,12 @@ DirectX::XMMATRIX Camera::CreateCamera(const XMVECTOR& pos, const XMVECTOR& targ
 	return mat;
 }
 
-DirectX::XMMATRIX Camera::CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
+Math::Matrix4 Camera::CreateCameraFix(const XMVECTOR& pos, const XMVECTOR& target, const XMVECTOR& upVector)
 {
 	using namespace DirectX;
 
 	XMVECTOR x, y, z, d;
-	XMMATRIX mat = {};
+	Matrix4 mat = {};
 
 	y = XMVector3Normalize(upVector);
 	d = target - pos;
@@ -147,14 +146,14 @@ int Camera::ChangeCamera(const size_t& cameraNo)
 {
 	if (cameraNo < 0 || cameraNo >= matView.size())
 	{
-		return Engine::FUNCTION_ERROR;
+		return FUNCTION_ERROR;
 	}
 
 	Camera::cameraNo = cameraNo;
 	return 0;
 }
 
-void Camera::SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Math::Vector3& cameraTarget, const Engine::Math::Vector3& upVector)
+void Camera::SetCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector)
 {
 	using namespace DirectX;
 
@@ -165,7 +164,7 @@ void Camera::SetCamera(const Engine::Math::Vector3& cameraPos, const Engine::Mat
 	);
 }
 
-int Camera::SetNear(const float& nearClip)
+int Camera::SetNear(float nearClip)
 {
 	using namespace DirectX;
 
@@ -176,7 +175,7 @@ int Camera::SetNear(const float& nearClip)
 
 	if (nearClip <= 0.0f || nearClip == Camera::farClip)
 	{
-		return Engine::ErrorLog("nearClipの値がおかしいです。");
+		return ErrorLog("nearClipの値がおかしいです。");
 	}
 
 	Camera::nearClip = nearClip;
@@ -201,7 +200,7 @@ int Camera::SetNear(const float& nearClip)
 	return 0;
 }
 
-int Camera::SetFar(const float& farClip)
+int Camera::SetFar(float farClip)
 {
 	using namespace DirectX;
 
@@ -212,7 +211,7 @@ int Camera::SetFar(const float& farClip)
 
 	if (farClip <= 0.0f || Camera::nearClip == farClip)
 	{
-		return Engine::ErrorLog("farClipの値がおかしいです。");
+		return ErrorLog("farClipの値がおかしいです。");
 	}
 
 	Camera::farClip = farClip;

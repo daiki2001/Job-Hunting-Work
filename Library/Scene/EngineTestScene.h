@@ -9,12 +9,9 @@
 
 #include <memory>
 
-class EngineTestScene : public BaseScene
+__declspec(align(16)) class EngineTestScene : public BaseScene
 {
 public: // エイリアス
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMMATRIX = DirectX::XMMATRIX;
-	using Vector3 = Math::Vector3;
 
 public: // 定数
 

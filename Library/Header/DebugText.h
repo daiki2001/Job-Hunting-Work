@@ -13,6 +13,10 @@ private: // 静的メンバ変数
 	static UINT64 fontTexWidth; //フォント画像の横幅
 	static UINT fontTexHeight;  //フォント画像の縦幅
 
+private: // メンバ変数
+	vector<int> fontIndex; //定数バッファ
+	int charCount;         //文字数
+
 public: // メンバ関数
 	// コンストラクタ
 	DebugText();
@@ -31,8 +35,8 @@ public: // メンバ関数
 	/// <param name="text"> 描画したい書式付き文字列のアドレス </param>
 	/// <param name="..."> 書式付き文字列に付随する引数 </param>
 	/// <returns> 0で成功 </returns>
-	HRESULT DrawString(const float& posX, const float& posY, const float& fontScale,
-					   const XMFLOAT4& color, const char* text, ...);
+	HRESULT DrawString(float posX, float posY, float fontScale, const XMFLOAT4& color,
+					   const char* text, ...);
 
 	// ループ終わり（デバッグテキスト版）
 	void TextLoopEnd();
@@ -42,9 +46,4 @@ private:
 
 	// デバッグテキストの初期化
 	HRESULT DrawStringInit();
-
-private: // メンバ変数
-	vector<int> fontIndex; //定数バッファ
-	int charCount;         //文字数
-
 };

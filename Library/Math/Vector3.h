@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <DirectXMath.h>
 
 namespace Engine
@@ -8,37 +8,38 @@ namespace Math
 class Vector3 : public DirectX::XMFLOAT3
 {
 public:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	Vector3();                          //—ëƒxƒNƒgƒ‹‚Æ‚µ‚Ä¶¬
-	Vector3(float x, float y, float z); //x¬•ªAy¬•ªAz¬•ª‚ğw’è‚µ‚Ä¶¬
-	Vector3(XMFLOAT3 v);                //DirectX::XMFLOAT3‚ÆŒİŠ·«‚ğ‚½‚¹‚é‚½‚ß
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	Vector3();                          //é›¶ãƒ™ã‚¯ãƒˆãƒ«ã¨ã—ã¦ç”Ÿæˆ
+	Vector3(float x, float y, float z); //xæˆåˆ†ã€yæˆåˆ†ã€zæˆåˆ†ã‚’æŒ‡å®šã—ã¦ç”Ÿæˆ
+	Vector3(const XMFLOAT3& v);         //DirectX::XMFLOAT3ã¨äº’æ›æ€§ã‚’æŒãŸã›ã‚‹ãŸã‚
 
-	// ƒƒ“ƒoŠÖ”
-	float Length() const;                  //ƒmƒ‹ƒ€(’·‚³)‚ğ‹‚ß‚é
-	float LengthSquared() const;           //ƒmƒ‹ƒ€(’·‚³)‚ğ‹‚ß‚é
-	Vector3 Normalize() const;             //³‹K‰»‚·‚é
-	float Dot(const Vector3& v) const;     //“àÏ‚ğ‹‚ß‚é
-	Vector3 Cross(const Vector3& v) const; //ŠOÏ‚ğ‹‚ß‚é
+	// é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	static Vector3 Zero() { return { 0.0f, 0.0f, 0.0f }; }
 
-	// ’P€‰‰ZqƒI[ƒo[ƒ[ƒh
+	// ãƒ¡ãƒ³ãƒé–¢æ•°
+	float Length() const;                  //ãƒãƒ«ãƒ (é•·ã•)ã‚’æ±‚ã‚ã‚‹
+	float LengthSquared() const;           //ãƒãƒ«ãƒ (é•·ã•)ã‚’æ±‚ã‚ã‚‹
+	Vector3 Normalize() const;             //æ­£è¦åŒ–ã™ã‚‹
+	float Dot(const Vector3& v) const;     //å†…ç©ã‚’æ±‚ã‚ã‚‹
+	Vector3 Cross(const Vector3& v) const; //å¤–ç©ã‚’æ±‚ã‚ã‚‹
+
+	// å˜é …æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
 	Vector3 operator+() const;
 	Vector3 operator-() const;
 
-	// ‘ã“ü‰‰ZqƒI[ƒo[ƒ[ƒh
+	// ä»£å…¥æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
 	Vector3& operator+=(const Vector3& v);
 	Vector3& operator-=(const Vector3& v);
 	Vector3& operator*=(float s);
 	Vector3& operator/=(float s);
 
-	// ”äŠr‰‰ZqƒI[ƒo[ƒ[ƒh
+	// æ¯”è¼ƒæ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
 	bool operator==(const Vector3& v);
 	bool operator!=(const Vector3& v);
-
-	inline static Vector3 Zero() { return { 0.0f, 0.0f, 0.0f }; }
 };
 
-// 2€‰‰ZqƒI[ƒo[ƒ[ƒh
-// ¦‚¢‚ë‚ñ‚Èˆø”(ˆø”‚ÌŒ^‚Æ‡˜)‚Ìƒpƒ^[ƒ“‚É‘Î‰‚·‚é‚½‚ßAˆÈ‰º‚Ì‚æ‚¤‚É€”õ‚µ‚Ä‚¢‚é
+// 2é …æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
+// â€»ã„ã‚ã‚“ãªå¼•æ•°(å¼•æ•°ã®å‹ã¨é †åº)ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã«å¯¾å¿œã™ã‚‹ãŸã‚ã€ä»¥ä¸‹ã®ã‚ˆã†ã«æº–å‚™ã—ã¦ã„ã‚‹
 const Vector3 operator+(const Vector3& v1, const Vector3& v2);
 const Vector3 operator-(const Vector3& v1, const Vector3& v2);
 const Vector3 operator*(const Vector3& v, float s);

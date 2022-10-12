@@ -1,39 +1,43 @@
-#pragma once
+ï»¿#pragma once
 #include "./Header/DrawPolygon.h"
 #include <string>
 #include "./Header/EngineGeneral.h"
 
 class BlockType
 {
-public: //ƒGƒCƒŠƒAƒX
+public: //ã‚¨ã‚¤ãƒªã‚¢ã‚¹
+	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using Vector3 = Math::Vector3;
+	using Matrix4 = Math::Matrix4;
 
-public: //’è”
+public: //å®šæ•°
 	static const int WIDTH;
 	static const int HEIGHT;
 	static const std::string blockResourcesDir;
 
-private: //Ã“Iƒƒ“ƒo•Ï”
+private: //é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 	static DrawPolygon* draw;
 	
-private: //ƒƒ“ƒo•Ï”
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
 	int typeId;
 	int graph;
 	int blockBox;
+	Matrix4 rotation;
+	Vector3 scale;
+	XMFLOAT4 color;
 
-public: //ƒƒ“ƒoŠÖ”
-	BlockType(const int& typeId, DrawPolygon* const draw);
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
+	BlockType(int typeId, DrawPolygon* const draw);
 	virtual ~BlockType();
 
-	// ¶¬ˆ—
-	virtual int Create(const wchar_t* filename = nullptr);
-	virtual int Create(const char* filename);
-	// •`‰æˆ—
+	// ç”Ÿæˆå‡¦ç†
+	virtual int Create(const wchar_t* filename = nullptr, const Matrix4& rotation = Math::Identity(),
+					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	virtual int Create(const char* filename, const Matrix4& rotation = Math::Identity(),
+					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	// æç”»å‡¦ç†
 	void Draw(const Vector3& pos);
-#ifdef _DEBUG
-	void Draw(const Vector3& pos, const DirectX::XMFLOAT4& color);
-#endif // _DEBUG
 
-	// ID‚Ìæ“¾
+	// IDã®å–å¾—
 	const int GetId() const { return typeId; }
 };

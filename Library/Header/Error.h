@@ -1,19 +1,19 @@
-#pragma once
+ï»¿#pragma once
 #include <windows.h>
 #include <string>
 #include <cassert>
 
-/*’è”*/
+/*å®šæ•°*/
 namespace Engine
 {
 static constexpr int FUNCTION_ERROR = -1;
 } // Engine
 
-/*ŠÖ”*/
+/*é–¢æ•°*/
 namespace Engine
 {
-// ƒGƒ‰[ƒƒO‚ğo—ÍƒEƒBƒ“ƒhƒE‚Éo—Í‚µAI—¹‚·‚é
-static int ErrorLog(const std::string& str, const bool& flag = true, const char* file = __FILE__, const int& line = __LINE__)
+// ã‚¨ãƒ©ãƒ¼ãƒ­ã‚°ã‚’å‡ºåŠ›ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«å‡ºåŠ›ã—ã€çµ‚äº†ã™ã‚‹
+static int ErrorLog(const std::string& str, bool flag = true, const char* file = __FILE__, int line = __LINE__)
 {
 	if (flag == false)
 	{

@@ -1,47 +1,46 @@
-#pragma once
+ï»¿#pragma once
 #include <Windows.h>
 
 class Win32API
 {
 public:
-	// ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	Win32API();
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~Win32API() {}
 
-public: // Ã“Iƒƒ“ƒoŠÖ”
-	// ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
-	static LRESULT WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
-	// ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ìæ“¾
-	static WNDCLASSEX GetWindow() { return wndClass; }
-	// ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹‚Ìæ“¾
-	static HWND GetHwnd() { return hWnd; }
-
-public: // Ã“Iƒƒ“ƒo•Ï”
+public: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 #ifdef UNICODE
-	static LPCWSTR className; //ƒNƒ‰ƒX–¼
-	static LPCWSTR title; //ƒ^ƒCƒgƒ‹ƒo[‚Ì•¶š
+	static LPCWSTR className; //ã‚¯ãƒ©ã‚¹å
+	static LPCWSTR title; //ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã®æ–‡å­—
 #else
-	static LPCSTR className; //ƒNƒ‰ƒX–¼
-	static LPCSTR title; //ƒ^ƒCƒgƒ‹ƒo[‚Ì•¶š
+	static LPCSTR className; //ã‚¯ãƒ©ã‚¹å
+	static LPCSTR title; //ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã®æ–‡å­—
 #endif // UNICODE
 private:
 	static WNDCLASSEX wndClass;
 	static HWND hWnd;
 
-public: // ƒƒ“ƒoŠÖ”
-	// ‰Šú‰»
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
+	static LRESULT WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®å–å¾—
+	static WNDCLASSEX GetWindow() { return wndClass; }
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã®å–å¾—
+	static HWND GetHwnd() { return hWnd; }
+
+public: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+int windowWidth, windowHeight; //ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º
+
+bool windowInit; //åˆæœŸåŒ–ãƒ•ãƒ©ã‚°
+UINT MessageCount; //WindowMessage()ã‚’é€šã£ãŸå›æ•°
+
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	// åˆæœŸåŒ–
 	BOOL WINAPI WindowInit();
-	// ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	int WindowMessage();
-	// I—¹ˆ—
+	// çµ‚äº†å‡¦ç†
 	BOOL WINAPI WindowEnd();
-
-public: // ƒƒ“ƒo•Ï”
-int windowWidth, windowHeight; //ƒEƒBƒ“ƒhƒEƒTƒCƒY
-
-bool windowInit; //‰Šú‰»ƒtƒ‰ƒO
-UINT MessageCount; //WindowMessage()‚ğ’Ê‚Á‚½‰ñ”
-
 };

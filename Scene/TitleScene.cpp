@@ -2,8 +2,6 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 
-#include "./Header/Error.h"
-
 namespace
 {
 static const std::wstring backgroundFileName = L"background.png";
@@ -38,7 +36,7 @@ void TitleScene::Init()
 	}
 	if (buttonBack == FUNCTION_ERROR)
 	{
-		buttonBack = draw->LoadTextrue(L"./lib/white1x1.png");
+		buttonBack = draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
 	}
 	if (start == FUNCTION_ERROR)
 	{
@@ -86,7 +84,7 @@ void TitleScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	w->ClearScreen();
-	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();

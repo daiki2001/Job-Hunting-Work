@@ -1,6 +1,5 @@
 ﻿#include "./Header/DirectDrawing.h"
 #include "./Header/DirectXInit.h"
-#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Camera.h"
 #include "./Math/Collision/BaseCollider.h"
 #include "./Math/Collision/CollisionManager.h"
@@ -154,7 +153,7 @@ int DirectDrawing::Init()
 	MaterialInit();
 	SpriteDrawingInit();
 
-	return CreateNullConstant(XMFLOAT3(), XMMATRIX(), XMFLOAT3(1, 1, 1));
+	return CreateNullConstant(Vector3(), Matrix4(), Vector3(1, 1, 1));
 }
 
 void DirectDrawing::DrawingInit()
@@ -172,7 +171,8 @@ void DirectDrawing::DrawingInit()
 	isDrawingInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	objShader = shaderMgr->CreateShader(L"./lib/Shaders/ObjectVS.hlsl", L"./lib/Shaders/ObjectPS.hlsl");
+	objShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "ObjectVS.hlsl").c_str(),
+										StringToWString(shadersDirectory + "ObjectPS.hlsl").c_str());
 
 	// 頂点レイアウト
 	if (inputLayout3d ==Engine::FUNCTION_ERROR)
@@ -212,7 +212,8 @@ void DirectDrawing::MaterialInit()
 	isMaterialInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	materialShader = shaderMgr->CreateShader(L"./lib/Shaders/MaterialVS.hlsl", L"./lib/Shaders/MaterialPS.hlsl");
+	materialShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "MaterialVS.hlsl").c_str(),
+											 StringToWString(shadersDirectory + "MaterialPS.hlsl").c_str());
 
 	// 頂点レイアウト
 	if (inputLayout3d == Engine::FUNCTION_ERROR)
@@ -256,7 +257,8 @@ void DirectDrawing::SpriteDrawingInit()
 	isSpriteDrawingInit = true;
 
 	// 各種シェーダーのコンパイルと読み込み
-	spriteShader = shaderMgr->CreateShader(L"./lib/Shaders/SpriteVS.hlsl", L"./lib/Shaders/SpritePS.hlsl");
+	spriteShader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "SpriteVS.hlsl").c_str(),
+										   StringToWString(shadersDirectory + "SpritePS.hlsl").c_str());
 
 	// 頂点レイアウト
 	inputLayout2d = shaderMgr->CreateInputLayout();
@@ -471,7 +473,7 @@ HRESULT DirectDrawing::CreateConstBuffer(int* objIndex)
 	return hr;
 }
 
-int DirectDrawing::CreateNullConstant(const XMFLOAT3& pos, const XMMATRIX& rota, const XMFLOAT3& scale)
+int DirectDrawing::CreateNullConstant(const Vector3& pos, const Matrix4& rota, const Vector3& scale)
 {
 	using namespace DirectX;
 
@@ -501,8 +503,8 @@ int DirectDrawing::CreateNullConstant(const XMFLOAT3& pos, const XMMATRIX& rota,
 }
 
 void DirectDrawing::UpdataConstant(
-	const XMFLOAT3& pos, const DirectX::XMMATRIX& rota, const XMFLOAT3& scale,
-	const DirectX::XMFLOAT4& color, const int& objectIndex, const int& polygonData,
+	const Vector3& pos, const DirectX::XMMATRIX& rota, const Vector3& scale,
+	const DirectX::XMFLOAT4& color, int objectIndex, int polygonData,
 	Object* parent)
 {
 	if ((objectIndex < 0 || static_cast<size_t>(objectIndex) >= obj.size()) ||

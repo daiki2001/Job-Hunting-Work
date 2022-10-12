@@ -35,13 +35,13 @@ void EngineTestScene::Init()
 	using namespace Math;
 
 	fbxLoader->Init();
-	fbxModel = fbxLoader->LoadModelFromFile("./Resources/boneTest.fbx");
-	fbxModel2 = fbxLoader->LoadModelFromFile("./Resources/cube/cube.fbx");
+	fbxModel = fbxLoader->LoadModelFromFile(resourcesDirectory + "boneTest.fbx");
+	fbxModel2 = fbxLoader->LoadModelFromFile(resourcesDirectory + "cube/cube.fbx");
 	fbxLoader->GetModel(fbxModel)->Init();
 	fbxLoader->GetModel(fbxModel2)->Init();
 
 	// 画像の読み込み
-	background = draw->LoadTextrue(L"./Resources/background.png");
+	background = draw->LoadTextrue(StringToWString(resourcesDirectory + "background.png").c_str());
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = DEGREE_F * (0.0f);
@@ -56,7 +56,7 @@ void EngineTestScene::Init()
 	fbxLoader->GetModel(fbxModel2)->pos = { -100.0f, -10.0f, -50.0f };
 
 	int shader = shaderMgr->CreateShader(shaderMgr->GetShader(postEffect.GetShader()).GetVertex(),
-										 L"./lib/Shaders/defaultPS.hlsl");
+										 StringToWString(resourcesDirectory + "defaultPS.hlsl").c_str());
 	int gPipeline = shaderMgr->CreateGPipeline(shader, postEffect.GetInputLayout());
 	for (size_t i = 0; i < 5; i++)
 	{
@@ -170,7 +170,7 @@ void EngineTestScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 
 	postEffect.PreDraw();
-	draw->SetDrawBlendMode(BLENDMODE_ALPHA);
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	if (useShader < 2)
 	{

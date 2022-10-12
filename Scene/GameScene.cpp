@@ -74,6 +74,10 @@ void GameScene::Update()
 	{
 		Reset();
 	}
+	if (Input::IsKeyTrigger(DIK_F1))
+	{
+		stage->LoadStage("./Resources/Game/Stage/test.csv");
+	}
 #endif // _DEBUG
 }
 

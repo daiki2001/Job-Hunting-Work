@@ -152,6 +152,13 @@ int Area::LoadArea(FILE* fileHandle)
 	{
 		static Vector3 size = Vector3(3.0f, 1.0f, 2.0f);
 
+#ifdef _DEBUG
+		if (doorSetting[i] == static_cast<int>(Door::DoorStatus::ENTRANCE))
+		{
+			doorSetting[i] = static_cast<int>(Door::DoorStatus::OPEN);
+		}
+#endif // _DEBUG
+
 		if (i % 4 <= 1)
 		{
 			size.x = 3.0f;
@@ -163,7 +170,7 @@ int Area::LoadArea(FILE* fileHandle)
 			size.y = 3.0f;
 		}
 
-		door[i].Init(size, Door::DoorStatus(doorSetting[i]));
+		door[i].Init(size, static_cast<Door::DoorStatus>(doorSetting[i]));
 		doorInit[i] = door[i];
 	}
 

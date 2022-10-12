@@ -10,11 +10,11 @@ private: //エイリアス
 public: //サブクラス
 	enum DoorStatus
 	{
-		OPEN,
-		CLOSE,
-		WALL,
-		KEY_CLOSE,
-		ENTRANCE = -1
+		OPEN,         //扉が開いている状態
+		CLOSE,        //スイッチで開く扉
+		WALL,         //壁
+		KEY_CLOSE,    //鍵扉
+		ENTRANCE = -1 //ダンジョンの入口
 	};
 
 private: //静的メンバ変数
@@ -42,5 +42,6 @@ public: //メンバ関数
 	void Open() { if (status == DoorStatus::CLOSE) status = DoorStatus::OPEN; }
 	void KeyOpen() { if (status == DoorStatus::KEY_CLOSE) status = DoorStatus::OPEN; }
 
+	// 扉の状態の取得
 	DoorStatus GetStatus() { return status; }
 };

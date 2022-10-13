@@ -53,7 +53,7 @@ public: //メンバ関数
 	const bool IsGoal() { return block_mgr.GetGoal(); }
 
 	BlockManager* GetBlockManager() { return &block_mgr; }
-	Door::DoorStatus GetDoorStatus(const DoorNum& num) { return door[num].GetStatus(); }
+	Door::DoorStatus GetDoorStatus(DoorNum num) { return door[num].GetStatus(); }
 private:
 	void DrawWall(const Vector3& offset);
 };

@@ -32,7 +32,7 @@ public: //サブクラス
 		Shader();
 		~Shader() = default;
 
-		int CompileShader(const LPCWSTR& pFileName, const ShaderType& shaderType);
+		int CompileShader(const LPCWSTR& pFileName, ShaderType shaderType);
 		std::wstring GetFileName() const { return fileName; }
 		ID3DBlob* GetShaderBlob() const { return shaderBlob.Get(); }
 	};

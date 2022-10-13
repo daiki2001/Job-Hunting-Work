@@ -10,7 +10,7 @@ ShaderManager::InputLayout::InputLayout() :
 {
 }
 
-void ShaderManager::InputLayout::PushInputLayout(const LPCSTR& SemanticName, const DXGI_FORMAT& Format)
+void ShaderManager::InputLayout::PushInputLayout(const LPCSTR& SemanticName, DXGI_FORMAT Format)
 {
 	inputLayout.push_back({
 		SemanticName,                               //セマンティック名

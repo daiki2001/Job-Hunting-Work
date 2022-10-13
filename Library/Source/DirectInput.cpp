@@ -142,7 +142,7 @@ bool DirectInput::CheckHitKey(int keyCode)
 	return false;
 }
 
-bool DirectInput::CheckHitGamepad(const GamepadInputType& inputType, const DIJOYSTATE& gamepad)
+bool DirectInput::CheckHitGamepad(GamepadInputType inputType, const DIJOYSTATE& gamepad)
 {
 	if (GamepadInputUpdate() != 0)
 	{
@@ -172,7 +172,7 @@ bool DirectInput::CheckHitGamepad(const GamepadInputType& inputType, const DIJOY
 	return false;
 }
 
-bool DirectInput::CheckHitGamepadAnalogStick(const GamepadInputType& inputType, const DIJOYSTATE& gamepad)
+bool DirectInput::CheckHitGamepadAnalogStick(GamepadInputType inputType, const DIJOYSTATE& gamepad)
 {
 	if (inputType < GamepadInputType::PAD_TRIGGER_LEFT)
 	{

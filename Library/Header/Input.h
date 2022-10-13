@@ -40,9 +40,9 @@ public: // 静的メンバ関数
 	// キーから離れたかどうか
 	static bool IsKeyReturn(int key);
 	// キーが押されているかどうか
-	static bool IsGamepad(const DirectInput::GamepadInputType& gamepadType);
+	static bool IsGamepad(DirectInput::GamepadInputType gamepadType);
 	// キーが押されたかどうか
-	static bool IsGamepadTrigger(const DirectInput::GamepadInputType& gamepadType);
+	static bool IsGamepadTrigger(DirectInput::GamepadInputType gamepadType);
 	// キーから離れたかどうか
-	static bool IsGamepadReturn(const DirectInput::GamepadInputType& gamepadType);
+	static bool IsGamepadReturn(DirectInput::GamepadInputType gamepadType);
 };

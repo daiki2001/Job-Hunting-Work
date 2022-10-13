@@ -13,7 +13,7 @@ Shaders::Shader::Shader() :
 {
 }
 
-int Shaders::Shader::CompileShader(const LPCWSTR& pFileName, const ShaderType& shaderType)
+int Shaders::Shader::CompileShader(const LPCWSTR& pFileName, ShaderType shaderType)
 {
 	if (pFileName == nullptr)
 	{

@@ -31,7 +31,7 @@ void SceneManager::Loop() const
 	sceneStack.top()->Draw();
 }
 
-void SceneManager::SceneChenge(const SceneChenger::Scene& scene, bool stackClear)
+void SceneManager::SceneChenge(SceneChenger::Scene scene, bool stackClear)
 {
 	using namespace std;
 

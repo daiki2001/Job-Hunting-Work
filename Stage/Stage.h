@@ -46,7 +46,7 @@ public: //静的メンバ関数
 		if (room.size() == 0) return nullptr;
 		return room[nowRoom].area.GetBlockManager();
 	}
-	static Door::DoorStatus GetDoorStatus(const Area::DoorNum& num)
+	static Door::DoorStatus GetDoorStatus(Area::DoorNum num)
 	{
 		if (room.size() == 0) return Door::DoorStatus::OPEN;
 		return room[nowRoom].area.GetDoorStatus(num);

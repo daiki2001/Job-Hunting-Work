@@ -36,7 +36,7 @@ public: //メンバ関数
 	~Door();
 
 	// 初期化
-	void Init(const Vector3& size, const DoorStatus& status);
+	void Init(const Vector3& size, DoorStatus status);
 	// 描画
 	void Draw(const Vector3& offset);
 

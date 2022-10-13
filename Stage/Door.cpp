@@ -47,7 +47,7 @@ Door::~Door()
 	//entranceLight = FUNCTION_ERROR;
 }
 
-void Door::Init(const Vector3& size, const DoorStatus& status)
+void Door::Init(const Vector3& size, DoorStatus status)
 {
 	this->size = size;
 	this->status = status;

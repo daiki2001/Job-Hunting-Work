@@ -92,7 +92,7 @@ int Stage::LoadStage(const char* filePath)
 		else if (string[i] >= '0' && string[i] <= '9')
 		{
 			roomNum *= 10;
-			roomNum += string[i] - '0';
+			roomNum += static_cast<short>(string[i]) - '0';
 		}
 	}
 

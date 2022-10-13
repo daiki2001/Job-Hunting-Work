@@ -1,14 +1,9 @@
 ﻿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
-#include "InputManager.h"
 #include "./Header/Camera.h"
 
-namespace
-{
-InputManager* inputMgr = InputManager::Get();
-}
-
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
+InputManager* StageEditorScene::inputMgr = InputManager::Get();
 Stage* StageEditorScene::stage = Stage::Get();
 
 StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
@@ -16,6 +11,7 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 	mapArray{},
 	mapIndex(0),
 	blockIndex(1),
+	cursorState(CursorState::BLOCKS),
 	background(Engine::FUNCTION_ERROR),
 	cursor(Engine::FUNCTION_ERROR)
 {
@@ -76,52 +72,20 @@ void StageEditorScene::Update()
 		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
 	}
 
-	if (inputMgr->MainLeftTrigger())
-	{
-		if (mapIndex % STAGE_WIDTH > 0)
-		{
-			mapIndex -= 1;
-		}
-	}
-	if (inputMgr->MainRightTrigger())
-	{
-		if (mapIndex % STAGE_WIDTH < STAGE_WIDTH - 1)
-		{
-			mapIndex += 1;
-		}
-	}
-	if (inputMgr->MainUpTrigger())
-	{
-		if (mapIndex / STAGE_WIDTH > 0)
-		{
-			mapIndex -= STAGE_WIDTH;
-		}
-	}
-	if (inputMgr->MainDownTrigger())
-	{
-		if (mapIndex / STAGE_WIDTH < STAGE_HEIGHT - 1)
-		{
-			mapIndex += STAGE_WIDTH;
-		}
-	}
+	CursorMove();
 
-	if (inputMgr->SubLeftTrigger())
+	if (cursorState == CursorState::BLOCKS)
 	{
-		if (blockIndex > 0)
-		{
-			blockIndex -= 1;
-		}
+		SelectBlock();
 	}
-	if (inputMgr->SubRightTrigger())
+	else
 	{
-		if (blockIndex < BlockManager::TypeId::MAX - 1)
-		{
-			blockIndex += 1;
-		}
+
 	}
 
 	if (inputMgr->DecisionTrigger())
 	{
+		// ブロックの配置
 		mapArray[mapIndex] = blockIndex;
 	}
 
@@ -169,9 +133,36 @@ void StageEditorScene::Draw()
 
 	// 前景
 	DirectDrawing::ChangeSpriteShader();
-	draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + w->windowWidth / 2.0f,
-					  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
-					  64.0f, 64.0f, 0.0f, cursor);
+	switch (cursorState)
+	{
+	case StageEditorScene::BLOCKS:
+	{
+		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + w->windowWidth / 2.0f,
+						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
+						  64.0f, 64.0f, 0.0f, cursor);
+		break;
+	}
+	case StageEditorScene::DOOR_UP:
+	case StageEditorScene::DOOR_DOWN:
+	{
+		float isMinus = (cursorState == StageEditorScene::DOOR_DOWN) ? 1.0f : -1.0f;
+		draw->DrawTextrue(0.0f + w->windowWidth / 2.0f,
+						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f + isMinus) * 64.0f + w->windowHeight / 2.0f,
+						  64.0f * 3.0f, 64.0f, 0.0f, cursor);
+		break;
+	}
+	case StageEditorScene::DOOR_LEFT:
+	case StageEditorScene::DOOR_RIGHT:
+	{
+		float isMinus = (cursorState == StageEditorScene::DOOR_RIGHT) ? 1.0f : -1.0f;
+		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f + isMinus) * 64.0f + w->windowWidth / 2.0f,
+						  0.0f + w->windowHeight / 2.0f,
+						  64.0f, 64.0f * 3.0f, 0.0f, cursor);
+		break;
+	}
+	default:
+		break;
+	}
 
 	draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
 
@@ -179,4 +170,153 @@ void StageEditorScene::Draw()
 
 	// ループの終了処理
 	draw->PolygonLoopEnd();
+}
+
+void StageEditorScene::CursorMove()
+{
+	if (inputMgr->MainLeftTrigger())
+	{
+		CursorMoveLeft();
+	}
+	if (inputMgr->MainRightTrigger())
+	{
+		CursorMoveRight();
+	}
+	if (inputMgr->MainUpTrigger())
+	{
+		CursorMoveUp();
+	}
+	if (inputMgr->MainDownTrigger())
+	{
+		CursorMoveDown();
+	}
+}
+
+void StageEditorScene::SelectBlock()
+{
+	if (inputMgr->SubLeftTrigger())
+	{
+		if (blockIndex > 0)
+		{
+			blockIndex -= 1;
+		}
+	}
+	if (inputMgr->SubRightTrigger())
+	{
+		if (blockIndex < BlockManager::TypeId::MAX - 1)
+		{
+			blockIndex += 1;
+		}
+	}
+}
+
+void StageEditorScene::CursorMoveLeft()
+{
+	if (cursorState == CursorState::BLOCKS)
+	{
+		if (mapIndex % STAGE_WIDTH > 0)
+		{
+			// カーソル移動
+			mapIndex -= 1;
+		}
+		else
+		{
+			// カーソルを左側のドアに移動
+			cursorState = CursorState::DOOR_LEFT;
+		}
+	}
+	else if (cursorState == CursorState::DOOR_LEFT)
+	{
+		// カーソルを右側のドアに移動(ループ)
+		mapIndex += STAGE_WIDTH - 1;
+		cursorState = CursorState::DOOR_RIGHT;
+	}
+	else if (cursorState == CursorState::DOOR_RIGHT)
+	{
+		// カーソルをブロックに移動
+		cursorState = CursorState::BLOCKS;
+	}
+}
+
+void StageEditorScene::CursorMoveRight()
+{
+	if (cursorState == CursorState::BLOCKS)
+	{
+		if (mapIndex % STAGE_WIDTH < STAGE_WIDTH - 1)
+		{
+			mapIndex += 1;
+		}
+		else
+		{
+			// カーソルが右側のドアに移動
+			cursorState = CursorState::DOOR_RIGHT;
+		}
+	}
+	else if (cursorState == CursorState::DOOR_RIGHT)
+	{
+		// カーソルが左側のドアに移動(ループ)
+		mapIndex -= STAGE_WIDTH - 1;
+		cursorState = CursorState::DOOR_LEFT;
+	}
+	else if (cursorState == CursorState::DOOR_LEFT)
+	{
+		// カーソルをブロックに移動
+		cursorState = CursorState::BLOCKS;
+	}
+}
+
+void StageEditorScene::CursorMoveUp()
+{
+	if (cursorState == CursorState::BLOCKS)
+	{
+		if (mapIndex / STAGE_WIDTH > 0)
+		{
+			// カーソル移動
+			mapIndex -= STAGE_WIDTH;
+		}
+		else
+		{
+			// カーソルが上側のドアに移動
+			cursorState = CursorState::DOOR_UP;
+		}
+	}
+	else if (cursorState == CursorState::DOOR_UP)
+	{
+		// カーソルが下側のドアに移動(ループ)
+		mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
+		cursorState = CursorState::DOOR_DOWN;
+	}
+	else if (cursorState == CursorState::DOOR_DOWN)
+	{
+		// カーソルをブロックに移動
+		cursorState = CursorState::BLOCKS;
+	}
+}
+
+void StageEditorScene::CursorMoveDown()
+{
+	if (cursorState == CursorState::BLOCKS)
+	{
+		if (mapIndex / STAGE_WIDTH < STAGE_HEIGHT - 1)
+		{
+			// カーソル移動
+			mapIndex += STAGE_WIDTH;
+		}
+		else
+		{
+			// カーソルが下側のドアに移動
+			cursorState = CursorState::DOOR_DOWN;
+		}
+	}
+	else if (cursorState == CursorState::DOOR_DOWN)
+	{
+		// カーソルが上側のドアに移動(ループ)
+		mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);
+		cursorState = CursorState::DOOR_UP;
+	}
+	else if (cursorState == CursorState::DOOR_UP)
+	{
+		// カーソルをブロックに移動
+		cursorState = CursorState::BLOCKS;
+	}
 }

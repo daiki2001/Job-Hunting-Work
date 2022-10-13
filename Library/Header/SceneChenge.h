@@ -15,6 +15,6 @@ public: // ƒƒ“ƒoŠÖ”
 	SceneChenger() {}
 	~SceneChenger() {}
 
-	virtual void SceneChenge(const SceneChenger::Scene& scene, bool stackClear) = 0;
+	virtual void SceneChenge(Scene scene, bool stackClear) = 0;
 	virtual int PopScene() = 0;
 };

@@ -95,9 +95,9 @@ public: // 静的メンバ関数
 	// 特定のキーボードの入力状態の取得
 	static bool CheckHitKey(int keyCode);
 	// 特定のゲームパッドの入力状態の取得
-	static bool CheckHitGamepad(const GamepadInputType& inputType, const DIJOYSTATE& gamepad);
+	static bool CheckHitGamepad(GamepadInputType inputType, const DIJOYSTATE& gamepad);
 	// 特定のゲームパッドのアナログスティックの入力状態の取得
-	static bool CheckHitGamepadAnalogStick(const GamepadInputType& inputType, const DIJOYSTATE& gamepad);
+	static bool CheckHitGamepadAnalogStick(GamepadInputType inputType, const DIJOYSTATE& gamepad);
 	// 全ての入力デバイスの状態の取得
 	static int CheckHitAll(int CheckType = CHECKINPUT_ALL);
 	// キーボードデバイスの入力状態の取得

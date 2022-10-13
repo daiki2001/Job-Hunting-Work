@@ -29,7 +29,7 @@ public: //サブクラス
 		~InputLayout() = default;
 
 		D3D12_INPUT_LAYOUT_DESC GetInputLayout() const { return { inputLayout.data(), static_cast<UINT>(inputLayout.size()) }; }
-		void PushInputLayout(const LPCSTR& SemanticName, const DXGI_FORMAT& Format);
+		void PushInputLayout(const LPCSTR& SemanticName, DXGI_FORMAT Format);
 		void PopInputLayout() { inputLayout.pop_back(); }
 	};
 
@@ -87,11 +87,11 @@ public: //メンバ関数
 	InputLayout& GetInputLayout(int index) { return inputLayouts.at(index); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(int index)
 	{ return gPipelines[blendMode].at(index); }
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(int index, const BlendMode& blendMode)
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetGraphicsPipeline(int index, BlendMode blendMode)
 	{ return gPipelines[blendMode].at(index); }
 	ID3D12RootSignature* GetRootSignature(int index) const { return rootSignature.at(index).Get(); }
 	ID3D12PipelineState* GetPipelineState(int index) const
 	{ return pipelineState[blendMode].at(index).Get(); }
-	ID3D12PipelineState* GetPipelineState(int index, const BlendMode& blendMode) const
+	ID3D12PipelineState* GetPipelineState(int index, BlendMode blendMode) const
 	{ return pipelineState[blendMode].at(index).Get(); }
 };

@@ -29,7 +29,7 @@ public: //サブクラス
 		TypeId typeId;
 
 	public: //メンバ関数
-		Block(const TypeId& typeId);
+		Block(TypeId typeId);
 		~Block() = default;
 	};
 
@@ -57,9 +57,9 @@ public: //メンバ関数
 	void Reset();
 
 	// ブロックの生成処理
-	int CreateBlock(const TypeId& typeId);
+	int CreateBlock(TypeId typeId);
 	// ブロックの切り替え処理
-	void ChengeBlock(int index, const TypeId& typeId);
+	void ChengeBlock(int index, TypeId typeId);
 	// ブロックの削除処理
 	void DeleteBlock(int index);
 	// 全ブロックの削除処理

@@ -2,7 +2,7 @@
 
 Player* BlockManager::player = Player::Get();
 
-BlockManager::Block::Block(const TypeId& typeId) :
+BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
 	typeId(typeId)
 {
@@ -126,7 +126,7 @@ void BlockManager::Reset()
 	keyInitPos.clear();
 }
 
-int BlockManager::CreateBlock(const TypeId& typeId)
+int BlockManager::CreateBlock(TypeId typeId)
 {
 	for (size_t i = 0; i < blockType.size(); i++)
 	{
@@ -142,7 +142,7 @@ int BlockManager::CreateBlock(const TypeId& typeId)
 	return Engine::FUNCTION_ERROR;
 }
 
-void BlockManager::ChengeBlock(int index, const TypeId& typeId)
+void BlockManager::ChengeBlock(int index, TypeId typeId)
 {
 	blocks[index] = Block(typeId);
 }

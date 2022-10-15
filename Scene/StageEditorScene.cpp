@@ -11,6 +11,7 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 	mapArray{},
 	mapIndex(0),
 	blockIndex(1),
+	doorIndex(1),
 	cursorState(CursorState::BLOCKS),
 	background(Engine::FUNCTION_ERROR),
 	cursor(Engine::FUNCTION_ERROR)
@@ -77,16 +78,22 @@ void StageEditorScene::Update()
 	if (cursorState == CursorState::BLOCKS)
 	{
 		SelectBlock();
+
+		if (inputMgr->DecisionTrigger())
+		{
+			// ブロックの配置
+			mapArray[mapIndex] = blockIndex;
+		}
 	}
 	else
 	{
+		SelectDoor();
 
-	}
-
-	if (inputMgr->DecisionTrigger())
-	{
-		// ブロックの配置
-		mapArray[mapIndex] = blockIndex;
+		if (inputMgr->DecisionTrigger())
+		{
+			// ドア・壁の配置
+			Stage::SetDoorStatus(static_cast<Door::DoorStatus>(doorIndex), static_cast<Area::DoorNum>(cursorState - 1));
+		}
 	}
 
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
@@ -135,26 +142,26 @@ void StageEditorScene::Draw()
 	DirectDrawing::ChangeSpriteShader();
 	switch (cursorState)
 	{
-	case StageEditorScene::BLOCKS:
+	case CursorState::BLOCKS:
 	{
 		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + w->windowWidth / 2.0f,
 						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
 						  64.0f, 64.0f, 0.0f, cursor);
 		break;
 	}
-	case StageEditorScene::DOOR_UP:
-	case StageEditorScene::DOOR_DOWN:
+	case CursorState::DOOR_UP:
+	case CursorState::DOOR_DOWN:
 	{
-		float isMinus = (cursorState == StageEditorScene::DOOR_DOWN) ? 1.0f : -1.0f;
+		float isMinus = (cursorState == CursorState::DOOR_DOWN) ? 1.0f : -1.0f;
 		draw->DrawTextrue(0.0f + w->windowWidth / 2.0f,
 						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f + isMinus) * 64.0f + w->windowHeight / 2.0f,
 						  64.0f * 3.0f, 64.0f, 0.0f, cursor);
 		break;
 	}
-	case StageEditorScene::DOOR_LEFT:
-	case StageEditorScene::DOOR_RIGHT:
+	case CursorState::DOOR_LEFT:
+	case CursorState::DOOR_RIGHT:
 	{
-		float isMinus = (cursorState == StageEditorScene::DOOR_RIGHT) ? 1.0f : -1.0f;
+		float isMinus = (cursorState == CursorState::DOOR_RIGHT) ? 1.0f : -1.0f;
 		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f + isMinus) * 64.0f + w->windowWidth / 2.0f,
 						  0.0f + w->windowHeight / 2.0f,
 						  64.0f, 64.0f * 3.0f, 0.0f, cursor);
@@ -164,7 +171,14 @@ void StageEditorScene::Draw()
 		break;
 	}
 
-	draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
+	if (cursorState == CursorState::BLOCKS)
+	{
+		draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
+	}
+	else
+	{
+		draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Door:%d", doorIndex);
+	}
 
 	w->ScreenFlip();
 
@@ -206,6 +220,24 @@ void StageEditorScene::SelectBlock()
 		if (blockIndex < BlockManager::TypeId::MAX - 1)
 		{
 			blockIndex += 1;
+		}
+	}
+}
+
+void StageEditorScene::SelectDoor()
+{
+	if (inputMgr->SubLeftTrigger())
+	{
+		if (doorIndex > 0)
+		{
+			doorIndex -= 1;
+		}
+	}
+	if (inputMgr->SubRightTrigger())
+	{
+		if (doorIndex < Door::DoorStatus::MAX - 1)
+		{
+			doorIndex += 1;
 		}
 	}
 }

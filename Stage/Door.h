@@ -45,4 +45,11 @@ public: //メンバ関数
 
 	// 扉の状態の取得
 	DoorStatus GetStatus() { return status; }
+
+	// 扉の状態の設定
+	void SetStatus(DoorStatus status)
+	{
+		if(status == DoorStatus::MAX) this->status = DoorStatus::OPEN;
+		this->status = status;
+	}
 };

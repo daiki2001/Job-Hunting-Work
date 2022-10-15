@@ -14,11 +14,11 @@ public: //サブクラス
 	// カーソルがどこを指しているか
 	enum CursorState
 	{
-		BLOCKS,    //何かしらのブロック
-		DOOR_UP,   //上のドア
-		DOOR_DOWN, //下のドア
-		DOOR_LEFT, //左のドア
-		DOOR_RIGHT //右のドア
+		BLOCKS,                               //何かしらのブロック
+		DOOR_UP = Area::DoorNum::UP + 1,      //上のドア
+		DOOR_DOWN = Area::DoorNum::DOWN + 1,  //下のドア
+		DOOR_LEFT = Area::DoorNum::LEFT + 1,  //左のドア
+		DOOR_RIGHT = Area::DoorNum::RIGHT + 1 //右のドア
 	};
 
 private: //静的メンバ変数
@@ -28,7 +28,8 @@ private: //静的メンバ変数
 private: //メンバ変数
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT];
 	int mapIndex;
-	int blockIndex;
+	int blockIndex; //選んでるブロックの種類
+	int doorIndex;  //選んでるドア・壁の種類
 	CursorState cursorState;
 
 	int background; //背景画像
@@ -46,6 +47,8 @@ private:
 	void CursorMove();
 	// ブロック選択
 	void SelectBlock();
+	// ドア・壁選択
+	void SelectDoor();
 
 	// カーソルを左に移動
 	void CursorMoveLeft();

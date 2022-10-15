@@ -52,6 +52,12 @@ public: //静的メンバ関数
 		return room[nowRoom].area.GetDoorStatus(num);
 	}
 
+	static void SetDoorStatus(Door::DoorStatus status, Area::DoorNum num)
+	{
+		if (room.size() == 0) return;
+		room[nowRoom].area.SetDoorStatus(status, num);
+	}
+
 public: //メンバ関数
 	// 初期化処理
 	void Init();

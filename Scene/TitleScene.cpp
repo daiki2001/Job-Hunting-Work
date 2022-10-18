@@ -1,6 +1,7 @@
 ﻿#include "TitleScene.h"
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
+#include "./Header/Parameter.h"
 
 namespace
 {
@@ -36,7 +37,7 @@ void TitleScene::Init()
 	}
 	if (buttonBack == FUNCTION_ERROR)
 	{
-		buttonBack = draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
+		buttonBack = Parameter::Get("white1x1");
 	}
 	if (start == FUNCTION_ERROR)
 	{

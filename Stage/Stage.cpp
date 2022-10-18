@@ -162,7 +162,7 @@ int Stage::CreateRoom(int direction)
 								 GetDoorStatus(Area::DoorNum::LEFT),
 								 GetDoorStatus(Area::DoorNum::RIGHT));
 
-	return 0;
+	return direction;
 }
 
 int Stage::MoveUpRoom()

@@ -3,6 +3,7 @@
 #include "./Header/Camera.h"
 #include "./Header/Input.h"
 #include "./Header/SceneManager.h"
+#include "./Header/Parameter.h"
 
 /*ウィンドウサイズ*/
 constexpr int window_width = 1280; //横幅
@@ -31,6 +32,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	DrawPolygon draw;
 	Camera::Init();
 	Input::Init();
+
+	int whiteTex = draw.LoadTextrue(L"./Resources/Engine/white1x1.png");
+	Parameter::Set("white1x1", whiteTex);
 
 	SceneManager sceneManager(&draw);
 

@@ -2,6 +2,12 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
+#include "./Header/Parameter.h"
+
+namespace
+{
+int debugTex = FUNCTION_ERROR;
+}
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 Player* GameScene::player = Player::Get();
@@ -34,6 +40,10 @@ void GameScene::Init()
 	if (clear == FUNCTION_ERROR)
 	{
 		clear = draw->LoadTextrue((gameResourcesDir + L"Clear.png").c_str());
+	}
+	if (debugTex == FUNCTION_ERROR)
+	{
+		debugTex = Parameter::Get("white1x1");
 	}
 
 	player->Init(draw);
@@ -118,12 +128,12 @@ void GameScene::Draw()
 	}
 	else
 	{
-		//draw->DrawTextrue(0.0f, (32.0f * 0.0f), 144.0f, (32.0f * 1.0f), 0.0f, 0,
-		//				  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawTextrue(0.0f, (32.0f * 0.0f), 16.0f * 9.0f, 32.0f, 0.0f, debugTex,
+						  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 		draw->DrawString(0.0f, (32.0f * 0.0f), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "WASD:MOVE");
-		//draw->DrawTextrue(0.0f, (32.0f * 1.0f), 144.0f, (32.0f * 2.0f), 0.0f, 0,
-		//				  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		draw->DrawTextrue(0.0f, (32.0f * 1.0f), 16.0f * 10.0f, 32.0f, 0.0f, debugTex,
+						  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 		draw->DrawString(0.0f, (32.0f * 1.0f), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "KeyCount:%d", player->GetKeyCount());
 	}

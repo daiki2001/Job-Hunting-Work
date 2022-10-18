@@ -5,8 +5,6 @@
 namespace
 {
 static InputManager* input = InputManager::Get();
-
-static int debugTex = FUNCTION_ERROR;
 }
 
 const int Area::STAGE_WIDTH = 15;
@@ -41,9 +39,7 @@ void Area::StaticInit(DrawPolygon* const draw)
 	}
 	// 外壁のモデルの読み込み
 	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall/Wall.obj", "./Resources/Game/Wall/");
-//#ifdef _DEBUG
-	debugTex = Area::draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
-//#endif // _DEBUG
+
 	Door::StaticInit(draw);
 }
 

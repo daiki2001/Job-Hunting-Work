@@ -1,6 +1,12 @@
 ﻿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
+#include "./Header/Parameter.h"
+
+namespace
+{
+int debugTex = FUNCTION_ERROR;
+}
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 InputManager* StageEditorScene::inputMgr = InputManager::Get();
@@ -40,6 +46,10 @@ void StageEditorScene::Init()
 	if (cursor == FUNCTION_ERROR)
 	{
 		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
+	}
+	if (debugTex == FUNCTION_ERROR)
+	{
+		debugTex = Parameter::Get("white1x1");
 	}
 
 	Stage::AllDeleteRoom();
@@ -84,7 +94,8 @@ void StageEditorScene::Update()
 			if (doorIndex == Door::DoorStatus::ROOM_CREATE)
 			{
 				// 部屋の生成
-				Stage::CreateRoom(cursorState - 1);
+				int createRoomDir = Stage::CreateRoom(cursorState - 1);
+				CursorMove(createRoomDir);
 			}
 			else
 			{
@@ -159,6 +170,7 @@ void StageEditorScene::Draw()
 		break;
 	}
 
+	draw->DrawTextrue(0.0f, 0.0f, 16.0f * 11.0f, 32.0f, 0.0f, debugTex, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.5f });
 	if (cursorState == CursorState::BLOCKS)
 	{
 		draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
@@ -198,6 +210,31 @@ void StageEditorScene::CursorMove()
 	if (inputMgr->MainDownTrigger())
 	{
 		CursorMoveDown();
+	}
+}
+
+void StageEditorScene::CursorMove(int createRoomDir)
+{
+	switch (createRoomDir)
+	{
+	case Area::DoorNum::UP:
+		mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
+		cursorState = CursorState::DOOR_DOWN;
+		break;
+	case Area::DoorNum::DOWN:
+		mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);
+		cursorState = CursorState::DOOR_UP;
+		break;
+	case Area::DoorNum::LEFT:
+		mapIndex += STAGE_WIDTH - 1;
+		cursorState = CursorState::DOOR_RIGHT;
+		break;
+	case Area::DoorNum::RIGHT:
+		mapIndex -= STAGE_WIDTH - 1;
+		cursorState = CursorState::DOOR_LEFT;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -254,7 +291,7 @@ void StageEditorScene::CursorMoveLeft()
 	}
 	else if (cursorState == CursorState::DOOR_LEFT)
 	{
-		if (Stage::MoveLeftRoom() != -1)
+		if (Stage::MoveLeftRoom() != FUNCTION_ERROR)
 		{
 			// カーソルを右側のドアに移動(ループ)
 			mapIndex += STAGE_WIDTH - 1;
@@ -284,7 +321,7 @@ void StageEditorScene::CursorMoveRight()
 	}
 	else if (cursorState == CursorState::DOOR_RIGHT)
 	{
-		if (Stage::MoveRightRoom() != -1)
+		if (Stage::MoveRightRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが左側のドアに移動(ループ)
 			mapIndex -= STAGE_WIDTH - 1;
@@ -315,7 +352,7 @@ void StageEditorScene::CursorMoveUp()
 	}
 	else if (cursorState == CursorState::DOOR_UP)
 	{
-		if (Stage::MoveUpRoom() != -1)
+		if (Stage::MoveUpRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが下側のドアに移動(ループ)
 			mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
@@ -346,7 +383,7 @@ void StageEditorScene::CursorMoveDown()
 	}
 	else if (cursorState == CursorState::DOOR_DOWN)
 	{
-		if (Stage::MoveDownRoom() != -1)
+		if (Stage::MoveDownRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが上側のドアに移動(ループ)
 			mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);

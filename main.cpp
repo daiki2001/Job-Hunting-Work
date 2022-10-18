@@ -9,7 +9,7 @@
 constexpr int window_width = 1280; //横幅
 constexpr int window_height = 768; //縦幅
 
-constexpr WCHAR title[] = L"DirectXGame"; //タイトル
+constexpr WCHAR title[] = L"猫の記憶"; //タイトル
 
 constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //背景色
 

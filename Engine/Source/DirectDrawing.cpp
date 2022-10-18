@@ -17,7 +17,7 @@ CommonData::CommonData() :
 }
 
 Object::Object() :
-	polygonData(-1),
+	polygonData(FUNCTION_ERROR),
 	constBuff{},
 	position(0.0f, 0.0f, 0.0f),
 	rotation(DirectX::XMMatrixIdentity()),

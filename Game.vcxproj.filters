@@ -31,6 +31,9 @@
     <Filter Include="Stage\Block">
       <UniqueIdentifier>{cae89078-5544-4172-a063-b130db7e8e46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{9779c01d-6707-46e4-8fee-f050e49e7a0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,9 +57,6 @@
     <ClCompile Include="Stage\BlockType.cpp">
       <Filter>Stage\Block</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -68,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="Stage\Door.cpp">
       <Filter>Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +92,6 @@
     <ClInclude Include="Stage\Stage.h">
       <Filter>Stage</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -103,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="Stage\Door.h">
       <Filter>Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

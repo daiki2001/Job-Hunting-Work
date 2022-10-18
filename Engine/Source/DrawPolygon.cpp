@@ -675,20 +675,25 @@ int DrawPolygon::CreateOBJModel(const char* filePath, const char* directoryPath)
 			obj.emplace_back(OBJData{});
 			if (parent == nullptr)
 			{
-				parent = &obj[obj.size() - 1];
+				parent = &obj.back();
 			}
 			else
 			{
-				obj[obj.size() - 1].parent = parent;
+				obj.back().parent = parent;
 			}
-			obj[obj.size() - 1].polygonData = (int)(vertices.size());
-			obj[obj.size() - 1].material = material[materialIndex];
+			obj.back().polygonData = (int)(vertices.size());
+			obj.back().material = material[materialIndex];
 			objModelCount++;
 			verticesCount++;
 		}
 	}
 	// ファイルを閉じる
 	file.close();
+
+	if (obj.back().polygonData == FUNCTION_ERROR)
+	{
+		return FUNCTION_ERROR;
+	}
 
 	// 頂点データ一つ分のサイズ * 頂点データの要素数
 	for (size_t i = vertices.size() - verticesCount; i < vertices.size(); i++)

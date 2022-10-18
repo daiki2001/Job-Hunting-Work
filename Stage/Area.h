@@ -7,6 +7,10 @@
 
 class Area
 {
+public: //定数
+	static const int STAGE_WIDTH;
+	static const int STAGE_HEIGHT;
+
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 
@@ -55,6 +59,9 @@ public: //メンバ関数
 	BlockManager* GetBlockManager() { return &block_mgr; }
 	Door::DoorStatus GetDoorStatus(DoorNum num) { return door[num].GetStatus(); }
 
+	void SetDoorInit(Door doors[4]);
+	void SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
+					 Door::DoorStatus left, Door::DoorStatus right);
 	void SetDoorStatus(Door::DoorStatus status, DoorNum num) { door[num].SetStatus(status); }
 private:
 	void DrawWall(const Vector3& offset);

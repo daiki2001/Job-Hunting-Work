@@ -14,6 +14,7 @@ public: //サブクラス
 		CLOSE,        //スイッチで開く扉
 		WALL,         //壁
 		KEY_CLOSE,    //鍵扉
+		ROOM_CREATE,  //部屋の生成(プログラム用)
 		MAX,          //DoorStatusの上限(プログラム用)
 		ENTRANCE = -1 //ダンジョンの入口
 	};

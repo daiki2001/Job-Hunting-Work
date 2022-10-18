@@ -144,7 +144,9 @@ int BlockManager::CreateBlock(TypeId typeId)
 
 void BlockManager::ChengeBlock(int index, TypeId typeId)
 {
-	blocks[index] = Block(typeId);
+	Block block = Block(typeId);
+	block.pos = blocks[index].pos;
+	blocks[index] = block;
 }
 
 void BlockManager::DeleteBlock(int index)

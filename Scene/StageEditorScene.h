@@ -45,6 +45,7 @@ public: //メンバ関数
 private:
 	// カーソル移動
 	void CursorMove();
+	void CursorMove(int createRoomDir);
 	// ブロック選択
 	void SelectBlock();
 	// ドア・壁選択

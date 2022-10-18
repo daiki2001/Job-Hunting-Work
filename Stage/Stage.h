@@ -34,10 +34,12 @@ public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
 
+	static int CreateRoom(int direction = -1);
 	static int MoveUpRoom();
 	static int MoveDownRoom();
 	static int MoveLeftRoom();
 	static int MoveRightRoom();
+	static void AllDeleteRoom();
 
 	static const bool IsGoal();
 

@@ -23,10 +23,6 @@ void Stage::StaticInit(DrawPolygon* const draw)
 {
 	Stage::draw = draw;
 	Area::StaticInit(Stage::draw);
-	if (room.size() == 0)
-	{
-		room.emplace_back();
-	}
 }
 
 void Stage::Init()
@@ -92,7 +88,7 @@ int Stage::LoadStage(const char* filePath)
 		else if (string[i] >= '0' && string[i] <= '9')
 		{
 			roomNum *= 10;
-			roomNum += static_cast<short>(string[i]) - '0';
+			roomNum += static_cast<size_t>(string[i]) - '0';
 		}
 	}
 
@@ -105,6 +101,68 @@ int Stage::LoadStage(const char* filePath)
 
 	fclose(fileHandle);
 	return 0;
+}
+
+int Stage::CreateRoom(int direction)
+{
+	if (direction >= 0 && direction < 4)
+	{
+		if (room[nowRoom].connection[direction] != -1)
+		{
+			return FUNCTION_ERROR;
+		}
+	}
+	else
+	{
+		if (room.empty() == false)
+		{
+			return FUNCTION_ERROR;
+		}
+	}
+
+	room.emplace_back();
+
+	for (int i = 0; i < Area::STAGE_WIDTH * Area::STAGE_HEIGHT; i++)
+	{
+		room.back().area.GetBlockManager()->CreateBlock(BlockManager::TypeId::NONE);
+		room.back().area.GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % Area::STAGE_WIDTH) * 1.0f;
+		room.back().area.GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / Area::STAGE_WIDTH) * -1.0f;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		room.back().area.SetDoorStatus(Door::DoorStatus::OPEN, Area::DoorNum(i));
+	}
+
+	switch (direction)
+	{
+	case Area::DoorNum::UP:
+		room[nowRoom].connection[Area::DoorNum::UP] = static_cast<int>(room.size() - 1);
+		room.back().connection[Area::DoorNum::DOWN] = nowRoom;
+		break;
+	case Area::DoorNum::DOWN:
+		room[nowRoom].connection[Area::DoorNum::DOWN] = static_cast<int>(room.size() - 1);
+		room.back().connection[Area::DoorNum::UP] = nowRoom;
+		break;
+	case Area::DoorNum::LEFT:
+		room[nowRoom].connection[Area::DoorNum::LEFT] = static_cast<int>(room.size() - 1);
+		room.back().connection[Area::DoorNum::RIGHT] = nowRoom;
+		break;
+	case Area::DoorNum::RIGHT:
+		room[nowRoom].connection[Area::DoorNum::RIGHT] = static_cast<int>(room.size() - 1);
+		room.back().connection[Area::DoorNum::LEFT] = nowRoom;
+		break;
+	default:
+		break;
+	}
+
+	nowRoom = static_cast<int>(room.size() - 1);
+	room.back().area.SetDoorInit(GetDoorStatus(Area::DoorNum::UP),
+								 GetDoorStatus(Area::DoorNum::DOWN),
+								 GetDoorStatus(Area::DoorNum::LEFT),
+								 GetDoorStatus(Area::DoorNum::RIGHT));
+
+	return direction;
 }
 
 int Stage::MoveUpRoom()
@@ -153,6 +211,15 @@ int Stage::MoveRightRoom()
 	nowRoom = room[nowRoom].connection[Area::DoorNum::RIGHT];
 
 	return 0;
+}
+
+void Stage::AllDeleteRoom()
+{
+	for (size_t i = 0; i < room.size(); i++)
+	{
+		room[i].area.GetBlockManager()->AllDeleteBlock();
+	}
+	room.clear();
 }
 
 const bool Stage::IsGoal()

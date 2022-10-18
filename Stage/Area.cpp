@@ -5,10 +5,10 @@
 namespace
 {
 static InputManager* input = InputManager::Get();
-
-static int debugTex = FUNCTION_ERROR;
 }
 
+const int Area::STAGE_WIDTH = 15;
+const int Area::STAGE_HEIGHT = 7;
 DrawPolygon* Area::draw = nullptr;
 int Area::wall_obj = FUNCTION_ERROR;
 
@@ -24,10 +24,7 @@ Area::Area() :
 	door[DoorNum::LEFT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
 	door[DoorNum::RIGHT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
 
-	for (size_t i = 0; i < 4; i++)
-	{
-		doorInit[i] = door[i];
-	}
+	SetDoorInit(door);
 }
 
 Area::~Area()
@@ -42,9 +39,7 @@ void Area::StaticInit(DrawPolygon* const draw)
 	}
 	// 外壁のモデルの読み込み
 	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall/Wall.obj", "./Resources/Game/Wall/");
-//#ifdef _DEBUG
-	debugTex = Area::draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
-//#endif // _DEBUG
+
 	Door::StaticInit(draw);
 }
 
@@ -120,10 +115,7 @@ void Area::Draw(int offsetX, int offsetY)
 
 int Area::LoadArea(FILE* fileHandle)
 {
-	static const int stageWidth = 15;
-	static const int stageHeight = 7;
-
-	int mapArray[stageWidth * stageHeight] = { BlockManager::TypeId::NONE };
+	int mapArray[STAGE_WIDTH * STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
 	int doorSetting[4] = { Door::DoorStatus::OPEN };
 
 	Load::LoadMapChip(fileHandle, doorSetting, 4, -2);
@@ -134,8 +126,8 @@ int Area::LoadArea(FILE* fileHandle)
 	/*マップの設定*/
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
-		int x = i % stageWidth;
-		int y = i / stageWidth;
+		int x = i % STAGE_WIDTH;
+		int y = i / STAGE_WIDTH;
 		int index = block_mgr.CreateBlock(BlockManager::TypeId(mapArray[i]));
 
 		if (index == Engine::FUNCTION_ERROR)
@@ -203,4 +195,21 @@ void Area::DrawWall(const Vector3& offset)
 	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+}
+
+void Area::SetDoorInit(Door doors[4])
+{
+	for (size_t i = 0; i < 4; i++)
+	{
+		doorInit[i] = doors[i];
+	}
+}
+
+void Area::SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
+					   Door::DoorStatus left, Door::DoorStatus right)
+{
+	doorInit[DoorNum::UP].SetStatus(up);
+	doorInit[DoorNum::DOWN].SetStatus(down);
+	doorInit[DoorNum::LEFT].SetStatus(left);
+	doorInit[DoorNum::RIGHT].SetStatus(right);
 }

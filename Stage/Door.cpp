@@ -1,5 +1,6 @@
 ﻿#include "Door.h"
 #include "Area.h"
+#include "./Header/Parameter.h"
 
 namespace
 {
@@ -25,7 +26,7 @@ void Door::StaticInit(DrawPolygon* draw)
 	}
 	if (debugTex == FUNCTION_ERROR)
 	{
-		debugTex = Door::draw->LoadTextrue(L"./Resources/Engine/white1x1.png");
+		debugTex = Parameter::Get("white1x1");
 	}
 	if (entranceLight == FUNCTION_ERROR)
 	{

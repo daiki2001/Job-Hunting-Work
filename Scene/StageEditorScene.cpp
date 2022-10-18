@@ -187,6 +187,23 @@ void StageEditorScene::Draw()
 		}
 	}
 
+	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 3.0f), 16.0f * 9.0f, 32.0f, 0.0f, debugTex,
+					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
+	draw->DrawString(0.0f, w->windowHeight - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Move:WASD");
+	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 2.0f), 16.0f * 12.0f, 32.0f, 0.0f, debugTex,
+					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
+	draw->DrawString(0.0f, w->windowHeight - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Select:Arrow");
+	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 1.0f), 16.0f * 14.0f, 32.0f, 0.0f, debugTex,
+					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
+	draw->DrawString(0.0f, w->windowHeight - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Decision:Space");
+	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 0.0f), 16.0f * 8.0f, 32.0f, 0.0f, debugTex,
+					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
+	draw->DrawString(0.0f, w->windowHeight - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Title:F1");
+
 	w->ScreenFlip();
 
 	// ループの終了処理

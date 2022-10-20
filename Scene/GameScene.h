@@ -7,6 +7,7 @@ class GameScene :  public BaseScene
 {
 public: //定数
 	static const std::wstring gameResourcesDir;
+	static const std::string stageDir;
 	
 private: //静的メンバ変数
 	static Player* player;

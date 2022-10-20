@@ -10,6 +10,8 @@ int debugTex = FUNCTION_ERROR;
 }
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
+const std::string GameScene::stageDir =
+	WStringToString(GameScene::gameResourcesDir) + "Stage/";
 Player* GameScene::player = Player::Get();
 Stage* GameScene::stage = Stage::Get();
 bool GameScene::isClear = false;
@@ -48,7 +50,7 @@ void GameScene::Init()
 
 	player->Init(draw);
 	stage->StaticInit(draw);
-	stage->LoadStage("./Resources/Game/Stage/test.csv");
+	stage->LoadStage((stageDir + "stage1.csv").c_str());
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -86,7 +88,7 @@ void GameScene::Update()
 	}
 	if (Input::IsKeyTrigger(DIK_F1))
 	{
-		stage->LoadStage("./Resources/Game/Stage/test.csv");
+		stage->LoadStage((stageDir + "stage1.csv").c_str());
 	}
 #endif // _DEBUG
 }

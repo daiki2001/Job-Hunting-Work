@@ -167,7 +167,7 @@
   <ItemGroup>
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\SettingScene.cpp" />
     <ClCompile Include="Scene\StageEditorScene.cpp" />
@@ -180,7 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="Player\Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\SettingScene.h" />
     <ClInclude Include="Scene\StageEditorScene.h" />

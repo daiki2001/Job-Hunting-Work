@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
-#include "InputManager.h"
+#include "../InputManager.h"
 #include "./Header/EngineGeneral.h"
 
 class Player final
@@ -32,7 +32,6 @@ private:
 
 	Direction direction; //向いている方向
 	int object;          //プレイヤーのオブジェクト
-	int graph;           //画像
 
 	unsigned int keyCount;
 

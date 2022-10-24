@@ -7,7 +7,6 @@ Player::Player() :
 	pos{},
 	direction(Player::Direction::UP),
 	object(Engine::FUNCTION_ERROR),
-	graph(Engine::FUNCTION_ERROR),
 	keyCount(0)
 {
 	Reset();
@@ -26,8 +25,7 @@ Player* Player::Get()
 void Player::Init(DrawPolygon* const draw)
 {
 	this->draw = draw;
-	object = this->draw->CreateCylinder(0.5f, 0.5f, 3);
-	graph = this->draw->LoadTextrue(L"./Resources/Game/Player.png");
+	object = this->draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
 }
 
 void Player::Update(const InputManager* const input)
@@ -37,16 +35,15 @@ void Player::Update(const InputManager* const input)
 
 void Player::Draw(int offsetX, int offsetY)
 {
-	DirectDrawing::ChangeOBJShader();
-	draw->Draw(
+	DirectDrawing::ChangeMaterialShader();
+	draw->DrawOBJ(
 		object,
 		pos + Vector3(static_cast<float>(offsetX),
 					  static_cast<float>(offsetY),
 					  0.0f),
 		Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
-		{ 0.5f, 1.0f, 1.0f },
-		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-		graph
+		scale_xyz(1.0f / 256.0f),
+		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
 	);
 }
 
@@ -58,7 +55,7 @@ void Player::Reset()
 
 void Player::Move(const InputManager* const input)
 {
-	if (input->MainUpTrigger() || input->SubUpTrigger())
+	if (input->MainUp() || input->SubUp())
 	{
 		pos.y += 1.0f;
 		direction = Player::Direction::UP;
@@ -74,7 +71,7 @@ void Player::Move(const InputManager* const input)
 			}
 		}
 	}
-	else if (input->MainDownTrigger() || input->SubDownTrigger())
+	else if (input->MainDown() || input->SubDown())
 	{
 		pos.y -= 1.0f;
 		direction = Player::Direction::DOWN;
@@ -90,7 +87,7 @@ void Player::Move(const InputManager* const input)
 			}
 		}
 	}
-	else if (input->MainLeftTrigger() || input->SubLeftTrigger())
+	else if (input->MainLeft() || input->SubLeft())
 	{
 		pos.x -= 1.0f;
 		direction = Player::Direction::LEFT;
@@ -106,7 +103,7 @@ void Player::Move(const InputManager* const input)
 			}
 		}
 	}
-	else if (input->MainRightTrigger() || input->SubRightTrigger())
+	else if (input->MainRight() || input->SubRight())
 	{
 		pos.x += 1.0f;
 		direction = Player::Direction::RIGHT;

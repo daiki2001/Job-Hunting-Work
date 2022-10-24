@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "BlockType.h"
-#include "../Player.h"
+#include "../Player/Player.h"
 #include <vector>
 #include "./Header/EngineGeneral.h"
 

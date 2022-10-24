@@ -2,6 +2,8 @@
 #include "./Stage/BlockType.h"
 #include "./Stage/Stage.h"
 
+const float Player::SPEED = 0.3f;
+
 Player::Player() :
 	draw(nullptr),
 	pos{},
@@ -57,7 +59,7 @@ void Player::Move(const InputManager* const input)
 {
 	if (input->MainUp() || input->SubUp())
 	{
-		pos.y += 1.0f;
+		if (pos.y <= 0.0f) pos.y += SPEED;
 		direction = Player::Direction::UP;
 
 		if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y > 0.0f)
@@ -66,17 +68,17 @@ void Player::Move(const InputManager* const input)
 			{
 				if (Stage::MoveUpRoom() == 0)
 				{
-					pos.y = -6.0f;
+					pos.y = -(Area::STAGE_HEIGHT - 1.0f);
 				}
 			}
 		}
 	}
 	else if (input->MainDown() || input->SubDown())
 	{
-		pos.y -= 1.0f;
+		if (pos.y >= -(Area::STAGE_HEIGHT - 1.0f)) pos.y -= SPEED;
 		direction = Player::Direction::DOWN;
 
-		if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y < -6.0f)
+		if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y < -(Area::STAGE_HEIGHT - 1.0f))
 		{
 			if (Stage::GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN)
 			{
@@ -89,7 +91,7 @@ void Player::Move(const InputManager* const input)
 	}
 	else if (input->MainLeft() || input->SubLeft())
 	{
-		pos.x -= 1.0f;
+		if (pos.x >= 0.0f) pos.x -= SPEED;
 		direction = Player::Direction::LEFT;
 
 		if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x < 0.0f)
@@ -98,17 +100,17 @@ void Player::Move(const InputManager* const input)
 			{
 				if (Stage::MoveLeftRoom() == 0)
 				{
-					pos.x = 14.0f;
+					pos.x = Area::STAGE_WIDTH - 1.0f;
 				}
 			}
 		}
 	}
 	else if (input->MainRight() || input->SubRight())
 	{
-		pos.x += 1.0f;
+		if (pos.x <= Area::STAGE_WIDTH - 1.0f) pos.x += SPEED;
 		direction = Player::Direction::RIGHT;
 
-		if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x > 14.0f)
+		if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x > Area::STAGE_WIDTH - 1.0f)
 		{
 			if (Stage::GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN)
 			{

@@ -1,4 +1,5 @@
 ﻿#include "BlockManager.h"
+#include "./Math/Collision/Collision.h"
 
 Player* BlockManager::player = Player::Get();
 
@@ -164,16 +165,16 @@ void BlockManager::PlayerPushBack() const
 	switch (player->GetDirection())
 	{
 	case Player::Direction::LEFT:
-		player->pos.x++;
+		player->pos.x += Player::SPEED;
 		break;
 	case Player::Direction::UP:
-		player->pos.y--;
+		player->pos.y -= Player::SPEED;
 		break;
 	case Player::Direction::RIGHT:
-		player->pos.x--;
+		player->pos.x -= Player::SPEED;
 		break;
 	case Player::Direction::DOWN:
-		player->pos.y++;
+		player->pos.y += Player::SPEED;
 		break;
 	default:
 		break;
@@ -198,12 +199,6 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 
 	for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
 	{
-		if (static_cast<int>(blocks[i].pos.x) == static_cast<int>(player->pos.x) &&
-			static_cast<int>(blocks[i].pos.y) == static_cast<int>(player->pos.y))
-		{
-			playerPos = i;
-		}
-
 		if (i == 0)
 		{
 			for (int y = static_cast<int>(player->pos.y) - radius;
@@ -232,10 +227,10 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 			break;
 		}
 
-		if ((static_cast<int>(blocks[i].pos.x) >= static_cast<int>(player->pos.x) - radius &&
-			 static_cast<int>(blocks[i].pos.x) <= static_cast<int>(player->pos.x) + radius) &&
-			(static_cast<int>(blocks[i].pos.y) >= static_cast<int>(player->pos.y) - radius &&
-			 static_cast<int>(blocks[i].pos.y) <= static_cast<int>(player->pos.y) + radius))
+		if (Collision::IsAABBToAABBCollision(blocks[i].pos - Vector3(0.5f, 0.5f, 0.5f),
+											 blocks[i].pos + Vector3(0.5f, 0.5f, 0.5f),
+											 player->pos - Vector3(0.5f, 0.5f, 0.5f) * static_cast<float>(radius),
+											 player->pos + Vector3(0.5f, 0.5f, 0.5f) * static_cast<float>(radius)))
 		{
 			surroundingBlock[j++] = i;
 		}
@@ -256,19 +251,22 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 		}
 	}
 
-	if (surroundingBlockType == nullptr)
-	{
-		return playerPos;
-	}
-
 	for (int i = 0; i < size; i++)
 	{
-		if (surroundingBlock[i] < 0)
+		if (surroundingBlockType != nullptr && surroundingBlock[i] < 0)
 		{
 			surroundingBlockType[i] = TypeId::WALL;
 			continue;
 		}
-		surroundingBlockType[i] = blocks[surroundingBlock[i]].typeId;
+
+		if (i == size / 2)
+		{
+			playerPos = surroundingBlock[i];
+		}
+		if (surroundingBlockType != nullptr)
+		{
+			surroundingBlockType[i] = blocks[surroundingBlock[i]].typeId;
+		}
 	}
 
 	return playerPos;

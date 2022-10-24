@@ -2,6 +2,17 @@
 
 namespace
 {
+// 1é≤è„ÇÃê¸ï™ìØémÇÃìñÇΩÇËîªíË
+bool Is1DLineTo1DLineCollision(float a1, float a2, float b1, float b2)
+{
+	if ((a1 <= b2) && (a2 >= b1))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle& triangle,
 							 Engine::Math::Vector3* closest)
 {
@@ -255,6 +266,18 @@ bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* d
 	}
 
 	return true;
+}
+
+bool IsAABBToAABBCollision(const Vector3& leftUpFront1, const Vector3& rightDownBack1, const Vector3& leftUpFront2, const Vector3& rightDownBack2)
+{
+	if (Is1DLineTo1DLineCollision(leftUpFront1.x, rightDownBack1.x, leftUpFront2.x, rightDownBack2.x) &&
+		Is1DLineTo1DLineCollision(leftUpFront1.y, rightDownBack1.y, leftUpFront2.y, rightDownBack2.y) &&
+		Is1DLineTo1DLineCollision(leftUpFront1.z, rightDownBack1.z, leftUpFront2.z, rightDownBack2.z))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Vector3& scale1,

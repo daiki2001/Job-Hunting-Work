@@ -15,6 +15,9 @@ private:
 
 private: //エイリアス
 	using Vector3 = Math::Vector3;
+	
+public: //定数
+	static const float SPEED;
 
 public: //サブクラス
 	enum Direction
@@ -33,7 +36,8 @@ private:
 	Direction direction; //向いている方向
 	int object;          //プレイヤーのオブジェクト
 
-	unsigned int keyCount;
+	/*インベントリ*/
+	unsigned int keyCount; //所持している鍵の数
 
 public: //メンバ関数
 	// 初期化処理

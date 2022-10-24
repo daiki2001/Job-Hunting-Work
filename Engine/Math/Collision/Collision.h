@@ -25,7 +25,11 @@ bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance =
 // レイと三角形の当たり判定
 bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* distance = nullptr, Vector3* inter = nullptr);
 
-// 直方体同士の当たり判定
+// AABB同士の当たり判定
+bool IsAABBToAABBCollision(const Vector3& leftUpFront1, const Vector3& rightDownBack1,
+						   const Vector3& leftUpFront2, const Vector3& rightDownBack2);
+
+// OBB同士の当たり判定
 bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Vector3& scale1,
 						 const Vector3& pos2, const Matrix4& rotation2, const Vector3& scale2);
 

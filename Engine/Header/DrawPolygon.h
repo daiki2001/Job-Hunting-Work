@@ -39,6 +39,8 @@ public: // メンバ関数
 	int CreateCircle(float r, const size_t& divNum, bool isFill = true);
 	// 直方体の作成
 	int Create3Dbox(float width, float height, float depth, bool isFill = true);
+	int Create3Dbox(Vector3 size, bool isFill = true)
+	{ return Create3Dbox(size.x, size.y, size.z, isFill); };
 	// 正多角錐の作成
 	int CreateCorn(float r, float h, const size_t& divNum, bool isFill = true);
 	// 正多角柱の作成

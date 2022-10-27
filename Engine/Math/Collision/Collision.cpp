@@ -1,11 +1,21 @@
-#include "Collision.h"
+ï»¿#include "Collision.h"
+#include "./Header/EngineGeneral.h"
 
 namespace
 {
-// 1²ã‚Ìü•ª“¯m‚Ì“–‚½‚è”»’è
+// 1è»¸ä¸Šã®ç·šåˆ†åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
 bool Is1DLineTo1DLineCollision(float a1, float a2, float b1, float b2)
 {
-	if ((a1 <= b2) && (a2 >= b1))
+	if (a1 > a2)
+	{
+		Swap(&a1, &a2);
+	}
+	if (b1 > b2)
+	{
+		Swap(&b1, &b2);
+	}
+
+	if ((a1 < b2) && (a2 >= b1))
 	{
 		return true;
 	}
@@ -18,7 +28,7 @@ void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle&
 {
 	using namespace Engine::Math;
 
-	// point‚ªp0‚ÌŠO‘¤‚Ì’¸“_—Ìˆæ‚Ì’†‚É‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN
+	// pointãŒp0ã®å¤–å´ã®é ‚ç‚¹é ˜åŸŸã®ä¸­ã«ã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
 	Vector3 p0_p1 = triangle.p1 - triangle.p0;
 	Vector3 p0_p2 = triangle.p2 - triangle.p0;
 	Vector3 p0_pt = point - triangle.p0;
@@ -32,7 +42,7 @@ void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle&
 		return;
 	}
 
-	// point‚ªp1‚ÌŠO‘¤‚Ì’¸“_—Ìˆæ‚Ì’†‚É‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN
+	// pointãŒp1ã®å¤–å´ã®é ‚ç‚¹é ˜åŸŸã®ä¸­ã«ã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
 	Vector3 p1_pt = point - triangle.p1;
 
 	float d3 = p0_p1.Dot(p1_pt);
@@ -44,7 +54,7 @@ void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle&
 		return;
 	}
 
-	// point‚ªp0_p1‚Ì•Ó—Ìˆæ‚Ì’†‚É‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚µA‚ ‚ê‚Îpoint‚Ìp0_p1ã‚É‘Î‚·‚éË‰e‚ğ•Ô‚·
+	// pointãŒp0_p1ã®è¾ºé ˜åŸŸã®ä¸­ã«ã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã—ã€ã‚ã‚Œã°pointã®p0_p1ä¸Šã«å¯¾ã™ã‚‹å°„å½±ã‚’è¿”ã™
 	float vc = d1 * d4 - d3 * d2;
 	if (vc <= 0.0f && d1 >= 0.0f && d3 <= 0.0f)
 	{
@@ -53,7 +63,7 @@ void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle&
 		return;
 	}
 
-	// point‚ªp2‚ÌŠO‘¤‚Ì’¸“_—Ìˆæ‚Ì’†‚É‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN
+	// pointãŒp2ã®å¤–å´ã®é ‚ç‚¹é ˜åŸŸã®ä¸­ã«ã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
 	Vector3 p2_pt = point - triangle.p2;
 
 	float d5 = p0_p1.Dot(p2_pt);
@@ -65,7 +75,7 @@ void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle&
 		return;
 	}
 
-	// point‚ªp0_p2‚Ì•Ó—Ìˆæ‚Ì’†‚É‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚µA‚ ‚ê‚Îpoint‚Ìp0_p2ã‚É‘Î‚·‚éË‰e‚ğ•Ô‚·
+	// pointãŒp0_p2ã®è¾ºé ˜åŸŸã®ä¸­ã«ã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã—ã€ã‚ã‚Œã°pointã®p0_p2ä¸Šã«å¯¾ã™ã‚‹å°„å½±ã‚’è¿”ã™
 	float vb = d5 * d2 - d1 * d6;
 	if (vb <= 0.0f && d2 >= 0.0f && d6 <= 0.0f)
 	{
@@ -74,7 +84,7 @@ void ClosestPtPoint2Triangle(const Engine::Math::Vector3& point, const Triangle&
 		return;
 	}
 
-	// point‚ªp1_p2‚Ì•Ó—Ìˆæ‚Ì’†‚É‚ ‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚µA‚ ‚ê‚Îpoint‚Ìp1_p2ã‚É‘Î‚·‚éË‰e‚ğ•Ô‚·
+	// pointãŒp1_p2ã®è¾ºé ˜åŸŸã®ä¸­ã«ã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã—ã€ã‚ã‚Œã°pointã®p1_p2ä¸Šã«å¯¾ã™ã‚‹å°„å½±ã‚’è¿”ã™
 	float va = d3 * d6 - d5 * d4;
 	if (va <= 0.0f && (d4 - d3) >= 0.0f && (d5 - d6) >= 0.0f)
 	{
@@ -94,7 +104,7 @@ namespace Collision
 {
 bool IsSphereToSphereCollision(const Sphere& sphere1, const Sphere& sphere2, Vector3* inter)
 {
-	static Vector3 distance{}; //’†S“_ŠÔ‚Ì‹——£
+	static Vector3 distance{}; //ä¸­å¿ƒç‚¹é–“ã®è·é›¢
 	static bool result = false;
 
 	distance = sphere2.center - sphere1.center;
@@ -105,7 +115,7 @@ bool IsSphereToSphereCollision(const Sphere& sphere1, const Sphere& sphere2, Vec
 	{
 		if (inter != nullptr)
 		{
-			// A‚Ì”¼Œa‚ª0‚ÌÀ•W‚ÍB‚Ì’†S B‚Ì”¼Œa‚ª0‚ÌÀ•W‚ÍA‚Ì’†S ‚Æ‚È‚é‚æ‚¤•âŠ®
+			// Aã®åŠå¾„ãŒ0ã®æ™‚åº§æ¨™ã¯Bã®ä¸­å¿ƒ Bã®åŠå¾„ãŒ0ã®æ™‚åº§æ¨™ã¯Aã®ä¸­å¿ƒ ã¨ãªã‚‹ã‚ˆã†è£œå®Œ
 			float t = sphere2.radius / (sphere1.radius + sphere2.radius);
 			*inter = Engine::Math::Lerp(sphere1.center, sphere2.center, t);
 		}
@@ -116,7 +126,7 @@ bool IsSphereToSphereCollision(const Sphere& sphere1, const Sphere& sphere2, Vec
 
 bool IsSphereToPlaneCollision(const Sphere& sphere, const Plane& plane)
 {
-	static float distance{}; //‹…‘Ì‚Ì’†SÀ•W‚Æ•½–Ê‚Ì‹——£
+	static float distance{}; //çƒä½“ã®ä¸­å¿ƒåº§æ¨™ã¨å¹³é¢ã®è·é›¢
 	distance = sphere.center.Dot(plane.normal) - plane.distance;
 	if (fabsf(distance) > sphere.radius)
 	{
@@ -147,33 +157,33 @@ bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distanc
 	float b = m.Dot(ray.dir);
 	float c = m.Dot(m) - sphere.radius * sphere.radius;
 
-	// ƒŒƒC‚Ìn“_‚ª‹…‘Ì‚É“–‚½‚Á‚Ä–³‚­‚ÄAƒŒƒC‚ª‹…‘Ì‚É‘Î‚µ‚Ä—£‚ê‚Ä‚¢‚­•ûŒü‚ğw‚µ‚Ä‚¢‚éê‡‚Í“–‚½‚ç‚È‚¢
+	// ãƒ¬ã‚¤ã®å§‹ç‚¹ãŒçƒä½“ã«å½“ãŸã£ã¦ç„¡ãã¦ã€ãƒ¬ã‚¤ãŒçƒä½“ã«å¯¾ã—ã¦é›¢ã‚Œã¦ã„ãæ–¹å‘ã‚’æŒ‡ã—ã¦ã„ã‚‹å ´åˆã¯å½“ãŸã‚‰ãªã„
 	if ((c > 0.0f) && (b > 0.0f))
 	{
 		return false;
 	}
 
 	float discr = b * b - c;
-	// ”»•Ê®‚ªƒ}ƒCƒiƒX‚È‚çAƒŒƒC‚Í‹…‘Ì‚ğ‚»‚ê‚Ä‚¢‚é
+	// åˆ¤åˆ¥å¼ãŒãƒã‚¤ãƒŠã‚¹ãªã‚‰ã€ãƒ¬ã‚¤ã¯çƒä½“ã‚’ãã‚Œã¦ã„ã‚‹
 	if (discr < 0.0f)
 	{
 		return false;
 	}
 
-	// Œğ·‚·‚éêŠt‚ğ‹‚ß‚é
+	// äº¤å·®ã™ã‚‹å ´æ‰€tã‚’æ±‚ã‚ã‚‹
 	float t = -b - sqrtf(discr);
-	// t‚ªƒ}ƒCƒiƒX‚Ìê‡An“_‚ª‹…‘Ì‚Ì“à‘¤‚É‚ ‚é
+	// tãŒãƒã‚¤ãƒŠã‚¹ã®å ´åˆã€å§‹ç‚¹ãŒçƒä½“ã®å†…å´ã«ã‚ã‚‹
 	if (t < 0)
 	{
 		t = 0.0f;
 	}
 
-	// ‹——£‚ğ‘‚«‚Ş
+	// è·é›¢ã‚’æ›¸ãè¾¼ã‚€
 	if (distance != nullptr)
 	{
 		*distance = t;
 	}
-	// Œğ“_‚ğ‹‚ß‚é
+	// äº¤ç‚¹ã‚’æ±‚ã‚ã‚‹
 	if (inter != nullptr)
 	{
 		*inter = ray.start + t * ray.dir;
@@ -185,26 +195,26 @@ bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distanc
 bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance,
 						   Vector3* inter)
 {
-	// –Ê–@ü‚ÆƒŒƒC‚Ì•ûŒüƒxƒNƒgƒ‹‚Ì“àÏ
+	// é¢æ³•ç·šã¨ãƒ¬ã‚¤ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©
 	float d1 = plane.normal.Dot(ray.dir);
-	// –Ê–@ü‚ÆƒŒƒC‚Ìn“_À•W‚Ì“àÏ
+	// é¢æ³•ç·šã¨ãƒ¬ã‚¤ã®å§‹ç‚¹åº§æ¨™ã®å†…ç©
 	float d2 = plane.normal.Dot(ray.start);
-	// n“_‚Æ•½–Ê‚Ì‹——£(•½–Ê‚Ì–@ü•ûŒü)
+	// å§‹ç‚¹ã¨å¹³é¢ã®è·é›¢(å¹³é¢ã®æ³•ç·šæ–¹å‘)
 	float dist = d2 - plane.distance;
-	// n“_‚Æ•½–Ê‚Ì‹——£(ƒŒƒC•ûŒü)
+	// å§‹ç‚¹ã¨å¹³é¢ã®è·é›¢(ãƒ¬ã‚¤æ–¹å‘)
 	float t = dist / -d1;
-	// Œğ“_‚ªn“_‚æ‚èŒã‚ë‚É‚ ‚é‚©‚ç“–‚½‚ç‚È‚¢
+	// äº¤ç‚¹ãŒå§‹ç‚¹ã‚ˆã‚Šå¾Œã‚ã«ã‚ã‚‹ã‹ã‚‰å½“ãŸã‚‰ãªã„
 	if (t < 0)
 	{
 		return false;
 	}
 
-	// ‹——£‚ğ‘‚«‚Ş
+	// è·é›¢ã‚’æ›¸ãè¾¼ã‚€
 	if (distance != nullptr)
 	{
 		*distance = t;
 	}
-	// Œğ“_‚ğ‹‚ß‚é
+	// äº¤ç‚¹ã‚’æ±‚ã‚ã‚‹
 	if (inter != nullptr)
 	{
 		*inter = ray.start + t * ray.dir;
@@ -216,21 +226,21 @@ bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance,
 bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* distance,
 							  Vector3* inter)
 {
-	// OŠpŒ`‚ªæ‚Á‚Ä‚¢‚é•½–Ê‚ğZo
+	// ä¸‰è§’å½¢ãŒä¹—ã£ã¦ã„ã‚‹å¹³é¢ã‚’ç®—å‡º
 	Plane plane;
 	Vector3 interPlane;
 	plane.normal = triangle.normal;
 	plane.distance = triangle.normal.Dot(triangle.p0);
-	// ƒŒƒC‚Æ•½–Ê‚ª“–‚½‚Á‚Ä–³‚©‚Á‚½‚ç“–‚½‚Á‚Ä–³‚¢
+	// ãƒ¬ã‚¤ã¨å¹³é¢ãŒå½“ãŸã£ã¦ç„¡ã‹ã£ãŸã‚‰å½“ãŸã£ã¦ç„¡ã„
 	if (IsRayToPlaneCollision(ray, plane, distance, &interPlane) == false)
 	{
 		return false;
 	}
 
-	const float epsilon = 1.0e-5f; //Œë·‹zû—p‚Ì”÷¬‚È’l
+	const float epsilon = 1.0e-5f; //èª¤å·®å¸åç”¨ã®å¾®å°ãªå€¤
 	Vector3 m;
 
-	// •Óp0_p1
+	// è¾ºp0_p1
 	Vector3 pt_p0 = triangle.p0 - interPlane;
 	Vector3 p0_p1 = triangle.p1 - triangle.p0;
 	m = pt_p0.Cross(p0_p1);
@@ -240,7 +250,7 @@ bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* d
 		return false;
 	}
 
-	// •Óp1_p2
+	// è¾ºp1_p2
 	Vector3 pt_p1 = triangle.p1 - interPlane;
 	Vector3 p1_p2 = triangle.p2 - triangle.p1;
 	m = pt_p1.Cross(p1_p2);
@@ -250,7 +260,7 @@ bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* d
 		return false;
 	}
 
-	// •Óp2_p0
+	// è¾ºp2_p0
 	Vector3 pt_p2 = triangle.p2 - interPlane;
 	Vector3 p2_p0 = triangle.p0 - triangle.p2;
 	m = pt_p2.Cross(p2_p0);
@@ -285,16 +295,16 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 {
 	using namespace DirectX;
 
-	// “ñ“_ŠÔ‚Ì‹——£
+	// äºŒç‚¹é–“ã®è·é›¢
 	static Vector3 distance{};
-	// ’†S‚©‚ç–Ê‚Ü‚Å‚Ì’·‚³
+	// ä¸­å¿ƒã‹ã‚‰é¢ã¾ã§ã®é•·ã•
 	static Vector3 length1{}, length2{};
-	// •ª—£²ƒxƒNƒgƒ‹
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«
 	static Vector3 direction1_XN{}, direction1_YN{}, direction1_ZN{}, direction2_XN{}, direction2_YN{}, direction2_ZN{};
-	// •ûŒüƒxƒNƒgƒ‹
+	// æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	static Vector3 direction1_X{}, direction1_Y{}, direction1_Z{}, direction2_X{}, direction2_Y{}, direction2_Z{};
 
-	/*OBB‚Ì“–‚½‚è”»’è‚Ì‰º€”õ*/
+	/*OBBã®å½“ãŸã‚Šåˆ¤å®šã®ä¸‹æº–å‚™*/
 
 	length1 = scale1 / 2.0f;
 	XMStoreFloat3(&direction1_XN, XMVector4Normalize(rotation1.r[0]));
@@ -312,14 +322,14 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 	direction2_Y = direction2_YN * length2.y;
 	direction2_Z = direction2_ZN * length2.z;
 
-	/*OBB‚Ì“–‚½‚è”»’è*/
+	/*OBBã®å½“ãŸã‚Šåˆ¤å®š*/
 
 	distance = pos2 - pos1;
 
-	static float r1{}, r2{}; //”¼“Š‰eü•ª
-	static float l{}; //’†ŠÔ“_ŠÔ‚Ì‹——£
+	static float r1{}, r2{}; //åŠæŠ•å½±ç·šåˆ†
+	static float l{}; //ä¸­é–“ç‚¹é–“ã®è·é›¢
 
-	// •ª—£²ƒxƒNƒgƒ‹Fdirection1_XN
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šdirection1_XN
 	r1 = direction1_X.Length();
 	r2 = fabsf(direction1_XN.Dot(direction2_X)) + fabsf(direction1_XN.Dot(direction2_Y)) + fabsf(direction1_XN.Dot(direction2_Z));
 	l = fabsf(direction1_XN.Dot(distance));
@@ -328,7 +338,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹Fdirection1_YN
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šdirection1_YN
 	r1 = direction1_Y.Length();
 	r2 = fabsf(direction1_YN.Dot(direction2_X)) + fabsf(direction1_YN.Dot(direction2_Y)) + fabsf(direction1_YN.Dot(direction2_Z));
 	l = fabsf(direction1_YN.Dot(distance));
@@ -337,7 +347,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹Fdirection1_ZN
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šdirection1_ZN
 	r1 = direction1_Z.Length();
 	r2 = fabsf(direction1_ZN.Dot(direction2_X)) + fabsf(direction1_ZN.Dot(direction2_Y)) + fabsf(direction1_ZN.Dot(direction2_Z));
 	l = fabsf(direction1_ZN.Dot(distance));
@@ -346,7 +356,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹Fdirection2_XN
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šdirection2_XN
 	r1 = direction2_X.Length();
 	r2 = fabsf(direction2_XN.Dot(direction1_X)) + fabsf(direction2_XN.Dot(direction1_Y)) + fabsf(direction2_XN.Dot(direction1_Z));
 	l = fabsf(direction2_XN.Dot(distance));
@@ -355,7 +365,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹Fdirection2_YN
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šdirection2_YN
 	r1 = direction2_Y.Length();
 	r2 = fabsf(direction2_YN.Dot(direction1_X)) + fabsf(direction2_YN.Dot(direction1_Y)) + fabsf(direction2_YN.Dot(direction1_Z));
 	l = fabsf(direction2_YN.Dot(distance));
@@ -364,7 +374,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹Fdirection2_ZN
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šdirection2_ZN
 	r1 = direction2_Z.Length();
 	r2 = fabsf(direction2_ZN.Dot(direction1_X)) + fabsf(direction2_ZN.Dot(direction1_Y)) + fabsf(direction2_ZN.Dot(direction1_Z));
 	l = fabsf(direction2_ZN.Dot(distance));
@@ -373,9 +383,9 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	static Vector3 crossDirection{}; //ŠOÏ•ª—£²
+	static Vector3 crossDirection{}; //å¤–ç©åˆ†é›¢è»¸
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_X, direction2_X)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_X, direction2_X)
 	crossDirection = direction1_X.Cross(direction2_X);
 	r1 = fabsf(crossDirection.Dot(direction1_Y)) + fabsf(crossDirection.Dot(direction1_Z));
 	r2 = fabsf(crossDirection.Dot(direction2_Y)) + fabsf(crossDirection.Dot(direction2_Z));
@@ -385,7 +395,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_X, direction2_Y)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_X, direction2_Y)
 	crossDirection = direction1_X.Cross(direction2_Y);
 	r1 = fabsf(crossDirection.Dot(direction1_Y)) + fabsf(crossDirection.Dot(direction1_Z));
 	r2 = fabsf(crossDirection.Dot(direction2_X)) + fabsf(crossDirection.Dot(direction2_Z));
@@ -395,7 +405,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_X, direction2_Z)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_X, direction2_Z)
 	crossDirection = direction1_X.Cross(direction2_Z);
 	r1 = fabsf(crossDirection.Dot(direction1_Y)) + fabsf(crossDirection.Dot(direction1_Z));
 	r2 = fabsf(crossDirection.Dot(direction2_X)) + fabsf(crossDirection.Dot(direction2_Y));
@@ -405,7 +415,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_Y, direction2_X)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_Y, direction2_X)
 	crossDirection = direction1_Y.Cross(direction2_X);
 	r1 = fabsf(crossDirection.Dot(direction1_X)) + fabsf(crossDirection.Dot(direction1_Z));
 	r2 = fabsf(crossDirection.Dot(direction2_Y)) + fabsf(crossDirection.Dot(direction2_Z));
@@ -415,7 +425,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_Y, direction2_Y)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_Y, direction2_Y)
 	crossDirection = direction1_Y.Cross(direction2_Y);
 	r1 = fabsf(crossDirection.Dot(direction1_X)) + fabsf(crossDirection.Dot(direction1_Z));
 	r2 = fabsf(crossDirection.Dot(direction2_X)) + fabsf(crossDirection.Dot(direction2_Z));
@@ -425,7 +435,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_Y, direction2_Z)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_Y, direction2_Z)
 	crossDirection = direction1_Y.Cross(direction2_Z);
 	r1 = fabsf(crossDirection.Dot(direction1_X)) + fabsf(crossDirection.Dot(direction1_Z));
 	r2 = fabsf(crossDirection.Dot(direction2_X)) + fabsf(crossDirection.Dot(direction2_Y));
@@ -435,7 +445,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_Z, direction2_X)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_Z, direction2_X)
 	crossDirection = direction1_Z.Cross(direction2_X);
 	r1 = fabsf(crossDirection.Dot(direction1_X)) + fabsf(crossDirection.Dot(direction1_Y));
 	r2 = fabsf(crossDirection.Dot(direction2_Y)) + fabsf(crossDirection.Dot(direction2_Z));
@@ -445,7 +455,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_Z, direction2_Y)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_Z, direction2_Y)
 	crossDirection = direction1_Z.Cross(direction2_Y);
 	r1 = fabsf(crossDirection.Dot(direction1_X)) + fabsf(crossDirection.Dot(direction1_Y));
 	r2 = fabsf(crossDirection.Dot(direction2_X)) + fabsf(crossDirection.Dot(direction2_Z));
@@ -455,7 +465,7 @@ bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Ve
 		return false;
 	}
 
-	// •ª—£²ƒxƒNƒgƒ‹FCross(direction1_Z, direction2_Z)
+	// åˆ†é›¢è»¸ãƒ™ã‚¯ãƒˆãƒ«ï¼šCross(direction1_Z, direction2_Z)
 	crossDirection = direction1_Z.Cross(direction2_Z);
 	r1 = fabsf(crossDirection.Dot(direction1_X)) + fabsf(crossDirection.Dot(direction1_Y));
 	r2 = fabsf(crossDirection.Dot(direction2_X)) + fabsf(crossDirection.Dot(direction2_Y));
@@ -473,59 +483,59 @@ float sphereSwept(const Vector3& pos1, const Vector3& speed1, float r1,
 {
 	static const float noHit = -1.0f;
 
-	static Vector3 endPos1{};       //t = 1.0f’n“_‚Ìpos1‚Ì’†SˆÊ’u
-	static Vector3 endPos2{};       //t = 1.0f’n“_‚Ìpos2‚Ì’†SˆÊ’u
-	static Vector3 startDistance{}; //t = 0.0f’n“_‚Ì’†S“_ŠÔ‚Ì‹——£
-	static Vector3 endDistance{};   //t = 1.0f’n“_‚Ì’†S“_ŠÔ‚Ì‹——£
-	static Vector3 distance{};      //“ñ²ŠÔ‚Ì‹——£
+	static Vector3 endPos1{};       //t = 1.0fåœ°ç‚¹ã®pos1ã®ä¸­å¿ƒä½ç½®
+	static Vector3 endPos2{};       //t = 1.0fåœ°ç‚¹ã®pos2ã®ä¸­å¿ƒä½ç½®
+	static Vector3 startDistance{}; //t = 0.0fåœ°ç‚¹ã®ä¸­å¿ƒç‚¹é–“ã®è·é›¢
+	static Vector3 endDistance{};   //t = 1.0fåœ°ç‚¹ã®ä¸­å¿ƒç‚¹é–“ã®è·é›¢
+	static Vector3 distance{};      //äºŒè»¸é–“ã®è·é›¢
 
-	// t = 0.0f’n“_‚Ì’†S“_ŠÔ‚Ì‹——£‚ÌŒvZ
+	// t = 0.0fåœ°ç‚¹ã®ä¸­å¿ƒç‚¹é–“ã®è·é›¢ã®è¨ˆç®—
 	startDistance = pos2 - pos1;
 
-	// t = 0.0f’n“_‚ÌÕ“Ë”»’è
+	// t = 0.0fåœ°ç‚¹ã®è¡çªåˆ¤å®š
 	if (distance.Length() < (r1 + r2))
 	{
 		return 0.0f;
 	}
 
-	// t = 1.0f’n“_‚Ìpos1‚Ì’†SˆÊ’u‚ÌŒvZ
+	// t = 1.0fåœ°ç‚¹ã®pos1ã®ä¸­å¿ƒä½ç½®ã®è¨ˆç®—
 	endPos1 = pos1 + speed1;
-	// t = 1.0f’n“_‚Ìpos2‚Ì’†SˆÊ’u‚ÌŒvZ
+	// t = 1.0fåœ°ç‚¹ã®pos2ã®ä¸­å¿ƒä½ç½®ã®è¨ˆç®—
 	endPos2 = pos2 + speed2;
-	// t = 1.0f’n“_‚Ì’†S“_ŠÔ‚Ì‹——£‚ÌŒvZ
+	// t = 1.0fåœ°ç‚¹ã®ä¸­å¿ƒç‚¹é–“ã®è·é›¢ã®è¨ˆç®—
 	endDistance = endPos2 - endPos1;
-	// t = 1.0f’n“_‚Ì’†S“_ŠÔ‚Ì‹——£ - t = 0.0f’n“_‚Ì’†S“_ŠÔ‚Ì‹——£
+	// t = 1.0fåœ°ç‚¹ã®ä¸­å¿ƒç‚¹é–“ã®è·é›¢ - t = 0.0fåœ°ç‚¹ã®ä¸­å¿ƒç‚¹é–“ã®è·é›¢
 	distance = endDistance - startDistance;
 
-	static float t = 0.0f; //Õ“Ë‚µ‚½ŠÔ
-	static float p = 0.0f; //distance‚Ì’·‚³‚Ì“ñæ
-	static float q = 0.0f; //startDistance‚Ædistance‚Ì“àÏ
-	static float r = 0.0f; //startDistance‚Ì’·‚³‚Ì“ñæ
+	static float t = 0.0f; //è¡çªã—ãŸæ™‚é–“
+	static float p = 0.0f; //distanceã®é•·ã•ã®äºŒä¹—
+	static float q = 0.0f; //startDistanceã¨distanceã®å†…ç©
+	static float r = 0.0f; //startDistanceã®é•·ã•ã®äºŒä¹—
 
-	// distance‚Ì’·‚³‚Ì“ñæ‚ÌŒvZ
+	// distanceã®é•·ã•ã®äºŒä¹—ã®è¨ˆç®—
 	p = distance.LengthSquared();
 	if (p == 0)
 	{
-		// distance‚Ì’·‚³‚ª0‚È‚çÕ“Ë‚µ‚Ä‚¢‚È‚¢
+		// distanceã®é•·ã•ãŒ0ãªã‚‰è¡çªã—ã¦ã„ãªã„
 		return noHit;
 	}
 
-	// startDistance‚Ì’·‚³‚Ì“ñæ‚ÌŒvZ
+	// startDistanceã®é•·ã•ã®äºŒä¹—ã®è¨ˆç®—
 	r = startDistance.LengthSquared();
-	// startDistance‚Ædistance‚Ì“àÏ‚ÌŒvZ
+	// startDistanceã¨distanceã®å†…ç©ã®è¨ˆç®—
 	q = startDistance.Dot(distance);
 
-	float keep = (q * q) - p * (r - ((r1 + r2) * (r1 + r2))); //ƒ‹[ƒg“à‚ÌŒvZ
+	float keep = (q * q) - p * (r - ((r1 + r2) * (r1 + r2))); //ãƒ«ãƒ¼ãƒˆå†…ã®è¨ˆç®—
 	if (keep < 0)
 	{
-		// ƒ‹[ƒg“à‚ªƒ}ƒCƒiƒX‚Ìê‡‚ÍÕ“Ë‚µ‚È‚¢
+		// ãƒ«ãƒ¼ãƒˆå†…ãŒãƒã‚¤ãƒŠã‚¹ã®å ´åˆã¯è¡çªã—ãªã„
 		return noHit;
 	}
 	else
 	{
-		// Õ“ËŠÔ‚ÌŒvZ
+		// è¡çªæ™‚é–“ã®è¨ˆç®—
 		t = (-q - sqrtf(keep)) / p;
-		// ƒ‹[ƒg“à‚ªƒvƒ‰ƒX‚Å‹‚ß‚½t‚ª0~1‚ÌŠÔ‚É–³‚¢ê‡‚Í®‚ğ•Ï‚¦‚ÄŒvZ‚µ’¼‚·
+		// ãƒ«ãƒ¼ãƒˆå†…ãŒãƒ—ãƒ©ã‚¹ã§æ±‚ã‚ãŸtãŒ0~1ã®é–“ã«ç„¡ã„å ´åˆã¯å¼ã‚’å¤‰ãˆã¦è¨ˆç®—ã—ç›´ã™
 		if (keep > 0 && (t < 0.0f || t > 1.0f))
 		{
 			t = (-q + sqrtf(keep)) / p;
@@ -544,9 +554,9 @@ float sphereSwept(const Vector3& pos1, const Vector3& speed1, float r1,
 
 bool IsPredictCollisionBall(const Vector3& pos1, const Vector3& speed1, float r1, const Vector3& pos2, const Vector3& speed2, float r2)
 {
-	// “ñ“_ŠÔ‚Ì‹——£
+	// äºŒç‚¹é–“ã®è·é›¢
 	static Vector3 distance{};
-	// ’†S“_ŠÔ‚Ì‹——£
+	// ä¸­å¿ƒç‚¹é–“ã®è·é›¢
 	distance = pos1 - pos2;
 
 	return distance.Length() < ((r1 + speed1.Length()) + (r2 + speed2.Length()));

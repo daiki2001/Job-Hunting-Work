@@ -1,4 +1,5 @@
 ﻿#include "BlockManager.h"
+#include "Area.h"
 #include "./Math/Collision/Collision.h"
 
 Player* BlockManager::player = Player::Get();
@@ -66,10 +67,15 @@ void BlockManager::Update()
 
 	const int playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
 
+	if (playerPos == FUNCTION_ERROR)
+	{
+		return;
+	}
+
 	switch (playerSurroundingsBlock[playerBlock])
 	{
 	case TypeId::WALL:
-		PlayerPushBack();
+		PlayerPushBack(playerPos);
 		break;
 	case TypeId::SWITCH:
 		SwitchPush(playerPos);
@@ -140,7 +146,7 @@ int BlockManager::CreateBlock(TypeId typeId)
 		return static_cast<int>(blocks.size() - 1);
 	}
 
-	return Engine::FUNCTION_ERROR;
+	return FUNCTION_ERROR;
 }
 
 void BlockManager::ChengeBlock(int index, TypeId typeId)
@@ -160,21 +166,22 @@ void BlockManager::AllDeleteBlock()
 	blocks.clear();
 }
 
-void BlockManager::PlayerPushBack() const
+void BlockManager::PlayerPushBack(int index) const
 {
+	float a = 0;
 	switch (player->GetDirection())
 	{
 	case Player::Direction::LEFT:
-		player->pos.x += Player::SPEED;
+		player->pos.x += 1.0f - (player->pos.x - blocks[index].pos.x);
 		break;
 	case Player::Direction::UP:
-		player->pos.y -= Player::SPEED;
+		player->pos.y -= 1.0f + (player->pos.y - blocks[index].pos.y);
 		break;
 	case Player::Direction::RIGHT:
-		player->pos.x -= Player::SPEED;
+		player->pos.x -= 1.0f + (player->pos.x - blocks[index].pos.x);
 		break;
 	case Player::Direction::DOWN:
-		player->pos.y += Player::SPEED;
+		player->pos.y += 1.0f - (player->pos.y - blocks[index].pos.y);
 		break;
 	default:
 		break;
@@ -191,63 +198,83 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	const int size = (radius * 2 + 1) * (radius * 2 + 1);
 	std::vector<int> surroundingBlock = {};
 	int playerPos = -1;
+	Vector3 playerSize = {};
+
+	if ((player->GetDirection() == Player::Direction::UP) || (player->GetDirection() == Player::Direction::DOWN))
+	{
+		playerSize = Player::COLLISION_SIZE / 2.0f;
+	}
+	else
+	{
+		playerSize = Vector3(Player::COLLISION_SIZE.y, Player::COLLISION_SIZE.x, Player::COLLISION_SIZE.z) / 2.0f;
+	}
+
+	// 場外判定
+	if (Collision::IsAABBToAABBCollision(
+		blocks[0].pos - Vector3(0.5f, -0.5f, 0.5f),
+		blocks[0].pos + Vector3(0.5f, -0.5f, 0.5f) +
+		Vector3(Area::STAGE_WIDTH - 1.0f, -(Area::STAGE_HEIGHT - 1.0f), 0.0f),
+		player->pos - playerSize,
+		player->pos + playerSize) == false)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (surroundingBlockType == nullptr)
+			{
+				break;
+			}
+
+			surroundingBlockType[i] = TypeId::WALL;
+		}
+		return FUNCTION_ERROR;
+	}
 
 	for (int i = 0; i < size; i++)
 	{
-		surroundingBlock.push_back(Engine::FUNCTION_ERROR);
+		surroundingBlock.push_back(FUNCTION_ERROR);
 	}
 
-	for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
+	const float playerUp = (player->pos + playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).y;
+	const float playerDown = (player->pos - playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).y;
+	const float playerLeft = (player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).x;
+	const float playerRight = (player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).x;
+
+	if ((player->GetDirection() == Player::Direction::UP) || (player->GetDirection() == Player::Direction::LEFT))
 	{
-		if (i == 0)
+		for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
 		{
-			for (int y = static_cast<int>(player->pos.y) - radius;
-				 (y < static_cast<int>(player->pos.y) + radius) && (y < static_cast<int>(blocks[i].pos.y));
-				 y++)
+			// 当たり判定
+			if ((playerUp > (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).y &&
+				 playerDown < (blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).y) &&
+				(playerLeft < (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).x &&
+				 playerRight >(blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).x))
 			{
-				for (int x = 0; x < radius * 2 + 1; x++)
-				{
-					j++;
-				}
+				surroundingBlock[j++] = i;
+			}
+
+			if (j >= size)
+			{
+				break;
 			}
 		}
-
-		if (blocks[i].pos.x == blocks[0].pos.x)
+	}
+	else
+	{
+		for (int i = static_cast<int>(blocks.size()) - 1, j = 0; i >= 0; i--)
 		{
-			for (int x = static_cast<int>(player->pos.x) - radius;
-				 (x < static_cast<int>(player->pos.x) + radius) && (x < static_cast<int>(blocks[i].pos.x));
-				 x++)
+			// 当たり判定
+			if ((playerUp > (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).y &&
+				 playerDown < (blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).y) &&
+				(playerLeft < (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).x &&
+				 playerRight >(blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).x))
 			{
-				j++;
+				surroundingBlock[j++] = i;
 			}
-		}
 
-		if (j >= size)
-		{
-			break;
-		}
-
-		if (Collision::IsAABBToAABBCollision(blocks[i].pos - Vector3(0.5f, 0.5f, 0.5f),
-											 blocks[i].pos + Vector3(0.5f, 0.5f, 0.5f),
-											 player->pos - Vector3(0.5f, 0.5f, 0.5f) * static_cast<float>(radius),
-											 player->pos + Vector3(0.5f, 0.5f, 0.5f) * static_cast<float>(radius)))
-		{
-			surroundingBlock[j++] = i;
-		}
-
-		if (blocks[i].pos.x == blocks[blocks.size() - 1].pos.x)
-		{
-			for (int x = static_cast<int>(player->pos.x) + radius;
-				 (x > static_cast<int>(player->pos.x) - radius) && (x > static_cast<int>(blocks[i].pos.x) / BlockType::WIDTH);
-				 x--)
+			if (j >= size)
 			{
-				j++;
+				break;
 			}
-		}
-
-		if (j >= size)
-		{
-			break;
 		}
 	}
 

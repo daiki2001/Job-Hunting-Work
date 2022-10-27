@@ -18,6 +18,7 @@ private: //エイリアス
 	
 public: //定数
 	static const float SPEED;
+	static const Vector3 COLLISION_SIZE;
 
 public: //サブクラス
 	enum Direction
@@ -58,4 +59,8 @@ public: //メンバ関数
 	const unsigned int GetKeyCount() const { return keyCount; }
 private:
 	void Move(const InputManager* const input);
+	void MoveUp(const InputManager* const input);
+	void MoveDown(const InputManager* const input);
+	void MoveLeft(const InputManager* const input);
+	void MoveRight(const InputManager* const input);
 };

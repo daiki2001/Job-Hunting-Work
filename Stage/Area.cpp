@@ -69,25 +69,29 @@ void Area::Update()
 	{
 		int playerPos = block_mgr.GetSurroundingBlock(0, nullptr);
 
-		if (playerPos % 15 == 0 && playerPos / 15 >= 2 && playerPos / 15 <= 4 &&
+		if ((playerPos == FUNCTION_ERROR ||
+			 (playerPos % 15 == 0 && playerPos / 15 >= 2 && playerPos / 15 <= 4)) &&
 			door[DoorNum::LEFT].GetStatus() == Door::DoorStatus::KEY_CLOSE)
 		{
 			door[DoorNum::LEFT].KeyOpen();
 			Player::Get()->UseKey();
 		}
-		if (playerPos % 15 == 14 && playerPos / 15 >= 2 && playerPos / 15 <= 4 &&
+		if ((playerPos == FUNCTION_ERROR ||
+			 (playerPos % 15 == 14 && playerPos / 15 >= 2 && playerPos / 15 <= 4)) &&
 			door[DoorNum::RIGHT].GetStatus() == Door::DoorStatus::KEY_CLOSE)
 		{
 			door[DoorNum::RIGHT].KeyOpen();
 			Player::Get()->UseKey();
 		}
-		if (playerPos >= 6 && playerPos <= 8 &&
+		if ((playerPos == FUNCTION_ERROR ||
+			 (playerPos >= 6 && playerPos <= 8)) &&
 			door[DoorNum::UP].GetStatus() == Door::DoorStatus::KEY_CLOSE)
 		{
 			door[DoorNum::UP].KeyOpen();
 			Player::Get()->UseKey();
 		}
-		if (playerPos >= 96 && playerPos <= 98 &&
+		if ((playerPos == FUNCTION_ERROR ||
+			 (playerPos >= 96 && playerPos <= 98)) &&
 			door[DoorNum::DOWN].GetStatus() == Door::DoorStatus::KEY_CLOSE)
 		{
 			door[DoorNum::DOWN].KeyOpen();

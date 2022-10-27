@@ -81,7 +81,7 @@ public: //メンバ関数
 	int GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const;
 private:
 	// プレイヤーの押し戻し処理
-	void PlayerPushBack() const;
+	void PlayerPushBack(int index) const;
 	// スイッチが押された時の処理
 	void SwitchPush(const size_t& blockNo);
 };

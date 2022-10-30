@@ -53,6 +53,8 @@ public: //メンバ関数
 
 	// ステージ読み込み
 	int LoadArea(FILE* fileHandle);
+	// ステージ書き込み
+	int WriteArea(FILE* fileHandle);
 
 	const bool IsGoal() { return block_mgr.GetGoal(); }
 

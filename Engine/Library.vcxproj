@@ -185,6 +185,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="File\LoadFile.h" />
+    <ClInclude Include="File\WriteFile.h" />
     <ClInclude Include="Header\Audio.h" />
     <ClInclude Include="Header\BaseScene.h" />
     <ClInclude Include="Header\Camera.h" />
@@ -197,7 +199,6 @@
     <ClInclude Include="Header\Error.h" />
     <ClInclude Include="Header\FbxLoader.h" />
     <ClInclude Include="Header\Input.h" />
-    <ClInclude Include="Header\LoadFile.h" />
     <ClInclude Include="Header\LoadTex.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Parameter.h" />
@@ -225,6 +226,8 @@
     <ClInclude Include="ShaderMgr\Shaders.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="File\LoadFile.cpp" />
+    <ClCompile Include="File\WriteFile.cpp" />
     <ClCompile Include="Math\Collision\Collision.cpp" />
     <ClCompile Include="Math\Collision\CollisionManager.cpp" />
     <ClCompile Include="Math\Collision\CollisionPrimitive.cpp" />
@@ -249,7 +252,6 @@
     <ClCompile Include="Source\EngineGeneral.cpp" />
     <ClCompile Include="Source\FbxLoader.cpp" />
     <ClCompile Include="Source\Input.cpp" />
-    <ClCompile Include="Source\LoadFile.cpp" />
     <ClCompile Include="Source\LoadTex.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Parameter.cpp" />

@@ -122,8 +122,8 @@ int Area::LoadArea(FILE* fileHandle)
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
 	int doorSetting[4] = { Door::DoorStatus::OPEN };
 
-	Load::LoadMapChip(fileHandle, doorSetting, 4, -2);
-	Load::LoadMapChip(fileHandle, mapArray, sizeof(mapArray) / sizeof(mapArray[0]));
+	File::LoadMapChip(fileHandle, doorSetting, 4, -2);
+	File::LoadMapChip(fileHandle, mapArray, sizeof(mapArray) / sizeof(mapArray[0]));
 
 	block_mgr.AllDeleteBlock();
 
@@ -168,6 +168,29 @@ int Area::LoadArea(FILE* fileHandle)
 		doorInit[i] = door[i];
 	}
 
+	return 0;
+}
+
+int Area::WriteArea(FILE* fileHandle)
+{
+	// ドア・壁
+	int doorStatus[4] = {};
+	for (size_t i = 0; i < 4; i++)
+	{
+		doorStatus[i] = static_cast<int>(door[i].GetStatus());
+	}
+	File::WriteCSV(fileHandle, doorStatus, 4);
+
+	// ブロック情報
+	for (int i = 0; i < STAGE_HEIGHT; i++)
+	{
+		int blocks[STAGE_WIDTH] = {};
+		for (int j = 0; j < STAGE_WIDTH; j++)
+		{
+			blocks[j] = static_cast<int>(block_mgr.GetBlock(i * STAGE_WIDTH + j).typeId);
+		}
+		File::WriteCSV(fileHandle, blocks, STAGE_WIDTH);
+	}
 	return 0;
 }
 

@@ -28,6 +28,11 @@ private: // 静的メンバ変数
 	// 1ループ(フレーム)前のゲームパッド情報
 	static DIJOYSTATE oldGamepad;
 
+	// コントロールキーが押されているかどうか
+	static bool isControl;
+	// 1ループ(フレーム)前にコントロールキーが押されていたかどうか
+	static bool isOldControl;
+
 public: // 静的メンバ関数
 	// 初期化
 	static void Init();
@@ -45,4 +50,11 @@ public: // 静的メンバ関数
 	static bool IsGamepadTrigger(DirectInput::GamepadInputType gamepadType);
 	// キーから離れたかどうか
 	static bool IsGamepadReturn(DirectInput::GamepadInputType gamepadType);
+
+	// コントロールキーが押されているかどうか
+	static bool IsControlKey() { return IsKey(DIK_LCONTROL) || IsKey(DIK_RCONTROL); }
+	// コントロールキーが押されたかどうか
+	static bool IsControlKeyTrigger() { return IsKeyTrigger(DIK_LCONTROL) || IsKeyTrigger(DIK_RCONTROL); }
+	// コントロールキーから離れたかどうか
+	static bool IsControlKeyReturn() { return IsKeyReturn(DIK_LCONTROL) || IsKeyReturn(DIK_RCONTROL); }
 };

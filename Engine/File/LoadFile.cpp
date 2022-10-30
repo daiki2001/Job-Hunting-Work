@@ -1,9 +1,9 @@
-﻿#include "./Header/LoadFile.h"
+﻿#include "LoadFile.h"
 #include "./Header/Error.h"
 
 namespace Engine
 {
-namespace Load
+namespace File
 {
 int LoadMapChip(const char* filePath, int* mapArray, int mapSize, int LoadStopNumber)
 {
@@ -133,5 +133,5 @@ int LoadMapChip(FILE* fileHandle, int* mapArray, int mapSize, int LoadStopNumber
 
 	return 0;
 }
-} //Load
+} //File
 } //Engine

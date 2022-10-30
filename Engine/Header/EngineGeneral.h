@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Math/EngineMath.h"
-#include "LoadFile.h"
+#include "./File/LoadFile.h"
+#include "./File/WriteFile.h"
 #include "Error.h"
 
 /*定数*/

@@ -72,4 +72,6 @@ public: //メンバ関数
 
 	// ステージ読み込み
 	int LoadStage(const char* filePath = nullptr);
+	// ステージ書き込み
+	int WirteStage(const char* filePath = nullptr);
 };

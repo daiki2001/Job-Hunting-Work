@@ -95,8 +95,28 @@ int Stage::LoadStage(const char* filePath)
 	for (size_t i = 0; i < roomNum; i++)
 	{
 		room.emplace_back();
-		Load::LoadMapChip(fileHandle, room[i].connection, 4, -2);
+		File::LoadMapChip(fileHandle, room[i].connection, 4, -2);
 		room.back().area.LoadArea(fileHandle);
+	}
+
+	fclose(fileHandle);
+	return 0;
+}
+
+int Stage::WirteStage(const char* filePath)
+{
+	FILE* fileHandle;
+	File::WriteFileOpen(&fileHandle, filePath);
+
+	// 部屋数
+	fprintf_s(fileHandle, "%zu\n", room.size());
+	// 各部屋の情報
+	for (size_t i = 0; i < room.size(); i++)
+	{
+		// 部屋との繋がり
+		File::WriteCSV(fileHandle, room[i].connection, 4);
+
+		room[i].area.WriteArea(fileHandle);
 	}
 
 	fclose(fileHandle);

@@ -31,7 +31,6 @@ void Player::Init(DrawPolygon* const draw)
 {
 	this->draw = draw;
 	object = this->draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
-	//object = this->draw->Create3Dbox(COLLISION_SIZE);
 }
 
 void Player::Update(const InputManager* const input)
@@ -41,17 +40,6 @@ void Player::Update(const InputManager* const input)
 
 void Player::Draw(int offsetX, int offsetY)
 {
-	//DirectDrawing::ChangeOBJShader();
-	//draw->Draw(
-	//	object,
-	//	pos + Vector3(static_cast<float>(offsetX),
-	//				  static_cast<float>(offsetY),
-	//				  0.0f),
-	//	Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
-	//	scale_xyz(1.0f),
-	//	DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-	//	Parameter::Get("white1x1")
-	//);
 	DirectDrawing::ChangeMaterialShader();
 	draw->DrawOBJ(
 		object,

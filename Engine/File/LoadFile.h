@@ -4,7 +4,7 @@
 /*関数*/
 namespace Engine
 {
-namespace Load
+namespace File
 {
 /// <summary>
 /// マップチップのファイル読み込み
@@ -25,5 +25,5 @@ int LoadMapChip(const char* filePath, int* mapArray, int mapSize, int LoadStopNu
 /// <param name="LoadStopNumber"> ここに指定された値がヒットすると読み込みを終了する </param>
 /// <returns> 0で成功、0以外で失敗 </returns>
 int LoadMapChip(FILE* fileHandle, int* mapArray, int mapSize, int LoadStopNumber = -1);
-} //Load
+} //File
 } //Engine

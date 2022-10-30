@@ -10,8 +10,7 @@ int debugTex = FUNCTION_ERROR;
 }
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
-const std::string GameScene::stageDir =
-	WStringToString(GameScene::gameResourcesDir) + "Stage/";
+const std::string GameScene::stageDir = resourcesDirectory + "Stage/";
 Player* GameScene::player = Player::Get();
 Stage* GameScene::stage = Stage::Get();
 bool GameScene::isClear = false;

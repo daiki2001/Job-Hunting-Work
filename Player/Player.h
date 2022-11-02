@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
+#include "Item.h"
 #include "../InputManager.h"
 #include "./Header/EngineGeneral.h"
 
@@ -38,7 +39,8 @@ private:
 	int object;          //プレイヤーのオブジェクト
 
 	/*インベントリ*/
-	unsigned int keyCount; //所持している鍵の数
+	Item key; //鍵
+	Item bomb; //爆弾
 
 public: //メンバ関数
 	// 初期化処理
@@ -47,16 +49,23 @@ public: //メンバ関数
 	void Update(const InputManager* const input);
 	// 描画処理
 	void Draw(int offsetX = 0, int offsetY = 0);
+	// 描画処理(アイテムインベントリ)
+	void DrawInventory(int offsetX = 0, int offsetY = 0);
 	// リセット
 	void Reset();
 
 	// 鍵の獲得
-	void AcquisitionKey() { keyCount++; }
+	void AcquisitionKey() { key.Acquisition(); }
+	// 爆弾の獲得
+	void AcquisitionBomb() { bomb.Acquisition(); }
 	// 鍵の使用
-	void UseKey() { if(keyCount > 0) keyCount--; }
+	void UseKey() { key.Use(); }
+	// 爆弾の使用
+	void UseBomb() { bomb.Use(); }
 
 	const Direction GetDirection() const { return direction; }
-	const unsigned int GetKeyCount() const { return keyCount; }
+	const unsigned int GetKeyCount() const { return key.GetCount(); }
+	const unsigned int GetBombCount() const { return bomb.GetCount(); }
 private:
 	void Move(const InputManager* const input);
 	void MoveUp(const InputManager* const input);

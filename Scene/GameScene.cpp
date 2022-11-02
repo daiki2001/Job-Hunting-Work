@@ -2,7 +2,6 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
-#include "./Header/Parameter.h"
 
 namespace
 {
@@ -41,10 +40,6 @@ void GameScene::Init()
 	if (clear == FUNCTION_ERROR)
 	{
 		clear = draw->LoadTextrue((gameResourcesDir + L"Clear.png").c_str());
-	}
-	if (debugTex == FUNCTION_ERROR)
-	{
-		debugTex = Parameter::Get("white1x1");
 	}
 
 	player->Init(draw);
@@ -125,22 +120,16 @@ void GameScene::Draw()
 	DirectDrawing::ChangeSpriteShader();
 	if (isClear)
 	{
-		draw->DrawTextrue(w->windowWidth / 2.0f, w->windowHeight / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear, DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+		draw->DrawTextrue(w->windowWidth / 2.0f, w->windowHeight / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,
+						  DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
 	}
 	else
 	{
-		draw->DrawTextrue(0.0f, 0.0f, 16.0f * 10.0f, 32.0f, 0.0f, debugTex,
-						  DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
-		draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-						 "KeyCount:%d", player->GetKeyCount());
+		player->DrawInventory();
 
-		draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 1.0f), 16.0f * 18.0f, 32.0f, 0.0f, debugTex,
-						  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 		draw->DrawString(0.0f, w->windowHeight - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "Move:WASD or Arrow");
 	}
-	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 0.0f), 16.0f * 12.0f, 32.0f, 0.0f, debugTex,
-					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Action:Space");
 

@@ -1,12 +1,6 @@
 ﻿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
-#include "./Header/Parameter.h"
-
-namespace
-{
-int debugTex = FUNCTION_ERROR;
-}
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 InputManager* StageEditorScene::inputMgr = InputManager::Get();
@@ -46,10 +40,6 @@ void StageEditorScene::Init()
 	if (cursor == FUNCTION_ERROR)
 	{
 		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
-	}
-	if (debugTex == FUNCTION_ERROR)
-	{
-		debugTex = Parameter::Get("white1x1");
 	}
 
 	Stage::AllDeleteRoom();
@@ -176,7 +166,6 @@ void StageEditorScene::Draw()
 		break;
 	}
 
-	draw->DrawTextrue(0.0f, 0.0f, 16.0f * 11.0f, 32.0f, 0.0f, debugTex, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.5f });
 	if (cursorState == CursorState::BLOCKS)
 	{
 		draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
@@ -193,24 +182,14 @@ void StageEditorScene::Draw()
 		}
 	}
 
-	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 4.0f), 16.0f * 9.0f, 32.0f, 0.0f, debugTex,
-					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Move:WASD");
-	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 3.0f), 16.0f * 12.0f, 32.0f, 0.0f, debugTex,
-					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Select:Arrow");
-	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 2.0f), 16.0f * 14.0f, 32.0f, 0.0f, debugTex,
-					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Decision:Space");
-	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 1.0f), 16.0f * 13.0f, 32.0f, 0.0f, debugTex,
-					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Save:Ctrl + S");
-	draw->DrawTextrue(0.0f, w->windowHeight - (32.0f * 0.0f), 16.0f * 8.0f, 32.0f, 0.0f, debugTex,
-					  DirectX::XMFLOAT2(0.0f, 1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Title:F1");
 

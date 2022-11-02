@@ -12,7 +12,8 @@ Player::Player() :
 	pos{},
 	direction(Player::Direction::UP),
 	object(Engine::FUNCTION_ERROR),
-	keyCount(0)
+	key(100),
+	bomb(100)
 {
 	Reset();
 }
@@ -31,6 +32,8 @@ void Player::Init(DrawPolygon* const draw)
 {
 	this->draw = draw;
 	object = this->draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
+
+	Item::StaticInit(this->draw);
 }
 
 void Player::Update(const InputManager* const input)
@@ -52,10 +55,17 @@ void Player::Draw(int offsetX, int offsetY)
 	);
 }
 
+void Player::DrawInventory(int offsetX, int offsetY)
+{
+	key.Draw("Key", offsetX, 0 + offsetY);
+	bomb.Draw("Bomb", offsetX, 32 + offsetY);
+}
+
 void Player::Reset()
 {
 	pos = { 7.0f, -6.0f, 0.0f };
-	keyCount = 0;
+	key.Reset();
+	bomb.Reset();
 }
 
 void Player::Move(const InputManager* const input)

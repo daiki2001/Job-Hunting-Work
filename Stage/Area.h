@@ -60,6 +60,7 @@ public: //メンバ関数
 
 	BlockManager* GetBlockManager() { return &block_mgr; }
 	Door::DoorStatus GetDoorStatus(DoorNum num) { return door[num].GetStatus(); }
+	Door& GetDoor(DoorNum num) { return door[num]; }
 
 	void SetDoorInit(Door doors[4]);
 	void SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,

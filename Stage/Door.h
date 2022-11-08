@@ -45,9 +45,10 @@ public: //メンバ関数
 
 	void Open() { if (status == DoorStatus::CLOSE) status = DoorStatus::OPEN; }
 	void KeyOpen() { if (status == DoorStatus::KEY_CLOSE) status = DoorStatus::OPEN; }
+	void BreakWall() { if (status == DoorStatus::BREAK_WALL) status = DoorStatus::OPEN; }
 
 	// 扉の状態の取得
-	DoorStatus GetStatus() { return status; }
+	DoorStatus GetStatus() const { return status; }
 
 	// 扉の状態の設定
 	void SetStatus(DoorStatus status)

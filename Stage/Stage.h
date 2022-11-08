@@ -74,4 +74,11 @@ public: //メンバ関数
 	int LoadStage(const char* filePath = nullptr);
 	// ステージ書き込み
 	int WirteStage(const char* filePath = nullptr);
+
+	Area& GetArea()
+	{
+		static Area defArea = {};
+		if (room.size() == 0) return defArea;
+		return room[nowRoom].area;
+	}
 };

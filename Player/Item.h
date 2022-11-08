@@ -3,24 +3,28 @@
 
 class Item
 {
-public: //静的メンバ変数
+protected: //静的メンバ変数
 	static DrawPolygon* draw;
 
 public: //静的メンバ関数
-	static void StaticInit(DrawPolygon* const draw) { Item::draw = draw; }
+	static void StaticInit(DrawPolygon* const draw);
 
-private: //メンバ変数
+public: //メンバ変数
+	int graph; //画像情報
+private:
 	unsigned int count;    //所持数
 	unsigned int maxCount; //アイテムの上限
 
 public: //メンバ関数
 	Item(unsigned int maxCount, unsigned int count = 0);
-	~Item() = default;
+	virtual ~Item() = default;
 
-	// 描画
-	void Draw(const char* type, int offsetX = 0, int offsetY = 0);
+	// 描画処理
+	virtual void Draw(int offsetX = 0, int offsetY = 0) {}
 	// リセット
 	void Reset() { count = 0; }
+	// 所持数の表示
+	void DrawInfo(const char* type, int offsetX = 0, int offsetY = 0);
 
 	// アイテムの入手
 	void Acquisition() { if (count < maxCount) count++; }

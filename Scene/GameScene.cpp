@@ -3,11 +3,6 @@
 #include "InputManager.h"
 #include "./Header/Camera.h"
 
-namespace
-{
-int debugTex = FUNCTION_ERROR;
-}
-
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 const std::string GameScene::stageDir = resourcesDirectory + "Stage/";
 Player* GameScene::player = Player::Get();
@@ -127,8 +122,10 @@ void GameScene::Draw()
 	{
 		player->DrawInventory();
 
+		draw->DrawString(0.0f, w->windowHeight - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "Move:WASD");
 		draw->DrawString(0.0f, w->windowHeight - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-						 "Move:WASD or Arrow");
+						 "SelectAction:Arrow");
 	}
 	draw->DrawString(0.0f, w->windowHeight - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Action:Space");

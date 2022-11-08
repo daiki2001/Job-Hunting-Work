@@ -75,6 +75,9 @@
     <ClCompile Include="Player\Item.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="Player\Bomb.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\GameScene.h">
@@ -111,6 +114,9 @@
       <Filter>Player</Filter>
     </ClInclude>
     <ClInclude Include="Player\Item.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\Bomb.h">
       <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>

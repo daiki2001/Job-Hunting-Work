@@ -2,6 +2,7 @@
 #include "./Stage/Stage.h"
 #include "./Math/Collision/Collision.h"
 #include "./Header/Parameter.h"
+#include "LoadGraph.h"
 
 namespace
 {
@@ -22,7 +23,7 @@ void Bomb::Init()
 {
 	if (graph == FUNCTION_ERROR)
 	{
-		graph = draw->LoadTextrue(L"Resources/Game/Block/Bomb.png");
+		graph = Parameter::Get(LoadGraph::BOMB.c_str());
 	}
 	if (object == FUNCTION_ERROR)
 	{

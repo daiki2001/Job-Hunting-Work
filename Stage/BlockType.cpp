@@ -23,8 +23,7 @@ BlockType::~BlockType()
 {
 }
 
-int BlockType::Create(const wchar_t* filename, const Matrix4& rotation,
-					  const Vector3& scale, const XMFLOAT4& color)
+int BlockType::Create(const wchar_t* filename, const Matrix4& rotation, const Vector3& scale, const XMFLOAT4& color)
 {
 	if (filename == nullptr)
 	{
@@ -49,8 +48,7 @@ int BlockType::Create(const wchar_t* filename, const Matrix4& rotation,
 	return graph;
 }
 
-int BlockType::Create(const char* filename, const Matrix4& rotation,
-					  const Vector3& scale, const XMFLOAT4& color)
+int BlockType::Create(const char* filename, const Matrix4& rotation, const Vector3& scale, const XMFLOAT4& color)
 {
 	graph = FUNCTION_ERROR;
 
@@ -58,6 +56,30 @@ int BlockType::Create(const char* filename, const Matrix4& rotation,
 	{
 		auto resDir = blockResourcesDir + ExtractDirectory(filename);
 		blockBox = draw->CreateOBJModel((blockResourcesDir + filename).c_str(), resDir.c_str());
+	}
+
+	this->rotation = rotation;
+	this->scale = scale;
+	this->color = color;
+
+	return blockBox;
+}
+
+int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const Vector3& scale, const XMFLOAT4& color)
+{
+	if (isObject)
+	{
+		graph = FUNCTION_ERROR;
+		blockBox = number;
+	}
+	else
+	{
+		graph = number;
+
+		if (blockBox == FUNCTION_ERROR)
+		{
+			blockBox = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
+		}
 	}
 
 	this->rotation = rotation;

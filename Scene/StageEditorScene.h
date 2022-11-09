@@ -34,6 +34,7 @@ private: //メンバ変数
 
 	int background; //背景画像
 	int cursor; //カーソル画像
+	int frame; //フレーム画像
 
 public: //メンバ関数
 	StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger);

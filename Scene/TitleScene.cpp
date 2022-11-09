@@ -2,6 +2,7 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Parameter.h"
+#include "LoadGraph.h"
 
 namespace
 {
@@ -47,6 +48,8 @@ void TitleScene::Init()
 	{
 		editer = draw->LoadTextrue((titleResourcesDir + L"Editer.png").c_str());
 	}
+
+	//LoadGraph::Get()->Load(draw);
 }
 
 void TitleScene::Update()

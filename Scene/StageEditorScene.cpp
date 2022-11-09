@@ -1,6 +1,8 @@
 ﻿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
+#include "./Header/Parameter.h"
+#include "LoadGraph.h"
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 InputManager* StageEditorScene::inputMgr = InputManager::Get();
@@ -14,7 +16,8 @@ StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger
 	doorIndex(1),
 	cursorState(CursorState::BLOCKS),
 	background(Engine::FUNCTION_ERROR),
-	cursor(Engine::FUNCTION_ERROR)
+	cursor(Engine::FUNCTION_ERROR),
+	frame(Engine::FUNCTION_ERROR)
 {
 	Init();
 	stage->Reset();
@@ -30,6 +33,7 @@ StageEditorScene::~StageEditorScene()
 
 void StageEditorScene::Init()
 {
+	LoadGraph::Get()->Load(draw);
 	stage->StaticInit(draw);
 
 	// 背景画像の読み込み
@@ -37,9 +41,15 @@ void StageEditorScene::Init()
 	{
 		background = draw->LoadTextrue((resourcesDir + L"./Game/background.png").c_str());
 	}
+	// カーソル画像の読み込み
 	if (cursor == FUNCTION_ERROR)
 	{
-		cursor = draw->LoadTextrue((resourcesDir + L"UI/cursor.png").c_str());
+		cursor = draw->LoadTextrue((resourcesDir + L"./UI/Cursor.png").c_str());
+	}
+	// フレーム画像の読み込み
+	if (frame == FUNCTION_ERROR)
+	{
+		frame = draw->LoadTextrue((resourcesDir + L"./UI/Frame.png").c_str());
 	}
 
 	Stage::AllDeleteRoom();
@@ -135,6 +145,8 @@ void StageEditorScene::Draw()
 
 	// 前景
 	DirectDrawing::ChangeSpriteShader();
+
+	// ブロック配置用カーソル
 	switch (cursorState)
 	{
 	case CursorState::BLOCKS:
@@ -166,19 +178,113 @@ void StageEditorScene::Draw()
 		break;
 	}
 
+	static const int blank = 5;
+	static const int frameSize = 64;
+
 	if (cursorState == CursorState::BLOCKS)
 	{
-		draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Block:%d", blockIndex);
+		// ブロック選択
+		for (int i = 0; i < BlockManager::TypeId::MAX; i++)
+		{
+			if (i == blockIndex)
+			{
+				int a = draw->SetDrawBlendMode(ShaderManager::BlendMode::SUB);
+				DirectDrawing::ChangeSpriteShader();
+			}
+			draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f, frameSize, frameSize, 0.0f, frame);
+			if (i == blockIndex)
+			{
+				draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
+				DirectDrawing::ChangeSpriteShader();
+			}
+
+			switch (i)
+			{
+			case BlockManager::TypeId::WALL:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::WALL_BLOCK.c_str()));
+				break;
+			case BlockManager::TypeId::GOAL:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::GOAL.c_str()));
+				break;
+			case BlockManager::TypeId::SWITCH:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::SWITCH_UI.c_str()));
+				break;
+			case BlockManager::TypeId::KEY:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::KEY.c_str()));
+				break;
+			case BlockManager::TypeId::BOMB:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::BOMB.c_str()));
+				break;
+			default:
+				break;
+			}
+		}
 	}
 	else
 	{
+		// ドア・壁選択
+		for (int i = 0; i < Door::DoorStatus::MAX; i++)
+		{
+			if (i == doorIndex)
+			{
+				int a = draw->SetDrawBlendMode(ShaderManager::BlendMode::SUB);
+				DirectDrawing::ChangeSpriteShader();
+			}
+			draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f, frameSize, frameSize, 0.0f, frame);
+			if (i == doorIndex)
+			{
+				draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
+				DirectDrawing::ChangeSpriteShader();
+			}
+
+			switch (i)
+			{
+			case Door::DoorStatus::CLOSE:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get("white1x1"));
+				break;
+			case Door::DoorStatus::WALL:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::WALL_UI.c_str()));
+				break;
+			case Door::DoorStatus::KEY_CLOSE:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::KEY_CLOSE.c_str()));
+				break;
+			case Door::DoorStatus::BREAK_WALL:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::BREAK_WALL_UI.c_str()));
+				break;
+			case Door::DoorStatus::ROOM_CREATE:
+				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
+								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
+								  Parameter::Get(LoadGraph::CREATE_ROOM.c_str()));
+				break;
+			default:
+				break;
+			}
+		}
 		if (doorIndex == Door::DoorStatus::ROOM_CREATE)
 		{
-			draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Create Room");
+			//draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Create Room");
 		}
 		else
 		{
-			draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Door:%d", doorIndex);
+			//draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Door:%d", doorIndex);
 		}
 	}
 

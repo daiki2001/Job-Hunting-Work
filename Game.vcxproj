@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LoadGraph.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player\Bomb.cpp" />
     <ClCompile Include="Player\Item.cpp" />
@@ -182,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LoadGraph.h" />
     <ClInclude Include="Player\Bomb.h" />
     <ClInclude Include="Player\Item.h" />
     <ClInclude Include="Player\Player.h" />

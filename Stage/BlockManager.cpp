@@ -1,6 +1,8 @@
 ﻿#include "BlockManager.h"
 #include "Area.h"
 #include "./Math/Collision/Collision.h"
+#include "./Header/Parameter.h"
+#include "LoadGraph.h"
 
 Player* BlockManager::player = Player::Get();
 
@@ -43,10 +45,10 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.back().Create();
 
 	blockType.push_back(BlockType(TypeId::WALL, draw));
-	blockType.back().Create(L"WallBlock.png");
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false);
 
 	blockType.push_back(BlockType(TypeId::GOAL, draw));
-	blockType.back().Create(L"Goal.png");
+	blockType.back().Create(Parameter::Get(LoadGraph::GOAL.c_str()), false);
 
 	blockType.push_back(BlockType(TypeId::SWITCH, draw));
 	blockType.back().Create("Switch.obj");
@@ -58,7 +60,7 @@ void BlockManager::Init(DrawPolygon* const draw)
 							{ 1.0f, 1.0f, 0.0f, 1.0f });
 
 	blockType.push_back(BlockType(TypeId::BOMB, draw));
-	blockType.back().Create(L"Bomb.png");
+	blockType.back().Create(Parameter::Get(LoadGraph::BOMB.c_str()), false);
 }
 
 void BlockManager::Update()

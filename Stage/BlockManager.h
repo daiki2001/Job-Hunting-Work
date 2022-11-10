@@ -3,6 +3,7 @@
 #include "../Player/Player.h"
 #include <vector>
 #include "./Header/EngineGeneral.h"
+#include <map>
 
 class BlockManager
 {
@@ -13,12 +14,13 @@ public: //エイリアス
 public: //サブクラス
 	enum TypeId
 	{
-		NONE,
-		WALL,
-		GOAL,
-		SWITCH,
-		KEY,
-		MAX
+		NONE,   //ブロックなし
+		WALL,   //壁ブロック
+		GOAL,   //ゴール
+		SWITCH, //スイッチ
+		KEY,    //鍵
+		BOMB,   //爆弾
+		MAX     //TypeIdの上限(プログラム用)
 	};
 
 	class Block
@@ -41,7 +43,7 @@ private: //メンバ変数
 	vector<Block> blocks;
 	bool isOpen;
 	bool isGoal;
-	vector<int> keyInitPos;
+	std::map<int, TypeId> itemInitPos;
 
 public: //メンバ関数
 	BlockManager();

@@ -22,13 +22,12 @@ Vector3::Vector3(const XMFLOAT3& v) :
 
 float Vector3::Length() const
 {
-	return sqrtf((x * x) + (y * y) + (z * z));
+	return sqrtf(LengthSquared());
 }
 
 float Vector3::LengthSquared() const
 {
-	float len = Length();
-	return len * len;
+	return (x * x) + (y * y) + (z * z);
 }
 
 Vector3 Vector3::Normalize() const

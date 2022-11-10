@@ -14,6 +14,7 @@ public: //サブクラス
 		CLOSE,        //スイッチで開く扉
 		WALL,         //壁
 		KEY_CLOSE,    //鍵扉
+		BREAK_WALL,   //壊せる壁
 		ROOM_CREATE,  //部屋の生成(プログラム用)
 		MAX,          //DoorStatusの上限(プログラム用)
 		ENTRANCE = -1 //ダンジョンの入口
@@ -21,8 +22,9 @@ public: //サブクラス
 
 private: //静的メンバ変数
 	static DrawPolygon* draw;
-	static int door_obj; //ドアのオブジェクト
-	static int keyDoor; //鍵ドアのオブジェクト
+	static int door_obj;  //ドアのオブジェクト
+	static int keyDoor;   //鍵ドアのオブジェクト
+	static int breakWall; //壊せる壁のオブジェクト
 
 public: //静的メンバ関数
 	// 初期化
@@ -43,9 +45,10 @@ public: //メンバ関数
 
 	void Open() { if (status == DoorStatus::CLOSE) status = DoorStatus::OPEN; }
 	void KeyOpen() { if (status == DoorStatus::KEY_CLOSE) status = DoorStatus::OPEN; }
+	void BreakWall() { if (status == DoorStatus::BREAK_WALL) status = DoorStatus::OPEN; }
 
 	// 扉の状態の取得
-	DoorStatus GetStatus() { return status; }
+	DoorStatus GetStatus() const { return status; }
 
 	// 扉の状態の設定
 	void SetStatus(DoorStatus status)

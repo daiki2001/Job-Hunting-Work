@@ -2,7 +2,11 @@
 #include "./Stage/BlockType.h"
 #include "./Stage/Stage.h"
 #include "./Math/Collision/Collision.h"
-#include "./Header/Parameter.h"
+
+namespace
+{
+static Stage* stage = Stage::Get();
+}
 
 const float Player::SPEED = 0.3f;
 const Math::Vector3 Player::COLLISION_SIZE = Vector3(0.25f, 1.0f, 1.0f);
@@ -12,7 +16,9 @@ Player::Player() :
 	pos{},
 	direction(Player::Direction::UP),
 	object(Engine::FUNCTION_ERROR),
-	keyCount(0)
+	selectItem(SelectItem::KEY),
+	key(100),
+	bomb(100, 10)
 {
 	Reset();
 }
@@ -31,15 +37,24 @@ void Player::Init(DrawPolygon* const draw)
 {
 	this->draw = draw;
 	object = this->draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
+
+	Item::StaticInit(this->draw);
+	bomb.Init();
 }
 
 void Player::Update(const InputManager* const input)
 {
+	bomb.Update();
+
 	Move(input);
+	SelectAction(input);
+	Action(input);
 }
 
 void Player::Draw(int offsetX, int offsetY)
 {
+	bomb.Draw();
+
 	DirectDrawing::ChangeMaterialShader();
 	draw->DrawOBJ(
 		object,
@@ -52,29 +67,75 @@ void Player::Draw(int offsetX, int offsetY)
 	);
 }
 
+void Player::DrawInventory(int offsetX, int offsetY)
+{
+	switch (selectItem)
+	{
+	case Player::KEY:
+		key.DrawInfo("Key", offsetX, offsetY);
+		break;
+	case Player::BOMB:
+		bomb.DrawInfo("Bomb", offsetX, offsetY);
+		break;
+	default:
+		break;
+	}
+}
+
 void Player::Reset()
 {
 	pos = { 7.0f, -6.0f, 0.0f };
-	keyCount = 0;
+	key.Reset();
+	bomb.Reset();
 }
 
 void Player::Move(const InputManager* const input)
 {
-	if (input->MainUp() || input->SubUp())
+	if (input->MainUp())
 	{
 		MoveUp(input);
 	}
-	else if (input->MainDown() || input->SubDown())
+	else if (input->MainDown())
 	{
 		MoveDown(input);
 	}
-	else if (input->MainLeft() || input->SubLeft())
+	else if (input->MainLeft())
 	{
 		MoveLeft(input);
 	}
-	else if (input->MainRight() || input->SubRight())
+	else if (input->MainRight())
 	{
 		MoveRight(input);
+	}
+}
+
+void Player::SelectAction(const InputManager* const input)
+{
+	if (input->SubLeftTrigger())
+	{
+		selectItem = (selectItem - 1 < 0) ? static_cast<SelectItem>(0) : static_cast<SelectItem>(selectItem - 1);
+	}
+	else if (input->SubRightTrigger())
+	{
+		selectItem = (selectItem + 1 >= SelectItem::MAX) ? static_cast<SelectItem>(SelectItem::MAX - 1) : static_cast<SelectItem>(selectItem + 1);
+	}
+}
+
+void Player::Action(const InputManager* const input)
+{
+	if (input->DecisionTrigger())
+	{
+		switch (selectItem)
+		{
+		case SelectItem::KEY:
+			KeyAction();
+			break;
+		case SelectItem::BOMB:
+			BombAction();
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -88,9 +149,9 @@ void Player::MoveUp(const InputManager* const input)
 
 	if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y >= 0.0f)
 	{
-		if (Stage::GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::OPEN)
+		if (stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::OPEN)
 		{
-			if (Stage::MoveUpRoom() == 0)
+			if (stage->MoveUpRoom() == 0)
 			{
 				pos.y = -(Area::STAGE_HEIGHT - 1.0f);
 			}
@@ -98,7 +159,7 @@ void Player::MoveUp(const InputManager* const input)
 	}
 
 	// 場外判定
-	if ((pos + COLLISION_SIZE / 2.0f).y > Stage::GetBlockManager()->GetBlock(0).pos.y)
+	if ((pos + COLLISION_SIZE / 2.0f).y > stage->GetBlockManager()->GetBlock(0).pos.y)
 	{
 		pos.y = 0.0f;
 	}
@@ -117,9 +178,9 @@ void Player::MoveDown(const InputManager* const input)
 
 	if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y < -(Area::STAGE_HEIGHT - 1.0f))
 	{
-		if (Stage::GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN)
+		if (stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN)
 		{
-			if (Stage::MoveDownRoom() == 0)
+			if (stage->MoveDownRoom() == 0)
 			{
 				pos.y = 0.0f;
 			}
@@ -127,7 +188,7 @@ void Player::MoveDown(const InputManager* const input)
 	}
 
 	// 場外判定
-	if ((pos - COLLISION_SIZE / 2.0f).y < Stage::GetBlockManager()->GetBlock(0).pos.y - (Area::STAGE_HEIGHT - 1.0f))
+	if ((pos - COLLISION_SIZE / 2.0f).y < stage->GetBlockManager()->GetBlock(0).pos.y - (Area::STAGE_HEIGHT - 1.0f))
 	{
 		pos.y = -(Area::STAGE_HEIGHT - 1.0f);
 	}
@@ -146,9 +207,9 @@ void Player::MoveLeft(const InputManager* const input)
 
 	if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x < 0.0f)
 	{
-		if (Stage::GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN)
+		if (stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN)
 		{
-			if (Stage::MoveLeftRoom() == 0)
+			if (stage->MoveLeftRoom() == 0)
 			{
 				pos.x = Area::STAGE_WIDTH - 1.0f;
 			}
@@ -158,7 +219,7 @@ void Player::MoveLeft(const InputManager* const input)
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
 
 	// 場外判定
-	if ((pos - COLLISION_BOX).x < Stage::GetBlockManager()->GetBlock(0).pos.x)
+	if ((pos - COLLISION_BOX).x < stage->GetBlockManager()->GetBlock(0).pos.x)
 	{
 		pos.x = 0.0f;
 	}
@@ -177,9 +238,9 @@ void Player::MoveRight(const InputManager* const input)
 
 	if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x > Area::STAGE_WIDTH - 1.0f)
 	{
-		if (Stage::GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN)
+		if (stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN)
 		{
-			if (Stage::MoveRightRoom() == 0)
+			if (stage->MoveRightRoom() == 0)
 			{
 				pos.x = 0.0f;
 			}
@@ -189,8 +250,51 @@ void Player::MoveRight(const InputManager* const input)
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
 
 	// 場外判定
-	if ((pos + COLLISION_BOX).x > Stage::GetBlockManager()->GetBlock(0).pos.x + (Area::STAGE_WIDTH - 1.0f))
+	if ((pos + COLLISION_BOX).x > stage->GetBlockManager()->GetBlock(0).pos.x + (Area::STAGE_WIDTH - 1.0f))
 	{
 		pos.x = Area::STAGE_WIDTH - 1.0f;
 	}
+}
+
+void Player::KeyAction()
+{
+	if (key.GetCount() <= 0) return;
+
+	int playerPos = stage->GetBlockManager()->GetSurroundingBlock(0, nullptr);
+
+	if ((playerPos == FUNCTION_ERROR ||
+		 (playerPos % 15 == 0 && playerPos / 15 >= 2 && playerPos / 15 <= 4)) &&
+		stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::KEY_CLOSE)
+	{
+		stage->GetArea().GetDoor(Area::DoorNum::LEFT).KeyOpen();
+		key.Use();
+	}
+	if ((playerPos == FUNCTION_ERROR ||
+		 (playerPos % 15 == 14 && playerPos / 15 >= 2 && playerPos / 15 <= 4)) &&
+		stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::KEY_CLOSE)
+	{
+		stage->GetArea().GetDoor(Area::DoorNum::RIGHT).KeyOpen();
+		key.Use();
+	}
+	if ((playerPos == FUNCTION_ERROR ||
+		 (playerPos >= 6 && playerPos <= 8)) &&
+		stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::KEY_CLOSE)
+	{
+		stage->GetArea().GetDoor(Area::DoorNum::UP).KeyOpen();
+		key.Use();
+	}
+	if ((playerPos == FUNCTION_ERROR ||
+		 (playerPos >= 96 && playerPos <= 98)) &&
+		stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::KEY_CLOSE)
+	{
+		stage->GetArea().GetDoor(Area::DoorNum::DOWN).KeyOpen();
+		key.Use();
+	}
+}
+
+void Player::BombAction()
+{
+	if (bomb.GetCount() <= 0) return;
+
+	bomb.Set(pos);
 }

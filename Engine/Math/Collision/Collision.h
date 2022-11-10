@@ -19,15 +19,18 @@ bool IsSphereToTriangleCollision(const Sphere& sphere, const Triangle& triangle)
 // レイと球体の当たり判定
 bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distance = nullptr, Vector3* inter = nullptr);
 
+// AABB同士の当たり判定
+bool IsAABBToAABBCollision(const Vector3& leftUpFront1, const Vector3& rightDownBack1,
+						   const Vector3& leftUpFront2, const Vector3& rightDownBack2);
+
+// 球体とAABBの当たり判定
+bool IsSphereToAABBCollision(const Sphere& sphere, const Vector3& leftUpFront, const Vector3& rightDownBack);
+
 // レイと平面の当たり判定
 bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance = nullptr, Vector3* inter = nullptr);
 
 // レイと三角形の当たり判定
 bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* distance = nullptr, Vector3* inter = nullptr);
-
-// AABB同士の当たり判定
-bool IsAABBToAABBCollision(const Vector3& leftUpFront1, const Vector3& rightDownBack1,
-						   const Vector3& leftUpFront2, const Vector3& rightDownBack2);
 
 // OBB同士の当たり判定
 bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Vector3& scale1,

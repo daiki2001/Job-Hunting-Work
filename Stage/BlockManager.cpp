@@ -23,7 +23,7 @@ BlockManager::BlockManager() :
 	blocks{},
 	isOpen(false),
 	isGoal(false),
-	keyInitPos{}
+	itemInitPos{}
 {
 }
 
@@ -31,7 +31,7 @@ BlockManager::~BlockManager()
 {
 	blockType.clear();
 	blocks.clear();
-	keyInitPos.clear();
+	itemInitPos.clear();
 }
 
 void BlockManager::Init(DrawPolygon* const draw)
@@ -56,6 +56,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 							Math::rotateZ(-Math::PI_F / 4),
 							scale_xyz(0.25f),
 							{ 1.0f, 1.0f, 0.0f, 1.0f });
+
+	blockType.push_back(BlockType(TypeId::BOMB, draw));
+	blockType.back().Create(L"Bomb.png");
 }
 
 void BlockManager::Update()
@@ -85,7 +88,12 @@ void BlockManager::Update()
 		break;
 	case TypeId::KEY:
 		player->AcquisitionKey();
-		keyInitPos.push_back(playerPos);
+		itemInitPos[playerPos] = TypeId::KEY;
+		blocks[playerPos].typeId = TypeId::NONE;
+		break;
+	case TypeId::BOMB:
+		player->AcquisitionBomb();
+		itemInitPos[playerPos] = TypeId::BOMB;
 		blocks[playerPos].typeId = TypeId::NONE;
 		break;
 	case TypeId::NONE:
@@ -126,11 +134,11 @@ void BlockManager::Reset()
 
 	isGoal = false;
 
-	for (size_t i = 0; i < keyInitPos.size(); i++)
+	for (auto& i : itemInitPos)
 	{
-		blocks[keyInitPos[i]].typeId = TypeId::KEY;
+		blocks[i.first].typeId = i.second;
 	}
-	keyInitPos.clear();
+	itemInitPos.clear();
 }
 
 int BlockManager::CreateBlock(TypeId typeId)

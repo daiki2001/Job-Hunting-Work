@@ -1,6 +1,7 @@
 ﻿#include "./Header/DebugText.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
+#include "./Header/Parameter.h"
 
 /*static変数の初期化*/
 int DebugText::fontTex = FUNCTION_ERROR;
@@ -104,9 +105,6 @@ HRESULT DebugText::DrawString(float posX, float posY, float fontScale, const XMF
 	ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	// シェーダーリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(1, textrueData[fontTex].gpuDescHandle);
-
 	for (size_t i = 0, j = 0, k = 0; text[j] != '\0'; i++)
 	{
 		bool isInit = false;
@@ -165,6 +163,7 @@ HRESULT DebugText::DrawString(float posX, float posY, float fontScale, const XMF
 				if (string[k] == '\0')
 				{
 					j += 2;
+					i--;
 					string = nullptr;
 					formatFlag = false;
 					continue;
@@ -200,6 +199,9 @@ HRESULT DebugText::DrawString(float posX, float posY, float fontScale, const XMF
 		sprite[fontIndex[charCount]].texLeftTop.x = (character % fontLineCount) * static_cast<float>(fontWidth);
 		sprite[fontIndex[charCount]].texLeftTop.y = static_cast<float>(character / fontLineCount) * static_cast<float>(fontHeight);
 		sprite[fontIndex[charCount]].texSize = { fontWidth, fontHeight };
+
+		DrawTextrue(posX + fontWidth * fontScale * i + pixel.x, posY + pixel.y, fontWidth * fontScale, fontHeight * fontScale,
+					0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 
 		enum Corner { LB, LT, RB, RT };
 
@@ -256,6 +258,8 @@ HRESULT DebugText::DrawString(float posX, float posY, float fontScale, const XMF
 
 		// 定数バッファビューをセット
 		cmdList->SetGraphicsRootConstantBufferView(0, sprite[fontIndex[charCount]].constBuff->GetGPUVirtualAddress());
+		// シェーダーリソースビューをセット
+		cmdList->SetGraphicsRootDescriptorTable(1, textrueData[fontTex].gpuDescHandle);
 
 		// 頂点バッファの設定
 		cmdList->IASetVertexBuffers(0, 1, &sprite[fontIndex[charCount]].vbView);

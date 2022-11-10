@@ -192,6 +192,100 @@ bool IsRayToSphereCollision(const Ray& ray, const Sphere& sphere, float* distanc
 	return true;
 }
 
+bool IsAABBToAABBCollision(const Vector3& leftUpFront1, const Vector3& rightDownBack1, const Vector3& leftUpFront2, const Vector3& rightDownBack2)
+{
+	if (Is1DLineTo1DLineCollision(leftUpFront1.x, rightDownBack1.x, leftUpFront2.x, rightDownBack2.x) &&
+		Is1DLineTo1DLineCollision(leftUpFront1.y, rightDownBack1.y, leftUpFront2.y, rightDownBack2.y) &&
+		Is1DLineTo1DLineCollision(leftUpFront1.z, rightDownBack1.z, leftUpFront2.z, rightDownBack2.z))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool IsSphereToAABBCollision(const Sphere& sphere, const Vector3& leftUpFront, const Vector3& rightDownBack)
+{
+	if (IsAABBToAABBCollision(Vector3(sphere.center.x - sphere.radius, sphere.center.y - sphere.radius, sphere.center.z - sphere.radius),
+							  Vector3(sphere.center.x + sphere.radius, sphere.center.y + sphere.radius, sphere.center.z + sphere.radius),
+							  leftUpFront,
+							  rightDownBack) == false)
+	{
+		// 球をAABBとして大雑把な判定、ここで当たらなかったらfalseを返す
+		//return false;
+	}
+
+	if (IsAABBToAABBCollision(sphere.center, sphere.center,
+							  Vector3(leftUpFront.x - sphere.radius, leftUpFront.y, leftUpFront.z),
+							  Vector3(rightDownBack.x + sphere.radius, rightDownBack.y, rightDownBack.z)))
+	{
+		return true;
+	}
+	if (IsAABBToAABBCollision(sphere.center, sphere.center,
+							  Vector3(leftUpFront.x, leftUpFront.y - sphere.radius, leftUpFront.z),
+							  Vector3(rightDownBack.x, rightDownBack.y + sphere.radius, rightDownBack.z)))
+	{
+		return true;
+	}
+	if (IsAABBToAABBCollision(sphere.center, sphere.center,
+							  Vector3(leftUpFront.x, leftUpFront.y, leftUpFront.z - sphere.radius),
+							  Vector3(rightDownBack.x, rightDownBack.y, rightDownBack.z + sphere.radius)))
+	{
+		return true;
+	}
+
+	if (Vector3((leftUpFront.x - sphere.center.x),
+				(leftUpFront.y - sphere.center.y),
+				(leftUpFront.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((leftUpFront.x - sphere.center.x),
+				(leftUpFront.y - sphere.center.y),
+				(rightDownBack.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((leftUpFront.x - sphere.center.x),
+				(rightDownBack.y - sphere.center.y),
+				(leftUpFront.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((leftUpFront.x - sphere.center.x),
+				(rightDownBack.y - sphere.center.y),
+				(rightDownBack.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((rightDownBack.x - sphere.center.x),
+				(leftUpFront.y - sphere.center.y),
+				(leftUpFront.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((rightDownBack.x - sphere.center.x),
+				(leftUpFront.y - sphere.center.y),
+				(rightDownBack.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((rightDownBack.x - sphere.center.x),
+				(rightDownBack.y - sphere.center.y),
+				(leftUpFront.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+	if (Vector3((rightDownBack.x - sphere.center.x),
+				(rightDownBack.y - sphere.center.y),
+				(rightDownBack.z - sphere.center.z)).LengthSquared() < sphere.radius * sphere.radius)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool IsRayToPlaneCollision(const Ray& ray, const Plane& plane, float* distance,
 						   Vector3* inter)
 {
@@ -276,18 +370,6 @@ bool IsRayToTriangleCollision(const Ray& ray, const Triangle& triangle, float* d
 	}
 
 	return true;
-}
-
-bool IsAABBToAABBCollision(const Vector3& leftUpFront1, const Vector3& rightDownBack1, const Vector3& leftUpFront2, const Vector3& rightDownBack2)
-{
-	if (Is1DLineTo1DLineCollision(leftUpFront1.x, rightDownBack1.x, leftUpFront2.x, rightDownBack2.x) &&
-		Is1DLineTo1DLineCollision(leftUpFront1.y, rightDownBack1.y, leftUpFront2.y, rightDownBack2.y) &&
-		Is1DLineTo1DLineCollision(leftUpFront1.z, rightDownBack1.z, leftUpFront2.z, rightDownBack2.z))
-	{
-		return true;
-	}
-
-	return false;
 }
 
 bool IsOBBToOBBCollision(const Vector3& pos1, const Matrix4& rotation1, const Vector3& scale1,

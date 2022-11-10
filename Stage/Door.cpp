@@ -11,6 +11,7 @@ int entranceLight = FUNCTION_ERROR;
 DrawPolygon* Door::draw = nullptr;
 int Door::door_obj = FUNCTION_ERROR;
 int Door::keyDoor = FUNCTION_ERROR;
+int Door::breakWall = FUNCTION_ERROR;
 
 void Door::StaticInit(DrawPolygon* draw)
 {
@@ -23,6 +24,10 @@ void Door::StaticInit(DrawPolygon* draw)
 	if (keyDoor == FUNCTION_ERROR)
 	{
 		keyDoor = Door::draw->CreateOBJModel("./Resources/Game/Wall/KeyWall.obj", "./Resources/Game/Wall/");
+	}
+	if (breakWall == FUNCTION_ERROR)
+	{
+		breakWall = Door::draw->CreateOBJModel("./Resources/Game/Wall/BreakWall.obj", "./Resources/Game/Wall/");
 	}
 	if (debugTex == FUNCTION_ERROR)
 	{
@@ -58,7 +63,7 @@ void Door::Draw(const Vector3& offset)
 {
 	using namespace Math;
 
-	if (status == WALL || status == KEY_CLOSE)
+	if (status == WALL || status == KEY_CLOSE || status == BREAK_WALL)
 	{
 		DirectDrawing::ChangeMaterialShader();
 	}
@@ -78,6 +83,9 @@ void Door::Draw(const Vector3& offset)
 		break;
 	case DoorStatus::KEY_CLOSE:
 		draw->DrawOBJ(keyDoor, offset, rotateX(PI_F), size);
+		break;
+	case DoorStatus::BREAK_WALL:
+		draw->DrawOBJ(breakWall, offset, rotateX(PI_F), size);
 		break;
 	case DoorStatus::ENTRANCE:
 		draw->Draw(entranceLight, offset, Identity(), Vector3(1.0f, 1.0f, 1.0f),

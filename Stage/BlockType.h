@@ -35,6 +35,8 @@ public: //メンバ関数
 					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	virtual int Create(const char* filename, const Matrix4& rotation = Math::Identity(),
 					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	virtual int Create(int number, bool isObject, const Matrix4& rotation = Math::Identity(), const Vector3& scale = { 1.0f, 1.0f, 1.0f },
+					   const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	// 描画処理
 	void Draw(const Vector3& pos);
 

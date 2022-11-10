@@ -2,6 +2,7 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
+#include "LoadGraph.h"
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 const std::string GameScene::stageDir = resourcesDirectory + "Stage/";
@@ -37,6 +38,7 @@ void GameScene::Init()
 		clear = draw->LoadTextrue((gameResourcesDir + L"Clear.png").c_str());
 	}
 
+	LoadGraph::Get()->Load(draw);
 	player->Init(draw);
 	stage->StaticInit(draw);
 	stage->LoadStage((stageDir + "stage1.csv").c_str());
@@ -74,6 +76,10 @@ void GameScene::Update()
 	if (Input::IsKeyTrigger(DIK_R))
 	{
 		Reset();
+	}
+	if (Input::IsKeyTrigger(DIK_L))
+	{
+		stage->LastRoom();
 	}
 	if (Input::IsKeyTrigger(DIK_F1))
 	{

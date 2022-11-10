@@ -19,6 +19,9 @@ public: //メンバ関数
 	Item(unsigned int maxCount, unsigned int count = 0);
 	virtual ~Item() = default;
 
+	// 初期化処理
+	void Init(const wchar_t* fileName = nullptr);
+	void Init(int texNumber);
 	// 描画処理
 	virtual void Draw(int offsetX = 0, int offsetY = 0) {}
 	// リセット

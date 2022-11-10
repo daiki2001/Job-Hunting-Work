@@ -11,6 +11,21 @@ Item::Item(unsigned int maxCount, unsigned int count) :
 {
 }
 
+void Item::Init(const wchar_t* fileName)
+{
+	if (fileName == nullptr) return;
+
+	if (graph == FUNCTION_ERROR)
+	{
+		graph = draw->LoadTextrue(fileName);
+	}
+}
+
+void Item::Init(int texNumber)
+{
+	graph = texNumber;
+}
+
 void Item::StaticInit(DrawPolygon* const draw)
 {
 	Item::draw = draw;

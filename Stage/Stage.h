@@ -70,6 +70,9 @@ public: //メンバ関数
 	// リセット処理
 	void Reset();
 
+	// 最後の部屋に飛ぶ
+	void LastRoom() { nowRoom = static_cast<int>(room.size() - 1); }
+
 	// ステージ読み込み
 	int LoadStage(const char* filePath = nullptr);
 	// ステージ書き込み

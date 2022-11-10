@@ -2,6 +2,8 @@
 #include "./Stage/BlockType.h"
 #include "./Stage/Stage.h"
 #include "./Math/Collision/Collision.h"
+#include "./Header/Parameter.h"
+#include "LoadGraph.h"
 
 namespace
 {
@@ -39,6 +41,7 @@ void Player::Init(DrawPolygon* const draw)
 	object = this->draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
 
 	Item::StaticInit(this->draw);
+	key.Init(Parameter::Get(LoadGraph::KEY.c_str()));
 	bomb.Init();
 }
 

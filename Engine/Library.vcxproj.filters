@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="シェーダファイル">
+      <UniqueIdentifier>{da130f93-bf95-4404-8b10-d1e20ae9ef35}</UniqueIdentifier>
+      <Extensions>hlsl;hlsli</Extensions>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{5c6d57e8-02fa-4dce-9799-30a366188a35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Collision">
+      <UniqueIdentifier>{fddb9231-8191-434a-a71e-194b10945baf}</UniqueIdentifier>
+      <Extensions>
+      </Extensions>
+    </Filter>
+    <Filter Include="シェーダファイル\FBX">
+      <UniqueIdentifier>{583dcae3-48f8-4f1a-a321-9144023a2296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダファイル\PostEffectTest">
+      <UniqueIdentifier>{56ea5020-189e-487b-825d-572d865b6ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダファイル\Sprite">
+      <UniqueIdentifier>{1cee1d2c-cf41-49e3-b418-c53c5a1a8435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダファイル\Object">
+      <UniqueIdentifier>{96d16df7-cd74-4f93-a34f-2a69242982a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダファイル\Material">
+      <UniqueIdentifier>{14e17682-542a-4fe7-ae3d-e9044c260493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{b1e89a78-fc97-4880-961f-f5fcbe745d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderMgr">
+      <UniqueIdentifier>{98ccd8ac-c63e-4199-843d-298908d1c06c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{daf7b5fa-bd56-4296-95a6-9631c7e6addc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header\DirectDrawing.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\DirectInput.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\DrawPolygon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\LoadTex.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\DebugText.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Camera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\SafeDelete.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\DirectXInit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Win32API.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Input.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Audio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Error.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Parameter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\BaseCollider.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\Collision.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\CollisionPrimitive.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\CollisionTypes.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\CollisionInfo.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\SphereCollider.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Collision\CollisionManager.h">
+      <Filter>Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Easing.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\EngineMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Quaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\FbxLoader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Model.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PostEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\RenderTexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\BaseScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\SceneChenge.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\SceneManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\EngineGeneral.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\EngineTestScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TestObject.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr\Shaders.h">
+      <Filter>ShaderMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr\ShaderManager.h">
+      <Filter>ShaderMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="File\LoadFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="File\WriteFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\DirectDrawing.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DirectInput.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DrawPolygon.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LoadTex.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DebugText.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DirectXInit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Win32API.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Audio.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Parameter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix4.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Collision\Collision.cpp">
+      <Filter>Math\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Collision\CollisionPrimitive.cpp">
+      <Filter>Math\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Collision\SphereCollider.cpp">
+      <Filter>Math\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Collision\CollisionManager.cpp">
+      <Filter>Math\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Easing.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\EngineMath.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Quaternion.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FbxLoader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EngineGeneral.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PostEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RenderTexture.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BaseScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\EngineTestScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TestObject.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr\Shaders.cpp">
+      <Filter>ShaderMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr\ShaderManager.cpp">
+      <Filter>ShaderMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="File\LoadFile.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="File\WriteFile.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\Engine\white1x1.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="..\Resources\Engine\DebugTextFont.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Resources\Shaders\color.hlsl">
+      <Filter>シェーダファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\defaultPS.hlsl">
+      <Filter>シェーダファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\FBXPS.hlsl">
+      <Filter>シェーダファイル\FBX</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\FBXVS.hlsl">
+      <Filter>シェーダファイル\FBX</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\MaterialPS.hlsl">
+      <Filter>シェーダファイル\Material</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\MaterialVS.hlsl">
+      <Filter>シェーダファイル\Material</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ObjectPS.hlsl">
+      <Filter>シェーダファイル\Object</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\ObjectVS.hlsl">
+      <Filter>シェーダファイル\Object</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PostEffectTestPS.hlsl">
+      <Filter>シェーダファイル\PostEffectTest</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\PostEffectTestVS.hlsl">
+      <Filter>シェーダファイル\PostEffectTest</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\SpritePS.hlsl">
+      <Filter>シェーダファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shaders\SpriteVS.hlsl">
+      <Filter>シェーダファイル\Sprite</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\Shaders\FBX.hlsli">
+      <Filter>シェーダファイル\FBX</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\ObjectData.hlsli">
+      <Filter>シェーダファイル\Object</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\PostEffectTest.hlsli">
+      <Filter>シェーダファイル\PostEffectTest</Filter>
+    </None>
+    <None Include="..\Resources\Shaders\SpriteData.hlsli">
+      <Filter>シェーダファイル\Sprite</Filter>
+    </None>
+  </ItemGroup>
+</Project>

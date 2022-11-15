@@ -366,8 +366,6 @@ FodyWeavers.xsd
 OutPut/
 
 # Engine directory
-Engine/*.vcxproj
-Engine/*.vcxproj.filters
 Engine/.git/
 Engine/.gitignore
 Engine/.gitattributes

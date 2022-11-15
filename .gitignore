@@ -365,6 +365,14 @@ FodyWeavers.xsd
 # Output directory
 OutPut/
 
+# Engine directory
+Engine/*.vcxproj
+Engine/*.vcxproj.filters
+Engine/.git/
+Engine/.gitignore
+Engine/.gitattributes
+Engine/README.md
+
 # Resources directory
 !Resources/
 

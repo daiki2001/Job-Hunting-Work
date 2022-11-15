@@ -3,6 +3,7 @@
 #include "./Header/Camera.h"
 #include "./Header/Input.h"
 #include "./Header/SceneManager.h"
+#include "./Header/EngineGeneral.h"
 #include "./Header/Parameter.h"
 
 /*ウィンドウサイズ*/
@@ -33,7 +34,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	Camera::Init();
 	Input::Init();
 
-	int whiteTex = draw.LoadTextrue(L"./Resources/Engine/white1x1.png");
+	int whiteTex = draw.LoadTextrue((StringToWString(engineResourcesDir) + L"white1x1.png").c_str());
 	Parameter::Set("white1x1", whiteTex);
 
 	SceneManager sceneManager(&draw);

@@ -10,8 +10,8 @@ Player* GameScene::player = Player::Get();
 Stage* GameScene::stage = Stage::Get();
 bool GameScene::isClear = false;
 
-GameScene::GameScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
-	BaseScene(draw, sceneChenger),
+GameScene::GameScene(SceneChanger* sceneChanger) :
+	BaseScene(sceneChanger),
 	background(Engine::FUNCTION_ERROR),
 	clear(Engine::FUNCTION_ERROR)
 {
@@ -56,9 +56,11 @@ void GameScene::Update()
 {
 	if (isClear)
 	{
-		if (InputManager::Get()->DecisionTrigger())
+		if (isSceneDest == false && InputManager::Get()->DecisionTrigger())
 		{
-			sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
+			isSceneDest = true;
+			nextScene = SceneChanger::Scene::Title;
+			changeAnimation.Start();
 		}
 	}
 	else
@@ -86,20 +88,29 @@ void GameScene::Update()
 		stage->LoadStage((stageDir + "stage1.csv").c_str());
 	}
 #endif // _DEBUG
+
+	if (isSceneDest)
+	{
+		if (changeAnimation.GetChange())
+		{
+			sceneChanger->SceneChange(nextScene, true);
+		}
+	}
 }
 
 void GameScene::Draw()
 {
 	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
-	w->ClearScreen();
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();
-	for (int y = 0; y * 128 < w->windowHeight; y++)
+	for (int y = 0; y * 128 < winH; y++)
 	{
-		for (int x = 0; x * 128 < w->windowWidth; x++)
+		for (int x = 0; x * 128 < winW; x++)
 		{
 			draw->DrawTextrue(
 				x * 128.0f,
@@ -121,25 +132,20 @@ void GameScene::Draw()
 	DirectDrawing::ChangeSpriteShader();
 	if (isClear)
 	{
-		draw->DrawTextrue(w->windowWidth / 2.0f, w->windowHeight / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,
+		draw->DrawTextrue(winW / 2.0f, winH / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,
 						  DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
 	}
 	else
 	{
 		player->DrawInventory();
 
-		draw->DrawString(0.0f, w->windowHeight - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "Move:WASD");
-		draw->DrawString(0.0f, w->windowHeight - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "SelectAction:Arrow");
 	}
-	draw->DrawString(0.0f, w->windowHeight - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Action:Space");
-
-	w->ScreenFlip();
-
-	// ループの終了処理
-	draw->PolygonLoopEnd();
 }
 
 void GameScene::Reset()

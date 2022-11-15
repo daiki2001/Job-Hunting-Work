@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Header/BaseScene.h"
+#include "./Scene/BaseScene.h"
 #include "../Stage/Stage.h"
 #include "../InputManager.h"
 
@@ -37,7 +37,7 @@ private: //メンバ変数
 	int frame; //フレーム画像
 
 public: //メンバ関数
-	StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger);
+	StageEditorScene(SceneChanger* sceneChanger);
 	~StageEditorScene() override;
 
 	void Init() override;

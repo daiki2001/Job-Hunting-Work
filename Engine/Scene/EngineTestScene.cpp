@@ -10,8 +10,8 @@ ShaderManager* shaderMgr = ShaderManager::Get();
 DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
-EngineTestScene::EngineTestScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
-	BaseScene(draw, sceneChenger),
+EngineTestScene::EngineTestScene(SceneChanger* sceneChanger) :
+	BaseScene(sceneChanger),
 	fbxLoader(FbxLoader::GetInstance()),
 	background(FUNCTION_ERROR),
 	fbxModel(FUNCTION_ERROR),
@@ -195,8 +195,6 @@ void EngineTestScene::Draw()
 
 	postEffect.PostDraw();
 
-	w->ClearScreen();
-
 	shaderMgr->ChangePipelineState(
 		DirectXInit::GetCommandList(),
 		DirectDrawing::GetSpriteRootSignature(),
@@ -248,8 +246,4 @@ void EngineTestScene::Draw()
 		"%d",
 		useShader
 	);
-	w->ScreenFlip();
-
-	// ループの終了処理
-	draw->PolygonLoopEnd();
 }

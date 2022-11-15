@@ -2,7 +2,7 @@
 #include "./Header/DrawPolygon.h"
 #include "./Header/Camera.h"
 #include "./Header/Input.h"
-#include "./Header/SceneManager.h"
+#include "./Scene/SceneManager.h"
 #include "./Header/EngineGeneral.h"
 #include "./Header/Parameter.h"
 

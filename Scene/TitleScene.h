@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Header/BaseScene.h"
+#include "./Scene/BaseScene.h"
 #include <string>
 
 class TitleScene : public BaseScene
@@ -15,7 +15,7 @@ public: //サブクラス
 	};
 
 public: //メンバ関数
-	TitleScene(DrawPolygon* draw, SceneChenger* sceneChenger);
+	TitleScene(SceneChanger* sceneChanger);
 	~TitleScene() override;
 
 	void Init() override;

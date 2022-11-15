@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Header/BaseScene.h"
+#include "./Scene/BaseScene.h"
 
 class SettingScene : public BaseScene
 {
@@ -7,7 +7,7 @@ public: //定数
 	static const std::wstring settingResourcesDir;
 
 public: //メンバ関数
-	SettingScene(DrawPolygon* draw, SceneChenger* sceneChenger);
+	SettingScene(SceneChanger* sceneChanger);
 	~SettingScene() override;
 
 	void Init() override;

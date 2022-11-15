@@ -9,8 +9,8 @@ static const std::wstring backgroundFileName = L"background.png";
 
 const std::wstring SettingScene::settingResourcesDir = L"./Resources/Setting/";
 
-SettingScene::SettingScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
-	BaseScene(draw, sceneChenger),
+SettingScene::SettingScene(SceneChanger* sceneChanger) :
+	BaseScene(sceneChanger),
 	background(Engine::FUNCTION_ERROR)
 {
 	Init();
@@ -33,28 +33,39 @@ void SettingScene::Update()
 {
 	if (Input::IsKeyTrigger(DIK_R))
 	{
-		sceneChenger->PopScene();
+		sceneChanger->PopScene();
 	}
 	if (Input::IsKeyTrigger(DIK_SPACE))
 	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
+		isSceneDest = true;
+		nextScene = SceneChanger::Scene::Title;
+		changeAnimation.Start();
+	}
+
+	if (isSceneDest)
+	{
+		if (changeAnimation.GetChange())
+		{
+			sceneChanger->SceneChange(nextScene, true);
+		}
 	}
 }
 
 void SettingScene::Draw()
 {
 	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
-	w->ClearScreen();
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();
 	draw->DrawTextrue(
-		w->windowWidth / 2.0f,
-		w->windowHeight / 2.0f,
-		static_cast<float>(w->windowWidth),
-		static_cast<float>(w->windowHeight),
+		winW / 2.0f,
+		winH / 2.0f,
+		static_cast<float>(winW),
+		static_cast<float>(winH),
 		0.0f,
 		background
 	);
@@ -62,9 +73,4 @@ void SettingScene::Draw()
 	// 3Dオブジェクト
 
 	// 前景
-
-	w->ScreenFlip();
-
-	// ループの終了処理
-	draw->PolygonLoopEnd();
 }

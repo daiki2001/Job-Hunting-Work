@@ -8,8 +8,8 @@ const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 InputManager* StageEditorScene::inputMgr = InputManager::Get();
 Stage* StageEditorScene::stage = Stage::Get();
 
-StageEditorScene::StageEditorScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
-	BaseScene(draw, sceneChenger),
+StageEditorScene::StageEditorScene(SceneChanger* sceneChanger) :
+	BaseScene(sceneChanger),
 	mapArray{},
 	mapIndex(0),
 	blockIndex(1),
@@ -70,7 +70,9 @@ void StageEditorScene::Update()
 {
 	if (Input::IsKeyTrigger(DIK_F1))
 	{
-		sceneChenger->SceneChenge(SceneChenger::Scene::Title, true);
+		isSceneDest = true;
+		nextScene = SceneChanger::Scene::Title;
+		changeAnimation.Start();
 	}
 
 	CursorMove();
@@ -110,6 +112,14 @@ void StageEditorScene::Update()
 		static const std::string userStageDir = resourcesDirectory + "Stage/User/";
 		stage->WirteStage((userStageDir + "aaa.csv").c_str());
 	}
+
+	if (isSceneDest)
+	{
+		if (changeAnimation.GetChange())
+		{
+			sceneChanger->SceneChange(nextScene, true);
+		}
+	}
 }
 
 void StageEditorScene::Draw()
@@ -117,16 +127,17 @@ void StageEditorScene::Draw()
 	using namespace Engine::Math;
 
 	DirectXInit* w = DirectXInit::GetInstance();
+	const int winW = w->windowWidth;
+	const int winH = w->windowHeight;
 	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f);
 
-	w->ClearScreen();
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();
-	for (int y = 0; y * 128 < w->windowHeight; y++)
+	for (int y = 0; y * 128 < winH; y++)
 	{
-		for (int x = 0; x * 128 < w->windowWidth; x++)
+		for (int x = 0; x * 128 < winW; x++)
 		{
 			draw->DrawTextrue(
 				x * 128.0f,
@@ -151,8 +162,8 @@ void StageEditorScene::Draw()
 	{
 	case CursorState::BLOCKS:
 	{
-		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + w->windowWidth / 2.0f,
-						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + w->windowHeight / 2.0f,
+		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + winW / 2.0f,
+						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + winH / 2.0f,
 						  64.0f, 64.0f, 0.0f, cursor);
 		break;
 	}
@@ -160,8 +171,8 @@ void StageEditorScene::Draw()
 	case CursorState::DOOR_DOWN:
 	{
 		float isMinus = (cursorState == CursorState::DOOR_DOWN) ? 1.0f : -1.0f;
-		draw->DrawTextrue(0.0f + w->windowWidth / 2.0f,
-						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f + isMinus) * 64.0f + w->windowHeight / 2.0f,
+		draw->DrawTextrue(0.0f + winW / 2.0f,
+						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f + isMinus) * 64.0f + winH / 2.0f,
 						  64.0f * 3.0f, 64.0f, 0.0f, cursor);
 		break;
 	}
@@ -169,8 +180,8 @@ void StageEditorScene::Draw()
 	case CursorState::DOOR_RIGHT:
 	{
 		float isMinus = (cursorState == CursorState::DOOR_RIGHT) ? 1.0f : -1.0f;
-		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f + isMinus) * 64.0f + w->windowWidth / 2.0f,
-						  0.0f + w->windowHeight / 2.0f,
+		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f + isMinus) * 64.0f + winW / 2.0f,
+						  0.0f + winH / 2.0f,
 						  64.0f, 64.0f * 3.0f, 0.0f, cursor);
 		break;
 	}
@@ -278,31 +289,18 @@ void StageEditorScene::Draw()
 				break;
 			}
 		}
-		if (doorIndex == Door::DoorStatus::ROOM_CREATE)
-		{
-			//draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Create Room");
-		}
-		else
-		{
-			//draw->DrawString(0.0f, 0.0f, 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Door:%d", doorIndex);
-		}
 	}
 
-	draw->DrawString(0.0f, w->windowHeight - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Move:WASD");
-	draw->DrawString(0.0f, w->windowHeight - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Select:Arrow");
-	draw->DrawString(0.0f, w->windowHeight - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Decision:Space");
-	draw->DrawString(0.0f, w->windowHeight - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Save:Ctrl + S");
-	draw->DrawString(0.0f, w->windowHeight - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Title:F1");
-
-	w->ScreenFlip();
-
-	// ループの終了処理
-	draw->PolygonLoopEnd();
 }
 
 void StageEditorScene::CursorMove()

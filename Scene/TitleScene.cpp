@@ -11,8 +11,8 @@ static const std::wstring backgroundFileName = L"background.png";
 
 const std::wstring TitleScene::titleResourcesDir = L"./Resources/Title/";
 
-TitleScene::TitleScene(DrawPolygon* draw, SceneChenger* sceneChenger) :
-	BaseScene(draw, sceneChenger),
+TitleScene::TitleScene(SceneChanger* sceneChanger) :
+	BaseScene(sceneChanger),
 	buttonIndex(ButtonIndex::START),
 	background(Engine::FUNCTION_ERROR),
 	buttonBack(Engine::FUNCTION_ERROR),
@@ -63,22 +63,35 @@ void TitleScene::Update()
 		buttonIndex = ButtonIndex::EDITER;
 	}
 
-	if (InputManager::Get()->DecisionTrigger())
+	if (isSceneDest)
 	{
-		switch (buttonIndex)
+		if (changeAnimation.GetChange())
 		{
-		case ButtonIndex::START:
-		{
-			sceneChenger->SceneChenge(SceneChenger::Scene::Game, true);
-			break;
+			sceneChanger->SceneChange(nextScene, true);
 		}
-		case ButtonIndex::EDITER:
+	}
+	else
+	{
+		if (InputManager::Get()->DecisionTrigger())
 		{
-			sceneChenger->SceneChenge(SceneChenger::Scene::StageEditer, true);
-			break;
-		}
-		default:
-			break;
+			isSceneDest = true;
+			changeAnimation.Start();
+
+			switch (buttonIndex)
+			{
+			case ButtonIndex::START:
+			{
+				nextScene = SceneChanger::Scene::Game;
+				break;
+			}
+			case ButtonIndex::EDITER:
+			{
+				nextScene = SceneChanger::Scene::StageEditer;
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -86,17 +99,18 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
-	w->ClearScreen();
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
 	DirectDrawing::ChangeSpriteShader();
 	draw->DrawTextrue(
-		w->windowWidth / 2.0f,
-		w->windowHeight / 2.0f,
-		static_cast<float>(w->windowWidth),
-		static_cast<float>(w->windowHeight),
+		winW / 2.0f,
+		winH / 2.0f,
+		static_cast<float>(winW),
+		static_cast<float>(winH),
 		0.0f,
 		background
 	);
@@ -110,8 +124,8 @@ void TitleScene::Draw()
 	case ButtonIndex::START:
 	{
 		draw->DrawTextrue(
-			w->windowWidth / 2.0f,
-			w->windowHeight / 2.0f + 150.0f,
+			winW / 2.0f,
+			winH / 2.0f + 150.0f,
 			352.0f,
 			64.0f,
 			0.0f,
@@ -124,8 +138,8 @@ void TitleScene::Draw()
 	case ButtonIndex::EDITER:
 	{
 		draw->DrawTextrue(
-			w->windowWidth / 2.0f,
-			w->windowHeight / 2.0f + 64.0f + 150.0f + 50.0f,
+			winW / 2.0f,
+			winH / 2.0f + 64.0f + 150.0f + 50.0f,
 			352.0f,
 			64.0f,
 			0.0f,
@@ -139,24 +153,19 @@ void TitleScene::Draw()
 		break;
 	}
 	draw->DrawTextrue(
-		w->windowWidth / 2.0f,
-		w->windowHeight / 2.0f + 150.0f,
+		winW / 2.0f,
+		winH / 2.0f + 150.0f,
 		144.0f,
 		64.0f,
 		0.0f,
 		start
 	);
 	draw->DrawTextrue(
-		w->windowWidth / 2.0f,
-		w->windowHeight / 2.0f + 64.0f + 150.0f + 50.0f,
+		winW / 2.0f,
+		winH / 2.0f + 64.0f + 150.0f + 50.0f,
 		352.0f,
 		64.0f,
 		0.0f,
 		editer
 	);
-
-	w->ScreenFlip();
-
-	// ループの終了処理
-	draw->PolygonLoopEnd();
 }

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "./Header/BaseScene.h"
+#include "./Scene/BaseScene.h"
 #include "../Player/Player.h"
 #include "../Stage/Stage.h"
 
@@ -19,7 +19,7 @@ private: //メンバ変数
 	int clear;
 
 public: //メンバ関数
-	GameScene(DrawPolygon* draw, SceneChenger* sceneChenger);
+	GameScene(SceneChanger* sceneChanger);
 	~GameScene() override;
 
 	void Init() override;

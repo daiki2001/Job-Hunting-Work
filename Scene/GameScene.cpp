@@ -142,7 +142,7 @@ void GameScene::Draw()
 		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "Move:WASD");
 		draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-						 "SelectAction:Arrow");
+						 "ItemSelect:Arrow");
 	}
 	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Action:Space");

@@ -26,12 +26,14 @@ public: //サブクラス
 private: //静的メンバ変数
 	static DrawPolygon* draw;
 	static int wall_obj; //外壁のオブジェクト
+	static Area* planeArea; //ブロックが何も置かれていないエリア
 
 public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
 
-	static int GetWallObj() { return wall_obj; }
+	static const int GetWallObj() { return wall_obj; }
+	static const Area GetPlaneArea() { return *planeArea; }
 
 private: //メンバ変数
 	BlockManager block_mgr;

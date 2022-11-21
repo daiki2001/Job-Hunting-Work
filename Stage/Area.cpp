@@ -11,6 +11,7 @@ const int Area::STAGE_WIDTH = 15;
 const int Area::STAGE_HEIGHT = 7;
 DrawPolygon* Area::draw = nullptr;
 int Area::wall_obj = FUNCTION_ERROR;
+Area* Area::planeArea = nullptr;
 
 Area::Area() :
 	block_mgr{},
@@ -39,6 +40,19 @@ void Area::StaticInit(DrawPolygon* const draw)
 	}
 	// 外壁のモデルの読み込み
 	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall/Wall.obj", "./Resources/Game/Wall/");
+
+	// planeAreaの初期化
+	static Area defArea = {};
+	planeArea = &defArea;
+	for (int i = 0; i < Area::STAGE_WIDTH * Area::STAGE_HEIGHT; i++)
+	{
+		planeArea->GetBlockManager()->CreateBlock(BlockManager::TypeId::NONE);
+		planeArea->GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % Area::STAGE_WIDTH) * 1.0f;
+		planeArea->GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / Area::STAGE_WIDTH) * -1.0f;
+	}
+	planeArea->SetDoorInit(Door::DoorStatus::OPEN, Door::DoorStatus::OPEN,
+						   Door::DoorStatus::OPEN, Door::DoorStatus::OPEN);
+	planeArea->Reset();
 
 	Door::StaticInit(draw);
 }
@@ -88,7 +102,7 @@ int Area::LoadArea(FILE* fileHandle)
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
 	int doorSetting[4] = { Door::DoorStatus::OPEN };
 
-	File::LoadMapChip(fileHandle, doorSetting, 4, -2);
+	File::LoadMapChip(fileHandle, doorSetting, 4);
 	File::LoadMapChip(fileHandle, mapArray, sizeof(mapArray) / sizeof(mapArray[0]));
 
 	block_mgr.AllDeleteBlock();

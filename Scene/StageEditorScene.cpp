@@ -107,10 +107,17 @@ void StageEditorScene::Update()
 		}
 	}
 
-	if (Input::IsControlKey() && Input::IsKeyTrigger(DIK_S))
+	if (Input::IsControlKey())
 	{
 		static const std::string userStageDir = resourcesDirectory + "Stage/User/";
-		stage->WirteStage((userStageDir + "aaa.csv").c_str());
+		if (inputMgr->MainDownTrigger())
+		{
+			stage->WirteStage((userStageDir + "aaa.csv").c_str());
+		}
+		else if (Input::IsKeyTrigger(DIK_L))
+		{
+			stage->LoadStage((userStageDir + "aaa.csv").c_str());
+		}
 	}
 
 	if (isSceneDest)

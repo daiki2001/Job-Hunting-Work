@@ -71,6 +71,7 @@ public: //メンバ関数
 	{
 		return blocks[index];
 	};
+	const size_t GetBlockSize() const { return blocks.size(); }
 	const bool GetDoor() const { return isOpen; }
 	const bool GetGoal() const { return isGoal; }
 

@@ -96,15 +96,14 @@ void Bomb::Draw(int offsetX, int offsetY)
 {
 	if (isAlive == false) return;
 
+	DirectDrawing::ChangeOBJShader();
 	if (isBomber)
 	{
-		DirectDrawing::ChangeOBJShader();
 		draw->Draw(object, pos, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 0.8f),
 				   Parameter::Get("white1x1"));
 	}
 	else
 	{
-		DirectDrawing::ChangeOBJShader();
 		draw->Draw(object, pos, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
 				   Parameter::Get("white1x1"));
 	}

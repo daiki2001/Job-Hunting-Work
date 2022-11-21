@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
-#include <vector>
+#include <map>
 #include "./Header/EngineGeneral.h"
 
 class Stage final
@@ -27,8 +27,8 @@ public: //サブクラス
 private: //静的メンバ変数
 	static DrawPolygon* draw;
 	static Player* player;         //プレイヤー
-	static std::vector<Room> room; //各部屋の情報
-	static int nowRoom; //プレイヤーが現在いる部屋
+	static std::map<Vector3, Area> rooms; //各部屋の情報
+	static Vector3 nowRoom; //プレイヤーが現在いる部屋
 
 public: //静的メンバ関数
 	// 静的初期化処理
@@ -45,19 +45,19 @@ public: //静的メンバ関数
 
 	static BlockManager* GetBlockManager()
 	{
-		if (room.size() == 0) return nullptr;
-		return room[nowRoom].area.GetBlockManager();
+		if (rooms.empty()) return nullptr;
+		return rooms[nowRoom].GetBlockManager();
 	}
 	static Door::DoorStatus GetDoorStatus(Area::DoorNum num)
 	{
-		if (room.size() == 0) return Door::DoorStatus::OPEN;
-		return room[nowRoom].area.GetDoorStatus(num);
+		if (rooms.empty()) return Door::DoorStatus::OPEN;
+		return rooms[nowRoom].GetDoorStatus(num);
 	}
 
 	static void SetDoorStatus(Door::DoorStatus status, Area::DoorNum num)
 	{
-		if (room.size() == 0) return;
-		room[nowRoom].area.SetDoorStatus(status, num);
+		if (rooms.empty()) return;
+		rooms[nowRoom].SetDoorStatus(status, num);
 	}
 
 public: //メンバ関数
@@ -70,18 +70,21 @@ public: //メンバ関数
 	// リセット処理
 	void Reset();
 
-	// 最後の部屋に飛ぶ
-	void LastRoom() { nowRoom = static_cast<int>(room.size() - 1); }
-
 	// ステージ読み込み
 	int LoadStage(const char* filePath = nullptr);
 	// ステージ書き込み
 	int WirteStage(const char* filePath = nullptr);
 
+	// 最後の部屋に飛ぶ
+	void LastRoom();
+
 	Area& GetArea()
 	{
 		static Area defArea = {};
-		if (room.size() == 0) return defArea;
-		return room[nowRoom].area;
+		if (rooms.empty()) return defArea;
+		return rooms[nowRoom];
 	}
+private:
+	// ミニマップの描画
+	void MiniMap(int offsetX = 0, int offsetY = 0, float scale = 1.0f);
 };

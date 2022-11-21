@@ -1,4 +1,6 @@
 ﻿#include "Stage.h"
+#include "./Header/DirectXInit.h"
+#include "./Header/Parameter.h"
 
 DrawPolygon* Stage::draw = nullptr;
 std::map<Math::Vector3, Area> Stage::rooms;
@@ -38,6 +40,7 @@ void Stage::Update()
 void Stage::Draw(int offsetX, int offsetY)
 {
 	rooms[nowRoom].Draw(offsetX, offsetY);
+	MiniMap(DirectXInit::GetInstance()->windowWidth, 0, 16.0f);
 }
 
 void Stage::Reset()
@@ -47,30 +50,6 @@ void Stage::Reset()
 	for (auto& i : rooms)
 	{
 		i.second.Reset();
-	}
-}
-
-void Stage::LastRoom()
-{
-	bool isGool = false;
-
-	for (auto& i : rooms)
-	{
-		auto blockMgr = i.second.GetBlockManager();
-		for (size_t j = 0; j < blockMgr->GetBlockSize(); j++)
-		{
-			if (blockMgr->GetBlock(static_cast<int>(j)).typeId == BlockManager::TypeId::GOAL)
-			{
-				isGool = true;
-				break;
-			}
-		}
-
-		if (isGool)
-		{
-			nowRoom = i.first;
-			break;
-		}
 	}
 }
 
@@ -156,6 +135,110 @@ int Stage::WirteStage(const char* filePath)
 
 	fclose(fileHandle);
 	return 0;
+}
+
+void Stage::LastRoom()
+{
+	bool isGool = false;
+
+	for (auto& i : rooms)
+	{
+		auto blockMgr = i.second.GetBlockManager();
+		for (size_t j = 0; j < blockMgr->GetBlockSize(); j++)
+		{
+			if (blockMgr->GetBlock(static_cast<int>(j)).typeId == BlockManager::TypeId::GOAL)
+			{
+				isGool = true;
+				break;
+			}
+		}
+
+		if (isGool)
+		{
+			nowRoom = i.first;
+			break;
+		}
+	}
+}
+
+void Stage::MiniMap(int offsetX, int offsetY, float scale)
+{
+	Vector3 offset = {
+		offsetX - (1.0f * 3.0f + 2.0f * 3.0f) * scale + 1.0f * scale,
+		offsetY + 1.0f * scale + 1.0f * scale,
+		0.0f
+	};
+
+	draw->ChangeSpriteShader();
+	for (int i = 0; i < 9; i++)
+	{
+		float x = static_cast<float>(i % 3);
+		float y = static_cast<float>(i / 3);
+		Vector3 roomPos = nowRoom + Vector3(x - 1.0f, y - 1.0f, 0.0f);
+		if (rooms.find(roomPos) == rooms.end())
+		{
+			continue;
+		}
+
+		draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
+						  y * (2.0f + 1.0f) * scale + offset.y,
+						  2.0f * scale,
+						  2.0f * scale,
+						  0.0f,
+						  Parameter::Get("white1x1"),
+						  DirectX::XMFLOAT2(0.5f, 0.5f),
+						  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+		if (x == 0.0f)
+		{
+			if (rooms.at(roomPos).GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
+			{
+				draw->DrawTextrue(x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
+								  y * (2.0f + 1.0f) * scale + offset.y,
+								  1.0f * scale,
+								  1.0f * scale,
+								  0.0f,
+								  Parameter::Get("white1x1"),
+								  DirectX::XMFLOAT2(0.5f, 0.5f),
+								  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+			}
+		}
+		if (y == 0.0f)
+		{
+			if (rooms.at(roomPos).GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
+			{
+				draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
+								  y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
+								  1.0f * scale,
+								  1.0f * scale,
+								  0.0f,
+								  Parameter::Get("white1x1"),
+								  DirectX::XMFLOAT2(0.5f, 0.5f),
+								  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+			}
+		}
+		if (rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
+		{
+			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
+							  y * (2.0f + 1.0f) * scale + offset.y,
+							  1.0f * scale,
+							  1.0f * scale,
+							  0.0f,
+							  Parameter::Get("white1x1"),
+							  DirectX::XMFLOAT2(0.5f, 0.5f),
+							  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+		}
+		if (rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
+		{
+			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
+							  y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
+							  1.0f * scale,
+							  1.0f * scale,
+							  0.0f,
+							  Parameter::Get("white1x1"),
+							  DirectX::XMFLOAT2(0.5f, 0.5f),
+							  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+		}
+	}
 }
 
 int Stage::CreateRoom(int direction)

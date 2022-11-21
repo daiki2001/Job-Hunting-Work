@@ -70,13 +70,13 @@ public: //メンバ関数
 	// リセット処理
 	void Reset();
 
-	// 最後の部屋に飛ぶ
-	void LastRoom();
-
 	// ステージ読み込み
 	int LoadStage(const char* filePath = nullptr);
 	// ステージ書き込み
 	int WirteStage(const char* filePath = nullptr);
+
+	// 最後の部屋に飛ぶ
+	void LastRoom();
 
 	Area& GetArea()
 	{
@@ -84,4 +84,7 @@ public: //メンバ関数
 		if (rooms.empty()) return defArea;
 		return rooms[nowRoom];
 	}
+private:
+	// ミニマップの描画
+	void MiniMap(int offsetX = 0, int offsetY = 0, float scale = 1.0f);
 };

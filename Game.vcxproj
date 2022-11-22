@@ -165,6 +165,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Effect\Particle.cpp" />
+    <ClCompile Include="Effect\WallBreakEffect.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LoadGraph.cpp" />
     <ClCompile Include="main.cpp" />
@@ -182,6 +184,8 @@
     <ClCompile Include="Stage\Area.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Effect\Particle.h" />
+    <ClInclude Include="Effect\WallBreakEffect.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LoadGraph.h" />
     <ClInclude Include="Player\Bomb.h" />

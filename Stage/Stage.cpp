@@ -40,7 +40,7 @@ void Stage::Update()
 void Stage::Draw(int offsetX, int offsetY)
 {
 	rooms[nowRoom].Draw(offsetX, offsetY);
-	MiniMap(DirectXInit::GetInstance()->windowWidth, 0, 16.0f);
+	MiniMap(DirectXInit::GetInstance()->windowWidth, 0, 20.0f);
 }
 
 void Stage::Reset()
@@ -168,6 +168,7 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 		offsetY + 1.0f * scale + 1.0f * scale,
 		0.0f
 	};
+	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.625f, 0.625f, 0.625f, 0.75f);
 
 	draw->ChangeSpriteShader();
 	for (int i = 0; i < 9; i++)
@@ -187,10 +188,11 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 						  0.0f,
 						  Parameter::Get("white1x1"),
 						  DirectX::XMFLOAT2(0.5f, 0.5f),
-						  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+						  (roomPos == nowRoom) ? DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, color.w) : color);
 		if (x == 0.0f)
 		{
-			if (rooms.at(roomPos).GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
+			if (rooms.find(roomPos + Vector3(-1.0f, 0.0f, 0.0f)) != rooms.end() &&
+				rooms.at(roomPos).GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
 			{
 				draw->DrawTextrue(x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
 								  y * (2.0f + 1.0f) * scale + offset.y,
@@ -199,12 +201,13 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 								  0.0f,
 								  Parameter::Get("white1x1"),
 								  DirectX::XMFLOAT2(0.5f, 0.5f),
-								  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+								  color);
 			}
 		}
 		if (y == 0.0f)
 		{
-			if (rooms.at(roomPos).GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
+			if (rooms.find(roomPos + Vector3(0.0f, -1.0f, 0.0f)) != rooms.end() &&
+				rooms.at(roomPos).GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
 			{
 				draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
 								  y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
@@ -213,10 +216,11 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 								  0.0f,
 								  Parameter::Get("white1x1"),
 								  DirectX::XMFLOAT2(0.5f, 0.5f),
-								  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+								  color);
 			}
 		}
-		if (rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
+		if (rooms.find(roomPos + Vector3(1.0f, 0.0f, 0.0f)) != rooms.end() &&
+			rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
 		{
 			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
 							  y * (2.0f + 1.0f) * scale + offset.y,
@@ -225,9 +229,10 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 							  0.0f,
 							  Parameter::Get("white1x1"),
 							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+							  color);
 		}
-		if (rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
+		if (rooms.find(roomPos + Vector3(0.0f, 1.0f, 0.0f)) != rooms.end() &&
+			rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
 		{
 			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
 							  y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
@@ -236,7 +241,7 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 							  0.0f,
 							  Parameter::Get("white1x1"),
 							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f));
+							  color);
 		}
 	}
 }

@@ -248,11 +248,6 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 
 int Stage::CreateRoom(int direction)
 {
-	static const Vector3 moveUpRoom = { 0.0f, -1.0f, 0.0f };
-	static const Vector3 moveDownRoom = { 0.0f, 1.0f, 0.0f };
-	static const Vector3 moveLeftRoom = { -1.0f, 0.0f, 0.0f };
-	static const Vector3 moveRightRoom = { 1.0f, 0.0f, 0.0f };
-
 	if (direction < 0 && direction >= 4)
 	{
 		if (rooms.empty() == false)
@@ -260,6 +255,11 @@ int Stage::CreateRoom(int direction)
 			return FUNCTION_ERROR;
 		}
 	}
+
+	static const Vector3 moveUpRoom = { 0.0f, -1.0f, 0.0f };
+	static const Vector3 moveDownRoom = { 0.0f, 1.0f, 0.0f };
+	static const Vector3 moveLeftRoom = { -1.0f, 0.0f, 0.0f };
+	static const Vector3 moveRightRoom = { 1.0f, 0.0f, 0.0f };
 
 	switch (direction)
 	{
@@ -281,7 +281,7 @@ int Stage::CreateRoom(int direction)
 
 	if (rooms.find(nowRoom) != rooms.end())
 	{
-		return 0;
+		return direction;
 	}
 
 	rooms[nowRoom] = Area::GetPlaneArea();

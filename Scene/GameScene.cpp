@@ -137,7 +137,8 @@ void GameScene::Draw()
 	}
 	else
 	{
-		player->DrawInventory();
+		const float inventoryScale = 1.5f;
+		player->DrawInventory(winW - 64.0f * inventoryScale, winH - 32.0f * inventoryScale, inventoryScale);
 
 		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "Move:WASD");

@@ -58,7 +58,7 @@ public: //メンバ関数
 	// 描画処理
 	void Draw(int offsetX = 0, int offsetY = 0);
 	// 描画処理(アイテムインベントリ)
-	void DrawInventory(int offsetX = 0, int offsetY = 0);
+	void DrawInventory(int offsetX = 0, int offsetY = 0, float scale = 1.0f);
 	// リセット
 	void Reset();
 

@@ -70,15 +70,15 @@ void Player::Draw(int offsetX, int offsetY)
 	);
 }
 
-void Player::DrawInventory(int offsetX, int offsetY)
+void Player::DrawInventory(int offsetX, int offsetY, float scale)
 {
 	switch (selectItem)
 	{
 	case Player::KEY:
-		key.DrawInfo("Key", offsetX, offsetY);
+		key.DrawInfo("Key", offsetX, offsetY, scale);
 		break;
 	case Player::BOMB:
-		bomb.DrawInfo("Bomb", offsetX, offsetY);
+		bomb.DrawInfo("Bomb", offsetX, offsetY, scale);
 		break;
 	default:
 		break;

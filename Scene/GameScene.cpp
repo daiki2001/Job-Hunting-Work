@@ -2,7 +2,6 @@
 #include "./Header/DirectXInit.h"
 #include "InputManager.h"
 #include "./Header/Camera.h"
-#include "LoadGraph.h"
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 const std::string GameScene::stageDir = resourcesDirectory + "Stage/";
@@ -38,10 +37,7 @@ void GameScene::Init()
 		clear = draw->LoadTextrue((gameResourcesDir + L"Clear.png").c_str());
 	}
 
-	LoadGraph::Get()->Load(draw);
 	player->Init(draw);
-	stage->StaticInit(draw);
-	stage->LoadStage((stageDir + "stage1.csv").c_str());
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -88,6 +84,12 @@ void GameScene::Update()
 		stage->LoadStage((stageDir + "stage1.csv").c_str());
 	}
 #endif // _DEBUG
+	if (Input::IsKeyTrigger(DIK_RETURN))
+	{
+		isSceneDest = true;
+		nextScene = SceneChanger::Scene::Title;
+		changeAnimation.Start();
+	}
 
 	if (isSceneDest)
 	{
@@ -137,7 +139,8 @@ void GameScene::Draw()
 	}
 	else
 	{
-		player->DrawInventory();
+		const float inventoryScale = 1.5f;
+		player->DrawInventory(static_cast<int>(winW - 64.0f * inventoryScale), static_cast<int>(winH - 32.0f * inventoryScale), inventoryScale);
 
 		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 "Move:WASD");

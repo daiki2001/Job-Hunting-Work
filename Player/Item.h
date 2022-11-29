@@ -27,7 +27,7 @@ public: //メンバ関数
 	// リセット
 	void Reset() { count = 0; }
 	// 所持数の表示
-	void DrawInfo(const char* type, int offsetX = 0, int offsetY = 0);
+	void DrawInfo(const char* type, int offsetX = 0, int offsetY = 0, float scale = 1.0f);
 
 	// アイテムの入手
 	void Acquisition() { if (count < maxCount) count++; }

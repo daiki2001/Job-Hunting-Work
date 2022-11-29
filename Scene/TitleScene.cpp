@@ -81,7 +81,7 @@ void TitleScene::Update()
 			{
 			case ButtonIndex::START:
 			{
-				nextScene = SceneChanger::Scene::Game;
+				nextScene = SceneChanger::Scene::StageSelect;
 				break;
 			}
 			case ButtonIndex::EDITER:

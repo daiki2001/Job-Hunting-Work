@@ -17,6 +17,7 @@ StageSelectScene::StageSelectScene(SceneChanger* sceneChanger) :
 	title(FUNCTION_ERROR),
 	stage(FUNCTION_ERROR),
 	userStage(FUNCTION_ERROR),
+	arrow(FUNCTION_ERROR),
 	number(FUNCTION_ERROR)
 {
 	Init();
@@ -54,29 +55,59 @@ void StageSelectScene::Init()
 	{
 		userStage = draw->LoadTextrue((resourcesDir + L"UserStage.png").c_str());
 	}
+	if (arrow == FUNCTION_ERROR)
+	{
+		arrow = draw->LoadTextrue((resourcesDir + L"Arrow.png").c_str());
+	}
 	if (number == FUNCTION_ERROR)
 	{
 		number = draw->LoadTextrue((resourcesDir + L"Number.png").c_str());
 	}
+
+	Camera::targetRadius = 10.0f;
+	Camera::longitude = Math::DEGREE_F * (-90.0f);
+	Camera::latitude = Math::DEGREE_F * (0.0f);
+
+	Camera::pos = { 0.0f, 0.0f, -10.0f };
+	Camera::target = { 0.0f, 0.0f, 0.0f };
+	Camera::upVec = { 0.0f, 1.0f, 0.0f };
 }
 
 void StageSelectScene::Update()
 {
+	static int loopCount = 0;
+
 	if (inputMgr->MainLeft() || inputMgr->SubLeft())
 	{
-		stageIndex--;
-		if (stageIndex < StageStatus::USER)
+		if (loopCount % 5 == 0)
 		{
-			stageIndex = StageStatus::USER;
+			stageIndex--;
+			if (stageIndex < StageStatus::USER)
+			{
+				stageIndex = StageStatus::USER;
+			}
 		}
+
+		loopCount++;
+		loopCount %= 1000;
 	}
-	if (inputMgr->MainRight() || inputMgr->SubRight())
+	else if (inputMgr->MainRight() || inputMgr->SubRight())
 	{
-		stageIndex++;
-		if (stageIndex > StageStatus::MAX)
+		if (loopCount % 5 == 0)
 		{
-			stageIndex = StageStatus::MAX;
+			stageIndex++;
+			if (stageIndex > StageStatus::MAX)
+			{
+				stageIndex = StageStatus::MAX;
+			}
 		}
+
+		loopCount++;
+		loopCount %= 1000;
+	}
+	else
+	{
+		loopCount = 0;
 	}
 	if (isSceneDest)
 	{
@@ -157,6 +188,12 @@ void StageSelectScene::Draw()
 	}
 	else if (stageIndex == StageStatus::USER)
 	{
+		DirectDrawing::ChangeMaterialShader();
+		draw->DrawOBJ(cave,
+					  Vector3(0.0f, 0.0f, 30.0f),
+					  Math::rotateY(90.0f * Math::DEGREE_F),
+					  scale_xyz(7.0f));
+		DirectDrawing::ChangeSpriteShader();
 		draw->DrawTextrue(winW / 2.0f,
 						  100.0f,
 						  640.0f,
@@ -169,9 +206,9 @@ void StageSelectScene::Draw()
 	{
 		DirectDrawing::ChangeMaterialShader();
 		draw->DrawOBJ(cave,
-					  Vector3(0.0f, 50.0f, 30.0f),
+					  Vector3(0.0f, 0.0f, 30.0f),
 					  Math::rotateY(90.0f * Math::DEGREE_F),
-					  scale_xyz(32.0f));
+					  scale_xyz(7.0f));
 		DirectDrawing::ChangeSpriteShader();
 		draw->DrawTextrue(winW / 2.0f - 60.0f,
 						  100.0f,
@@ -189,5 +226,28 @@ void StageSelectScene::Draw()
 							 0.0f,
 							 number,
 							 XMFLOAT2(0.5f, 0.0f));
+	}
+
+	// 左右の三角形の描画
+	DirectDrawing::ChangeSpriteShader();
+	if (stageIndex != StageStatus::MAX)
+	{
+		draw->DrawTextrue(winW - 96.0f,
+						  winH / 2.0f,
+						  128.0f,
+						  128.0f,
+						  0.0f,
+						  arrow,
+						  XMFLOAT2(0.5f, 0.5f));
+	}
+	if (stageIndex != StageStatus::USER)
+	{
+		draw->DrawTextrue(96.0f,
+						  winH / 2.0f,
+						  128.0f,
+						  128.0f,
+						  180.0f * Math::DEGREE_F,
+						  arrow,
+						  XMFLOAT2(0.5f, 0.5f));
 	}
 }

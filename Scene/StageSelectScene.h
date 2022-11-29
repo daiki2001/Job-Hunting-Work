@@ -32,6 +32,7 @@ private: //メンバ変数
 	int title;      //「TITLE」の文字画像
 	int stage;      //「Stage」の文字画像
 	int userStage;  //「User Stage」の文字画像
+	int arrow;      //矢印の画像
 	int number;     //数字の文字画像
 
 public: //メンバ関数

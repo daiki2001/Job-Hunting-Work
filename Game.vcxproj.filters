@@ -37,6 +37,9 @@
     <Filter Include="Effect">
       <UniqueIdentifier>{9bb187a7-fd82-4f85-8e57-6b186c58d5a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UndoRedo">
+      <UniqueIdentifier>{3f59ea14-dbcc-443d-91cf-a7ae128b224c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,11 +93,20 @@
     <ClCompile Include="Effect\WallBreakEffect.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
-    <ClCompile Include="FuncRedoUndo.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\StageSelectScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="UndoRedo\AddBlock.cpp">
+      <Filter>UndoRedo</Filter>
+    </ClCompile>
+    <ClCompile Include="UndoRedo\FuncRedoUndo.cpp">
+      <Filter>UndoRedo</Filter>
+    </ClCompile>
+    <ClCompile Include="UndoRedo\BaseUndoRedo.cpp">
+      <Filter>UndoRedo</Filter>
+    </ClCompile>
+    <ClCompile Include="UndoRedo\AddDoor.cpp">
+      <Filter>UndoRedo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,11 +158,23 @@
     <ClInclude Include="Effect\WallBreakEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
-    <ClInclude Include="FuncRedoUndo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\StageSelectScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoRedo\AddBlock.h">
+      <Filter>UndoRedo</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoRedo\FuncRedoUndo.h">
+      <Filter>UndoRedo</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoRedo\BaseUndoRedo.h">
+      <Filter>UndoRedo</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoRedo\AddRoom.h">
+      <Filter>UndoRedo</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoRedo\AddDoor.h">
+      <Filter>UndoRedo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

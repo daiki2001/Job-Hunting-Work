@@ -43,6 +43,7 @@ public: //静的メンバ関数
 
 	static const bool IsGoal();
 
+	static Vector3 GetRoom() { return nowRoom; }
 	static BlockManager* GetBlockManager()
 	{
 		if (rooms.empty()) return nullptr;
@@ -54,6 +55,16 @@ public: //静的メンバ関数
 		return rooms[nowRoom].GetDoorStatus(num);
 	}
 
+	static int SetRoom(const Vector3& roomPos)
+	{
+		if (rooms.find(roomPos) == rooms.end())
+		{
+			return FUNCTION_ERROR;
+		}
+
+		nowRoom == roomPos;
+		return 0;
+	}
 	static void SetDoorStatus(Door::DoorStatus status, Area::DoorNum num)
 	{
 		if (rooms.empty()) return;

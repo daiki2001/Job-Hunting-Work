@@ -250,4 +250,6 @@ void StageSelectScene::Draw()
 						  arrow,
 						  XMFLOAT2(0.5f, 0.5f));
 	}
+
+	draw->DrawString(winW / 2.0f - (4.0f * 9.0f * 4.0f), winH - 64.0f, 4.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Press Space");
 }

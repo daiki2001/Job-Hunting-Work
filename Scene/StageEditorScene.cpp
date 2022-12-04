@@ -1,4 +1,6 @@
 ﻿#include "StageEditorScene.h"
+#include "./UndoRedo/AddBlock.h"
+#include "./UndoRedo/AddDoor.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
 #include "./Header/Parameter.h"
@@ -68,13 +70,6 @@ void StageEditorScene::Init()
 
 void StageEditorScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_F1))
-	{
-		isSceneDest = true;
-		nextScene = SceneChanger::Scene::Title;
-		changeAnimation.Start();
-	}
-
 	CursorMove();
 
 	if (cursorState == CursorState::BLOCKS)
@@ -83,8 +78,11 @@ void StageEditorScene::Update()
 
 		if (inputMgr->DecisionTrigger())
 		{
+			// 今配置されているブロックの取得
+			auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
 			// ブロックの配置
-			Stage::GetBlockManager()->ChengeBlock(mapIndex, BlockManager::TypeId(blockIndex));
+			AddBlock add = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId(blockIndex), oldBlock);
+			redoUndo.AddCommandList<AddBlock>("Add Block", add);
 		}
 	}
 	else
@@ -101,8 +99,13 @@ void StageEditorScene::Update()
 			}
 			else
 			{
+				// 今配置されているドアの取得
+				auto oldDoor = stage->GetDoorStatus(static_cast<Area::DoorNum>(cursorState - 1));
 				// ドア・壁の配置
-				Stage::SetDoorStatus(static_cast<Door::DoorStatus>(doorIndex), static_cast<Area::DoorNum>(cursorState - 1));
+				AddDoor add = AddDoor(Stage::GetRoom(), static_cast<Area::DoorNum>(cursorState - 1),
+									  static_cast<Door::DoorStatus>(doorIndex), oldDoor);
+				redoUndo.AddCommandList<AddDoor>("Add Door", add);
+				//Stage::SetDoorStatus(static_cast<Door::DoorStatus>(doorIndex), static_cast<Area::DoorNum>(cursorState - 1));
 			}
 		}
 	}
@@ -117,6 +120,14 @@ void StageEditorScene::Update()
 		else if (Input::IsKeyTrigger(DIK_L))
 		{
 			stage->LoadStage((userStageDir + "aaa.csv").c_str());
+		}
+		else if (Input::IsKeyTrigger(DIK_Z))
+		{
+			redoUndo.UndoCommand();
+		}
+		else if (Input::IsKeyTrigger(DIK_Y))
+		{
+			redoUndo.RedoCommand();
 		}
 	}
 

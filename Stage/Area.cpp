@@ -16,7 +16,8 @@ Area* Area::planeArea = nullptr;
 Area::Area() :
 	block_mgr{},
 	door{},
-	doorInit{}
+	doorInit{},
+	isAlive(false)
 {
 	block_mgr.Init(Area::draw);
 
@@ -69,6 +70,8 @@ void Area::Reset()
 
 void Area::Update()
 {
+	if (isAlive == false) return;
+
 	block_mgr.Update();
 
 	if (block_mgr.GetDoor())
@@ -82,6 +85,8 @@ void Area::Update()
 
 void Area::Draw(int offsetX, int offsetY)
 {
+	if (isAlive == false) return;
+
 	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) +
 		Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
 
@@ -148,11 +153,14 @@ int Area::LoadArea(FILE* fileHandle)
 		doorInit[i] = door[i];
 	}
 
+	isAlive = true;
 	return 0;
 }
 
 int Area::WriteArea(FILE* fileHandle)
 {
+	if (isAlive == false) return FUNCTION_ERROR;
+
 	// ドア・壁
 	int doorStatus[4] = {};
 	for (size_t i = 0; i < 4; i++)

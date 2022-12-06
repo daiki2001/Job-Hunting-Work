@@ -1,4 +1,6 @@
 ﻿#include "StageEditorScene.h"
+#include "./UndoRedo/AddBlock.h"
+#include "./UndoRedo/AddDoor.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
 #include "./Header/Parameter.h"
@@ -68,13 +70,6 @@ void StageEditorScene::Init()
 
 void StageEditorScene::Update()
 {
-	if (Input::IsKeyTrigger(DIK_F1))
-	{
-		isSceneDest = true;
-		nextScene = SceneChanger::Scene::Title;
-		changeAnimation.Start();
-	}
-
 	CursorMove();
 
 	if (cursorState == CursorState::BLOCKS)
@@ -83,8 +78,11 @@ void StageEditorScene::Update()
 
 		if (inputMgr->DecisionTrigger())
 		{
+			// 今配置されているブロックの取得
+			auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
 			// ブロックの配置
-			Stage::GetBlockManager()->ChengeBlock(mapIndex, BlockManager::TypeId(blockIndex));
+			AddBlock add = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId(blockIndex), oldBlock);
+			redoUndo.AddCommandList<AddBlock>("Add Block", add);
 		}
 	}
 	else
@@ -95,14 +93,23 @@ void StageEditorScene::Update()
 		{
 			if (doorIndex == Door::DoorStatus::ROOM_CREATE)
 			{
+				// 今いる部屋の取得
+				Math::Vector3 oldRoomPos = Stage::GetRoom();
 				// 部屋の生成
 				int createRoomDir = Stage::CreateRoom(cursorState - 1);
+				CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
+				redoUndo.AddCommandList<CreateRoom>("Create Room", add);
 				CursorMove(createRoomDir);
 			}
 			else
 			{
+				// 今配置されているドアの取得
+				auto oldDoor = stage->GetDoorStatus(static_cast<Area::DoorNum>(cursorState - 1));
 				// ドア・壁の配置
-				Stage::SetDoorStatus(static_cast<Door::DoorStatus>(doorIndex), static_cast<Area::DoorNum>(cursorState - 1));
+				AddDoor add = AddDoor(Stage::GetRoom(), static_cast<Area::DoorNum>(cursorState - 1),
+									  static_cast<Door::DoorStatus>(doorIndex), oldDoor,
+									  cursorState);
+				redoUndo.AddCommandList<AddDoor>("Add Door", add);
 			}
 		}
 	}
@@ -117,6 +124,14 @@ void StageEditorScene::Update()
 		else if (Input::IsKeyTrigger(DIK_L))
 		{
 			stage->LoadStage((userStageDir + "aaa.csv").c_str());
+		}
+		else if (Input::IsKeyTrigger(DIK_Z))
+		{
+			redoUndo.UndoCommand();
+		}
+		else if (Input::IsKeyTrigger(DIK_Y))
+		{
+			redoUndo.RedoCommand();
 		}
 	}
 
@@ -298,14 +313,18 @@ void StageEditorScene::Draw()
 		}
 	}
 
-	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Move:WASD");
-	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (5.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Select:Arrow");
-	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Decision:Space");
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Save:Ctrl + S");
+	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Redo:Ctrl + Z");
+	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Undo:Ctrl + Y");
 	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Title:F1");
 }

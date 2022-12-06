@@ -1,7 +1,10 @@
 ﻿#pragma once
 #include "./Scene/BaseScene.h"
 #include "../Stage/Stage.h"
+#include "../UndoRedo/FuncRedoUndo.h"
 #include "../InputManager.h"
+
+class FuncRedoUndo;
 
 class StageEditorScene : public BaseScene
 {
@@ -31,6 +34,8 @@ private: //メンバ変数
 	int blockIndex; //選んでるブロックの種類
 	int doorIndex;  //選んでるドア・壁の種類
 	CursorState cursorState;
+
+	FuncRedoUndo redoUndo;
 
 	int background; //背景画像
 	int cursor; //カーソル画像

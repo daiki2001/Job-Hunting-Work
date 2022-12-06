@@ -2,6 +2,10 @@
 #include "./Header/DirectXInit.h"
 #include "./Header/Parameter.h"
 
+const Math::Vector3 Stage::moveUpRoom = { 0.0f, -1.0f, 0.0f };
+const Math::Vector3 Stage::moveDownRoom = { 0.0f, 1.0f, 0.0f };
+const Math::Vector3 Stage::moveLeftRoom = { -1.0f, 0.0f, 0.0f };
+const Math::Vector3 Stage::moveRightRoom = { 1.0f, 0.0f, 0.0f };
 DrawPolygon* Stage::draw = nullptr;
 std::map<Math::Vector3, Area> Stage::rooms;
 Math::Vector3 Stage::nowRoom = { 0.0f, 0.0f, 0.0f };
@@ -137,6 +141,202 @@ int Stage::WirteStage(const char* filePath)
 	return 0;
 }
 
+int Stage::CreateRoom(int direction)
+{
+	if (direction < 0 && direction >= 4)
+	{
+		if (rooms.empty() == false)
+		{
+			return FUNCTION_ERROR;
+		}
+	}
+
+	switch (direction)
+	{
+	case Area::DoorNum::UP:
+		nowRoom += moveUpRoom;
+		break;
+	case Area::DoorNum::DOWN:
+		nowRoom += moveDownRoom;
+		break;
+	case Area::DoorNum::LEFT:
+		nowRoom += moveLeftRoom;
+		break;
+	case Area::DoorNum::RIGHT:
+		nowRoom += moveRightRoom;
+		break;
+	default:
+		break;
+	}
+
+	if (rooms.find(nowRoom) != rooms.end())
+	{
+		rooms[nowRoom].isAlive = true;
+		return direction;
+	}
+
+	rooms[nowRoom] = Area::GetPlaneArea();
+	rooms[nowRoom].isAlive = true;
+
+	return direction;
+}
+
+int Stage::DeleteRoom(int direction)
+{
+	if (direction < 0 && direction >= 4)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	Vector3 moveRoom = {};
+
+	switch (direction)
+	{
+	case Area::DoorNum::UP:
+		moveRoom = nowRoom + moveUpRoom;
+		break;
+	case Area::DoorNum::DOWN:
+		moveRoom = nowRoom + moveDownRoom;
+		break;
+	case Area::DoorNum::LEFT:
+		moveRoom = nowRoom + moveLeftRoom;
+		break;
+	case Area::DoorNum::RIGHT:
+		moveRoom = nowRoom + moveRightRoom;
+		break;
+	default:
+		break;
+	}
+
+	if (rooms.find(moveRoom) == rooms.end())
+	{
+		return FUNCTION_ERROR;
+	}
+
+	rooms[moveRoom].GetBlockManager()->AllDeleteBlock();
+	rooms.erase(moveRoom);
+
+	nowRoom = moveRoom;
+
+	return 0;
+}
+
+int Stage::DeleteRoom(int direction, const Vector3& roomPos)
+{
+	if (direction < 0 && direction >= 4 ||
+		rooms.find(roomPos) == rooms.end())
+	{
+		return FUNCTION_ERROR;
+	}
+
+	if (roomPos == nowRoom)
+	{
+		Vector3 moveRoom = {};
+
+		switch (direction)
+		{
+		case Area::DoorNum::UP:
+			moveRoom = nowRoom + moveUpRoom;
+			break;
+		case Area::DoorNum::DOWN:
+			moveRoom = nowRoom + moveDownRoom;
+			break;
+		case Area::DoorNum::LEFT:
+			moveRoom = nowRoom + moveLeftRoom;
+			break;
+		case Area::DoorNum::RIGHT:
+			moveRoom = nowRoom + moveRightRoom;
+			break;
+		default:
+			break;
+		}
+
+		if (rooms.find(moveRoom) == rooms.end())
+		{
+			return FUNCTION_ERROR;
+		}
+
+		rooms[moveRoom].GetBlockManager()->AllDeleteBlock();
+		rooms.erase(moveRoom);
+
+		nowRoom = moveRoom;
+	}
+	else
+	{
+		rooms[roomPos].GetBlockManager()->AllDeleteBlock();
+		rooms.erase(roomPos);
+	}
+
+	return 0;
+}
+
+void Stage::AllDeleteRoom()
+{
+	nowRoom = { 0.0f, 0.0f, 0.0f };
+
+	for (auto& i : rooms)
+	{
+		i.second.GetBlockManager()->AllDeleteBlock();
+	}
+	rooms.clear();
+}
+
+int Stage::MoveUpRoom()
+{
+	Vector3 moveRoom = nowRoom + moveUpRoom;
+
+	if (rooms.find(moveRoom) == rooms.end() ||
+		rooms[moveRoom].isAlive == false)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = moveRoom;
+	return 0;
+}
+
+int Stage::MoveDownRoom()
+{
+	Vector3 moveRoom = nowRoom + moveDownRoom;
+
+	if (rooms.find(moveRoom) == rooms.end() ||
+		rooms[moveRoom].isAlive == false)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = moveRoom;
+	return 0;
+}
+
+int Stage::MoveLeftRoom()
+{
+	Vector3 moveRoom = nowRoom + moveLeftRoom;
+
+	if (rooms.find(moveRoom) == rooms.end() ||
+		rooms[moveRoom].isAlive == false)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = moveRoom;
+	return 0;
+}
+
+int Stage::MoveRightRoom()
+{
+	Vector3 moveRoom = nowRoom + moveRightRoom;
+
+	if (rooms.find(moveRoom) == rooms.end() ||
+		rooms[moveRoom].isAlive == false)
+	{
+		return FUNCTION_ERROR;
+	}
+
+	nowRoom = moveRoom;
+	return 0;
+}
+
 void Stage::LastRoom()
 {
 	bool isGool = false;
@@ -176,7 +376,8 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 		float x = static_cast<float>(i % 3);
 		float y = static_cast<float>(i / 3);
 		Vector3 roomPos = nowRoom + Vector3(x - 1.0f, y - 1.0f, 0.0f);
-		if (rooms.find(roomPos) == rooms.end())
+		if ((rooms.find(roomPos) == rooms.end()) ||
+			(rooms[roomPos].isAlive == false))
 		{
 			continue;
 		}
@@ -246,124 +447,6 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 	}
 }
 
-int Stage::CreateRoom(int direction)
-{
-	if (direction < 0 && direction >= 4)
-	{
-		if (rooms.empty() == false)
-		{
-			return FUNCTION_ERROR;
-		}
-	}
-
-	static const Vector3 moveUpRoom = { 0.0f, -1.0f, 0.0f };
-	static const Vector3 moveDownRoom = { 0.0f, 1.0f, 0.0f };
-	static const Vector3 moveLeftRoom = { -1.0f, 0.0f, 0.0f };
-	static const Vector3 moveRightRoom = { 1.0f, 0.0f, 0.0f };
-
-	switch (direction)
-	{
-	case Area::DoorNum::UP:
-		nowRoom += moveUpRoom;
-		break;
-	case Area::DoorNum::DOWN:
-		nowRoom += moveDownRoom;
-		break;
-	case Area::DoorNum::LEFT:
-		nowRoom += moveLeftRoom;
-		break;
-	case Area::DoorNum::RIGHT:
-		nowRoom += moveRightRoom;
-		break;
-	default:
-		break;
-	}
-
-	if (rooms.find(nowRoom) != rooms.end())
-	{
-		return direction;
-	}
-
-	rooms[nowRoom] = Area::GetPlaneArea();
-
-	return direction;
-}
-
-int Stage::MoveUpRoom()
-{
-	static const Vector3 moveRoom = { 0.0f, -1.0f, 0.0f };
-
-	if (rooms.find(nowRoom + moveRoom) == rooms.end())
-	{
-		return FUNCTION_ERROR;
-	}
-	else
-	{
-		nowRoom += moveRoom;
-	}
-
-	return 0;
-}
-
-int Stage::MoveDownRoom()
-{
-	static const Vector3 moveRoom = { 0.0f, 1.0f, 0.0f };
-
-	if (rooms.find(nowRoom + moveRoom) == rooms.end())
-	{
-		return FUNCTION_ERROR;
-	}
-	else
-	{
-		nowRoom += moveRoom;
-	}
-
-	return 0;
-}
-
-int Stage::MoveLeftRoom()
-{
-	static const Vector3 moveRoom = { -1.0f, 0.0f, 0.0f };
-
-	if (rooms.find(nowRoom + moveRoom) == rooms.end())
-	{
-		return FUNCTION_ERROR;
-	}
-	else
-	{
-		nowRoom += moveRoom;
-	}
-
-	return 0;
-}
-
-int Stage::MoveRightRoom()
-{
-	static const Vector3 moveRoom = { 1.0f, 0.0f, 0.0f };
-
-	if (rooms.find(nowRoom + moveRoom) == rooms.end())
-	{
-		return FUNCTION_ERROR;
-	}
-	else
-	{
-		nowRoom += moveRoom;
-	}
-
-	return 0;
-}
-
-void Stage::AllDeleteRoom()
-{
-	nowRoom = { 0.0f, 0.0f, 0.0f };
-
-	for (auto& i : rooms)
-	{
-		i.second.GetBlockManager()->AllDeleteBlock();
-	}
-	rooms.clear();
-}
-
 const bool Stage::IsGoal()
 {
 	static bool reslut = false;
@@ -371,10 +454,13 @@ const bool Stage::IsGoal()
 
 	for (auto& i : rooms)
 	{
-		if (i.second.IsGoal())
+		if (i.second.isAlive = true)
 		{
-			reslut = true;
-			break;
+			if (i.second.IsGoal())
+			{
+				reslut = true;
+				break;
+			}
 		}
 	}
 

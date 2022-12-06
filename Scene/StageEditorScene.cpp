@@ -93,8 +93,12 @@ void StageEditorScene::Update()
 		{
 			if (doorIndex == Door::DoorStatus::ROOM_CREATE)
 			{
+				// 今いる部屋の取得
+				Math::Vector3 oldRoomPos = Stage::GetRoom();
 				// 部屋の生成
 				int createRoomDir = Stage::CreateRoom(cursorState - 1);
+				CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
+				redoUndo.AddCommandList<CreateRoom>("Create Room", add);
 				CursorMove(createRoomDir);
 			}
 			else
@@ -103,9 +107,9 @@ void StageEditorScene::Update()
 				auto oldDoor = stage->GetDoorStatus(static_cast<Area::DoorNum>(cursorState - 1));
 				// ドア・壁の配置
 				AddDoor add = AddDoor(Stage::GetRoom(), static_cast<Area::DoorNum>(cursorState - 1),
-									  static_cast<Door::DoorStatus>(doorIndex), oldDoor);
+									  static_cast<Door::DoorStatus>(doorIndex), oldDoor,
+									  cursorState);
 				redoUndo.AddCommandList<AddDoor>("Add Door", add);
-				//Stage::SetDoorStatus(static_cast<Door::DoorStatus>(doorIndex), static_cast<Area::DoorNum>(cursorState - 1));
 			}
 		}
 	}
@@ -309,14 +313,18 @@ void StageEditorScene::Draw()
 		}
 	}
 
-	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Move:WASD");
-	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (5.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Select:Arrow");
-	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Decision:Space");
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Save:Ctrl + S");
+	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Redo:Ctrl + Z");
+	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					 "Undo:Ctrl + Y");
 	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Title:F1");
 }

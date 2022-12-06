@@ -34,8 +34,12 @@ public: //静的メンバ関数
 
 	static const int GetWallObj() { return wall_obj; }
 	static const Area GetPlaneArea() { return *planeArea; }
+private:
+	static void DrawWall(const Vector3& offset);
 
-private: //メンバ変数
+public: //メンバ変数
+	bool isAlive;
+private:
 	BlockManager block_mgr;
 	Door door[4];
 	Door doorInit[4];
@@ -68,6 +72,4 @@ public: //メンバ関数
 	void SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
 					 Door::DoorStatus left, Door::DoorStatus right);
 	void SetDoorStatus(Door::DoorStatus status, DoorNum num) { door[num].SetStatus(status); }
-private:
-	void DrawWall(const Vector3& offset);
 };

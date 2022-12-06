@@ -102,10 +102,10 @@
     <ClCompile Include="UndoRedo\FuncRedoUndo.cpp">
       <Filter>UndoRedo</Filter>
     </ClCompile>
-    <ClCompile Include="UndoRedo\BaseUndoRedo.cpp">
+    <ClCompile Include="UndoRedo\AddDoor.cpp">
       <Filter>UndoRedo</Filter>
     </ClCompile>
-    <ClCompile Include="UndoRedo\AddDoor.cpp">
+    <ClCompile Include="UndoRedo\CreateRoom.cpp">
       <Filter>UndoRedo</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,7 +170,7 @@
     <ClInclude Include="UndoRedo\BaseUndoRedo.h">
       <Filter>UndoRedo</Filter>
     </ClInclude>
-    <ClInclude Include="UndoRedo\AddRoom.h">
+    <ClInclude Include="UndoRedo\CreateRoom.h">
       <Filter>UndoRedo</Filter>
     </ClInclude>
     <ClInclude Include="UndoRedo\AddDoor.h">

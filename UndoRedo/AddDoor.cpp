@@ -1,24 +1,25 @@
 ﻿#include "AddDoor.h"
 #include "./Stage/Stage.h"
 
-AddDoor::AddDoor(const Math::Vector3& roomPos, Area::DoorNum cursorState,
-				 Door::DoorStatus doorIndex, Door::DoorStatus oldDoorIndex) :
+AddDoor::AddDoor(const Math::Vector3& roomPos, Area::DoorNum doorNum,
+				 Door::DoorStatus doorIndex, Door::DoorStatus oldDoorIndex, int cursorState) :
 	BaseUndoRedo(),
 	roomPos(roomPos),
-	cursorState(cursorState),
+	doorNum(doorNum),
 	doorIndex(doorIndex),
-	oldDoorIndex(oldDoorIndex)
+	oldDoorIndex(oldDoorIndex),
+	cursorState(cursorState)
 {
 }
 
 void AddDoor::Undo()
 {
 	if (Stage::SetRoom(roomPos) == FUNCTION_ERROR) return;
-	Stage::SetDoorStatus(oldDoorIndex, cursorState);
+	Stage::SetDoorStatus(oldDoorIndex, doorNum);
 }
 
 void AddDoor::Redo()
 {
 	if (Stage::SetRoom(roomPos) == FUNCTION_ERROR) return;
-	Stage::SetDoorStatus(doorIndex, cursorState);
+	Stage::SetDoorStatus(doorIndex, doorNum);
 }

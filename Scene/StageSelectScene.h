@@ -13,7 +13,7 @@ public: //サブクラス
 	{
 		TITLE = 0,
 		USER = -1,
-		MAX = 1
+		MAX = 2
 	};
 
 public: //定数

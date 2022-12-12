@@ -133,13 +133,16 @@ void StageSelectScene::Update()
 			}
 			else
 			{
+				std::string extension = ".csv";
 				if (stageIndex == StageStatus::USER)
 				{
-					stagePath = stageDir + "User/" + "aaa.csv";
+					stagePath = stageDir + "User/" + "aaa" + extension;
 				}
 				else
 				{
-					stagePath = stageDir + "stage1.csv";
+					stagePath = stageDir + "stage";
+					stagePath += std::to_string(stageIndex);
+					stagePath += extension;
 				}
 				nextScene = SceneChanger::Scene::Game;
 			}
@@ -210,7 +213,7 @@ void StageSelectScene::Draw()
 					  Math::rotateY(90.0f * Math::DEGREE_F),
 					  scale_xyz(7.0f));
 		DirectDrawing::ChangeSpriteShader();
-		draw->DrawTextrue(winW / 2.0f - 60.0f,
+		draw->DrawTextrue(winW / 2.0f - 70.0f,
 						  100.0f,
 						  320.0f,
 						  128.0f,

@@ -3,16 +3,19 @@
 #include "BlockManager.h"
 #include "Door.h"
 #include "./Header/EngineGeneral.h"
+#include <vector>
 #include <stdio.h>
 
 class Area
 {
-public: //定数
-	static const int STAGE_WIDTH;
-	static const int STAGE_HEIGHT;
-
 private: //エイリアス
 	using Vector3 = Math::Vector3;
+
+public: //定数
+	static const size_t STAGE_WIDTH;
+	static const size_t STAGE_HEIGHT;
+	static const int NONE_LOST_FOREST;
+	static const size_t MAX_COURSE_NUM;
 
 public: //サブクラス
 	enum DoorNum
@@ -43,6 +46,7 @@ private:
 	BlockManager block_mgr;
 	Door door[4];
 	Door doorInit[4];
+	std::vector<int> lostForest; //迷いの森
 
 public: //メンバ関数
 	Area();
@@ -63,6 +67,7 @@ public: //メンバ関数
 	int WriteArea(FILE* fileHandle);
 
 	const bool IsGoal() { return block_mgr.GetGoal(); }
+	const int LostForest(const std::vector<int>& route, const size_t& index = 0);
 
 	BlockManager* GetBlockManager() { return &block_mgr; }
 	Door::DoorStatus GetDoorStatus(DoorNum num) { return door[num].GetStatus(); }

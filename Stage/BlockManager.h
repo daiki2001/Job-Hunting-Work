@@ -67,7 +67,7 @@ public: //メンバ関数
 	// 全ブロックの削除処理
 	void AllDeleteBlock();
 
-	Block& GetBlock(int index)
+	Block& GetBlock(const size_t& index)
 	{
 		return blocks[index];
 	};

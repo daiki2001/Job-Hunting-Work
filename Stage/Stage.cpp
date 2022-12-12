@@ -392,8 +392,9 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 						  (roomPos == nowRoom) ? DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, color.w) : color);
 		if (x == 0.0f)
 		{
-			if (rooms.find(roomPos + Vector3(-1.0f, 0.0f, 0.0f)) != rooms.end() &&
-				rooms.at(roomPos).GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
+			if (rooms.find(roomPos + moveLeftRoom) != rooms.end() &&
+				rooms[roomPos].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN &&
+				(rooms[roomPos + moveLeftRoom].isAlive == true))
 			{
 				draw->DrawTextrue(x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
 								  y * (2.0f + 1.0f) * scale + offset.y,
@@ -407,8 +408,9 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 		}
 		if (y == 0.0f)
 		{
-			if (rooms.find(roomPos + Vector3(0.0f, -1.0f, 0.0f)) != rooms.end() &&
-				rooms.at(roomPos).GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
+			if (rooms.find(roomPos + moveUpRoom) != rooms.end() &&
+				rooms[roomPos].GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN &&
+				(rooms[roomPos + moveUpRoom].isAlive == true))
 			{
 				draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
 								  y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
@@ -420,8 +422,9 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 								  color);
 			}
 		}
-		if (rooms.find(roomPos + Vector3(1.0f, 0.0f, 0.0f)) != rooms.end() &&
-			rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
+		if (rooms.find(roomPos + moveRightRoom) != rooms.end() &&
+			rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + moveRightRoom].isAlive == true))
 		{
 			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
 							  y * (2.0f + 1.0f) * scale + offset.y,
@@ -432,8 +435,9 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 							  DirectX::XMFLOAT2(0.5f, 0.5f),
 							  color);
 		}
-		if (rooms.find(roomPos + Vector3(0.0f, 1.0f, 0.0f)) != rooms.end() &&
-			rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
+		if (rooms.find(roomPos + moveDownRoom) != rooms.end() &&
+			rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + moveDownRoom].isAlive == true))
 		{
 			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
 							  y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,

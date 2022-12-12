@@ -20,7 +20,8 @@ Player::Player() :
 	object(Engine::FUNCTION_ERROR),
 	selectItem(SelectItem::KEY),
 	key(100),
-	bomb(100, 10)
+	bomb(100, 10),
+	route{}
 {
 	Reset();
 }
@@ -43,6 +44,7 @@ void Player::Init(DrawPolygon* const draw)
 	Item::StaticInit(this->draw);
 	key.Init(Parameter::Get(LoadGraph::KEY.c_str()));
 	bomb.Init();
+	route.reserve(Area::MAX_COURSE_NUM);
 }
 
 void Player::Update(const InputManager* const input)
@@ -146,19 +148,37 @@ void Player::MoveUp(const InputManager* const input)
 {
 	direction = Player::Direction::UP;
 
-	if (pos.y > 0.0f) return;
+	if (pos.y > 0.0f)
+	{
+		return;
+	}
 
 	pos.y += SPEED;
 
-	if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y >= 0.0f)
+	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
+		 (pos.y >= 0.0f)) &&
+		(stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::UP);
+
+		switch (stage->GetArea().LostForest(route))
 		{
+		case 0:
+		case 2:
 			if (stage->MoveUpRoom() == 0)
 			{
-				pos.y = -(Area::STAGE_HEIGHT - 1.0f);
+				route.clear();
 			}
+			break;
+		case FUNCTION_ERROR:
+			route.clear();
+			route.emplace_back(Area::DoorNum::UP);
+			break;
+		default:
+			break;
 		}
+
+		pos.y = -(static_cast<int>(Area::STAGE_HEIGHT) - 1.0f);
 	}
 
 	// 場外判定
@@ -179,15 +199,30 @@ void Player::MoveDown(const InputManager* const input)
 
 	pos.y -= SPEED;
 
-	if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y < -(Area::STAGE_HEIGHT - 1.0f))
+	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
+		 (pos.y < -(Area::STAGE_HEIGHT - 1.0f))) &&
+		(stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::DOWN);
+
+		switch (stage->GetArea().LostForest(route))
 		{
+		case 0:
+		case 2:
 			if (stage->MoveDownRoom() == 0)
 			{
-				pos.y = 0.0f;
+				route.clear();
 			}
+			break;
+		case FUNCTION_ERROR:
+			route.clear();
+			route.emplace_back(Area::DoorNum::DOWN);
+			break;
+		default:
+			break;
 		}
+
+		pos.y = 0.0f;
 	}
 
 	// 場外判定
@@ -208,15 +243,30 @@ void Player::MoveLeft(const InputManager* const input)
 
 	pos.x -= SPEED;
 
-	if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x < 0.0f)
+	if (((pos.x < 0.0f)) &&
+		 (pos.y <= -2.0f && pos.y >= -4.0f) &&
+		(stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::LEFT);
+
+		switch (stage->GetArea().LostForest(route))
 		{
+		case 0:
+		case 2:
 			if (stage->MoveLeftRoom() == 0)
 			{
-				pos.x = Area::STAGE_WIDTH - 1.0f;
+				route.clear();
 			}
+			break;
+		case FUNCTION_ERROR:
+			route.clear();
+			route.emplace_back(Area::DoorNum::LEFT);
+			break;
+		default:
+			break;
 		}
+
+		pos.x = Area::STAGE_WIDTH - 1.0f;
 	}
 
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
@@ -239,15 +289,30 @@ void Player::MoveRight(const InputManager* const input)
 
 	pos.x += SPEED;
 
-	if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x > Area::STAGE_WIDTH - 1.0f)
+	if (((pos.x > Area::STAGE_WIDTH - 1.0f) && 
+		 (pos.y <= -2.0f && pos.y >= -4.0f)) &&
+		(stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::RIGHT);
+
+		switch (stage->GetArea().LostForest(route))
 		{
+		case 0:
+		case 2:
 			if (stage->MoveRightRoom() == 0)
 			{
-				pos.x = 0.0f;
+				route.clear();
 			}
+			break;
+		case FUNCTION_ERROR:
+			route.clear();
+			route.emplace_back(Area::DoorNum::RIGHT);
+			break;
+		default:
+			break;
 		}
+
+		pos.x = 0.0f;
 	}
 
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;

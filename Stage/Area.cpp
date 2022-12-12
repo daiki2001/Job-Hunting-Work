@@ -7,8 +7,10 @@ namespace
 static InputManager* input = InputManager::Get();
 }
 
-const int Area::STAGE_WIDTH = 15;
-const int Area::STAGE_HEIGHT = 7;
+const size_t Area::STAGE_WIDTH = 15;
+const size_t Area::STAGE_HEIGHT = 7;
+const int Area::NONE_LOST_FOREST = 4;
+const size_t Area::MAX_COURSE_NUM = 5;
 DrawPolygon* Area::draw = nullptr;
 int Area::wall_obj = FUNCTION_ERROR;
 Area* Area::planeArea = nullptr;
@@ -17,6 +19,7 @@ Area::Area() :
 	block_mgr{},
 	door{},
 	doorInit{},
+	lostForest{},
 	isAlive(false)
 {
 	block_mgr.Init(Area::draw);
@@ -54,6 +57,8 @@ void Area::StaticInit(DrawPolygon* const draw)
 	planeArea->SetDoorInit(Door::DoorStatus::OPEN, Door::DoorStatus::OPEN,
 						   Door::DoorStatus::OPEN, Door::DoorStatus::OPEN);
 	planeArea->Reset();
+	planeArea->lostForest.reserve(MAX_COURSE_NUM + 1U);
+	planeArea->lostForest.emplace_back(NONE_LOST_FOREST);
 
 	Door::StaticInit(draw);
 }
@@ -106,13 +111,15 @@ int Area::LoadArea(FILE* fileHandle)
 {
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
 	int doorSetting[4] = { Door::DoorStatus::OPEN };
+	int courceSetting[MAX_COURSE_NUM] = {};
 
 	File::LoadMapChip(fileHandle, doorSetting, 4);
+	File::LoadMapChip(fileHandle, courceSetting, MAX_COURSE_NUM, true, NONE_LOST_FOREST);
 	File::LoadMapChip(fileHandle, mapArray, sizeof(mapArray) / sizeof(mapArray[0]));
 
 	block_mgr.AllDeleteBlock();
 
-	/*マップの設定*/
+	// マップの設定
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
 		int x = i % STAGE_WIDTH;
@@ -128,7 +135,8 @@ int Area::LoadArea(FILE* fileHandle)
 		block.pos.x = static_cast<float>(x * 1.0f);
 		block.pos.y = static_cast<float>(-y * 1.0f);
 	}
-	/*ドアの設定*/
+
+	// ドアの設定
 	for (int i = 0; i < 4; i++)
 	{
 		static Vector3 size = Vector3(3.0f, 1.0f, 2.0f);
@@ -153,6 +161,22 @@ int Area::LoadArea(FILE* fileHandle)
 		doorInit[i] = door[i];
 	}
 
+	// 迷いの森の道設定
+	if (lostForest.capacity() < MAX_COURSE_NUM + 1U)
+	{
+		lostForest.reserve(MAX_COURSE_NUM + 1U);
+	}
+	for (size_t i = 0; i < MAX_COURSE_NUM; i++)
+	{
+		lostForest.emplace_back(courceSetting[i]);
+
+		if (courceSetting[i] == NONE_LOST_FOREST)
+		{
+			break;
+		}
+	}
+	lostForest.emplace_back(NONE_LOST_FOREST);
+
 	isAlive = true;
 	return 0;
 }
@@ -163,17 +187,25 @@ int Area::WriteArea(FILE* fileHandle)
 
 	// ドア・壁
 	int doorStatus[4] = {};
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < sizeof(doorStatus) / sizeof(doorStatus[0]); i++)
 	{
 		doorStatus[i] = static_cast<int>(door[i].GetStatus());
 	}
-	File::WriteCSV(fileHandle, doorStatus, 4);
+	File::WriteCSV(fileHandle, doorStatus, sizeof(doorStatus) / sizeof(doorStatus[0]));
+
+	// 迷いの森の道
+	int courceSetting[MAX_COURSE_NUM] = {};
+	for (size_t i = 0; i < lostForest.size(); i++)
+	{
+		courceSetting[i] = lostForest[i];
+	}
+	File::WriteCSV(fileHandle, courceSetting, lostForest.size());
 
 	// ブロック情報
-	for (int i = 0; i < STAGE_HEIGHT; i++)
+	for (size_t i = 0; i < STAGE_HEIGHT; i++)
 	{
 		int blocks[STAGE_WIDTH] = {};
-		for (int j = 0; j < STAGE_WIDTH; j++)
+		for (size_t j = 0; j < STAGE_WIDTH; j++)
 		{
 			blocks[j] = static_cast<int>(block_mgr.GetBlock(i * STAGE_WIDTH + j).typeId);
 		}
@@ -208,6 +240,38 @@ void Area::DrawWall(const Vector3& offset)
 	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
 	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+}
+
+const int Area::LostForest(const std::vector<int>& route, const size_t& index)
+{
+	if (index >= lostForest.size() ||
+		lostForest[index] == NONE_LOST_FOREST)
+	{
+		return 0;
+	}
+
+	if (index >= route.size())
+	{
+		return 1;
+	}
+
+	if (route[index] < 0 || route[index] > NONE_LOST_FOREST)
+	{
+		return FUNCTION_ERROR;
+	}
+	else if (route[index] >= 0 && route[index] < NONE_LOST_FOREST)
+	{
+		if (route[index] == lostForest[index])
+		{
+			return LostForest(route, index + 1);
+		}
+		else
+		{
+			return 2;
+		}
+	}
+
+	return 0;
 }
 
 void Area::SetDoorInit(Door doors[4])

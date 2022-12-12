@@ -4,6 +4,7 @@
 #include "Bomb.h"
 #include "../InputManager.h"
 #include "./Header/EngineGeneral.h"
+#include <vector>
 
 class Player final
 {
@@ -34,7 +35,7 @@ public: //サブクラス
 	{
 		KEY,  //鍵
 		BOMB, //爆弾
-		MAX   //上限(プログラム用)
+		MAX   //種類数(プログラム用)
 	};
 
 public: //メンバ変数
@@ -49,6 +50,8 @@ private:
 	SelectItem selectItem;
 	Item key;  //鍵
 	Bomb bomb; //爆弾
+
+	std::vector<int> route; //迷いの森
 
 public: //メンバ関数
 	// 初期化処理

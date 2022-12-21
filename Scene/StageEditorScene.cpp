@@ -1,10 +1,13 @@
 ﻿#include "StageEditorScene.h"
-#include "./UndoRedo/AddBlock.h"
-#include "./UndoRedo/AddDoor.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/Camera.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
+
+#include "./UndoRedo/AddBlock.h"
+#include "./UndoRedo/AddDoor.h"
+#include "./UndoRedo/CreateRoom.h"
+#include "./UndoRedo/RouteSetter.h"
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 InputManager* StageEditorScene::inputMgr = InputManager::Get();
@@ -16,10 +19,13 @@ StageEditorScene::StageEditorScene(SceneChanger* sceneChanger) :
 	mapIndex(0),
 	blockIndex(1),
 	doorIndex(1),
+	isRoute(false),
+	routeIndex(0),
 	cursorState(CursorState::BLOCKS),
 	background(Engine::FUNCTION_ERROR),
 	cursor(Engine::FUNCTION_ERROR),
-	frame(Engine::FUNCTION_ERROR)
+	frame(Engine::FUNCTION_ERROR),
+	cross(Engine::FUNCTION_ERROR)
 {
 	Init();
 	stage->Reset();
@@ -53,6 +59,11 @@ void StageEditorScene::Init()
 	{
 		frame = draw->LoadTextrue((resourcesDir + L"./UI/Frame.png").c_str());
 	}
+	// ×画像の読み込み
+	if (cross == FUNCTION_ERROR)
+	{
+		cross = draw->LoadTextrue((resourcesDir + L"./UI/Cross.png").c_str());
+	}
 
 	Stage::AllDeleteRoom();
 	Stage::CreateRoom();
@@ -70,46 +81,60 @@ void StageEditorScene::Init()
 
 void StageEditorScene::Update()
 {
-	CursorMove();
-
-	if (cursorState == CursorState::BLOCKS)
+	if (isRoute)
 	{
-		SelectBlock();
+		RouteSetting();
 
 		if (inputMgr->DecisionTrigger())
 		{
-			// 今配置されているブロックの取得
-			auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
-			// ブロックの配置
-			AddBlock add = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId(blockIndex), oldBlock);
-			redoUndo.AddCommandList<AddBlock>("Add Block", add);
+			// 迷いの森の道の設定
+			RouteSetter add = RouteSetter(Stage::GetRoom(), routeIndex);
+			redoUndo.AddCommandList<RouteSetter>("Route Setting", add);
 		}
 	}
 	else
 	{
-		SelectDoor();
+		CursorMove();
 
-		if (inputMgr->DecisionTrigger())
+		if (cursorState == CursorState::BLOCKS)
 		{
-			if (doorIndex == Door::DoorStatus::ROOM_CREATE)
+			SelectBlock();
+
+			if (inputMgr->DecisionTrigger())
 			{
-				// 今いる部屋の取得
-				Math::Vector3 oldRoomPos = Stage::GetRoom();
-				// 部屋の生成
-				int createRoomDir = Stage::CreateRoom(cursorState - 1);
-				CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
-				redoUndo.AddCommandList<CreateRoom>("Create Room", add);
-				CursorMove(createRoomDir);
+				// 今配置されているブロックの取得
+				auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
+				// ブロックの配置
+				AddBlock add = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId(blockIndex), oldBlock);
+				redoUndo.AddCommandList<AddBlock>("Add Block", add);
 			}
-			else
+		}
+		else
+		{
+			SelectDoor();
+
+			if (inputMgr->DecisionTrigger())
 			{
-				// 今配置されているドアの取得
-				auto oldDoor = stage->GetDoorStatus(static_cast<Area::DoorNum>(cursorState - 1));
-				// ドア・壁の配置
-				AddDoor add = AddDoor(Stage::GetRoom(), static_cast<Area::DoorNum>(cursorState - 1),
-									  static_cast<Door::DoorStatus>(doorIndex), oldDoor,
-									  cursorState);
-				redoUndo.AddCommandList<AddDoor>("Add Door", add);
+				if (doorIndex == Door::DoorStatus::ROOM_CREATE)
+				{
+					// 今いる部屋の取得
+					Math::Vector3 oldRoomPos = Stage::GetRoom();
+					// 部屋の生成
+					int createRoomDir = Stage::CreateRoom(cursorState - 1);
+					CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
+					redoUndo.AddCommandList<CreateRoom>("Create Room", add);
+					CursorMove(createRoomDir);
+				}
+				else
+				{
+					// 今配置されているドアの取得
+					auto oldDoor = stage->GetDoorStatus(static_cast<Area::DoorNum>(cursorState - 1));
+					// ドア・壁の配置
+					AddDoor add = AddDoor(Stage::GetRoom(), static_cast<Area::DoorNum>(cursorState - 1),
+										  static_cast<Door::DoorStatus>(doorIndex), oldDoor,
+										  cursorState);
+					redoUndo.AddCommandList<AddDoor>("Add Door", add);
+				}
 			}
 		}
 	}
@@ -123,6 +148,7 @@ void StageEditorScene::Update()
 		}
 		else if (Input::IsKeyTrigger(DIK_L))
 		{
+			routeIndex = 0;
 			stage->LoadStage((userStageDir + "aaa.csv").c_str());
 		}
 		else if (Input::IsKeyTrigger(DIK_Z))
@@ -213,50 +239,64 @@ void StageEditorScene::Draw()
 
 	static const int blank = 5;
 	static const int frameSize = 64;
+	bool isSelect = false;
 
 	if (cursorState == CursorState::BLOCKS)
 	{
 		// ブロック選択
 		for (int i = 0; i < BlockManager::TypeId::MAX; i++)
 		{
-			if (i == blockIndex)
-			{
-				int a = draw->SetDrawBlendMode(ShaderManager::BlendMode::SUB);
-				DirectDrawing::ChangeSpriteShader();
-			}
-			draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f, frameSize, frameSize, 0.0f, frame);
-			if (i == blockIndex)
-			{
-				draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
-				DirectDrawing::ChangeSpriteShader();
-			}
+			isSelect = (isRoute == false) && (i == blockIndex);
 
 			switch (i)
 			{
+			case BlockManager::TypeId::NONE:
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  cross,
+						  isSelect);
+				break;
 			case BlockManager::TypeId::WALL:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::WALL_BLOCK.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::WALL_BLOCK.c_str()),
+						  isSelect);
 				break;
 			case BlockManager::TypeId::GOAL:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::GOAL.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::GOAL.c_str()),
+						  isSelect);
 				break;
 			case BlockManager::TypeId::SWITCH:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::SWITCH_UI.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::SWITCH_UI.c_str()),
+						  isSelect);
 				break;
 			case BlockManager::TypeId::KEY:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::KEY.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::KEY.c_str()),
+						  isSelect);
 				break;
 			case BlockManager::TypeId::BOMB:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::BOMB.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::BOMB.c_str()),
+						  isSelect);
 				break;
 			default:
 				break;
@@ -268,44 +308,57 @@ void StageEditorScene::Draw()
 		// ドア・壁選択
 		for (int i = 0; i < Door::DoorStatus::MAX; i++)
 		{
-			if (i == doorIndex)
-			{
-				int a = draw->SetDrawBlendMode(ShaderManager::BlendMode::SUB);
-				DirectDrawing::ChangeSpriteShader();
-			}
-			draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f, frameSize, frameSize, 0.0f, frame);
-			if (i == doorIndex)
-			{
-				draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
-				DirectDrawing::ChangeSpriteShader();
-			}
+			isSelect = (isRoute == false) && (i == doorIndex);
 
 			switch (i)
 			{
+			case Door::DoorStatus::OPEN:
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  cross,
+						  isSelect);
+				break;
 			case Door::DoorStatus::CLOSE:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get("white1x1"));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get("white1x1"),
+						  isSelect);
 				break;
 			case Door::DoorStatus::WALL:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::WALL_UI.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::WALL_UI.c_str()),
+						  isSelect);
 				break;
 			case Door::DoorStatus::KEY_CLOSE:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::KEY_CLOSE.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::KEY_CLOSE.c_str()),
+						  isSelect);
 				break;
 			case Door::DoorStatus::BREAK_WALL:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::BREAK_WALL_UI.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::BREAK_WALL_UI.c_str()),
+						  isSelect);
 				break;
 			case Door::DoorStatus::ROOM_CREATE:
-				draw->DrawTextrue((frameSize + blank) * i + (frameSize / 2.0f), frameSize / 2.0f,
-								  frameSize * (3.0f / 4.0f), frameSize * (3.0f / 4.0f), 0.0f,
-								  Parameter::Get(LoadGraph::CREATE_ROOM.c_str()));
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::CREATE_ROOM.c_str()),
+						  isSelect);
 				break;
 			default:
 				break;
@@ -313,12 +366,68 @@ void StageEditorScene::Draw()
 		}
 	}
 
-	draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-					 "Move:WASD");
+	for (int i = 0; static_cast<int>(i) < stage->GetArea().GetRoute().size() - 1; i++)
+	{
+		float angle = 0.0f;
+		int tex = 0;
+
+		isSelect = isRoute && (i == routeIndex);
+
+		if (stage->GetArea().GetRoute()[i] == Area::NONE_LOST_FOREST)
+		{
+			tex = cross;
+		}
+		else
+		{
+			switch (stage->GetArea().GetRoute()[i] % 4)
+			{
+			case Area::DoorNum::UP:
+				angle = (90.0f * 3) * Math::DEGREE_F;
+				break;
+			case Area::DoorNum::DOWN:
+				angle = (90.0f * 1) * Math::DEGREE_F;
+				break;
+			case Area::DoorNum::LEFT:
+				angle = Math::PI_F;
+				break;
+			case Area::DoorNum::RIGHT:
+				angle = 0.0f;
+				break;
+			}
+
+			tex = Parameter::Get(LoadGraph::ARROW.c_str());
+		}
+
+		DrawUIBox(winW - frameSize / 2.0f,
+				  (frameSize + blank) * i + (frameSize / 2.0f),
+				  frameSize,
+				  angle,
+				  tex,
+				  isSelect);
+
+		if (stage->GetArea().GetRoute()[i] == Area::NONE_LOST_FOREST)
+		{
+			break;
+		}
+	}
+
+	if (isRoute == false)
+	{
+		draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "Move:WASD");
+	}
 	draw->DrawString(0.0f, winH - (32.0f * (5.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Select:Arrow");
-	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-					 "Decision:Space");
+	if (isRoute)
+	{
+		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "Change:Space");
+	}
+	else
+	{
+		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+						 "Decision:Space");
+	}
 	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					 "Save:Ctrl + S");
 	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
@@ -389,6 +498,10 @@ void StageEditorScene::SelectBlock()
 		{
 			blockIndex += 1;
 		}
+		else
+		{
+			isRoute = true;
+		}
 	}
 }
 
@@ -407,6 +520,35 @@ void StageEditorScene::SelectDoor()
 		{
 			doorIndex += 1;
 		}
+		else
+		{
+			isRoute = true;
+		}
+	}
+}
+
+void StageEditorScene::RouteSetting()
+{
+	if (inputMgr->SubUpTrigger())
+	{
+		if (routeIndex > 0)
+		{
+			routeIndex -= 1;
+		}
+	}
+	if (inputMgr->SubDownTrigger())
+	{
+		int r = stage->GetArea().GetRoute(routeIndex);
+		if (routeIndex < Area::MAX_COURSE_NUM - 1 &&
+			(r != FUNCTION_ERROR &&
+			 r != Area::NONE_LOST_FOREST))
+		{
+			routeIndex += 1;
+		}
+	}
+	if (inputMgr->SubLeftTrigger())
+	{
+		isRoute = false;
 	}
 }
 
@@ -531,4 +673,21 @@ void StageEditorScene::CursorMoveDown()
 		// カーソルをブロックに移動
 		cursorState = CursorState::BLOCKS;
 	}
+}
+
+void StageEditorScene::DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, bool flag)
+{
+	if (flag)
+	{
+		draw->SetDrawBlendMode(ShaderManager::BlendMode::SUB);
+		DirectDrawing::ChangeSpriteShader();
+	}
+	draw->DrawTextrue(posX, posY, size, size, 0.0f, frame);
+	if (flag)
+	{
+		draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
+		DirectDrawing::ChangeSpriteShader();
+	}
+
+	draw->DrawTextrue(posX, posY, size * (3.0f / 4.0f), size * (3.0f / 4.0f), angle, graphHandle);
 }

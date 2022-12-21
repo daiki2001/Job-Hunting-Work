@@ -164,12 +164,12 @@ void Player::MoveUp(const InputManager* const input)
 		switch (stage->GetArea().LostForest(route))
 		{
 		case 0:
-		case 2:
 			if (stage->MoveUpRoom() == 0)
 			{
 				route.clear();
 			}
 			break;
+		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::UP);
@@ -208,12 +208,12 @@ void Player::MoveDown(const InputManager* const input)
 		switch (stage->GetArea().LostForest(route))
 		{
 		case 0:
-		case 2:
 			if (stage->MoveDownRoom() == 0)
 			{
 				route.clear();
 			}
 			break;
+		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::DOWN);
@@ -252,12 +252,12 @@ void Player::MoveLeft(const InputManager* const input)
 		switch (stage->GetArea().LostForest(route))
 		{
 		case 0:
-		case 2:
 			if (stage->MoveLeftRoom() == 0)
 			{
 				route.clear();
 			}
 			break;
+		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::LEFT);
@@ -298,12 +298,12 @@ void Player::MoveRight(const InputManager* const input)
 		switch (stage->GetArea().LostForest(route))
 		{
 		case 0:
-		case 2:
 			if (stage->MoveRightRoom() == 0)
 			{
 				route.clear();
 			}
 			break;
+		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::RIGHT);

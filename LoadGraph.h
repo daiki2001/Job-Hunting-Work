@@ -26,6 +26,8 @@ public: //定数
 	static const string KEY_CLOSE;
 	static const string BREAK_WALL_UI;
 	static const string CREATE_ROOM;
+	
+	static const string ARROW;
 
 private: //メンバ変数
 	bool isLoad;

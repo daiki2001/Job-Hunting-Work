@@ -4,10 +4,6 @@
 #include <memory>
 #include "BaseUndoRedo.h"
 
-#include "AddBlock.h"
-#include "AddDoor.h"
-#include "CreateRoom.h"
-
 class FuncRedoUndo
 {
 public: //サブクラス

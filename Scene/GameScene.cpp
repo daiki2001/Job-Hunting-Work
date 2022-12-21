@@ -79,10 +79,6 @@ void GameScene::Update()
 	{
 		stage->LastRoom();
 	}
-	if (Input::IsKeyTrigger(DIK_F1))
-	{
-		stage->LoadStage((stageDir + "stage1.csv").c_str());
-	}
 #endif // _DEBUG
 	if (Input::IsKeyTrigger(DIK_RETURN))
 	{

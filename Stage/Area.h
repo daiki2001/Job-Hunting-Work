@@ -23,7 +23,8 @@ public: //サブクラス
 		UP,
 		DOWN,
 		LEFT,
-		RIGHT
+		RIGHT,
+		MAX
 	};
 
 private: //静的メンバ変数
@@ -72,9 +73,13 @@ public: //メンバ関数
 	BlockManager* GetBlockManager() { return &block_mgr; }
 	Door::DoorStatus GetDoorStatus(DoorNum num) { return door[num].GetStatus(); }
 	Door& GetDoor(DoorNum num) { return door[num]; }
+	const std::vector<int>& GetRoute() { return lostForest; }
+	int GetRoute(const size_t& index) { return (index < lostForest.size()) ? lostForest[index] : FUNCTION_ERROR; }
 
 	void SetDoorInit(Door doors[4]);
 	void SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
 					 Door::DoorStatus left, Door::DoorStatus right);
 	void SetDoorStatus(Door::DoorStatus status, DoorNum num) { door[num].SetStatus(status); }
+	void SetRoute(const std::vector<int>& route) { lostForest = route; }
+	int SetRoute(const size_t& index, int route);
 };

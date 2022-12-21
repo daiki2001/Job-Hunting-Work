@@ -57,7 +57,7 @@ void StageSelectScene::Init()
 	}
 	if (arrow == FUNCTION_ERROR)
 	{
-		arrow = draw->LoadTextrue((resourcesDir + L"Arrow.png").c_str());
+		arrow = Parameter::Get(LoadGraph::Get()->ARROW.c_str());
 	}
 	if (number == FUNCTION_ERROR)
 	{
@@ -115,7 +115,10 @@ void StageSelectScene::Update()
 		{
 			auto* stage = Stage::Get();
 			stage->StaticInit(draw);
-			stage->LoadStage(stagePath.c_str());
+			if (stagePath.empty() == false)
+			{
+				stage->LoadStage(stagePath.c_str());
+			}
 
 			sceneChanger->SceneChange(nextScene, true);
 		}

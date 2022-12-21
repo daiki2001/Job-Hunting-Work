@@ -12,6 +12,8 @@ const std::string LoadGraph::KEY_CLOSE = "Key_Close";
 const std::string LoadGraph::BREAK_WALL_UI = "BreakWallUI";
 const std::string LoadGraph::CREATE_ROOM = "CreateRoom";
 
+const std::string LoadGraph::ARROW = "Arrow";
+
 LoadGraph::LoadGraph() :
 	isLoad(false)
 {
@@ -42,4 +44,6 @@ void LoadGraph::Load(DrawPolygon* const draw)
 	Parameter::Set(KEY_CLOSE.c_str(), draw->LoadTextrue(L"./Resources/UI/KeyClose.png"));
 	Parameter::Set(BREAK_WALL_UI.c_str(), draw->LoadTextrue(L"./Resources/UI/BreakWallUI.png"));
 	Parameter::Set(CREATE_ROOM.c_str(), draw->LoadTextrue(L"./Resources/UI/CreateRoom.png"));
+
+	Parameter::Set(ARROW.c_str(), draw->LoadTextrue(L"./Resources/UI/Arrow.png"));
 }

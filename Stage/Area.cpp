@@ -9,7 +9,7 @@ static InputManager* input = InputManager::Get();
 
 const size_t Area::STAGE_WIDTH = 15;
 const size_t Area::STAGE_HEIGHT = 7;
-const int Area::NONE_LOST_FOREST = 4;
+const int Area::NONE_LOST_FOREST = Area::DoorNum::MAX;
 const size_t Area::MAX_COURSE_NUM = 5;
 DrawPolygon* Area::draw = nullptr;
 int Area::wall_obj = FUNCTION_ERROR;
@@ -47,18 +47,28 @@ void Area::StaticInit(DrawPolygon* const draw)
 
 	// planeAreaの初期化
 	static Area defArea = {};
-	planeArea = &defArea;
-	for (int i = 0; i < Area::STAGE_WIDTH * Area::STAGE_HEIGHT; i++)
+	static bool isCreatePlane = false;
+
+	if (isCreatePlane == false)
 	{
-		planeArea->GetBlockManager()->CreateBlock(BlockManager::TypeId::NONE);
-		planeArea->GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % Area::STAGE_WIDTH) * 1.0f;
-		planeArea->GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / Area::STAGE_WIDTH) * -1.0f;
+		planeArea = &defArea;
+		isCreatePlane = true;
+
+		for (int i = 0; i < Area::STAGE_WIDTH * Area::STAGE_HEIGHT; i++)
+		{
+			planeArea->GetBlockManager()->CreateBlock(BlockManager::TypeId::NONE);
+			planeArea->GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % Area::STAGE_WIDTH) * 1.0f;
+			planeArea->GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / Area::STAGE_WIDTH) * -1.0f;
+		}
+		planeArea->SetDoorInit(Door::DoorStatus::OPEN, Door::DoorStatus::OPEN,
+							   Door::DoorStatus::OPEN, Door::DoorStatus::OPEN);
+		planeArea->Reset();
+		planeArea->lostForest.reserve(MAX_COURSE_NUM + 1U);
+		for (size_t i = 0; i < planeArea->lostForest.capacity(); i++)
+		{
+			planeArea->lostForest.emplace_back(NONE_LOST_FOREST);
+		}
 	}
-	planeArea->SetDoorInit(Door::DoorStatus::OPEN, Door::DoorStatus::OPEN,
-						   Door::DoorStatus::OPEN, Door::DoorStatus::OPEN);
-	planeArea->Reset();
-	planeArea->lostForest.reserve(MAX_COURSE_NUM + 1U);
-	planeArea->lostForest.emplace_back(NONE_LOST_FOREST);
 
 	Door::StaticInit(draw);
 }
@@ -162,13 +172,16 @@ int Area::LoadArea(FILE* fileHandle)
 	}
 
 	// 迷いの森の道設定
-	if (lostForest.capacity() < MAX_COURSE_NUM + 1U)
-	{
-		lostForest.reserve(MAX_COURSE_NUM + 1U);
-	}
 	for (size_t i = 0; i < MAX_COURSE_NUM; i++)
 	{
-		lostForest.emplace_back(courceSetting[i]);
+		if (lostForest.size() < MAX_COURSE_NUM + 1U)
+		{
+			lostForest.emplace_back(courceSetting[i]);
+		}
+		else
+		{
+			lostForest[i] = courceSetting[i];
+		}
 
 		if (courceSetting[i] == NONE_LOST_FOREST)
 		{
@@ -195,11 +208,19 @@ int Area::WriteArea(FILE* fileHandle)
 
 	// 迷いの森の道
 	int courceSetting[MAX_COURSE_NUM] = {};
-	for (size_t i = 0; i < lostForest.size(); i++)
+	size_t courceSettingSize = 0;
+	for (courceSettingSize = 0; courceSettingSize < lostForest.size();)
 	{
-		courceSetting[i] = lostForest[i];
+		courceSetting[courceSettingSize] = lostForest[courceSettingSize];
+
+		if (lostForest[courceSettingSize] == NONE_LOST_FOREST)
+		{
+			break;
+		}
+
+		courceSettingSize++;
 	}
-	File::WriteCSV(fileHandle, courceSetting, lostForest.size());
+	File::WriteCSV(fileHandle, courceSetting, courceSettingSize + 1U);
 
 	// ブロック情報
 	for (size_t i = 0; i < STAGE_HEIGHT; i++)
@@ -267,7 +288,25 @@ const int Area::LostForest(const std::vector<int>& route, const size_t& index)
 		}
 		else
 		{
-			return 2;
+			bool isLoop = false;
+
+			for (size_t i = 0; i < lostForest.size(); i++)
+			{
+				if (route[index] == lostForest[i])
+				{
+					isLoop = true;
+					break;
+				}
+			}
+
+			if (isLoop)
+			{
+				return 2;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 	}
 
@@ -289,4 +328,20 @@ void Area::SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
 	doorInit[DoorNum::DOWN].SetStatus(down);
 	doorInit[DoorNum::LEFT].SetStatus(left);
 	doorInit[DoorNum::RIGHT].SetStatus(right);
+}
+
+int Area::SetRoute(const size_t& index, int route)
+{
+	if (index > MAX_COURSE_NUM) return FUNCTION_ERROR;
+
+	if (index < lostForest.size())
+	{
+		lostForest[index] = route;
+	}
+	else
+	{
+		lostForest.emplace_back(route);
+	}
+
+	return 0;
 }

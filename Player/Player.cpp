@@ -47,7 +47,7 @@ void Player::Init(DrawPolygon* const draw)
 	route.reserve(Area::MAX_COURSE_NUM);
 }
 
-void Player::Update(const InputManager* const input)
+void Player::Update(const GameInput* const input)
 {
 	bomb.Update();
 
@@ -95,7 +95,7 @@ void Player::Reset()
 	bomb.Reset();
 }
 
-void Player::Move(const InputManager* const input)
+void Player::Move(const GameInput* const input)
 {
 	if (input->MainUp())
 	{
@@ -115,7 +115,7 @@ void Player::Move(const InputManager* const input)
 	}
 }
 
-void Player::SelectAction(const InputManager* const input)
+void Player::SelectAction(const GameInput* const input)
 {
 	if (input->SubLeftTrigger())
 	{
@@ -127,7 +127,7 @@ void Player::SelectAction(const InputManager* const input)
 	}
 }
 
-void Player::Action(const InputManager* const input)
+void Player::Action(const GameInput* const input)
 {
 	if (input->DecisionTrigger())
 	{
@@ -145,7 +145,7 @@ void Player::Action(const InputManager* const input)
 	}
 }
 
-void Player::MoveUp(const InputManager* const input)
+void Player::MoveUp(const GameInput* const input)
 {
 	direction = Player::Direction::UP;
 
@@ -189,7 +189,7 @@ void Player::MoveUp(const InputManager* const input)
 	}
 }
 
-void Player::MoveDown(const InputManager* const input)
+void Player::MoveDown(const GameInput* const input)
 {
 	direction = Player::Direction::DOWN;
 
@@ -233,7 +233,7 @@ void Player::MoveDown(const InputManager* const input)
 	}
 }
 
-void Player::MoveLeft(const InputManager* const input)
+void Player::MoveLeft(const GameInput* const input)
 {
 	direction = Player::Direction::LEFT;
 
@@ -279,7 +279,7 @@ void Player::MoveLeft(const InputManager* const input)
 	}
 }
 
-void Player::MoveRight(const InputManager* const input)
+void Player::MoveRight(const GameInput* const input)
 {
 	direction = Player::Direction::RIGHT;
 

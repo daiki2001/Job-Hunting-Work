@@ -1,17 +1,17 @@
-#pragma once
-#include "./Header/Input.h"
+ï»¿#pragma once
+#include "Input.h"
 
-class InputManager final
+class GameInput final
 {
-public: //ƒVƒ“ƒOƒ‹ƒgƒ“‰»
-	static InputManager* Get();
+public: //ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–
+	static GameInput* Get();
 private:
-	InputManager();
-	InputManager(const InputManager&) = delete;
-	~InputManager() = default;
-	InputManager operator=(const InputManager&) = delete;
+	GameInput();
+	GameInput(const GameInput&) = delete;
+	~GameInput() = default;
+	GameInput operator=(const GameInput&) = delete;
 
-private: //ƒƒ“ƒo•Ï”
+private: //ãƒ¡ãƒ³ãƒå¤‰æ•°
 	int mainUpKey;
 	int mainDownKey;
 	int mainLeftKey;
@@ -36,7 +36,7 @@ private: //ƒƒ“ƒo•Ï”
 	DirectInput::GamepadInputType subRightGamepad;
 	DirectInput::GamepadInputType decisionGamepad;
 
-public: //ƒƒ“ƒoŠÖ”
+public: //ãƒ¡ãƒ³ãƒé–¢æ•°
 	const bool MainUp() const;
 	const bool MainUpTrigger() const;
 	const bool MainUpReturn() const;
@@ -64,4 +64,23 @@ public: //ƒƒ“ƒoŠÖ”
 	const bool Decision() const;
 	const bool DecisionTrigger() const;
 	const bool DecisionReturn() const;
+
+	void SetMainUpKey(int key) { mainUpKey = key; }
+	void SetMainDownKey(int key) { mainDownKey = key; }
+	void SetMainLeftKey(int key) { mainLeftKey = key; }
+	void SetMainRightKey(int key) { mainRightKey = key; }
+	void SetSubUpKey(int key) { subUpKey = key; }
+	void SetSubDownKey(int key) { subDownKey = key; }
+	void SetSubLeftKey(int key) { subLeftKey = key; }
+	void SetSubRightKey(int key) { subRightKey = key; }
+	void SetDecisionKey(int key) { decisionKey = key; }
+	void SetMainUpPad(DirectInput::GamepadInputType padType) { mainUp2Gamepad = padType; }
+	void SetMainDownPad(DirectInput::GamepadInputType padType) { mainDown2Gamepad = padType; }
+	void SetMainLeftPad(DirectInput::GamepadInputType padType) { mainLeft2Gamepad = padType; }
+	void SetMainRightPad(DirectInput::GamepadInputType padType) { mainRight2Gamepad = padType; }
+	void SetSubUpPad(DirectInput::GamepadInputType padType) { subUpGamepad = padType; }
+	void SetSubDownPad(DirectInput::GamepadInputType padType) { subDownGamepad = padType; }
+	void SetSubLeftPad(DirectInput::GamepadInputType padType) { subLeftGamepad = padType; }
+	void SetSubRightPad(DirectInput::GamepadInputType padType) { subRightGamepad = padType; }
+	void SetDecisionPad(DirectInput::GamepadInputType padType) { decisionGamepad = padType; }
 };

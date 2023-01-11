@@ -35,11 +35,32 @@ DirectXInit::DirectXInit() :
 
 void DirectXInit::DebugLayer()
 {
-	ID3D12Debug* debugController;
+	ID3D12Debug1* debugController;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
 	{
 		debugController->EnableDebugLayer();
+		//debugController->SetEnableGPUBasedValidation(TRUE);
 	}
+
+	ID3D12InfoQueue* infoQueue;
+	if (SUCCEEDED(dev->QueryInterface(IID_PPV_ARGS(&infoQueue))))
+	{
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true); //‚â‚Î‚¢Žž
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true); //ƒGƒ‰[Žž
+		infoQueue->Release();
+	}
+
+	D3D12_MESSAGE_ID denyIds[] = {
+		D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+	};
+
+	D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+	D3D12_INFO_QUEUE_FILTER filter{};
+	filter.DenyList.NumIDs = _countof(denyIds);
+	filter.DenyList.pIDList = denyIds;
+	filter.DenyList.NumSeverities = _countof(severities);
+	filter.DenyList.pSeverityList = severities;
+	infoQueue->PushStorageFilter(&filter);
 }
 
 DirectXInit* DirectXInit::GetInstance()

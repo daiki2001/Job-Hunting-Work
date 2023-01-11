@@ -1,6 +1,6 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
-#include "InputManager.h"
+#include "./Input/GameInput.h"
 #include "./Header/Camera.h"
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
@@ -52,7 +52,7 @@ void GameScene::Update()
 {
 	if (isClear)
 	{
-		if (isSceneDest == false && InputManager::Get()->DecisionTrigger())
+		if (isSceneDest == false && GameInput::Get()->DecisionTrigger())
 		{
 			isSceneDest = true;
 			nextScene = SceneChanger::Scene::Title;
@@ -61,7 +61,7 @@ void GameScene::Update()
 	}
 	else
 	{
-		player->Update(InputManager::Get());
+		player->Update(GameInput::Get());
 		stage->Update();
 
 		if (Stage::IsGoal())

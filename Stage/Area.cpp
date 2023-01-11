@@ -1,10 +1,10 @@
 ﻿#include "Area.h"
 #include "Door.h"
-#include "InputManager.h"
+#include "./Input/GameInput.h"
 
 namespace
 {
-static InputManager* input = InputManager::Get();
+static GameInput* input = GameInput::Get();
 }
 
 const size_t Area::STAGE_WIDTH = 15;

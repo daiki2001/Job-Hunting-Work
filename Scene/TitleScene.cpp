@@ -1,6 +1,6 @@
 ﻿#include "TitleScene.h"
 #include "./Header/DirectXInit.h"
-#include "InputManager.h"
+#include "./Input//GameInput.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
@@ -54,11 +54,11 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (InputManager::Get()->MainUpTrigger() || InputManager::Get()->SubUpTrigger())
+	if (GameInput::Get()->MainUpTrigger() || GameInput::Get()->SubUpTrigger())
 	{
 		buttonIndex = ButtonIndex::START;
 	}
-	else if (InputManager::Get()->MainDownTrigger() || InputManager::Get()->SubDownTrigger())
+	else if (GameInput::Get()->MainDownTrigger() || GameInput::Get()->SubDownTrigger())
 	{
 		buttonIndex = ButtonIndex::EDITER;
 	}
@@ -72,7 +72,7 @@ void TitleScene::Update()
 	}
 	else
 	{
-		if (InputManager::Get()->DecisionTrigger())
+		if (GameInput::Get()->DecisionTrigger())
 		{
 			isSceneDest = true;
 			changeAnimation.Start();

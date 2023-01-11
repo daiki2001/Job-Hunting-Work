@@ -63,9 +63,6 @@
     <ClCompile Include="Stage\BlockType.cpp">
       <Filter>Stage\Block</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\StageEditorScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -130,9 +127,6 @@
     </ClInclude>
     <ClInclude Include="Stage\Stage.h">
       <Filter>Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Scene\StageEditorScene.h">
       <Filter>Scene</Filter>

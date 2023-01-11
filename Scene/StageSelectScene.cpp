@@ -6,7 +6,7 @@
 
 const std::wstring StageSelectScene::resourcesDir = L"./Resources/Select/";
 const std::string StageSelectScene::stageDir = resourcesDirectory + "Stage/";
-InputManager* StageSelectScene::inputMgr = InputManager::Get();
+GameInput* StageSelectScene::inputMgr = GameInput::Get();
 
 StageSelectScene::StageSelectScene(SceneChanger* sceneChanger) :
 	BaseScene(sceneChanger),

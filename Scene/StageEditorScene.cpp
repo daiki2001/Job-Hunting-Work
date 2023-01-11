@@ -10,7 +10,7 @@
 #include "./UndoRedo/RouteSetter.h"
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
-InputManager* StageEditorScene::inputMgr = InputManager::Get();
+GameInput* StageEditorScene::inputMgr = GameInput::Get();
 Stage* StageEditorScene::stage = Stage::Get();
 
 StageEditorScene::StageEditorScene(SceneChanger* sceneChanger) :

@@ -2,7 +2,7 @@
 #include "./Scene/BaseScene.h"
 #include "../Stage/Stage.h"
 #include "../UndoRedo/FuncRedoUndo.h"
-#include "../InputManager.h"
+#include "./Input/GameInput.h"
 
 class FuncRedoUndo;
 
@@ -25,7 +25,7 @@ public: //サブクラス
 	};
 
 private: //静的メンバ変数
-	static InputManager* inputMgr;
+	static GameInput* inputMgr;
 	static Stage* stage;
 
 private: //メンバ変数

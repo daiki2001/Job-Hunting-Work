@@ -90,6 +90,7 @@ void Player::DrawInventory(int offsetX, int offsetY, float scale)
 void Player::Reset()
 {
 	pos = { 7.0f, -6.0f, 0.0f };
+	selectItem = SelectItem::KEY;
 	key.Reset();
 	bomb.Reset();
 }

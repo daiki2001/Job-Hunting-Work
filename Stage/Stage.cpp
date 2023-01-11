@@ -390,63 +390,128 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 						  Parameter::Get("white1x1"),
 						  DirectX::XMFLOAT2(0.5f, 0.5f),
 						  (roomPos == nowRoom) ? DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, color.w) : color);
-		if (x == 0.0f)
+		if (rooms.find(roomPos + moveLeftRoom) != rooms.end() &&
+			rooms[roomPos].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + moveLeftRoom].isAlive == true))
 		{
-			if (rooms.find(roomPos + moveLeftRoom) != rooms.end() &&
-				rooms[roomPos].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN &&
-				(rooms[roomPos + moveLeftRoom].isAlive == true))
+			if (rooms[roomPos + moveLeftRoom].GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
 			{
-				draw->DrawTextrue(x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
-								  y * (2.0f + 1.0f) * scale + offset.y,
-								  1.0f * scale,
-								  1.0f * scale,
-								  0.0f,
-								  Parameter::Get("white1x1"),
-								  DirectX::XMFLOAT2(0.5f, 0.5f),
-								  color);
+				if (x == 0.0f)
+				{
+					draw->DrawTextrue(
+						x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
+						y * (2.0f + 1.0f) * scale + offset.y,
+						1.0f * scale,
+						1.0f * scale,
+						0.0f,
+						Parameter::Get("white1x1"),
+						DirectX::XMFLOAT2(0.5f, 0.5f),
+						color);
+				}
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					0.0f,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
 			}
 		}
-		if (y == 0.0f)
+		if (rooms.find(roomPos + moveUpRoom) != rooms.end() &&
+			rooms[roomPos].GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + moveUpRoom].isAlive == true))
 		{
-			if (rooms.find(roomPos + moveUpRoom) != rooms.end() &&
-				rooms[roomPos].GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN &&
-				(rooms[roomPos + moveUpRoom].isAlive == true))
+			if (rooms[roomPos + moveUpRoom].GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
 			{
-				draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
-								  y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
-								  1.0f * scale,
-								  1.0f * scale,
-								  0.0f,
-								  Parameter::Get("white1x1"),
-								  DirectX::XMFLOAT2(0.5f, 0.5f),
-								  color);
+				if (y == 0.0f)
+				{
+					draw->DrawTextrue(
+						x * (2.0f + 1.0f) * scale + offset.x,
+						y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
+						1.0f * scale,
+						1.0f * scale,
+						0.0f,
+						Parameter::Get("white1x1"),
+						DirectX::XMFLOAT2(0.5f, 0.5f),
+						color);
+				}
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale + offset.x,
+					y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					90.0f * Math::DEGREE_F,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
 			}
 		}
 		if (rooms.find(roomPos + moveRightRoom) != rooms.end() &&
 			rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN &&
 			(rooms[roomPos + moveRightRoom].isAlive == true))
 		{
-			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
-							  y * (2.0f + 1.0f) * scale + offset.y,
-							  1.0f * scale,
-							  1.0f * scale,
-							  0.0f,
-							  Parameter::Get("white1x1"),
-							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  color);
+			if (rooms[roomPos + moveRightRoom].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
+			{
+				draw->DrawTextrue(
+					x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					0.0f,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					Math::PI_F,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
 		}
 		if (rooms.find(roomPos + moveDownRoom) != rooms.end() &&
 			rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN &&
 			(rooms[roomPos + moveDownRoom].isAlive == true))
 		{
-			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
-							  y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
-							  1.0f * scale,
-							  1.0f * scale,
-							  0.0f,
-							  Parameter::Get("white1x1"),
-							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  color);
+
+			if (rooms[roomPos + moveDownRoom].GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
+			{
+				draw->DrawTextrue(
+					x * (2.0f + 1.0f) * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					0.0f,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					270.0f * Math::DEGREE_F,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
 		}
 	}
 }

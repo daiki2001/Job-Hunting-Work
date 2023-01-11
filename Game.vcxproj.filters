@@ -179,9 +179,6 @@
     <ClInclude Include="UndoRedo\AddDoor.h">
       <Filter>UndoRedo</Filter>
     </ClInclude>
-    <ClInclude Include="RouteSetting.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="UndoRedo\RouteSetter.h">
       <Filter>UndoRedo</Filter>
     </ClInclude>

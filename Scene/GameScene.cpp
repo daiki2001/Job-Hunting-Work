@@ -123,7 +123,14 @@ void GameScene::Draw()
 	}
 
 	// 3Dオブジェクト
-	stage->Draw();
+	if (stage->scroll.GetFlag())
+	{
+		stage->ScrollDraw();
+	}
+	else
+	{
+		stage->Draw();
+	}
 	player->Draw();
 
 	// 前景

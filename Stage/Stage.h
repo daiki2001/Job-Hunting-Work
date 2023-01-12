@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
+#include "./Effect/Scroll.h"
 #include <map>
 #include "./Header/EngineGeneral.h"
 
@@ -30,11 +31,14 @@ public: //サブクラス
 		int connection[4] = { -1, -1, -1, -1 }; //どの部屋と繋がっているか
 	};
 
-private: //静的メンバ変数
+public: //静的メンバ変数
+	static Scroll scroll;
+private:
 	static DrawPolygon* draw;
 	static Player* player;         //プレイヤー
 	static std::map<Vector3, Area> rooms; //各部屋の情報
 	static Vector3 nowRoom; //プレイヤーが現在いる部屋
+	static Vector3 oldRoom; //プレイヤーが1つ前にいた部屋
 	
 public: //静的メンバ関数
 	// 静的初期化処理
@@ -94,6 +98,9 @@ public: //メンバ関数
 	// リセット処理
 	void Reset();
 
+	// ステージのスクロール描画
+	void ScrollDraw(int offsetX = 0, int offsetY = 0);
+
 	// ステージ読み込み
 	int LoadStage(const char* filePath = nullptr);
 	// ステージ書き込み
@@ -116,5 +123,5 @@ public: //メンバ関数
 	}
 private:
 	// ミニマップの描画
-	void MiniMap(int offsetX = 0, int offsetY = 0, float scale = 1.0f);
+	void MiniMap(int offsetX = 0, int offsetY = 0, float scale = 1.0f, DirectX::XMFLOAT2 scroll = { 0.0f, 0.0f });
 };

@@ -9,6 +9,8 @@ const Math::Vector3 Stage::moveRightRoom = { 1.0f, 0.0f, 0.0f };
 DrawPolygon* Stage::draw = nullptr;
 std::map<Math::Vector3, Area> Stage::rooms;
 Math::Vector3 Stage::nowRoom = { 0.0f, 0.0f, 0.0f };
+Math::Vector3 Stage::oldRoom = Stage::nowRoom;
+Scroll Stage::scroll = {};
 
 Stage::Stage()
 {
@@ -38,13 +40,14 @@ void Stage::Init()
 
 void Stage::Update()
 {
+	scroll.ScrollUpdate(0.1f);
 	rooms[nowRoom].Update();
 }
 
 void Stage::Draw(int offsetX, int offsetY)
 {
 	rooms[nowRoom].Draw(offsetX, offsetY);
-	MiniMap(DirectXInit::GetInstance()->windowWidth, 0, 20.0f);
+	MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
 }
 
 void Stage::Reset()
@@ -55,6 +58,23 @@ void Stage::Reset()
 	{
 		i.second.Reset();
 	}
+}
+
+void Stage::ScrollDraw(int offsetX, int offsetY)
+{
+	float winW = static_cast<float>(DirectXInit::GetInstance()->windowWidth);
+	float winH = static_cast<float>(DirectXInit::GetInstance()->windowHeight);
+
+	DirectX::XMFLOAT2 scr = {
+		(oldRoomPos - nextRoomPos).x * scroll.GetTime(),
+		(oldRoomPos - nextRoomPos).y * scroll.GetTime()
+	};
+
+	rooms[nextRoomPos].Draw(
+		static_cast<int>(winW * (oldRoomPos - nextRoomPos).x) + offsetX - static_cast<int>(winW * scr.x),
+		static_cast<int>(winH * (oldRoomPos - nextRoomPos).y) + offsetY - static_cast<int>(winH * scr.y));
+	rooms[oldRoomPos].Draw(offsetX - static_cast<int>(winW * scr.x), offsetY - static_cast<int>(winH * scr.y));
+	MiniMap(static_cast<int>(winW) + offsetX, offsetY, 20.0f, scr);
 }
 
 int Stage::LoadStage(const char* filePath)
@@ -291,7 +311,9 @@ int Stage::MoveUpRoom()
 		return FUNCTION_ERROR;
 	}
 
+	oldRoom = nowRoom;
 	nowRoom = moveRoom;
+	scroll.ScrollStart();
 	return 0;
 }
 
@@ -305,7 +327,9 @@ int Stage::MoveDownRoom()
 		return FUNCTION_ERROR;
 	}
 
+	oldRoom = nowRoom;
 	nowRoom = moveRoom;
+	scroll.ScrollStart();
 	return 0;
 }
 
@@ -319,7 +343,9 @@ int Stage::MoveLeftRoom()
 		return FUNCTION_ERROR;
 	}
 
+	oldRoom = nowRoom;
 	nowRoom = moveRoom;
+	scroll.ScrollStart();
 	return 0;
 }
 
@@ -333,7 +359,9 @@ int Stage::MoveRightRoom()
 		return FUNCTION_ERROR;
 	}
 
+	oldRoom = nowRoom;
 	nowRoom = moveRoom;
+	scroll.ScrollStart();
 	return 0;
 }
 
@@ -361,7 +389,7 @@ void Stage::LastRoom()
 	}
 }
 
-void Stage::MiniMap(int offsetX, int offsetY, float scale)
+void Stage::MiniMap(int offsetX, int offsetY, float scale, DirectX::XMFLOAT2 scroll)
 {
 	Vector3 offset = {
 		offsetX - (1.0f * 3.0f + 2.0f * 3.0f) * scale + 1.0f * scale,

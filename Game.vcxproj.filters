@@ -108,6 +108,9 @@
     <ClCompile Include="UndoRedo\RouteSetter.cpp">
       <Filter>UndoRedo</Filter>
     </ClCompile>
+    <ClCompile Include="Effect\Scroll.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\GameScene.h">
@@ -175,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="UndoRedo\RouteSetter.h">
       <Filter>UndoRedo</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\Scroll.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

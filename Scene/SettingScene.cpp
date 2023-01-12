@@ -1,6 +1,6 @@
 ﻿#include "SettingScene.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/Input.h"
+#include "./Input/Input.h"
 
 namespace
 {

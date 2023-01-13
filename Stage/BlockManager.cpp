@@ -1,6 +1,7 @@
 ﻿#include "BlockManager.h"
 #include "Area.h"
 #include "./Math/Collision/Collision.h"
+#include "./Header/DirectXInit.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
@@ -114,10 +115,8 @@ void BlockManager::Update()
 	}
 }
 
-void BlockManager::Draw(int offsetX, int offsetY)
+void BlockManager::Draw(const Vector3& offset)
 {
-	Vector3 offset = { static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f };
-
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
 		blockType[blocks[i].typeId].Draw(blocks[i].pos + offset);

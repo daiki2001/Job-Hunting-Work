@@ -14,6 +14,8 @@ private: //エイリアス
 public: //定数
 	static const size_t STAGE_WIDTH;
 	static const size_t STAGE_HEIGHT;
+	static const float WALL_SIZE;
+	static const Vector3 INIT_CAMERA;
 	static const int NONE_LOST_FOREST;
 	static const size_t MAX_COURSE_NUM;
 
@@ -58,7 +60,7 @@ public: //メンバ関数
 	// 更新処理
 	void Update();
 	// 描画処理
-	void Draw(int offsetX = 0, int offsetY = 0);
+	void Draw(const Vector3& offset = Vector3::Zero());
 	// リセット処理
 	void Reset();
 

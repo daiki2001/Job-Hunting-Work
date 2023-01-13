@@ -174,6 +174,8 @@ void Player::MoveUp(const GameInput* const input)
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::UP);
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::moveUpRoom);
 			break;
 		default:
 			break;
@@ -218,6 +220,8 @@ void Player::MoveDown(const GameInput* const input)
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::DOWN);
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::moveDownRoom);
 			break;
 		default:
 			break;
@@ -262,6 +266,8 @@ void Player::MoveLeft(const GameInput* const input)
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::LEFT);
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::moveLeftRoom);
 			break;
 		default:
 			break;
@@ -308,6 +314,8 @@ void Player::MoveRight(const GameInput* const input)
 		case FUNCTION_ERROR:
 			route.clear();
 			route.emplace_back(Area::DoorNum::RIGHT);
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::moveRightRoom);
 			break;
 		default:
 			break;

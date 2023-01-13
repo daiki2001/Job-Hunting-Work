@@ -9,7 +9,8 @@ const Math::Vector3 Stage::moveRightRoom = { 1.0f, 0.0f, 0.0f };
 DrawPolygon* Stage::draw = nullptr;
 std::map<Math::Vector3, Area> Stage::rooms;
 Math::Vector3 Stage::nowRoom = { 0.0f, 0.0f, 0.0f };
-Math::Vector3 Stage::oldRoom = Stage::nowRoom;
+Math::Vector3 Stage::oldRoomPos = Stage::nowRoom;
+Math::Vector3 Stage::moveDir = { 0.0f, 0.0f, 0.0f };
 Scroll Stage::scroll = {};
 
 Stage::Stage()
@@ -40,13 +41,27 @@ void Stage::Init()
 
 void Stage::Update()
 {
-	scroll.ScrollUpdate(0.1f);
 	rooms[nowRoom].Update();
+
+	scroll.ScrollUpdate(0.1f);
+	if (scroll.GetFlag())
+	{
+		Vector3 moveCamera = moveDir * scroll.GetTime();
+		moveCamera = 2.0f * Vector3(
+			Area::INIT_CAMERA.x * moveCamera.x,
+			Area::INIT_CAMERA.y * moveCamera.y,
+			Area::INIT_CAMERA.z * moveCamera.z);
+		Camera::target = Area::INIT_CAMERA + moveCamera;
+	}
+	else
+	{
+		Camera::target = Area::INIT_CAMERA;
+	}
 }
 
 void Stage::Draw(int offsetX, int offsetY)
 {
-	rooms[nowRoom].Draw(offsetX, offsetY);
+	rooms[nowRoom].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f });
 	MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
 }
 
@@ -62,19 +77,25 @@ void Stage::Reset()
 
 void Stage::ScrollDraw(int offsetX, int offsetY)
 {
-	float winW = static_cast<float>(DirectXInit::GetInstance()->windowWidth);
-	float winH = static_cast<float>(DirectXInit::GetInstance()->windowHeight);
-
+	int winW = DirectXInit::GetInstance()->windowWidth;
+	int winH = DirectXInit::GetInstance()->windowHeight;
 	DirectX::XMFLOAT2 scr = {
-		(oldRoomPos - nextRoomPos).x * scroll.GetTime(),
-		(oldRoomPos - nextRoomPos).y * scroll.GetTime()
+		moveDir.x * scroll.GetTime(),
+		moveDir.y * scroll.GetTime()
 	};
+	Vector3 offset = { static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f };
 
-	rooms[nextRoomPos].Draw(
-		static_cast<int>(winW * (oldRoomPos - nextRoomPos).x) + offsetX - static_cast<int>(winW * scr.x),
-		static_cast<int>(winH * (oldRoomPos - nextRoomPos).y) + offsetY - static_cast<int>(winH * scr.y));
-	rooms[oldRoomPos].Draw(offsetX - static_cast<int>(winW * scr.x), offsetY - static_cast<int>(winH * scr.y));
-	MiniMap(static_cast<int>(winW) + offsetX, offsetY, 20.0f, scr);
+	if (rooms.find(oldRoomPos) == rooms.end())
+	{
+		oldRoomPos = nowRoom;
+	}
+
+	rooms[nowRoom].Draw(Vector3(
+		(static_cast<float>(Area::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
+		(static_cast<float>(Area::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
+		0.0f) + offset);
+	rooms[oldRoomPos].Draw(offset);
+	MiniMap(winW + offsetX, offsetY, 20.0f, scr);
 }
 
 int Stage::LoadStage(const char* filePath)
@@ -301,68 +322,47 @@ void Stage::AllDeleteRoom()
 	rooms.clear();
 }
 
-int Stage::MoveUpRoom()
+int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 {
-	Vector3 moveRoom = nowRoom + moveUpRoom;
-
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
+	if (rooms.find(moveRoomPos) == rooms.end() ||
+		rooms[moveRoomPos].isAlive == false)
 	{
 		return FUNCTION_ERROR;
 	}
 
-	oldRoom = nowRoom;
-	nowRoom = moveRoom;
+	if (direction == Vector3::Zero())
+	{
+		moveDir = moveRoomPos - nowRoom;
+	}
+	else
+	{
+		moveDir = direction.Normalize();
+	}
+
+	oldRoomPos = nowRoom;
+	nowRoom = moveRoomPos;
 	scroll.ScrollStart();
 	return 0;
+}
+
+int Stage::MoveUpRoom()
+{
+	return MoveRoom(nowRoom + moveUpRoom);
 }
 
 int Stage::MoveDownRoom()
 {
-	Vector3 moveRoom = nowRoom + moveDownRoom;
-
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
-	{
-		return FUNCTION_ERROR;
-	}
-
-	oldRoom = nowRoom;
-	nowRoom = moveRoom;
-	scroll.ScrollStart();
-	return 0;
+	return MoveRoom(nowRoom + moveDownRoom);
 }
 
 int Stage::MoveLeftRoom()
 {
-	Vector3 moveRoom = nowRoom + moveLeftRoom;
-
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
-	{
-		return FUNCTION_ERROR;
-	}
-
-	oldRoom = nowRoom;
-	nowRoom = moveRoom;
-	scroll.ScrollStart();
-	return 0;
+	return MoveRoom(nowRoom + moveLeftRoom);
 }
 
 int Stage::MoveRightRoom()
 {
-	Vector3 moveRoom = nowRoom + moveRightRoom;
-
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
-	{
-		return FUNCTION_ERROR;
-	}
-
-	oldRoom = nowRoom;
-	nowRoom = moveRoom;
-	scroll.ScrollStart();
-	return 0;
+	return MoveRoom(nowRoom + moveRightRoom);
 }
 
 void Stage::LastRoom()
@@ -555,6 +555,7 @@ const bool Stage::IsGoal()
 		{
 			if (i.second.IsGoal())
 			{
+				Camera::target = Area::INIT_CAMERA;
 				reslut = true;
 				break;
 			}

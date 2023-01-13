@@ -1,5 +1,6 @@
 ﻿#include "Area.h"
 #include "Door.h"
+#include "./Header/DirectXInit.h"
 #include "./Input/GameInput.h"
 
 namespace
@@ -9,6 +10,8 @@ static GameInput* input = GameInput::Get();
 
 const size_t Area::STAGE_WIDTH = 15;
 const size_t Area::STAGE_HEIGHT = 7;
+const float Area::WALL_SIZE = 2.0f;
+const Math::Vector3 Area::INIT_CAMERA = { 7.0f, -3.0f, 0.0f };
 const int Area::NONE_LOST_FOREST = Area::DoorNum::MAX;
 const size_t Area::MAX_COURSE_NUM = 5;
 DrawPolygon* Area::draw = nullptr;
@@ -24,10 +27,10 @@ Area::Area() :
 {
 	block_mgr.Init(Area::draw);
 
-	door[DoorNum::UP].Init(Vector3(3.0f, 1.0f, 2.0f), Door::DoorStatus::CLOSE);
-	door[DoorNum::DOWN].Init(Vector3(3.0f, 1.0f, 2.0f), Door::DoorStatus::CLOSE);
-	door[DoorNum::LEFT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
-	door[DoorNum::RIGHT].Init(Vector3(1.0f, 3.0f, 2.0f), Door::DoorStatus::CLOSE);
+	door[DoorNum::UP].Init(Vector3(3.0f, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::DOWN].Init(Vector3(3.0f, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::LEFT].Init(Vector3(1.0f, 3.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::RIGHT].Init(Vector3(1.0f, 3.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
 
 	SetDoorInit(door);
 }
@@ -98,23 +101,22 @@ void Area::Update()
 	}
 }
 
-void Area::Draw(int offsetX, int offsetY)
+void Area::Draw(const Vector3& offset)
 {
 	if (isAlive == false) return;
 
-	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f) +
-		Vector3(static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f);
+	const Vector3 centerPos = INIT_CAMERA + offset;
 
 	// 外壁の描画
 	DirectDrawing::ChangeMaterialShader();
-	DrawWall(offset);
+	DrawWall(centerPos);
 
-	door[DoorNum::UP].Draw(Vector3(0.0f, +4.5f, 0.0f) + offset);
-	door[DoorNum::DOWN].Draw(Vector3(0.0f, -4.5f, 0.0f) + offset);
-	door[DoorNum::LEFT].Draw(Vector3(-8.5f, 0.0f, 0.0f) + offset);
-	door[DoorNum::RIGHT].Draw(Vector3(+8.5f, 0.0f, 0.0f) + offset);
+	door[DoorNum::UP].Draw(Vector3(0.0f, +4.5f, 0.0f) + centerPos);
+	door[DoorNum::DOWN].Draw(Vector3(0.0f, -4.5f, 0.0f) + centerPos);
+	door[DoorNum::LEFT].Draw(Vector3(-8.5f, 0.0f, 0.0f) + centerPos);
+	door[DoorNum::RIGHT].Draw(Vector3(+8.5f, 0.0f, 0.0f) + centerPos);
 
-	block_mgr.Draw(offsetX, -offsetY);
+	block_mgr.Draw(offset);
 }
 
 int Area::LoadArea(FILE* fileHandle)
@@ -237,30 +239,32 @@ int Area::WriteArea(FILE* fileHandle)
 
 void Area::DrawWall(const Vector3& offset)
 {
-	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	const Vector3 size = scale_xyz(WALL_SIZE);
 
-	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +2.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
 
-	draw->DrawOBJ(wall_obj, Vector3(-6.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-6.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+6.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+6.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +2.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -2.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -2.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +2.5f, 0.0f) + offset, Math::Identity(), size);
 
-	draw->DrawOBJ(wall_obj, Vector3(-4.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-4.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+4.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+4.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-6.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-6.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+6.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+6.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
 
-	draw->DrawOBJ(wall_obj, Vector3(-2.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
-	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, 0.0f) + offset, Math::Identity(), Vector3(2.0f, 2.0f, 2.0f));
+	draw->DrawOBJ(wall_obj, Vector3(-4.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-4.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+4.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+4.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+
+	draw->DrawOBJ(wall_obj, Vector3(-2.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
 }
 
 const int Area::LostForest(const std::vector<int>& route, const size_t& index)

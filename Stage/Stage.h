@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
-#include "./Effect/Scroll.h"
+#include "../Effect/Scroll.h"
 #include <map>
 #include "./Header/EngineGeneral.h"
 
@@ -18,7 +18,7 @@ private:
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 
-private: //定数
+public: //定数
 	static const Vector3 moveUpRoom;
 	static const Vector3 moveDownRoom;
 	static const Vector3 moveLeftRoom;
@@ -37,9 +37,10 @@ private:
 	static DrawPolygon* draw;
 	static Player* player;         //プレイヤー
 	static std::map<Vector3, Area> rooms; //各部屋の情報
-	static Vector3 nowRoom; //プレイヤーが現在いる部屋
-	static Vector3 oldRoom; //プレイヤーが1つ前にいた部屋
-	
+	static Vector3 nowRoom;    //プレイヤーが現在いる部屋
+	static Vector3 oldRoomPos; //プレイヤーが一つ前にいた部屋
+	static Vector3 moveDir;    //部屋移動した方向
+
 public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
@@ -53,6 +54,7 @@ public: //静的メンバ関数
 	// 全部屋の削除
 	static void AllDeleteRoom();
 
+	static int MoveRoom(const Vector3& roomPos, const Vector3& direction = Vector3::Zero());
 	static int MoveUpRoom();
 	static int MoveDownRoom();
 	static int MoveLeftRoom();

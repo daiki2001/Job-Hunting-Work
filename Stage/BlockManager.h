@@ -54,7 +54,7 @@ public: //メンバ関数
 	// 更新処理
 	void Update();
 	// 描画処理
-	void Draw(int offsetX = 0, int offsetY = 0);
+	void Draw(const Vector3& offset = Vector3::Zero());
 	// リセット処理
 	void Reset();
 

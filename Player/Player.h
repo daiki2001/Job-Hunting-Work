@@ -45,13 +45,14 @@ private:
 
 	Direction direction; //向いている方向
 	int object;          //プレイヤーのオブジェクト
+	Vector3 animationPos; //自機の部屋移動中のアニメーション時の座標
 
 	/*インベントリ*/
 	SelectItem selectItem;
 	Item key;  //鍵
 	Bomb bomb; //爆弾
 
-	std::vector<int> route; //迷いの森
+	std::vector<int> route; //迷いの森を進んだ道
 
 public: //メンバ関数
 	// 初期化処理
@@ -64,6 +65,9 @@ public: //メンバ関数
 	void DrawInventory(int offsetX = 0, int offsetY = 0, float scale = 1.0f);
 	// リセット
 	void Reset();
+
+	// 自機の部屋移動中のアニメーション
+	void MovingRoom();
 
 	// 鍵の獲得
 	void AcquisitionKey() { key.Acquisition(); }
@@ -81,10 +85,10 @@ private:
 	void Move(const GameInput* const input);
 	void SelectAction(const GameInput* const input);
 	void Action(const GameInput* const input);
-	void MoveUp(const GameInput* const input);
-	void MoveDown(const GameInput* const input);
-	void MoveLeft(const GameInput* const input);
-	void MoveRight(const GameInput* const input);
+	void MoveUp();
+	void MoveDown();
+	void MoveLeft();
+	void MoveRight();
 	void KeyAction();
 	void BombAction();
 };

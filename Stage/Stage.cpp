@@ -47,10 +47,8 @@ void Stage::Update()
 	if (scroll.GetFlag())
 	{
 		Vector3 moveCamera = moveDir * scroll.GetTime();
-		moveCamera = 2.0f * Vector3(
-			Area::INIT_CAMERA.x * moveCamera.x,
-			Area::INIT_CAMERA.y * moveCamera.y,
-			Area::INIT_CAMERA.z * moveCamera.z);
+		moveCamera.x *= (Area::WALL_SIZE * 2.0f + Area::STAGE_WIDTH);
+		moveCamera.y *= -(Area::WALL_SIZE * 2.0f + Area::STAGE_HEIGHT);
 		Camera::target = Area::INIT_CAMERA + moveCamera;
 	}
 	else

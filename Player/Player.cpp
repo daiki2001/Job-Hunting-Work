@@ -18,6 +18,7 @@ Player::Player() :
 	pos{},
 	direction(Player::Direction::UP),
 	object(Engine::FUNCTION_ERROR),
+	animationPos{},
 	selectItem(SelectItem::KEY),
 	key(100),
 	bomb(100, 10),
@@ -54,18 +55,32 @@ void Player::Update(const GameInput* const input)
 	Move(input);
 	SelectAction(input);
 	Action(input);
+
+	MovingRoom();
 }
 
 void Player::Draw(int offsetX, int offsetY)
 {
-	bomb.Draw();
+	Vector3 offset = Vector3(
+		static_cast<float>(offsetX),
+		static_cast<float>(offsetY),
+		0.0f);
+	Vector3 playerDrawPos = Vector3::Zero();
 
+	if (stage->scroll.GetFlag())
+	{
+		playerDrawPos = animationPos + offset;
+	}
+	else
+	{
+		playerDrawPos = pos + offset;
+	}
+
+	bomb.Draw();
 	DirectDrawing::ChangeMaterialShader();
 	draw->DrawOBJ(
 		object,
-		pos + Vector3(static_cast<float>(offsetX),
-					  static_cast<float>(offsetY),
-					  0.0f),
+		playerDrawPos,
 		Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
 		scale_xyz(1.0f / 256.0f),
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
@@ -89,7 +104,7 @@ void Player::DrawInventory(int offsetX, int offsetY, float scale)
 
 void Player::Reset()
 {
-	pos = { 7.0f, -6.0f, 0.0f };
+	pos = Area::INIT_CAMERA + Vector3(0.0f, -3.0f, 0.0f);
 	selectItem = SelectItem::KEY;
 	key.Reset();
 	bomb.Reset();
@@ -99,19 +114,19 @@ void Player::Move(const GameInput* const input)
 {
 	if (input->MainUp())
 	{
-		MoveUp(input);
+		MoveUp();
 	}
 	else if (input->MainDown())
 	{
-		MoveDown(input);
+		MoveDown();
 	}
 	else if (input->MainLeft())
 	{
-		MoveLeft(input);
+		MoveLeft();
 	}
 	else if (input->MainRight())
 	{
-		MoveRight(input);
+		MoveRight();
 	}
 }
 
@@ -145,7 +160,44 @@ void Player::Action(const GameInput* const input)
 	}
 }
 
-void Player::MoveUp(const GameInput* const input)
+void Player::MovingRoom()
+{
+	if (stage->scroll.GetFlag() == false)
+	{
+		if (animationPos != Vector3::Zero()) animationPos = Vector3::Zero();
+		return;
+	}
+
+	Vector3 animationVec = Vector3::Zero();
+	animationPos = pos;
+
+	switch (direction)
+	{
+	case Player::Direction::UP:
+		animationPos.y = 0.0f;
+		animationVec = Stage::moveUpRoom;
+		break;
+	case Player::Direction::DOWN:
+		animationPos.y = -(Area::STAGE_HEIGHT - 1.0f);
+		animationVec = Stage::moveDownRoom;
+		break;
+	case Player::Direction::LEFT:
+		animationPos.x = 0.0f;
+		animationVec = Stage::moveLeftRoom;
+		break;
+	case Player::Direction::RIGHT:
+		animationPos.x = Area::STAGE_WIDTH - 1.0f;
+		animationVec = Stage::moveRightRoom;
+		break;
+	default:
+		break;
+	}
+
+	animationVec.y *= -1.0f;
+	animationPos += (animationVec * stage->scroll.GetTime()) * (Area::WALL_SIZE * 2.0f);
+}
+
+void Player::MoveUp()
 {
 	direction = Player::Direction::UP;
 
@@ -191,7 +243,7 @@ void Player::MoveUp(const GameInput* const input)
 	}
 }
 
-void Player::MoveDown(const GameInput* const input)
+void Player::MoveDown()
 {
 	direction = Player::Direction::DOWN;
 
@@ -237,7 +289,7 @@ void Player::MoveDown(const GameInput* const input)
 	}
 }
 
-void Player::MoveLeft(const GameInput* const input)
+void Player::MoveLeft()
 {
 	direction = Player::Direction::LEFT;
 
@@ -285,7 +337,7 @@ void Player::MoveLeft(const GameInput* const input)
 	}
 }
 
-void Player::MoveRight(const GameInput* const input)
+void Player::MoveRight()
 {
 	direction = Player::Direction::RIGHT;
 

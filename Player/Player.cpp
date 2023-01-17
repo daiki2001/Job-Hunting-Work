@@ -225,7 +225,6 @@ void Player::MoveUp()
 		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
-			route.emplace_back(Area::DoorNum::UP);
 		case 1:
 			stage->MoveRoom(Stage::GetRoom(), Stage::moveUpRoom);
 			break;
@@ -271,7 +270,6 @@ void Player::MoveDown()
 		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
-			route.emplace_back(Area::DoorNum::DOWN);
 		case 1:
 			stage->MoveRoom(Stage::GetRoom(), Stage::moveDownRoom);
 			break;
@@ -317,7 +315,6 @@ void Player::MoveLeft()
 		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
-			route.emplace_back(Area::DoorNum::LEFT);
 		case 1:
 			stage->MoveRoom(Stage::GetRoom(), Stage::moveLeftRoom);
 			break;
@@ -365,7 +362,6 @@ void Player::MoveRight()
 		case 2:
 		case FUNCTION_ERROR:
 			route.clear();
-			route.emplace_back(Area::DoorNum::RIGHT);
 		case 1:
 			stage->MoveRoom(Stage::GetRoom(), Stage::moveRightRoom);
 			break;

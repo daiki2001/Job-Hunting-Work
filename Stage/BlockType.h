@@ -11,13 +11,20 @@ public: //エイリアス
 	using Matrix4 = Math::Matrix4;
 
 public: //定数
-	static const int WIDTH;
-	static const int HEIGHT;
+	static const float BLOCK_SIZE;   //ブロックの大きさ
+	static const float BLOCK_HEIGHT; //ブロックの高さ
+	static const float FLOOR_HEIGHT; //床の厚さ
 	static const std::string blockResourcesDir;
 
 private: //静的メンバ変数
 	static DrawPolygon* draw;
 	
+	static int floorGraph; //床のテクスチャ
+	static int floorObj;   //床のオブジェクト
+	
+public: //静的メンバ関数
+	static void StaticInit(DrawPolygon* const draw);
+
 private: //メンバ変数
 	int typeId;
 	int graph;
@@ -27,15 +34,15 @@ private: //メンバ変数
 	XMFLOAT4 color;
 
 public: //メンバ関数
-	BlockType(int typeId, DrawPolygon* const draw);
+	BlockType(int typeId);
 	virtual ~BlockType();
 
 	// 生成処理
-	virtual int Create(const wchar_t* filename = nullptr, const Matrix4& rotation = Math::Identity(),
-					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
-	virtual int Create(const char* filename, const Matrix4& rotation = Math::Identity(),
-					   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
-	virtual int Create(int number, bool isObject, const Matrix4& rotation = Math::Identity(), const Vector3& scale = { 1.0f, 1.0f, 1.0f },
+	int Create(const wchar_t* filename = nullptr, const Matrix4& rotation = Math::Identity(),
+			   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	int Create(const char* filename, const Matrix4& rotation = Math::Identity(),
+			   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	int Create(int number, bool isObject, const Matrix4& rotation = Math::Identity(), const Vector3& scale = { 1.0f, 1.0f, 1.0f },
 					   const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	// 描画処理
 	void Draw(const Vector3& pos);

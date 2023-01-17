@@ -1,11 +1,14 @@
 ﻿#include "BlockType.h"
 
-const int BlockType::WIDTH = 32;
-const int BlockType::HEIGHT = 32;
+const float BlockType::BLOCK_SIZE = 1.0f;
+const float BlockType::BLOCK_HEIGHT = 1.5f;
+const float BlockType::FLOOR_HEIGHT = 0.5f;
 const std::string BlockType::blockResourcesDir = "./Resources/Game/Block/";
 DrawPolygon* BlockType::draw = nullptr;
+int BlockType::floorGraph = FUNCTION_ERROR;
+int BlockType::floorObj = FUNCTION_ERROR;
 
-BlockType::BlockType(int typeId, DrawPolygon* const draw) :
+BlockType::BlockType(int typeId) :
 	typeId(typeId),
 	graph(FUNCTION_ERROR),
 	blockBox(FUNCTION_ERROR),
@@ -13,14 +16,27 @@ BlockType::BlockType(int typeId, DrawPolygon* const draw) :
 	scale(1.0f, 1.0f, 1.0f),
 	color(1.0f, 1.0f, 1.0f, 1.0f)
 {
-	if (this->draw == nullptr)
-	{
-		this->draw = draw;
-	}
 }
 
 BlockType::~BlockType()
 {
+}
+
+void BlockType::StaticInit(DrawPolygon* const draw)
+{
+	if (BlockType::draw == nullptr)
+	{
+		BlockType::draw = draw;
+	}
+
+	if (floorGraph == FUNCTION_ERROR)
+	{
+		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor.png");
+	}
+	if (floorObj == FUNCTION_ERROR)
+	{
+		floorObj = BlockType::draw->Create3Dbox(Vector3(BLOCK_SIZE, BLOCK_SIZE, FLOOR_HEIGHT));
+	}
 }
 
 int BlockType::Create(const wchar_t* filename, const Matrix4& rotation, const Vector3& scale, const XMFLOAT4& color)
@@ -38,7 +54,7 @@ int BlockType::Create(const wchar_t* filename, const Matrix4& rotation, const Ve
 
 	if (blockBox == FUNCTION_ERROR)
 	{
-		blockBox = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
+		blockBox = draw->Create3Dbox(scale_xyz(BLOCK_SIZE));
 	}
 
 	this->rotation = rotation;
@@ -78,7 +94,7 @@ int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const 
 
 		if (blockBox == FUNCTION_ERROR)
 		{
-			blockBox = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
+			blockBox = draw->Create3Dbox(scale_xyz(BLOCK_SIZE));
 		}
 	}
 
@@ -91,6 +107,12 @@ int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const 
 
 void BlockType::Draw(const Vector3& pos)
 {
+	// 床の描画
+	Vector3 floorPos = pos;
+	floorPos.z += (BLOCK_HEIGHT + FLOOR_HEIGHT) / 2.0f;
+	DirectDrawing::ChangeOBJShader();
+	draw->Draw(floorObj, floorPos, Math::Identity(), scale_xyz(1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), floorGraph);
+
 	// 'typeId'が0(None)は描画しない
 	if (typeId == 0)
 	{
@@ -106,7 +128,6 @@ void BlockType::Draw(const Vector3& pos)
 	else
 	{
 		// 'graph'が'FUNCTION_ERROR'でない時
-		DirectDrawing::ChangeOBJShader();
 		draw->Draw(blockBox, pos, rotation, scale, color, graph);
 	}
 }

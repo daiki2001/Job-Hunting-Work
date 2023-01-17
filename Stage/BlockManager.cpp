@@ -39,28 +39,30 @@ BlockManager::~BlockManager()
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
+	BlockType::StaticInit(draw);
+
 	blockType.clear();
 	blocks.clear();
 
-	blockType.push_back(BlockType(TypeId::NONE, draw));
+	blockType.push_back(BlockType(TypeId::NONE));
 	blockType.back().Create();
 
-	blockType.push_back(BlockType(TypeId::WALL, draw));
+	blockType.push_back(BlockType(TypeId::WALL));
 	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false);
 
-	blockType.push_back(BlockType(TypeId::GOAL, draw));
+	blockType.push_back(BlockType(TypeId::GOAL));
 	blockType.back().Create(Parameter::Get(LoadGraph::GOAL.c_str()), false);
 
-	blockType.push_back(BlockType(TypeId::SWITCH, draw));
+	blockType.push_back(BlockType(TypeId::SWITCH));
 	blockType.back().Create("Switch.obj");
 
-	blockType.push_back(BlockType(TypeId::KEY, draw));
+	blockType.push_back(BlockType(TypeId::KEY));
 	blockType.back().Create("key.obj",
 							Math::rotateZ(-Math::PI_F / 4),
 							scale_xyz(0.25f),
 							{ 1.0f, 1.0f, 0.0f, 1.0f });
 
-	blockType.push_back(BlockType(TypeId::BOMB, draw));
+	blockType.push_back(BlockType(TypeId::BOMB));
 	blockType.back().Create(Parameter::Get(LoadGraph::BOMB.c_str()), false);
 }
 

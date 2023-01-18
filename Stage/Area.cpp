@@ -2,6 +2,7 @@
 #include "Door.h"
 #include "./Header/DirectXInit.h"
 #include "./Input/GameInput.h"
+#include <math.h>
 
 namespace
 {
@@ -27,10 +28,10 @@ Area::Area() :
 {
 	block_mgr.Init(Area::draw);
 
-	door[DoorNum::UP].Init(Vector3(3.0f, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::DOWN].Init(Vector3(3.0f, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::LEFT].Init(Vector3(1.0f, 3.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::RIGHT].Init(Vector3(1.0f, 3.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::UP].Init(Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::DOWN].Init(Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::LEFT].Init(Vector3(1.0f, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::RIGHT].Init(Vector3(1.0f, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
 
 	SetDoorInit(door);
 }
@@ -105,16 +106,33 @@ void Area::Draw(const Vector3& offset)
 {
 	if (isAlive == false) return;
 
+	static const float halfWidth = floorf(Door::DOOR_WIDTH / 2.0f);
 	const Vector3 centerPos = INIT_CAMERA + offset;
 
 	// 外壁の描画
 	DirectDrawing::ChangeMaterialShader();
 	DrawWall(centerPos);
 
-	door[DoorNum::UP].Draw(Vector3(0.0f, +4.5f, 0.0f) + centerPos);
-	door[DoorNum::DOWN].Draw(Vector3(0.0f, -4.5f, 0.0f) + centerPos);
-	door[DoorNum::LEFT].Draw(Vector3(-8.5f, 0.0f, 0.0f) + centerPos);
-	door[DoorNum::RIGHT].Draw(Vector3(+8.5f, 0.0f, 0.0f) + centerPos);
+	door[DoorNum::UP].Draw(Vector3(0.0f, +5.0f, 0.0f) + centerPos);
+	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+	{
+		BlockType::FloorDraw(Vector3(i - halfWidth, +4.0f, 0.0f) + centerPos);
+	}
+	door[DoorNum::DOWN].Draw(Vector3(0.0f, -5.0f, 0.0f) + centerPos);
+	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+	{
+		BlockType::FloorDraw(Vector3(i - halfWidth, -4.0f, 0.0f) + centerPos);
+	}
+	door[DoorNum::LEFT].Draw(Vector3(-9.0f, 0.0f, 0.0f) + centerPos);
+	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+	{
+		BlockType::FloorDraw(Vector3(-8.0f,i - halfWidth,  0.0f) + centerPos);
+	}
+	door[DoorNum::RIGHT].Draw(Vector3(+9.0f, 0.0f, 0.0f) + centerPos);
+	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+	{
+		BlockType::FloorDraw(Vector3(+8.0f, i - halfWidth, 0.0f) + centerPos);
+	}
 
 	block_mgr.Draw(offset);
 }

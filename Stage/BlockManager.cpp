@@ -64,6 +64,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(TypeId::BOMB));
 	blockType.back().Create(Parameter::Get(LoadGraph::BOMB.c_str()), false);
+
+	blockType.push_back(BlockType(TypeId::HOLE));
+	blockType.back().Create();
 }
 
 void BlockManager::Update()
@@ -102,6 +105,7 @@ void BlockManager::Update()
 		blocks[playerPos].typeId = TypeId::NONE;
 		break;
 	case TypeId::NONE:
+	case TypeId::HOLE:
 	default:
 		break;
 	}
@@ -119,9 +123,48 @@ void BlockManager::Update()
 
 void BlockManager::Draw(const Vector3& offset)
 {
+	// ブロックの描画の除外リスト
+	static TypeId blockExclude[] = {
+		TypeId::NONE,
+		TypeId::HOLE,
+	};
+	// 床の描画の除外リスト
+	static TypeId floorExclude[] = {
+		TypeId::HOLE,
+	};
+
+	bool isSkip = false;
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		blockType[blocks[i].typeId].Draw(blocks[i].pos + offset);
+		// ブロックの描画
+		isSkip = false;
+		for (auto j : blockExclude)
+		{
+			if (blocks[i].typeId == j)
+			{
+				isSkip = true;
+				break; //ヒットした場合、それ以降はループを回す必要が無い
+			}
+		}
+		if (isSkip == false)
+		{
+			blockType[blocks[i].typeId].Draw(blocks[i].pos + offset);
+		}
+
+		// 床の描画
+		isSkip = false;
+		for (auto j : floorExclude)
+		{
+			if (blocks[i].typeId == j)
+			{
+				isSkip = true;
+				break; //ヒットした場合、それ以降はループを回す必要が無い
+			}
+		}
+		if (isSkip == false)
+		{
+			BlockType::FloorDraw(blocks[i].pos + offset);
+		}
 	}
 }
 

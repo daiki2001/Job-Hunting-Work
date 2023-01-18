@@ -20,6 +20,7 @@ public: //サブクラス
 		SWITCH, //スイッチ
 		KEY,    //鍵
 		BOMB,   //爆弾
+		HOLE,   //穴
 		MAX     //TypeIdの上限(プログラム用)
 	};
 

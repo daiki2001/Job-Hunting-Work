@@ -8,6 +8,7 @@ int debugTex = FUNCTION_ERROR;
 int entranceLight = FUNCTION_ERROR;
 }
 
+float Door::DOOR_WIDTH = 3.0f;
 DrawPolygon* Door::draw = nullptr;
 int Door::door_obj = FUNCTION_ERROR;
 int Door::keyDoor = FUNCTION_ERROR;
@@ -47,10 +48,6 @@ Door::Door() :
 
 Door::~Door()
 {
-	//door_obj = FUNCTION_ERROR;
-	//keyDoor = FUNCTION_ERROR;
-	//debugTex = FUNCTION_ERROR;
-	//entranceLight = FUNCTION_ERROR;
 }
 
 void Door::Init(const Vector3& size, DoorStatus status)
@@ -92,6 +89,22 @@ void Door::Draw(const Vector3& offset)
 				   DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f), debugTex);
 		break;
 	case DoorStatus::OPEN:
+	{
+		static const float halfWidth = floorf(Door::DOOR_WIDTH / 2.0f);
+
+		for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+		{
+			if (size.x == Door::DOOR_WIDTH)
+			{
+				BlockType::FloorDraw(Vector3((i - halfWidth) + Area::INIT_CAMERA.x, 0.0f, 0.0f) + offset);
+			}
+			else
+			{
+				BlockType::FloorDraw(Vector3(0.0f, (i - halfWidth) + Area::INIT_CAMERA.y, 0.0f) + offset);
+			}
+		}
+		break;
+	}
 	default:
 		break;
 	}

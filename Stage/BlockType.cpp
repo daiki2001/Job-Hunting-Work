@@ -31,7 +31,7 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 
 	if (floorGraph == FUNCTION_ERROR)
 	{
-		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor.png");
+		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor1.png");
 	}
 	if (floorObj == FUNCTION_ERROR)
 	{
@@ -105,29 +105,26 @@ int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const 
 	return blockBox;
 }
 
-void BlockType::Draw(const Vector3& pos)
+void BlockType::Draw(const Vector3& offset) const
 {
-	// 床の描画
-	Vector3 floorPos = pos;
-	floorPos.z += (BLOCK_HEIGHT + FLOOR_HEIGHT) / 2.0f;
-	DirectDrawing::ChangeOBJShader();
-	draw->Draw(floorObj, floorPos, Math::Identity(), scale_xyz(1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), floorGraph);
-
-	// 'typeId'が0(None)は描画しない
-	if (typeId == 0)
-	{
-		return;
-	}
-
 	if (graph == FUNCTION_ERROR)
 	{
 		// 'graph'が'FUNCTION_ERROR'の時
 		DirectDrawing::ChangeMaterialShader();
-		draw->DrawOBJ(blockBox, pos, rotation, scale, color);
+		draw->DrawOBJ(blockBox, offset, rotation, scale, color);
 	}
 	else
 	{
 		// 'graph'が'FUNCTION_ERROR'でない時
-		draw->Draw(blockBox, pos, rotation, scale, color, graph);
+		DirectDrawing::ChangeOBJShader();
+		draw->Draw(blockBox, offset, rotation, scale, color, graph);
 	}
+}
+
+void BlockType::FloorDraw(const Vector3& offset)
+{
+	Vector3 floorPos = offset;
+	floorPos.z += (BLOCK_HEIGHT + FLOOR_HEIGHT) / 2.0f;
+	DirectDrawing::ChangeOBJShader();
+	draw->Draw(floorObj, floorPos, Math::Identity(), scale_xyz(1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), floorGraph);
 }

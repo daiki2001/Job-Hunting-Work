@@ -20,6 +20,9 @@ public: //サブクラス
 		ENTRANCE = -1 //ダンジョンの入口
 	};
 
+public: //定数
+	static float DOOR_WIDTH; //ドアの横幅
+
 private: //静的メンバ変数
 	static DrawPolygon* draw;
 	static int door_obj;  //ドアのオブジェクト
@@ -47,6 +50,8 @@ public: //メンバ関数
 	void KeyOpen() { if (status == DoorStatus::KEY_CLOSE) status = DoorStatus::OPEN; }
 	void BreakWall() { if (status == DoorStatus::BREAK_WALL) status = DoorStatus::OPEN; }
 
+	// 扉のサイズの取得
+	const Vector3 GetSize() const { return size; }
 	// 扉の状態の取得
 	DoorStatus GetStatus() const { return status; }
 

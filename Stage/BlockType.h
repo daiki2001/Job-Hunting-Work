@@ -24,6 +24,8 @@ private: //静的メンバ変数
 	
 public: //静的メンバ関数
 	static void StaticInit(DrawPolygon* const draw);
+	// 床の描画
+	static void FloorDraw(const Vector3& offset);
 
 private: //メンバ変数
 	int typeId;
@@ -45,7 +47,7 @@ public: //メンバ関数
 	int Create(int number, bool isObject, const Matrix4& rotation = Math::Identity(), const Vector3& scale = { 1.0f, 1.0f, 1.0f },
 					   const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 	// 描画処理
-	void Draw(const Vector3& pos);
+	void Draw(const Vector3& offset) const;
 
 	// IDの取得
 	const int GetId() const { return typeId; }

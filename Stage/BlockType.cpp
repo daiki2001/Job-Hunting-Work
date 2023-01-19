@@ -31,7 +31,7 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 
 	if (floorGraph == FUNCTION_ERROR)
 	{
-		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor1.png");
+		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor.png");
 	}
 	if (floorObj == FUNCTION_ERROR)
 	{

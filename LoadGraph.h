@@ -21,13 +21,14 @@ public: //定数
 	static const string SWITCH_UI;
 	static const string KEY;
 	static const string BOMB;
+	static const string ARROW;
 
 	static const string WALL_UI;
 	static const string KEY_CLOSE;
 	static const string BREAK_WALL_UI;
 	static const string CREATE_ROOM;
 	
-	static const string ARROW;
+	static const string TRIANGLE;
 
 private: //メンバ変数
 	bool isLoad;

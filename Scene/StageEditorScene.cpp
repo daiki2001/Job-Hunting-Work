@@ -298,6 +298,14 @@ void StageEditorScene::Draw()
 						  Parameter::Get(LoadGraph::BOMB.c_str()),
 						  isSelect);
 				break;
+			case BlockManager::TypeId::HOLE:
+				DrawUIBox((frameSize + blank) * i + (frameSize / 2.0f),
+						  frameSize / 2.0f,
+						  frameSize,
+						  0.0f,
+						  Parameter::Get(LoadGraph::ARROW.c_str()),
+						  isSelect);
+				break;
 			default:
 				break;
 			}
@@ -395,7 +403,7 @@ void StageEditorScene::Draw()
 				break;
 			}
 
-			tex = Parameter::Get(LoadGraph::ARROW.c_str());
+			tex = Parameter::Get(LoadGraph::TRIANGLE.c_str());
 		}
 
 		DrawUIBox(winW - frameSize / 2.0f,

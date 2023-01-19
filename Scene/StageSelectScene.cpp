@@ -57,7 +57,7 @@ void StageSelectScene::Init()
 	}
 	if (arrow == FUNCTION_ERROR)
 	{
-		arrow = Parameter::Get(LoadGraph::Get()->ARROW.c_str());
+		arrow = Parameter::Get(LoadGraph::Get()->TRIANGLE.c_str());
 	}
 	if (number == FUNCTION_ERROR)
 	{

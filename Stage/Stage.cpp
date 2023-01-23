@@ -59,7 +59,16 @@ void Stage::Update()
 
 void Stage::Draw(int offsetX, int offsetY)
 {
+	static const Vector3 BOTTOM_ROOM = { 0.0f, 0.0f, -1.0f };
+
 	rooms[nowRoom].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f });
+
+	if (rooms.find(nowRoom + BOTTOM_ROOM) == rooms.end() ||
+		rooms[nowRoom + BOTTOM_ROOM].isAlive == false)
+	{
+		rooms[nowRoom + BOTTOM_ROOM].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), -Area::WALL_SIZE });
+	}
+
 	MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
 }
 

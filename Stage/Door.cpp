@@ -90,17 +90,30 @@ void Door::Draw(const Vector3& offset)
 		break;
 	case DoorStatus::OPEN:
 	{
-		static const float halfWidth = floorf(Door::DOOR_WIDTH / 2.0f);
+		static const float halfNum = floorf((Door::DOOR_WIDTH + 2.0f) / 2.0f);
+		float symbol = 0.0f;
 
-		for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+		if (((offset - Area::INIT_CAMERA).x > 0) || ((offset - Area::INIT_CAMERA).y > 0))
 		{
-			if (size.x == Door::DOOR_WIDTH)
+			symbol = +1.0f;
+		}
+		else if (((offset - Area::INIT_CAMERA).x < 0) || ((offset - Area::INIT_CAMERA).y < 0))
+		{
+			symbol = -1.0f;
+		}
+
+		for (float i = 0; i < Door::DOOR_WIDTH + 2.0f; i += 1.0f)
+		{
+			for (float j = 0; j < 2.0f; j += 1.0f)
 			{
-				BlockType::FloorDraw(Vector3((i - halfWidth) + Area::INIT_CAMERA.x, 0.0f, 0.0f) + offset);
-			}
-			else
-			{
-				BlockType::FloorDraw(Vector3(0.0f, (i - halfWidth) + Area::INIT_CAMERA.y, 0.0f) + offset);
+				if (size.x == Door::DOOR_WIDTH)
+				{
+					BlockType::FloorDraw(Vector3((i - halfNum), j * symbol, 0.0f) + offset);
+				}
+				else
+				{
+					BlockType::FloorDraw(Vector3(j * symbol, (i - halfNum), 0.0f) + offset);
+				}
 			}
 		}
 		break;

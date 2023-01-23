@@ -105,22 +105,6 @@ void GameScene::Draw()
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 背景
-	DirectDrawing::ChangeSpriteShader();
-	for (int y = 0; y * 128 < winH; y++)
-	{
-		for (int x = 0; x * 128 < winW; x++)
-		{
-			draw->DrawTextrue(
-				x * 128.0f,
-				y * 128.0f,
-				128.0f,
-				128.0f,
-				0.0f,
-				background,
-				DirectX::XMFLOAT2(0.0f, 0.0f)
-			);
-		}
-	}
 
 	// 3Dオブジェクト
 	if (stage->scroll.GetFlag())

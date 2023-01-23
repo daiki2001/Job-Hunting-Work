@@ -12,7 +12,7 @@ constexpr int window_height = 768; //縦幅
 
 constexpr WCHAR title[] = L"猫の記憶"; //タイトル
 
-constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //背景色
+constexpr float clearColor[] = { 0.1f, 0.1f, 0.15f, 1.0f }; //背景色
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {

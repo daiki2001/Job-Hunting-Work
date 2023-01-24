@@ -18,8 +18,8 @@ public: //サブクラス
 	enum CursorState
 	{
 		BLOCKS,                               //何かしらのブロック
-		DOOR_UP = Area::DoorNum::UP + 1,      //上のドア
-		DOOR_DOWN = Area::DoorNum::DOWN + 1,  //下のドア
+		DOOR_UP = Area::DoorNum::TOP + 1,      //上のドア
+		DOOR_DOWN = Area::DoorNum::BOTTOM + 1,  //下のドア
 		DOOR_LEFT = Area::DoorNum::LEFT + 1,  //左のドア
 		DOOR_RIGHT = Area::DoorNum::RIGHT + 1 //右のドア
 	};

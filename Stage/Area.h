@@ -22,10 +22,10 @@ public: //定数
 public: //サブクラス
 	enum DoorNum
 	{
-		UP,
-		DOWN,
 		LEFT,
 		RIGHT,
+		TOP,
+		BOTTOM,
 		MAX
 	};
 

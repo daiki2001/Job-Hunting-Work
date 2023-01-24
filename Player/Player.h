@@ -27,9 +27,9 @@ public: //サブクラス
 	enum Direction
 	{
 		RIGHT = -1,
-		UP,
+		TOP,
 		LEFT,
-		DOWN
+		BOTTOM
 	};
 	enum SelectItem
 	{

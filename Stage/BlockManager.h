@@ -14,14 +14,16 @@ public: //エイリアス
 public: //サブクラス
 	enum TypeId
 	{
-		NONE,   //ブロックなし
-		WALL,   //壁ブロック
-		GOAL,   //ゴール
-		SWITCH, //スイッチ
-		KEY,    //鍵
-		BOMB,   //爆弾
-		HOLE,   //穴
-		MAX     //TypeIdの上限(プログラム用)
+		NONE,        //ブロックなし
+		WALL,        //壁ブロック
+		GOAL,        //ゴール
+		SWITCH,      //スイッチ
+		KEY,         //鍵
+		BOMB,        //爆弾
+		HOLE,        //穴
+		UP_STAIRS,   //上り階段
+		DOWN_STAIRS, //下り階段
+		MAX          //TypeIdの上限(プログラム用)
 	};
 
 	class Block
@@ -38,6 +40,7 @@ public: //サブクラス
 
 private: //静的メンバ変数
 	static Player* player;
+	static int stairsObj;
 
 private: //メンバ変数
 	vector<BlockType> blockType;

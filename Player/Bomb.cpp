@@ -62,16 +62,16 @@ void Bomb::Update()
 			if (Collision::IsSphereToAABBCollision(Sphere(pos, 1.0f),
 												   upDoorPos - (upDoorSize / 2.0f),
 												   upDoorPos + (upDoorSize / 2.0f)) &&
-				stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::BREAK_WALL)
+				stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::BREAK_WALL)
 			{
-				stage->GetArea().GetDoor(Area::DoorNum::UP).BreakWall();
+				stage->GetArea().GetDoor(Area::DoorNum::TOP).BreakWall();
 			}
 			if (Collision::IsSphereToAABBCollision(Sphere(pos, 1.0f),
 												   downDoorPos - (downDoorSize / 2.0f),
 												   downDoorPos + (downDoorSize / 2.0f)) &&
-				stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::BREAK_WALL)
+				stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::BREAK_WALL)
 			{
-				stage->GetArea().GetDoor(Area::DoorNum::DOWN).BreakWall();
+				stage->GetArea().GetDoor(Area::DoorNum::BOTTOM).BreakWall();
 			}
 			if (Collision::IsSphereToAABBCollision(Sphere(pos, 1.0f),
 												   leftDoorPos - (leftDoorSize / 2.0f),

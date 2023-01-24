@@ -6,6 +6,7 @@
 #include "LoadGraph.h"
 
 Player* BlockManager::player = Player::Get();
+int BlockManager::stairsObj = FUNCTION_ERROR;
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
@@ -41,6 +42,11 @@ void BlockManager::Init(DrawPolygon* const draw)
 {
 	BlockType::StaticInit(draw);
 
+	if (stairsObj == FUNCTION_ERROR)
+	{
+		stairsObj = draw->CreateCylinder(BlockType::BLOCK_SIZE / 2.0f, BlockType::BLOCK_HEIGHT, 3);
+	}
+
 	blockType.clear();
 	blocks.clear();
 
@@ -67,6 +73,12 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(TypeId::HOLE));
 	blockType.back().Create();
+	
+	blockType.push_back(BlockType(TypeId::UP_STAIRS));
+	blockType.back().Create(stairsObj, true);
+	
+	blockType.push_back(BlockType(TypeId::DOWN_STAIRS));
+	blockType.back().Create(stairsObj, true);
 }
 
 void BlockManager::Update()
@@ -228,13 +240,13 @@ void BlockManager::PlayerPushBack(int index) const
 	case Player::Direction::LEFT:
 		player->pos.x += 1.0f - (player->pos.x - blocks[index].pos.x);
 		break;
-	case Player::Direction::UP:
+	case Player::Direction::TOP:
 		player->pos.y -= 1.0f + (player->pos.y - blocks[index].pos.y);
 		break;
 	case Player::Direction::RIGHT:
 		player->pos.x -= 1.0f + (player->pos.x - blocks[index].pos.x);
 		break;
-	case Player::Direction::DOWN:
+	case Player::Direction::BOTTOM:
 		player->pos.y += 1.0f - (player->pos.y - blocks[index].pos.y);
 		break;
 	default:
@@ -254,7 +266,7 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	int playerPos = -1;
 	Vector3 playerSize = {};
 
-	if ((player->GetDirection() == Player::Direction::UP) || (player->GetDirection() == Player::Direction::DOWN))
+	if ((player->GetDirection() == Player::Direction::TOP) || (player->GetDirection() == Player::Direction::BOTTOM))
 	{
 		playerSize = Player::COLLISION_SIZE / 2.0f;
 	}
@@ -293,7 +305,7 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	const float playerLeft = (player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).x;
 	const float playerRight = (player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).x;
 
-	if ((player->GetDirection() == Player::Direction::UP) || (player->GetDirection() == Player::Direction::LEFT))
+	if ((player->GetDirection() == Player::Direction::TOP) || (player->GetDirection() == Player::Direction::LEFT))
 	{
 		for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
 		{

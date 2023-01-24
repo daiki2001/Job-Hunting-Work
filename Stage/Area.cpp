@@ -28,10 +28,10 @@ Area::Area() :
 {
 	block_mgr.Init(Area::draw);
 
-	door[DoorNum::UP].Init(Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::DOWN].Init(Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
 	door[DoorNum::LEFT].Init(Vector3(1.0f, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
 	door[DoorNum::RIGHT].Init(Vector3(1.0f, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::TOP].Init(Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::BOTTOM].Init(Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
 
 	SetDoorInit(door);
 }
@@ -113,12 +113,12 @@ void Area::Draw(const Vector3& offset)
 	DirectDrawing::ChangeMaterialShader();
 	DrawWall(centerPos);
 
-	door[DoorNum::UP].Draw(Vector3(0.0f, +5.0f, 0.0f) + centerPos);
+	door[DoorNum::TOP].Draw(Vector3(0.0f, +5.0f, 0.0f) + centerPos);
 	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
 	{
 		BlockType::FloorDraw(Vector3(i - halfWidth, +4.0f, 0.0f) + centerPos);
 	}
-	door[DoorNum::DOWN].Draw(Vector3(0.0f, -5.0f, 0.0f) + centerPos);
+	door[DoorNum::BOTTOM].Draw(Vector3(0.0f, -5.0f, 0.0f) + centerPos);
 	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
 	{
 		BlockType::FloorDraw(Vector3(i - halfWidth, -4.0f, 0.0f) + centerPos);
@@ -346,8 +346,8 @@ void Area::SetDoorInit(Door doors[4])
 void Area::SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
 					   Door::DoorStatus left, Door::DoorStatus right)
 {
-	doorInit[DoorNum::UP].SetStatus(up);
-	doorInit[DoorNum::DOWN].SetStatus(down);
+	doorInit[DoorNum::TOP].SetStatus(up);
+	doorInit[DoorNum::BOTTOM].SetStatus(down);
 	doorInit[DoorNum::LEFT].SetStatus(left);
 	doorInit[DoorNum::RIGHT].SetStatus(right);
 }

@@ -16,7 +16,7 @@ const Math::Vector3 Player::COLLISION_SIZE = Vector3(0.25f, 1.0f, 1.0f);
 Player::Player() :
 	draw(nullptr),
 	pos{},
-	direction(Player::Direction::UP),
+	direction(Player::Direction::TOP),
 	object(Engine::FUNCTION_ERROR),
 	animationPos{},
 	selectItem(SelectItem::KEY),
@@ -173,11 +173,11 @@ void Player::MovingRoom()
 
 	switch (direction)
 	{
-	case Player::Direction::UP:
+	case Player::Direction::TOP:
 		animationPos.y = 0.0f;
 		animationVec = Stage::FRONT_ROOM;
 		break;
-	case Player::Direction::DOWN:
+	case Player::Direction::BOTTOM:
 		animationPos.y = -(Area::STAGE_HEIGHT - 1.0f);
 		animationVec = Stage::BACK_ROOM;
 		break;
@@ -199,7 +199,7 @@ void Player::MovingRoom()
 
 void Player::MoveUp()
 {
-	direction = Player::Direction::UP;
+	direction = Player::Direction::TOP;
 
 	if (pos.y > 0.0f)
 	{
@@ -210,9 +210,9 @@ void Player::MoveUp()
 
 	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
 		 (pos.y >= 0.0f)) &&
-		(stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::OPEN))
+		(stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::OPEN))
 	{
-		route.emplace_back(Area::DoorNum::UP);
+		route.emplace_back(Area::DoorNum::TOP);
 
 		switch (stage->GetArea().LostForest(route))
 		{
@@ -244,7 +244,7 @@ void Player::MoveUp()
 
 void Player::MoveDown()
 {
-	direction = Player::Direction::DOWN;
+	direction = Player::Direction::BOTTOM;
 
 	if (pos.y < -(Area::STAGE_HEIGHT - 1.0f))
 	{
@@ -255,9 +255,9 @@ void Player::MoveDown()
 
 	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
 		 (pos.y < -(Area::STAGE_HEIGHT - 1.0f))) &&
-		(stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN))
+		(stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::OPEN))
 	{
-		route.emplace_back(Area::DoorNum::DOWN);
+		route.emplace_back(Area::DoorNum::BOTTOM);
 
 		switch (stage->GetArea().LostForest(route))
 		{
@@ -403,16 +403,16 @@ void Player::KeyAction()
 	}
 	if ((playerPos == FUNCTION_ERROR ||
 		 (playerPos >= 6 && playerPos <= 8)) &&
-		stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::KEY_CLOSE)
+		stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::KEY_CLOSE)
 	{
-		stage->GetArea().GetDoor(Area::DoorNum::UP).KeyOpen();
+		stage->GetArea().GetDoor(Area::DoorNum::TOP).KeyOpen();
 		key.Use();
 	}
 	if ((playerPos == FUNCTION_ERROR ||
 		 (playerPos >= 96 && playerPos <= 98)) &&
-		stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::KEY_CLOSE)
+		stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::KEY_CLOSE)
 	{
-		stage->GetArea().GetDoor(Area::DoorNum::DOWN).KeyOpen();
+		stage->GetArea().GetDoor(Area::DoorNum::BOTTOM).KeyOpen();
 		key.Use();
 	}
 }

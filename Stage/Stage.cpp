@@ -251,10 +251,10 @@ int Stage::CreateRoom(int direction)
 	case Area::DoorNum::RIGHT:
 		nowRoom += RIGHT_ROOM;
 		break;
-	case Area::DoorNum::UP:
+	case Area::DoorNum::TOP:
 		nowRoom += FRONT_ROOM;
 		break;
-	case Area::DoorNum::DOWN:
+	case Area::DoorNum::BOTTOM:
 		nowRoom += BACK_ROOM;
 		break;
 	default:
@@ -306,10 +306,10 @@ int Stage::DeleteRoom(int direction)
 	case Area::DoorNum::RIGHT:
 		moveRoom = nowRoom + RIGHT_ROOM;
 		break;
-	case Area::DoorNum::UP:
+	case Area::DoorNum::TOP:
 		moveRoom = nowRoom + FRONT_ROOM;
 		break;
-	case Area::DoorNum::DOWN:
+	case Area::DoorNum::BOTTOM:
 		moveRoom = nowRoom + BACK_ROOM;
 		break;
 	default:
@@ -343,10 +343,10 @@ int Stage::DeleteRoom(int direction, const Vector3& roomPos)
 
 		switch (direction)
 		{
-		case Area::DoorNum::UP:
+		case Area::DoorNum::TOP:
 			moveRoom = nowRoom + FRONT_ROOM;
 			break;
-		case Area::DoorNum::DOWN:
+		case Area::DoorNum::BOTTOM:
 			moveRoom = nowRoom + BACK_ROOM;
 			break;
 		case Area::DoorNum::LEFT:
@@ -518,10 +518,10 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale, DirectX::XMFLOAT2 scr
 			}
 		}
 		if (rooms.find(roomPos + FRONT_ROOM) != rooms.end() &&
-			rooms[roomPos].GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN &&
+			rooms[roomPos].GetDoorStatus(Area::TOP) == Door::DoorStatus::OPEN &&
 			(rooms[roomPos + FRONT_ROOM].isAlive == true))
 		{
-			if (rooms[roomPos + FRONT_ROOM].GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
+			if (rooms[roomPos + FRONT_ROOM].GetDoorStatus(Area::BOTTOM) == Door::DoorStatus::OPEN)
 			{
 				if (y == 0.0f)
 				{
@@ -579,11 +579,11 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale, DirectX::XMFLOAT2 scr
 			}
 		}
 		if (rooms.find(roomPos + BACK_ROOM) != rooms.end() &&
-			rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN &&
+			rooms.at(roomPos).GetDoorStatus(Area::BOTTOM) == Door::DoorStatus::OPEN &&
 			(rooms[roomPos + BACK_ROOM].isAlive == true))
 		{
 
-			if (rooms[roomPos + BACK_ROOM].GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
+			if (rooms[roomPos + BACK_ROOM].GetDoorStatus(Area::TOP) == Door::DoorStatus::OPEN)
 			{
 				draw->DrawTextrue(
 					x * (2.0f + 1.0f) * scale + offset.x,

@@ -393,10 +393,10 @@ void StageEditorScene::Draw()
 		{
 			switch (stage->GetArea().GetRoute()[i] % 4)
 			{
-			case Area::DoorNum::UP:
+			case Area::DoorNum::TOP:
 				angle = (90.0f * 3) * Math::DEGREE_F;
 				break;
-			case Area::DoorNum::DOWN:
+			case Area::DoorNum::BOTTOM:
 				angle = (90.0f * 1) * Math::DEGREE_F;
 				break;
 			case Area::DoorNum::LEFT:
@@ -474,11 +474,11 @@ void StageEditorScene::CursorMove(int createRoomDir)
 {
 	switch (createRoomDir)
 	{
-	case Area::DoorNum::UP:
+	case Area::DoorNum::TOP:
 		mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
 		cursorState = CursorState::DOOR_DOWN;
 		break;
-	case Area::DoorNum::DOWN:
+	case Area::DoorNum::BOTTOM:
 		mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);
 		cursorState = CursorState::DOOR_UP;
 		break;

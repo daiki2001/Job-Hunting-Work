@@ -139,10 +139,12 @@ void BlockManager::Draw(const Vector3& offset)
 	static TypeId blockExclude[] = {
 		TypeId::NONE,
 		TypeId::HOLE,
+		TypeId::DOWN_STAIRS,
 	};
 	// 床の描画の除外リスト
 	static TypeId floorExclude[] = {
 		TypeId::HOLE,
+		TypeId::DOWN_STAIRS,
 	};
 
 	bool isSkip = false;
@@ -240,11 +242,11 @@ void BlockManager::PlayerPushBack(int index) const
 	case Player::Direction::LEFT:
 		player->pos.x += 1.0f - (player->pos.x - blocks[index].pos.x);
 		break;
-	case Player::Direction::TOP:
-		player->pos.y -= 1.0f + (player->pos.y - blocks[index].pos.y);
-		break;
 	case Player::Direction::RIGHT:
 		player->pos.x -= 1.0f + (player->pos.x - blocks[index].pos.x);
+		break;
+	case Player::Direction::TOP:
+		player->pos.y -= 1.0f + (player->pos.y - blocks[index].pos.y);
 		break;
 	case Player::Direction::BOTTOM:
 		player->pos.y += 1.0f - (player->pos.y - blocks[index].pos.y);

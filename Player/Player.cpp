@@ -175,19 +175,19 @@ void Player::MovingRoom()
 	{
 	case Player::Direction::UP:
 		animationPos.y = 0.0f;
-		animationVec = Stage::moveUpRoom;
+		animationVec = Stage::FRONT_ROOM;
 		break;
 	case Player::Direction::DOWN:
 		animationPos.y = -(Area::STAGE_HEIGHT - 1.0f);
-		animationVec = Stage::moveDownRoom;
+		animationVec = Stage::BACK_ROOM;
 		break;
 	case Player::Direction::LEFT:
 		animationPos.x = 0.0f;
-		animationVec = Stage::moveLeftRoom;
+		animationVec = Stage::LEFT_ROOM;
 		break;
 	case Player::Direction::RIGHT:
 		animationPos.x = Area::STAGE_WIDTH - 1.0f;
-		animationVec = Stage::moveRightRoom;
+		animationVec = Stage::RIGHT_ROOM;
 		break;
 	default:
 		break;
@@ -217,7 +217,7 @@ void Player::MoveUp()
 		switch (stage->GetArea().LostForest(route))
 		{
 		case 0:
-			if (stage->MoveUpRoom() == 0)
+			if (stage->MoveFrontRoom() == 0)
 			{
 				route.clear();
 			}
@@ -226,7 +226,7 @@ void Player::MoveUp()
 		case FUNCTION_ERROR:
 			route.clear();
 		case 1:
-			stage->MoveRoom(Stage::GetRoom(), Stage::moveUpRoom);
+			stage->MoveRoom(Stage::GetRoom(), Stage::FRONT_ROOM);
 			break;
 		default:
 			break;
@@ -262,7 +262,7 @@ void Player::MoveDown()
 		switch (stage->GetArea().LostForest(route))
 		{
 		case 0:
-			if (stage->MoveDownRoom() == 0)
+			if (stage->MoveBackRoom() == 0)
 			{
 				route.clear();
 			}
@@ -271,7 +271,7 @@ void Player::MoveDown()
 		case FUNCTION_ERROR:
 			route.clear();
 		case 1:
-			stage->MoveRoom(Stage::GetRoom(), Stage::moveDownRoom);
+			stage->MoveRoom(Stage::GetRoom(), Stage::BACK_ROOM);
 			break;
 		default:
 			break;
@@ -316,7 +316,7 @@ void Player::MoveLeft()
 		case FUNCTION_ERROR:
 			route.clear();
 		case 1:
-			stage->MoveRoom(Stage::GetRoom(), Stage::moveLeftRoom);
+			stage->MoveRoom(Stage::GetRoom(), Stage::LEFT_ROOM);
 			break;
 		default:
 			break;
@@ -363,7 +363,7 @@ void Player::MoveRight()
 		case FUNCTION_ERROR:
 			route.clear();
 		case 1:
-			stage->MoveRoom(Stage::GetRoom(), Stage::moveRightRoom);
+			stage->MoveRoom(Stage::GetRoom(), Stage::RIGHT_ROOM);
 			break;
 		default:
 			break;

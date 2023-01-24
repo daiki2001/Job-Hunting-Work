@@ -86,6 +86,7 @@ void BlockManager::Update()
 	switch (playerSurroundingsBlock[playerBlock])
 	{
 	case TypeId::WALL:
+	case TypeId::HOLE:
 		PlayerPushBack(playerPos);
 		break;
 	case TypeId::SWITCH:
@@ -105,7 +106,6 @@ void BlockManager::Update()
 		blocks[playerPos].typeId = TypeId::NONE;
 		break;
 	case TypeId::NONE:
-	case TypeId::HOLE:
 	default:
 		break;
 	}

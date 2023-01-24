@@ -19,10 +19,12 @@ private: //エイリアス
 	using Vector3 = Math::Vector3;
 
 public: //定数
-	static const Vector3 moveUpRoom;
-	static const Vector3 moveDownRoom;
-	static const Vector3 moveLeftRoom;
-	static const Vector3 moveRightRoom;
+	static const Vector3 LEFT_ROOM;  //左の部屋
+	static const Vector3 RIGHT_ROOM; //右の部屋
+	static const Vector3 FRONT_ROOM; //手前の部屋
+	static const Vector3 BACK_ROOM;  //奥の部屋
+	static const Vector3 UP_FLOOR;   //上の階
+	static const Vector3 DOWN_FLOOR; //下の階
 
 public: //サブクラス
 	struct Room
@@ -47,6 +49,7 @@ public: //静的メンバ関数
 
 	// 部屋の追加
 	static int CreateRoom(int direction = -1);
+	static int CreateRoom(const Vector3& moveRoom);
 	// 今いる部屋の削除
 	static int DeleteRoom(int direction);
 	// 部屋の削除
@@ -55,10 +58,10 @@ public: //静的メンバ関数
 	static void AllDeleteRoom();
 
 	static int MoveRoom(const Vector3& roomPos, const Vector3& direction = Vector3::Zero());
-	static int MoveUpRoom();
-	static int MoveDownRoom();
 	static int MoveLeftRoom();
 	static int MoveRightRoom();
+	static int MoveFrontRoom();
+	static int MoveBackRoom();
 
 	static const bool IsGoal();
 

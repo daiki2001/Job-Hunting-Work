@@ -102,11 +102,31 @@ void StageEditorScene::Update()
 
 			if (inputMgr->DecisionTrigger())
 			{
-				// 今配置されているブロックの取得
-				auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
-				// ブロックの配置
-				AddBlock add = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId(blockIndex), oldBlock);
-				redoUndo.AddCommandList<AddBlock>("Add Block", add);
+				if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::HOLE)
+				{
+					if (stage->GetArea(Stage::GetRoom() + Stage::DOWN_FLOOR).isAlive)
+					{
+						Stage::MoveRoom(Stage::GetRoom() + Stage::DOWN_FLOOR);
+					}
+					else
+					{
+						// 今いる部屋の取得
+						Math::Vector3 oldRoomPos = Stage::GetRoom();
+						// 部屋の生成
+						int createRoomDir = Stage::CreateRoom(Stage::DOWN_FLOOR);
+						CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
+						redoUndo.AddCommandList<CreateRoom>("Create Room", add);
+						CursorMove(createRoomDir);
+					}
+				}
+				else
+				{
+					// 今配置されているブロックの取得
+					auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
+					// ブロックの配置
+					AddBlock add = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId(blockIndex), oldBlock);
+					redoUndo.AddCommandList<AddBlock>("Add Block", add);
+				}
 			}
 		}
 		else
@@ -622,7 +642,7 @@ void StageEditorScene::CursorMoveUp()
 	}
 	else if (cursorState == CursorState::DOOR_UP)
 	{
-		if (Stage::MoveUpRoom() != FUNCTION_ERROR)
+		if (Stage::MoveFrontRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが下側のドアに移動(ループ)
 			mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
@@ -653,7 +673,7 @@ void StageEditorScene::CursorMoveDown()
 	}
 	else if (cursorState == CursorState::DOOR_DOWN)
 	{
-		if (Stage::MoveDownRoom() != FUNCTION_ERROR)
+		if (Stage::MoveBackRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが上側のドアに移動(ループ)
 			mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);

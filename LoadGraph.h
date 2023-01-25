@@ -22,6 +22,8 @@ public: //定数
 	static const string KEY;
 	static const string BOMB;
 	static const string ARROW;
+	static const string UP_STAIRS;
+	static const string DOWN_STAIRS;
 
 	static const string WALL_UI;
 	static const string KEY_CLOSE;

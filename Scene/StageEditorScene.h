@@ -12,6 +12,8 @@ public: //定数
 	static const int STAGE_WIDTH = 15;
 	static const int STAGE_HEIGHT = 7;
 	static const std::wstring resourcesDir;
+	static const int FRAME_SIZE;  //枠の大きさ
+	static const int FRAME_BLANK; //枠と枠の間隔
 
 public: //サブクラス
 	// カーソルがどこを指しているか
@@ -52,6 +54,9 @@ public: //メンバ関数
 	void Update() override;
 	void Draw() override;
 private:
+	// 配置されたブロックを消す
+	void EraseBlock();
+
 	// カーソル移動
 	void CursorMove();
 	void CursorMove(int createRoomDir);
@@ -72,4 +77,6 @@ private:
 	void CursorMoveDown();
 
 	void DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, bool flag);
+	void DrawSelectBlockUI(float offsetX = 0.0f, float offsetY = 0.0f);
+	void DrawSelectDoorUI(float offsetX = 0.0f, float offsetY = 0.0f);
 };

@@ -113,16 +113,6 @@ void Area::Draw(const Vector3& offset)
 	DirectDrawing::ChangeMaterialShader();
 	DrawWall(centerPos);
 
-	door[DoorNum::TOP].Draw(Vector3(0.0f, +5.0f, 0.0f) + centerPos);
-	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
-	{
-		BlockType::FloorDraw(Vector3(i - halfWidth, +4.0f, 0.0f) + centerPos);
-	}
-	door[DoorNum::BOTTOM].Draw(Vector3(0.0f, -5.0f, 0.0f) + centerPos);
-	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
-	{
-		BlockType::FloorDraw(Vector3(i - halfWidth, -4.0f, 0.0f) + centerPos);
-	}
 	door[DoorNum::LEFT].Draw(Vector3(-9.0f, 0.0f, 0.0f) + centerPos);
 	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
 	{
@@ -132,6 +122,16 @@ void Area::Draw(const Vector3& offset)
 	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
 	{
 		BlockType::FloorDraw(Vector3(+8.0f, i - halfWidth, 0.0f) + centerPos);
+	}
+	door[DoorNum::TOP].Draw(Vector3(0.0f, +5.0f, 0.0f) + centerPos);
+	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+	{
+		BlockType::FloorDraw(Vector3(i - halfWidth, +4.0f, 0.0f) + centerPos);
+	}
+	door[DoorNum::BOTTOM].Draw(Vector3(0.0f, -5.0f, 0.0f) + centerPos);
+	for (float i = 0; i < Door::DOOR_WIDTH; i += 1.0f)
+	{
+		BlockType::FloorDraw(Vector3(i - halfWidth, -4.0f, 0.0f) + centerPos);
 	}
 
 	block_mgr.Draw(offset);
@@ -176,15 +176,15 @@ int Area::LoadArea(FILE* fileHandle)
 			doorSetting[i] = static_cast<int>(Door::DoorStatus::OPEN);
 		}
 
-		if (i % 4 <= 1)
-		{
-			size.x = 3.0f;
-			size.y = 1.0f;
-		}
-		else if (i % 4 <= 3)
+		if ((i % 4) == DoorNum::LEFT || (i % 4) == DoorNum::RIGHT)
 		{
 			size.x = 1.0f;
 			size.y = 3.0f;
+		}
+		else if ((i % 4) == DoorNum::TOP || (i % 4) == DoorNum::BOTTOM)
+		{
+			size.x = 3.0f;
+			size.y = 1.0f;
 		}
 
 		door[i].Init(size, static_cast<Door::DoorStatus>(doorSetting[i]));

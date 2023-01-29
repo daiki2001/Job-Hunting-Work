@@ -6,7 +6,6 @@
 #include "LoadGraph.h"
 
 Player* BlockManager::player = Player::Get();
-int BlockManager::stairsObj = FUNCTION_ERROR;
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
@@ -27,7 +26,10 @@ BlockManager::BlockManager() :
 	blocks{},
 	isOpen(false),
 	isGoal(false),
-	itemInitPos{}
+	itemInitPos{},
+	step(Step::STAY),
+	playerInitPos(FUNCTION_ERROR),
+	isPlayerMove(false)
 {
 }
 
@@ -41,11 +43,6 @@ BlockManager::~BlockManager()
 void BlockManager::Init(DrawPolygon* const draw)
 {
 	BlockType::StaticInit(draw);
-
-	if (stairsObj == FUNCTION_ERROR)
-	{
-		stairsObj = draw->CreateCylinder(BlockType::BLOCK_SIZE / 2.0f, BlockType::BLOCK_HEIGHT, 3);
-	}
 
 	blockType.clear();
 	blocks.clear();
@@ -75,10 +72,10 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.back().Create();
 	
 	blockType.push_back(BlockType(TypeId::UP_STAIRS));
-	blockType.back().Create(stairsObj, true);
+	blockType.back().Create("Stairs.obj");
 	
 	blockType.push_back(BlockType(TypeId::DOWN_STAIRS));
-	blockType.back().Create(stairsObj, true);
+	blockType.back().Create();
 }
 
 void BlockManager::Update()
@@ -94,6 +91,11 @@ void BlockManager::Update()
 	{
 		return;
 	}
+	if(playerInitPos == FUNCTION_ERROR)
+	{
+		playerInitPos = playerPos;
+	}
+	isPlayerMove = ((playerPos == playerInitPos) == false);
 
 	switch (playerSurroundingsBlock[playerBlock])
 	{
@@ -117,8 +119,15 @@ void BlockManager::Update()
 		itemInitPos[playerPos] = TypeId::BOMB;
 		blocks[playerPos].typeId = TypeId::NONE;
 		break;
+	case TypeId::UP_STAIRS:
+		step = Step::UP;
+		break;
+	case TypeId::DOWN_STAIRS:
+		step = Step::DOWN;
+		break;
 	case TypeId::NONE:
 	default:
+		step = Step::STAY;
 		break;
 	}
 
@@ -232,6 +241,40 @@ void BlockManager::DeleteBlock(int index)
 void BlockManager::AllDeleteBlock()
 {
 	blocks.clear();
+}
+
+void BlockManager::MoveArea()
+{
+	Vector3 playerSize = {};
+
+	if ((player->GetDirection() == Player::Direction::TOP) || (player->GetDirection() == Player::Direction::BOTTOM))
+	{
+		playerSize = Player::COLLISION_SIZE / 2.0f;
+	}
+	else
+	{
+		playerSize = Vector3(Player::COLLISION_SIZE.y, Player::COLLISION_SIZE.x, Player::COLLISION_SIZE.z) / 2.0f;
+	}
+
+	const float playerUp = (player->pos + playerSize - Vector3(1.0f, -1.0f, 0.0f)).y;
+	const float playerDown = (player->pos - playerSize + Vector3(1.0f, -1.0f, 0.0f)).y;
+	const float playerLeft = (player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f)).x;
+	const float playerRight = (player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f)).x;
+
+	for (int i = 0; i < static_cast<int>(blocks.size()); i++)
+	{
+		// 当たり判定
+		if ((playerUp > (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).y &&
+			 playerDown < (blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).y) &&
+			(playerLeft < (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).x &&
+			 playerRight >(blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).x))
+		{
+			playerInitPos = i;
+			break;
+		}
+	}
+
+	isPlayerMove = false;
 }
 
 void BlockManager::PlayerPushBack(int index) const

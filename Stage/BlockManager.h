@@ -26,6 +26,13 @@ public: //サブクラス
 		MAX          //TypeIdの上限(プログラム用)
 	};
 
+	enum Step
+	{
+		STAY, //その階層にとどまる
+		UP,   //上がる
+		DOWN  //下がる
+	};
+
 	class Block
 	{
 	public: //メンバ変数
@@ -40,7 +47,6 @@ public: //サブクラス
 
 private: //静的メンバ変数
 	static Player* player;
-	static int stairsObj;
 
 private: //メンバ変数
 	vector<BlockType> blockType;
@@ -48,6 +54,9 @@ private: //メンバ変数
 	bool isOpen;
 	bool isGoal;
 	std::map<int, TypeId> itemInitPos;
+	Step step;
+	int playerInitPos; //プレイヤーの初期位置(マス目)
+	bool isPlayerMove;
 
 public: //メンバ関数
 	BlockManager();
@@ -71,6 +80,8 @@ public: //メンバ関数
 	// 全ブロックの削除処理
 	void AllDeleteBlock();
 
+	void MoveArea();
+
 	Block& GetBlock(const size_t& index)
 	{
 		return blocks[index];
@@ -78,6 +89,7 @@ public: //メンバ関数
 	const size_t GetBlockSize() const { return blocks.size(); }
 	const bool GetDoor() const { return isOpen; }
 	const bool GetGoal() const { return isGoal; }
+	const int GetStep() const { return static_cast<int>(step); }
 
 	/// <summary>
 	/// プレイヤーの周囲のブロックを取得する
@@ -86,6 +98,8 @@ public: //メンバ関数
 	/// <param name="surroundingBlockType"> 要素番号をまとめた配列 </param>
 	/// <returns> プレイヤーが踏んでいるブロックの要素番号 </returns>
 	int GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const;
+
+	bool IsPlayerMove() { return isPlayerMove; }
 private:
 	// プレイヤーの押し戻し処理
 	void PlayerPushBack(int index) const;

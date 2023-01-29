@@ -45,6 +45,18 @@ void Stage::Update()
 {
 	rooms[nowRoom].Update();
 
+	if (rooms[nowRoom].GetBlockManager()->IsPlayerMove())
+	{
+		if (rooms[nowRoom].GetBlockManager()->GetStep() == BlockManager::Step::UP)
+		{
+			MoveUpFloor();
+		}
+		else if (rooms[nowRoom].GetBlockManager()->GetStep() == BlockManager::Step::DOWN)
+		{
+			MoveDownFloor();
+		}
+	}
+
 	scroll.ScrollUpdate(0.1f);
 	if (scroll.GetFlag())
 	{
@@ -430,6 +442,26 @@ int Stage::MoveLeftRoom()
 int Stage::MoveRightRoom()
 {
 	return MoveRoom(nowRoom + RIGHT_ROOM);
+}
+
+int Stage::MoveUpFloor()
+{
+	int resurt = MoveRoom(nowRoom + UP_FLOOR);
+	if (resurt != FUNCTION_ERROR)
+	{
+		rooms[nowRoom].GetBlockManager()->MoveArea();
+	}
+	return resurt;
+}
+
+int Stage::MoveDownFloor()
+{
+	int resurt = MoveRoom(nowRoom + DOWN_FLOOR);
+	if (resurt != FUNCTION_ERROR)
+	{
+		rooms[nowRoom].GetBlockManager()->MoveArea();
+	}
+	return resurt;
 }
 
 void Stage::LastRoom()

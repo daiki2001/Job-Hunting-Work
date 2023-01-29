@@ -62,6 +62,8 @@ public: //静的メンバ関数
 	static int MoveRightRoom();
 	static int MoveFrontRoom();
 	static int MoveBackRoom();
+	static int MoveUpFloor();
+	static int MoveDownFloor();
 
 	static const bool IsGoal();
 

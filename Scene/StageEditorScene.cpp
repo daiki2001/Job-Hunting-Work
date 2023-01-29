@@ -111,7 +111,23 @@ void StageEditorScene::Update()
 				}
 				else
 				{
-					if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::HOLE)
+					// 下に降りるブロックのリスト
+					static BlockManager::TypeId downFloor[] = {
+						BlockManager::TypeId::HOLE,
+						BlockManager::TypeId::DOWN_STAIRS,
+					};
+
+					bool isDownFloor = false;
+					for (auto i : downFloor)
+					{
+						if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == i)
+						{
+							isDownFloor = true;
+							break;
+						}
+					}
+
+					if (isDownFloor)
 					{
 						if (stage->GetArea(Stage::GetRoom() + Stage::DOWN_FLOOR).isAlive)
 						{
@@ -123,6 +139,29 @@ void StageEditorScene::Update()
 							Math::Vector3 oldRoomPos = Stage::GetRoom();
 							// 部屋の生成
 							int createRoomDir = Stage::CreateRoom(Stage::DOWN_FLOOR);
+							CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
+							redoUndo.AddCommandList<CreateRoom>("Create Room", add);
+							CursorMove(createRoomDir);
+
+							if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::DOWN_STAIRS)
+							{
+								Stage::GetBlockManager()->ChengeBlock(mapIndex, BlockManager::TypeId::DOWN_STAIRS);
+							}
+						}
+					}
+					else if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::UP_STAIRS)
+					{
+						if (stage->GetArea(Stage::GetRoom() + Stage::UP_FLOOR).isAlive)
+						{
+							Stage::MoveRoom(Stage::GetRoom() + Stage::UP_FLOOR);
+						}
+						else
+						{
+							// 今いる部屋の取得
+							Math::Vector3 oldRoomPos = Stage::GetRoom();
+							// 部屋の生成
+							Stage::GetBlockManager()->ChengeBlock(mapIndex, BlockManager::TypeId::UP_STAIRS);
+							int createRoomDir = Stage::CreateRoom(Stage::UP_FLOOR);
 							CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
 							redoUndo.AddCommandList<CreateRoom>("Create Room", add);
 							CursorMove(createRoomDir);

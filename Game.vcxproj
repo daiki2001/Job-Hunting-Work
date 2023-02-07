@@ -111,6 +111,7 @@
     <ClCompile Include="Stage\Area.cpp" />
     <ClCompile Include="UndoRedo\AddBlock.cpp" />
     <ClCompile Include="UndoRedo\AddDoor.cpp" />
+    <ClCompile Include="UndoRedo\CreateFloor.cpp" />
     <ClCompile Include="UndoRedo\CreateRoom.cpp" />
     <ClCompile Include="UndoRedo\FuncRedoUndo.cpp" />
     <ClCompile Include="UndoRedo\RouteSetter.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="Stage\Area.h" />
     <ClInclude Include="UndoRedo\AddBlock.h" />
     <ClInclude Include="UndoRedo\AddDoor.h" />
+    <ClInclude Include="UndoRedo\CreateFloor.h" />
     <ClInclude Include="UndoRedo\CreateRoom.h" />
     <ClInclude Include="UndoRedo\FuncRedoUndo.h" />
     <ClInclude Include="UndoRedo\BaseUndoRedo.h" />

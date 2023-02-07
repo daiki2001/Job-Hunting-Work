@@ -306,6 +306,12 @@ void BlockManager::SwitchPush(const size_t& blockNo)
 
 int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const
 {
+	static const Vector3 halfBlockSize = Vector3(0.5f, -0.5f, 0.5f);
+	static const Vector3 LeftBlock = Vector3(-1.0f, 0.0f, 0.0f);
+	static const Vector3 RightBlock = Vector3(1.0f, 0.0f, 0.0f);
+	static const Vector3 UpBlock = Vector3(0.0f, 1.0f, 0.0f);
+	static const Vector3 DownBlock = Vector3(0.0f, -1.0f, 0.0f);
+
 	const int size = (radius * 2 + 1) * (radius * 2 + 1);
 	std::vector<int> surroundingBlock = {};
 	int playerPos = -1;
@@ -319,11 +325,12 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	{
 		playerSize = Vector3(Player::COLLISION_SIZE.y, Player::COLLISION_SIZE.x, Player::COLLISION_SIZE.z) / 2.0f;
 	}
+	playerSize.y *= -1.0f;
 
 	// 場外判定
 	if (Collision::IsAABBToAABBCollision(
-		blocks[0].pos - Vector3(0.5f, -0.5f, 0.5f),
-		blocks[0].pos + Vector3(0.5f, -0.5f, 0.5f) +
+		blocks[0].pos - halfBlockSize,
+		blocks[0].pos + halfBlockSize +
 		Vector3(Area::STAGE_WIDTH - 1.0f, -(Area::STAGE_HEIGHT - 1.0f), 0.0f),
 		player->pos - playerSize,
 		player->pos + playerSize) == false)
@@ -345,47 +352,24 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 		surroundingBlock.push_back(FUNCTION_ERROR);
 	}
 
-	const float playerUp = (player->pos + playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).y;
-	const float playerDown = (player->pos - playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).y;
-	const float playerLeft = (player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).x;
-	const float playerRight = (player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)).x;
+	bool isRight = player->GetDirection() == Player::Direction::RIGHT;
+	bool isBottom = player->GetDirection() == Player::Direction::BOTTOM;
 
-	if ((player->GetDirection() == Player::Direction::TOP) || (player->GetDirection() == Player::Direction::LEFT))
+	for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
 	{
-		for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
+		// 当たり判定
+		if (Collision::IsAABBToAABBCollision(
+			blocks[i].pos - halfBlockSize + LeftBlock * isRight + UpBlock * isBottom,
+			blocks[i].pos + halfBlockSize + LeftBlock * isRight + UpBlock * isBottom,
+			player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius),
+			player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)))
 		{
-			// 当たり判定
-			if ((playerUp > (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).y &&
-				 playerDown < (blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).y) &&
-				(playerLeft < (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).x &&
-				 playerRight >(blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).x))
-			{
-				surroundingBlock[j++] = i;
-			}
-
-			if (j >= size)
-			{
-				break;
-			}
+			surroundingBlock[j++] = i;
 		}
-	}
-	else
-	{
-		for (int i = static_cast<int>(blocks.size()) - 1, j = 0; i >= 0; i--)
-		{
-			// 当たり判定
-			if ((playerUp > (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).y &&
-				 playerDown < (blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).y) &&
-				(playerLeft < (blocks[i].pos + Vector3(0.5f, -0.5f, 0.5f)).x &&
-				 playerRight >(blocks[i].pos - Vector3(0.5f, -0.5f, 0.5f)).x))
-			{
-				surroundingBlock[j++] = i;
-			}
 
-			if (j >= size)
-			{
-				break;
-			}
+		if (j >= size)
+		{
+			break;
 		}
 	}
 

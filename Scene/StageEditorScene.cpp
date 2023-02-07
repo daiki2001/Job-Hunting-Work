@@ -8,6 +8,7 @@
 #include "./UndoRedo/AddDoor.h"
 #include "./UndoRedo/CreateRoom.h"
 #include "./UndoRedo/RouteSetter.h"
+#include "./UndoRedo/CreateFloor.h"
 
 const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 const int StageEditorScene::FRAME_SIZE = 64;
@@ -111,23 +112,7 @@ void StageEditorScene::Update()
 				}
 				else
 				{
-					// 下に降りるブロックのリスト
-					static BlockManager::TypeId downFloor[] = {
-						BlockManager::TypeId::HOLE,
-						BlockManager::TypeId::DOWN_STAIRS,
-					};
-
-					bool isDownFloor = false;
-					for (auto i : downFloor)
-					{
-						if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == i)
-						{
-							isDownFloor = true;
-							break;
-						}
-					}
-
-					if (isDownFloor)
+					if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::HOLE)
 					{
 						if (stage->GetArea(Stage::GetRoom() + Stage::DOWN_FLOOR).isAlive)
 						{
@@ -149,6 +134,23 @@ void StageEditorScene::Update()
 							}
 						}
 					}
+					else if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::DOWN_STAIRS)
+					{
+						if (stage->GetArea(Stage::GetRoom() + Stage::DOWN_FLOOR).isAlive)
+						{
+							Stage::MoveRoom(Stage::GetRoom() + Stage::DOWN_FLOOR);
+						}
+						else
+						{
+							// 今いる部屋の取得
+							Math::Vector3 oldRoomPos = Stage::GetRoom();
+							// 部屋の生成
+							int createRoomDir = Stage::CreateRoom(Stage::DOWN_FLOOR);
+							CreateFloor add = CreateFloor(mapIndex, Stage::GetRoom(), oldRoomPos, false);
+							redoUndo.AddCommandList<CreateFloor>("Create Floor", add);
+							CursorMove(createRoomDir);
+						}
+					}
 					else if (stage->GetBlockManager()->GetBlock(mapIndex).typeId == BlockManager::TypeId::UP_STAIRS)
 					{
 						if (stage->GetArea(Stage::GetRoom() + Stage::UP_FLOOR).isAlive)
@@ -160,10 +162,9 @@ void StageEditorScene::Update()
 							// 今いる部屋の取得
 							Math::Vector3 oldRoomPos = Stage::GetRoom();
 							// 部屋の生成
-							Stage::GetBlockManager()->ChengeBlock(mapIndex, BlockManager::TypeId::UP_STAIRS);
 							int createRoomDir = Stage::CreateRoom(Stage::UP_FLOOR);
-							CreateRoom add = CreateRoom(Stage::GetRoom(), oldRoomPos);
-							redoUndo.AddCommandList<CreateRoom>("Create Room", add);
+							CreateFloor add = CreateFloor(mapIndex, Stage::GetRoom(), oldRoomPos, true);
+							redoUndo.AddCommandList<CreateFloor>("Create Floor", add);
 							CursorMove(createRoomDir);
 						}
 					}

@@ -20,6 +20,7 @@ public: //サブクラス
 		SWITCH,      //スイッチ
 		KEY,         //鍵
 		BOMB,        //爆弾
+		MOVE_BLOCK,  //動かせるブロック
 		HOLE,        //穴
 		UP_STAIRS,   //上り階段
 		DOWN_STAIRS, //下り階段
@@ -37,7 +38,6 @@ public: //サブクラス
 	{
 	public: //メンバ変数
 		Vector3 pos; //座標
-		bool isSwitch;
 		TypeId typeId;
 
 	public: //メンバ関数
@@ -51,9 +51,9 @@ private: //静的メンバ変数
 private: //メンバ変数
 	vector<BlockType> blockType;
 	vector<Block> blocks;
-	bool isOpen;
+	bool isSwitch;
 	bool isGoal;
-	std::map<int, TypeId> itemInitPos;
+	std::map<int, TypeId> initPos; //ブロックの初期化
 	Step step;
 	int playerInitPos; //プレイヤーの初期位置(マス目)
 	bool isPlayerMove;
@@ -87,7 +87,7 @@ public: //メンバ関数
 		return blocks[index];
 	};
 	const size_t GetBlockSize() const { return blocks.size(); }
-	const bool GetDoor() const { return isOpen; }
+	const bool GetDoor() const { return isSwitch; }
 	const bool GetGoal() const { return isGoal; }
 	const int GetStep() const { return static_cast<int>(step); }
 
@@ -104,5 +104,7 @@ private:
 	// プレイヤーの押し戻し処理
 	void PlayerPushBack(int index) const;
 	// スイッチが押された時の処理
-	void SwitchPush(const size_t& blockNo);
+	void SwitchPush();
+	// 押せるブロックの処理
+	void PushBlock(int index);
 };

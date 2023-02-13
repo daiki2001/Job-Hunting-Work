@@ -30,7 +30,7 @@ public: //メンバ関数
 	void DrawInfo(const char* type, int offsetX = 0, int offsetY = 0, float scale = 1.0f);
 
 	// アイテムの入手
-	void Acquisition() { if (count < maxCount) count++; }
+	bool Acquisition();
 	// アイテムの使用
 	void Use() { if (count > 0) count--; }
 

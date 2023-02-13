@@ -11,22 +11,14 @@ BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
 	typeId(typeId)
 {
-	if (this->typeId == TypeId::SWITCH)
-	{
-		this->isSwitch = false;
-	}
-	else
-	{
-		this->isSwitch = true;
-	}
 }
 
 BlockManager::BlockManager() :
 	blockType{},
 	blocks{},
-	isOpen(false),
+	isSwitch(false),
 	isGoal(false),
-	itemInitPos{},
+	initPos{},
 	step(Step::STAY),
 	playerInitPos(FUNCTION_ERROR),
 	isPlayerMove(false)
@@ -37,7 +29,7 @@ BlockManager::~BlockManager()
 {
 	blockType.clear();
 	blocks.clear();
-	itemInitPos.clear();
+	initPos.clear();
 }
 
 void BlockManager::Init(DrawPolygon* const draw)
@@ -67,6 +59,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(TypeId::BOMB));
 	blockType.back().Create(Parameter::Get(LoadGraph::BOMB.c_str()), false);
+
+	blockType.push_back(BlockType(TypeId::MOVE_BLOCK));
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false);
 
 	blockType.push_back(BlockType(TypeId::HOLE));
 	blockType.back().Create();
@@ -104,20 +99,35 @@ void BlockManager::Update()
 		PlayerPushBack(playerPos);
 		break;
 	case TypeId::SWITCH:
-		SwitchPush(playerPos);
+		SwitchPush();
 		break;
 	case TypeId::GOAL:
 		isGoal = true;
 		break;
 	case TypeId::KEY:
-		player->AcquisitionKey();
-		itemInitPos[playerPos] = TypeId::KEY;
-		blocks[playerPos].typeId = TypeId::NONE;
+		if (player->AcquisitionKey())
+		{
+			initPos[playerPos] = TypeId::KEY;
+			blocks[playerPos].typeId = TypeId::NONE;
+		}
 		break;
 	case TypeId::BOMB:
-		player->AcquisitionBomb();
-		itemInitPos[playerPos] = TypeId::BOMB;
-		blocks[playerPos].typeId = TypeId::NONE;
+		if (player->AcquisitionBomb())
+		{
+			initPos[playerPos] = TypeId::BOMB;
+			blocks[playerPos].typeId = TypeId::NONE;
+		}
+		break;
+	case TypeId::MOVE_BLOCK:
+		if (GameInput::Get()->DecisionTrigger())
+		{
+			PushBlock(playerPos);
+			initPos[playerPos] = TypeId::MOVE_BLOCK;
+		}
+		else
+		{
+			PlayerPushBack(playerPos);
+		}
 		break;
 	case TypeId::UP_STAIRS:
 		step = Step::UP;
@@ -129,16 +139,6 @@ void BlockManager::Update()
 	default:
 		step = Step::STAY;
 		break;
-	}
-
-	isOpen = true;
-	for (size_t i = 0; i < blocks.size(); i++)
-	{
-		if (blocks[i].isSwitch == false)
-		{
-			isOpen = false;
-			break;
-		}
 	}
 }
 
@@ -193,21 +193,22 @@ void BlockManager::Draw(const Vector3& offset)
 
 void BlockManager::Reset()
 {
+	for (auto& i : initPos)
+	{
+		blocks[i.first].typeId = i.second;
+	}
+	initPos.clear();
+
 	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		if (blocks[i].typeId == TypeId::SWITCH)
+		if (blocks[i].typeId == TypeId::SWITCH || blocks[i].typeId == TypeId::MOVE_BLOCK)
 		{
-			blocks[i].isSwitch = false;
+			isSwitch = false;
+			break;
 		}
 	}
 
 	isGoal = false;
-
-	for (auto& i : itemInitPos)
-	{
-		blocks[i.first].typeId = i.second;
-	}
-	itemInitPos.clear();
 }
 
 int BlockManager::CreateBlock(TypeId typeId)
@@ -299,9 +300,50 @@ void BlockManager::PlayerPushBack(int index) const
 	}
 }
 
-void BlockManager::SwitchPush(const size_t& blockNo)
+void BlockManager::SwitchPush()
 {
-	blocks[blockNo].isSwitch = true;
+	isSwitch = true;
+}
+
+void BlockManager::PushBlock(int index)
+{
+	int nextBlock = index;
+
+	switch (player->GetDirection())
+	{
+	case Player::Direction::LEFT:
+		if ((index % Area::STAGE_WIDTH) == 0) break;
+
+		nextBlock -= 1;
+		break;
+	case Player::Direction::RIGHT:
+		if ((index % Area::STAGE_WIDTH) == Area::STAGE_WIDTH - 1) break;
+
+		nextBlock += 1;
+		break;
+	case Player::Direction::TOP:
+		if ((index / Area::STAGE_WIDTH) == 0) break;
+
+		nextBlock -= static_cast<int>(Area::STAGE_WIDTH);
+		break;
+	case Player::Direction::BOTTOM:
+		if ((index / Area::STAGE_WIDTH) == 0) break;
+
+		nextBlock += static_cast<int>(Area::STAGE_WIDTH);
+		break;
+	default:
+		break;
+	}
+
+	if (nextBlock == index || blocks[nextBlock].typeId != TypeId::NONE)
+	{
+		return;
+	}
+
+	blocks[index].typeId = TypeId::NONE;
+	initPos[nextBlock] = blocks[nextBlock].typeId;
+	blocks[nextBlock].typeId = TypeId::WALL;
+	SwitchPush();
 }
 
 int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const
@@ -354,13 +396,16 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 
 	bool isRight = player->GetDirection() == Player::Direction::RIGHT;
 	bool isBottom = player->GetDirection() == Player::Direction::BOTTOM;
+	// 判定補正
+	Vector3 correction = Vector3::Zero();
+	correction += LeftBlock * isRight + UpBlock * isBottom;
 
 	for (int i = 0, j = 0; i < static_cast<int>(blocks.size()); i++)
 	{
 		// 当たり判定
 		if (Collision::IsAABBToAABBCollision(
-			blocks[i].pos - halfBlockSize + LeftBlock * isRight + UpBlock * isBottom,
-			blocks[i].pos + halfBlockSize + LeftBlock * isRight + UpBlock * isBottom,
+			blocks[i].pos - halfBlockSize + correction,
+			blocks[i].pos + halfBlockSize + correction,
 			player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius),
 			player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)))
 		{

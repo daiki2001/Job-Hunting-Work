@@ -70,9 +70,9 @@ public: //メンバ関数
 	void MovingRoom();
 
 	// 鍵の獲得
-	void AcquisitionKey() { key.Acquisition(); }
+	bool AcquisitionKey() { return key.Acquisition(); }
 	// 爆弾の獲得
-	void AcquisitionBomb() { bomb.Acquisition(); }
+	bool AcquisitionBomb() { return bomb.Acquisition(); }
 	// 鍵の使用
 	void UseKey() { key.Use(); }
 	// 爆弾の使用

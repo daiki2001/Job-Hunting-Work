@@ -14,6 +14,7 @@ private: //エイリアス
 public: //定数
 	static const size_t STAGE_WIDTH;
 	static const size_t STAGE_HEIGHT;
+	static const size_t DOOR_COUNT = 4;
 	static const float WALL_SIZE;
 	static const Vector3 INIT_CAMERA;
 	static const int NONE_LOST_FOREST;
@@ -47,8 +48,8 @@ public: //メンバ変数
 	bool isAlive;
 private:
 	BlockManager block_mgr;
-	Door door[4];
-	Door doorInit[4];
+	Door door[DOOR_COUNT];
+	Door doorInit[DOOR_COUNT];
 	std::vector<int> lostForest; //迷いの森
 
 public: //メンバ関数
@@ -78,7 +79,7 @@ public: //メンバ関数
 	const std::vector<int>& GetRoute() { return lostForest; }
 	int GetRoute(const size_t& index) { return (index < lostForest.size()) ? lostForest[index] : FUNCTION_ERROR; }
 
-	void SetDoorInit(Door doors[4]);
+	void SetDoorInit(Door doors[DOOR_COUNT]);
 	void SetDoorInit(Door::DoorStatus up, Door::DoorStatus down,
 					 Door::DoorStatus left, Door::DoorStatus right);
 	void SetDoorStatus(Door::DoorStatus status, DoorNum num) { door[num].SetStatus(status); }

@@ -1,4 +1,5 @@
 ﻿#include "Item.h"
+#include "./Input/GameInput.h"
 #include "./Header/Parameter.h"
 #include "./Header/Error.h"
 
@@ -47,4 +48,17 @@ void Item::DrawInfo(const char* type, int offsetX, int offsetY, float scale)
 		draw->DrawString(static_cast<float>(offsetX) + 32.0f * scale, static_cast<float>(offsetY), 2.0f * scale, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 						 ":%d", count);
 	}
+}
+
+bool Item::Acquisition()
+{
+	if (GameInput::Get()->DecisionTrigger() == false) return false;
+
+	if (count < maxCount)
+	{
+		count++;
+		return true;
+	}
+
+	return false;
 }

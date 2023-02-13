@@ -652,6 +652,7 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 			graphHandle = cross;
 			break;
 		case BlockManager::TypeId::WALL:
+		case BlockManager::TypeId::MOVE_BLOCK:
 			graphHandle = Parameter::Get(LoadGraph::WALL_BLOCK.c_str());
 			break;
 		case BlockManager::TypeId::GOAL:

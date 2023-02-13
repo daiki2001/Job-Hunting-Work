@@ -420,6 +420,22 @@ int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 
 	oldRoomPos = nowRoom;
 	nowRoom = moveRoomPos;
+
+	bool isSwitchDoor = false;
+	for (size_t i = 0; i < Area::DOOR_COUNT; i++)
+	{
+		if (rooms[nowRoom].GetDoorStatus(static_cast<Area::DoorNum>(i)) == Door::DoorStatus::CLOSE)
+		{
+			isSwitchDoor = true;
+			break;
+		}
+	}
+
+	if (isSwitchDoor == false)
+	{
+		rooms[nowRoom].GetBlockManager()->Reset();
+	}
+
 	scroll.ScrollStart();
 	return 0;
 }

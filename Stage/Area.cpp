@@ -81,7 +81,7 @@ void Area::Reset()
 {
 	block_mgr.Reset();
 
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < DOOR_COUNT; i++)
 	{
 		door[i] = doorInit[i];
 	}
@@ -95,9 +95,9 @@ void Area::Update()
 
 	if (block_mgr.GetDoor())
 	{
-		for (size_t i = 0; i < sizeof(door) / sizeof(door[0]); i++)
+		for (auto& i : door)
 		{
-			door[i].Open();
+			i.Open();
 		}
 	}
 }
@@ -140,10 +140,10 @@ void Area::Draw(const Vector3& offset)
 int Area::LoadArea(FILE* fileHandle)
 {
 	int mapArray[STAGE_WIDTH * STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
-	int doorSetting[4] = { Door::DoorStatus::OPEN };
+	int doorSetting[DOOR_COUNT] = { Door::DoorStatus::OPEN };
 	int courceSetting[MAX_COURSE_NUM] = {};
 
-	File::LoadMapChip(fileHandle, doorSetting, 4);
+	File::LoadMapChip(fileHandle, doorSetting, static_cast<int>(DOOR_COUNT));
 	File::LoadMapChip(fileHandle, courceSetting, MAX_COURSE_NUM, true, NONE_LOST_FOREST);
 	File::LoadMapChip(fileHandle, mapArray, sizeof(mapArray) / sizeof(mapArray[0]));
 
@@ -167,13 +167,13 @@ int Area::LoadArea(FILE* fileHandle)
 	}
 
 	// ドアの設定
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < static_cast<int>(DOOR_COUNT); i++)
 	{
 		static Vector3 size = Vector3(3.0f, 1.0f, 2.0f);
 
 		if (doorSetting[i] == static_cast<int>(Door::DoorStatus::ENTRANCE))
 		{
-			doorSetting[i] = static_cast<int>(Door::DoorStatus::OPEN);
+			doorSetting[i] = static_cast<int>(Door::DoorStatus::WALL);
 		}
 
 		if ((i % 4) == DoorNum::LEFT || (i % 4) == DoorNum::RIGHT)
@@ -219,12 +219,12 @@ int Area::WriteArea(FILE* fileHandle)
 	if (isAlive == false) return FUNCTION_ERROR;
 
 	// ドア・壁
-	int doorStatus[4] = {};
-	for (size_t i = 0; i < sizeof(doorStatus) / sizeof(doorStatus[0]); i++)
+	int doorStatus[DOOR_COUNT] = {};
+	for (size_t i = 0; i < DOOR_COUNT; i++)
 	{
 		doorStatus[i] = static_cast<int>(door[i].GetStatus());
 	}
-	File::WriteCSV(fileHandle, doorStatus, sizeof(doorStatus) / sizeof(doorStatus[0]));
+	File::WriteCSV(fileHandle, doorStatus, DOOR_COUNT);
 
 	// 迷いの森の道
 	int courceSetting[MAX_COURSE_NUM] = {};
@@ -335,9 +335,9 @@ const int Area::LostForest(const std::vector<int>& route, const size_t& index)
 	return 0;
 }
 
-void Area::SetDoorInit(Door doors[4])
+void Area::SetDoorInit(Door doors[DOOR_COUNT])
 {
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < DOOR_COUNT; i++)
 	{
 		doorInit[i] = doors[i];
 	}

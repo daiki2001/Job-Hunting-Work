@@ -14,17 +14,19 @@ public: //エイリアス
 public: //サブクラス
 	enum TypeId
 	{
-		NONE,        //ブロックなし
-		WALL,        //壁ブロック
-		GOAL,        //ゴール
-		SWITCH,      //スイッチ
-		KEY,         //鍵
-		BOMB,        //爆弾
-		MOVE_BLOCK,  //動かせるブロック
-		HOLE,        //穴
-		UP_STAIRS,   //上り階段
-		DOWN_STAIRS, //下り階段
-		MAX          //TypeIdの上限(プログラム用)
+		NONE,             //ブロックなし
+		WALL,             //壁ブロック
+		GOAL,             //ゴール
+		SWITCH,           //スイッチ
+		KEY,              //鍵
+		BOMB,             //爆弾
+		MOVE_BLOCK,       //動かせるブロック
+		SWITCH_BLOCK,     //スイッチがONの時に反応するブロック
+		NOT_SWITCH_BLOCK, //スイッチがOFFの時に反応するブロック
+		HOLE,             //穴
+		UP_STAIRS,        //上り階段
+		DOWN_STAIRS,      //下り階段
+		MAX               //TypeIdの上限(プログラム用)
 	};
 
 	enum Step
@@ -47,6 +49,7 @@ public: //サブクラス
 
 private: //静的メンバ変数
 	static Player* player;
+	static bool isBlockSwitch;
 
 private: //メンバ変数
 	vector<BlockType> blockType;
@@ -70,6 +73,8 @@ public: //メンバ関数
 	void Draw(const Vector3& offset = Vector3::Zero());
 	// リセット処理
 	void Reset();
+	// マップのリセット処理
+	void MapInit();
 
 	// ブロックの生成処理
 	int CreateBlock(TypeId typeId);

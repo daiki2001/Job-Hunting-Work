@@ -21,7 +21,7 @@ Player::Player() :
 	animationPos{},
 	selectItem(SelectItem::KEY),
 	key(100),
-	bomb(100, 10),
+	bomb(100, 100),
 	route{}
 {
 	Reset();
@@ -419,7 +419,63 @@ void Player::KeyAction()
 
 void Player::BombAction()
 {
-	if (bomb.GetCount() <= 0) return;
+	if (bomb.GetAlive() == false)
+	{
+		if (bomb.GetCount() <= 0) return;
 
-	bomb.Set(pos);
+		bomb.Set(pos);
+		return;
+	}
+
+	static const Vector3 BOMB_SIZE = Vector3(BlockType::BLOCK_SIZE, -BlockType::BLOCK_SIZE, BlockType::BLOCK_SIZE);
+	Vector3 size = COLLISION_SIZE / 2.0f;
+	if (direction == Direction::LEFT || direction == Direction::RIGHT)
+	{
+		float temp = size.x;
+		size.x = size.y;
+		size.y = temp;
+	}
+
+	Vector3 move = Vector3::Zero();
+	Vector3 side = bomb.GetPos();
+
+	if (Collision::IsAABBToAABBCollision(pos - size / 2.0f,
+										 pos + size / 2.0f,
+										 bomb.GetPos() - BOMB_SIZE / 2.0f,
+										 bomb.GetPos() + BOMB_SIZE / 2.0f))
+	{
+		switch (direction)
+		{
+		case Player::TOP:
+			move.y -= BOMB_SIZE.y * 2.0f;
+			side.y = 0.0f;
+			break;
+		case Player::LEFT:
+			move.x -= BOMB_SIZE.x * 2.0f;
+			side.x = 0.0f;
+			break;
+		case Player::BOTTOM:
+			move.y += BOMB_SIZE.y * 2.0f;
+			side.y = static_cast<float>(Area::STAGE_HEIGHT - 1) * (-1.0f);
+			break;
+		case Player::RIGHT:
+			move.x += BOMB_SIZE.x * 2.0f;
+			side.y = static_cast<float>(Area::STAGE_WIDTH - 1) * (-1.0f);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (Collision::IsAABBToAABBCollision(bomb.GetPos() + move - BOMB_SIZE / 2.0f,
+										 bomb.GetPos() + move + BOMB_SIZE / 2.0f,
+										 Vector3::Zero(),
+										 Vector3(static_cast<float>(Area::STAGE_WIDTH), static_cast<float>(Area::STAGE_HEIGHT) * (-1.0f), 0.0f)))
+	{
+		bomb.Set(bomb.GetPos() + move);
+	}
+	else
+	{
+		bomb.Set(side);
+	}
 }

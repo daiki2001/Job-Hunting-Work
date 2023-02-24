@@ -6,6 +6,7 @@
 #include "LoadGraph.h"
 
 Player* BlockManager::player = Player::Get();
+bool BlockManager::isBlockSwitch = false;
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
@@ -61,7 +62,17 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.back().Create(Parameter::Get(LoadGraph::BOMB.c_str()), false);
 
 	blockType.push_back(BlockType(TypeId::MOVE_BLOCK));
+#if _DEBUG
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
+#else
 	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false);
+#endif // !_DEBUG
+	
+	blockType.push_back(BlockType(TypeId::SWITCH_BLOCK));
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	
+	blockType.push_back(BlockType(TypeId::NOT_SWITCH_BLOCK));
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
 
 	blockType.push_back(BlockType(TypeId::HOLE));
 	blockType.back().Create();
@@ -79,8 +90,11 @@ void BlockManager::Update()
 	static const int size = width * width; //playerSurroundingsBlockの大きさ
 	static TypeId playerSurroundingsBlock[size] = { TypeId::NONE };
 	static const int playerBlock = (width - 1) * (width - 1); //プレイヤーがいる場所のブロック(playerSurroundingsBlock基準)
+	static int playerPos = FUNCTION_ERROR; //プレイヤーがいる場所のブロック
+	static int oldPos = FUNCTION_ERROR;
 
-	const int playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
+	oldPos = playerPos;
+	playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
 
 	if (playerPos == FUNCTION_ERROR)
 	{
@@ -99,9 +113,13 @@ void BlockManager::Update()
 		PlayerPushBack(playerPos);
 		break;
 	case TypeId::SWITCH:
+		if (playerPos == oldPos) break;
+
 		SwitchPush();
 		break;
 	case TypeId::GOAL:
+		if (playerPos == oldPos) break;
+
 		isGoal = true;
 		break;
 	case TypeId::KEY:
@@ -122,9 +140,20 @@ void BlockManager::Update()
 		if (GameInput::Get()->DecisionTrigger())
 		{
 			PushBlock(playerPos);
-			initPos[playerPos] = TypeId::MOVE_BLOCK;
 		}
 		else
+		{
+			PlayerPushBack(playerPos);
+		}
+		break;
+	case TypeId::SWITCH_BLOCK:
+		if (isBlockSwitch == false)
+		{
+			PlayerPushBack(playerPos);
+		}
+		break;
+	case TypeId::NOT_SWITCH_BLOCK:
+		if (isBlockSwitch)
 		{
 			PlayerPushBack(playerPos);
 		}
@@ -169,6 +198,24 @@ void BlockManager::Draw(const Vector3& offset)
 				break; //ヒットした場合、それ以降はループを回す必要が無い
 			}
 		}
+
+		if (isBlockSwitch)
+		{
+			// スイッチがONの場合
+			if (blocks[i].typeId == TypeId::SWITCH_BLOCK)
+			{
+				isSkip = true;
+			}
+		}
+		else
+		{
+			// スイッチがOFFの場合
+			if (blocks[i].typeId == TypeId::NOT_SWITCH_BLOCK)
+			{
+				isSkip = true;
+			}
+		}
+
 		if (isSkip == false)
 		{
 			blockType[blocks[i].typeId].Draw(blocks[i].pos + offset);
@@ -208,7 +255,40 @@ void BlockManager::Reset()
 		}
 	}
 
+	isBlockSwitch = false;
 	isGoal = false;
+}
+
+void BlockManager::MapInit()
+{
+	static TypeId resetType[] = {
+		TypeId::NONE,
+		TypeId::BOMB,
+		TypeId::MOVE_BLOCK,
+	};
+
+	for (auto i = initPos.begin(); i != initPos.end();)
+	{
+		bool isInit = false;
+		for (auto j : resetType)
+		{
+			if (i->second == j)
+			{
+				isInit = true;
+				break;
+			}
+		}
+
+		if (isInit)
+		{
+			blocks[i->first].typeId = i->second;
+			i = initPos.erase(i);
+		}
+		else
+		{
+			i++;
+		}
+	}
 }
 
 int BlockManager::CreateBlock(TypeId typeId)
@@ -303,6 +383,7 @@ void BlockManager::PlayerPushBack(int index) const
 void BlockManager::SwitchPush()
 {
 	isSwitch = true;
+	isBlockSwitch = !isBlockSwitch;
 }
 
 void BlockManager::PushBlock(int index)
@@ -335,15 +416,23 @@ void BlockManager::PushBlock(int index)
 		break;
 	}
 
-	if (nextBlock == index || blocks[nextBlock].typeId != TypeId::NONE)
+	if (nextBlock == index)
+	{
+		return;
+	}
+	if (blocks[nextBlock].typeId != TypeId::NONE && blocks[nextBlock].typeId != TypeId::HOLE)
 	{
 		return;
 	}
 
+	if (initPos.find(index) == initPos.end()) initPos[index] = TypeId::MOVE_BLOCK;
 	blocks[index].typeId = TypeId::NONE;
-	initPos[nextBlock] = blocks[nextBlock].typeId;
-	blocks[nextBlock].typeId = TypeId::WALL;
-	SwitchPush();
+	if (blocks[nextBlock].typeId == TypeId::NONE)
+	{
+		if (initPos.find(nextBlock) == initPos.end()) initPos[nextBlock] = blocks[nextBlock].typeId;
+		blocks[nextBlock].typeId = TypeId::WALL;
+	}
+	isSwitch = true;
 }
 
 int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const

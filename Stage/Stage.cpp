@@ -421,6 +421,15 @@ int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 	oldRoomPos = nowRoom;
 	nowRoom = moveRoomPos;
 
+	bool isSwitch = false;
+	for (size_t i = 0; i < rooms[nowRoom].GetBlockManager()->GetBlockSize(); i++)
+	{
+		if (rooms[nowRoom].GetBlockManager()->GetBlock(i).typeId == BlockManager::TypeId::SWITCH)
+		{
+			isSwitch = true;
+			break;
+		}
+	}
 	bool isSwitchDoor = false;
 	for (size_t i = 0; i < Area::DOOR_COUNT; i++)
 	{
@@ -433,7 +442,7 @@ int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 
 	if (isSwitchDoor == false)
 	{
-		rooms[nowRoom].GetBlockManager()->Reset();
+		rooms[nowRoom].GetBlockManager()->MapInit();
 	}
 
 	scroll.ScrollStart();

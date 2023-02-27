@@ -8,6 +8,9 @@ class FuncRedoUndo;
 
 class StageEditorScene : public BaseScene
 {
+private: //エイリアス
+	using XMFLOAT4 = DirectX::XMFLOAT4;
+
 public: //定数
 	static const int STAGE_WIDTH = 15;
 	static const int STAGE_HEIGHT = 7;
@@ -76,7 +79,7 @@ private:
 	// カーソルを下に移動
 	void CursorMoveDown();
 
-	void DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, bool flag);
+	void DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, const XMFLOAT4& color, bool flag);
 	void DrawSelectBlockUI(float offsetX = 0.0f, float offsetY = 0.0f);
 	void DrawSelectDoorUI(float offsetX = 0.0f, float offsetY = 0.0f);
 };

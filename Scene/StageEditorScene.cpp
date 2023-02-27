@@ -339,6 +339,7 @@ void StageEditorScene::Draw()
 				  FRAME_SIZE,
 				  angle,
 				  tex,
+				  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 				  isSelect);
 
 		if (stage->GetArea().GetRoute()[i] == Area::NONE_LOST_FOREST)
@@ -620,7 +621,7 @@ void StageEditorScene::CursorMoveDown()
 	}
 }
 
-void StageEditorScene::DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, bool flag)
+void StageEditorScene::DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, const XMFLOAT4& color, bool flag)
 {
 	if (flag)
 	{
@@ -634,16 +635,18 @@ void StageEditorScene::DrawUIBox(float posX, float posY, float size, float angle
 		DirectDrawing::ChangeSpriteShader();
 	}
 
-	draw->DrawTextrue(posX, posY, size * (3.0f / 4.0f), size * (3.0f / 4.0f), angle, graphHandle);
+	draw->DrawTextrue(posX, posY, size * (3.0f / 4.0f), size * (3.0f / 4.0f), angle, graphHandle, DirectX::XMFLOAT2(0.5f, 0.5f), color);
 }
 
 void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 {
 	int graphHandle = FUNCTION_ERROR;
+	XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	bool isSelect = false;
 
 	for (int i = 0; i < BlockManager::TypeId::MAX; i++)
 	{
+		color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 		isSelect = (isRoute == false) && (i == blockIndex);
 
 		switch (i)
@@ -651,8 +654,16 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 		case BlockManager::TypeId::NONE:
 			graphHandle = cross;
 			break;
-		case BlockManager::TypeId::WALL:
+		case BlockManager::TypeId::SWITCH_BLOCK:
+			color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			goto WALL_GRAPH;
+		case BlockManager::TypeId::NOT_SWITCH_BLOCK:
+			color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+			goto WALL_GRAPH;
 		case BlockManager::TypeId::MOVE_BLOCK:
+			color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+		case BlockManager::TypeId::WALL:
+		WALL_GRAPH:
 			graphHandle = Parameter::Get(LoadGraph::WALL_BLOCK.c_str());
 			break;
 		case BlockManager::TypeId::GOAL:
@@ -681,11 +692,12 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 		}
 
 		DrawUIBox(((FRAME_SIZE + FRAME_BLANK) * i + (FRAME_SIZE / 2.0f)) + offsetX,
-			(FRAME_SIZE / 2.0f) + offsetY,
-			FRAME_SIZE,
-			0.0f,
-			graphHandle,
-			isSelect);
+				  (FRAME_SIZE / 2.0f) + offsetY,
+				  FRAME_SIZE,
+				  0.0f,
+				  graphHandle,
+				  color,
+				  isSelect);
 	}
 }
 
@@ -723,10 +735,11 @@ void StageEditorScene::DrawSelectDoorUI(float offsetX, float offsetY)
 		}
 
 		DrawUIBox(((FRAME_SIZE + FRAME_BLANK) * i + (FRAME_SIZE / 2.0f)) + offsetX,
-			(FRAME_SIZE / 2.0f) + offsetY,
-			FRAME_SIZE,
-			0.0f,
-			graphHandle,
-			isSelect);
+				  (FRAME_SIZE / 2.0f) + offsetY,
+				  FRAME_SIZE,
+				  0.0f,
+				  graphHandle,
+				  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+				  isSelect);
 	}
 }

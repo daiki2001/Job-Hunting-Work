@@ -41,7 +41,7 @@ void LoadGraph::Load(DrawPolygon* const draw)
 	Parameter::Set(GOAL.c_str(), draw->LoadTextrue(L"./Resources/Game/Block/Goal.png"));
 	Parameter::Set(SWITCH_UI.c_str(), draw->LoadTextrue(L"./Resources/UI/SwitchUI.png"));
 	Parameter::Set(KEY.c_str(), draw->LoadTextrue(L"./Resources/UI/Key.png"));
-	Parameter::Set(BOMB.c_str(), draw->LoadTextrue(L"./Resources/Game/Block/Bomb.png"));
+	Parameter::Set(BOMB.c_str(), draw->LoadTextrue(L"./Resources/UI/Bomb.png"));
 	Parameter::Set(ARROW.c_str(), draw->LoadTextrue(L"./Resources/UI/Arrow.png"));
 	Parameter::Set(UP_STAIRS.c_str(), draw->LoadTextrue(L"./Resources/UI/UpStairs.png"));
 	Parameter::Set(DOWN_STAIRS.c_str(), draw->LoadTextrue(L"./Resources/UI/DownStairs.png"));

@@ -59,7 +59,7 @@ void BlockManager::Init(DrawPolygon* const draw)
 							{ 1.0f, 1.0f, 0.0f, 1.0f });
 
 	blockType.push_back(BlockType(TypeId::BOMB));
-	blockType.back().Create(Parameter::Get(LoadGraph::BOMB.c_str()), false);
+	blockType.back().Create("Bomb.obj", Math::rotateY(Math::PI_F * 1.5f));
 
 	blockType.push_back(BlockType(TypeId::MOVE_BLOCK));
 #if _DEBUG

@@ -4,7 +4,7 @@
 >##### 開いている項目
 >* [ギミックの追加](https://github.com/daiki2001/Job-Hunting-Work/issues/19)
 >* [演出](https://github.com/daiki2001/Job-Hunting-Work/issues/24)
->* [UI](https://github.com/daiki2001/Job-Hunting-Work/issues/21)
+>* [UIとリソース](https://github.com/daiki2001/Job-Hunting-Work/issues/21)
 >* [その他](https://github.com/daiki2001/Job-Hunting-Work/issues/4)
 >##### 閉じている項目
 >* [ステージエディターの作成](https://github.com/daiki2001/Job-Hunting-Work/issues/7)

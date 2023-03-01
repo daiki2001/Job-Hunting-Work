@@ -91,6 +91,10 @@ void Area::Update()
 {
 	if (isAlive == false) return;
 
+	for (size_t i = 0; i < block_mgr.GetBlockSize(); i++)
+	{
+		BlockManager::EaseUpdate(&block_mgr.GetBlock(i));
+	}
 	block_mgr.Update();
 
 	if (block_mgr.GetDoor())

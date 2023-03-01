@@ -6,6 +6,14 @@ namespace Engine
 {
 namespace Math
 {
+struct Ease
+{
+	float start = 0.0f;
+	float end = 1.0f;
+	float time = 0.0f;
+	bool isAlive = false;
+};
+
 // 線形補間(1次関数補間)
 const Vector3 Lerp(const Vector3& start, const Vector3& end, float t);
 

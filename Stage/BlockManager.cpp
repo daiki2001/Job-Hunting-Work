@@ -7,10 +7,13 @@
 
 Player* BlockManager::player = Player::Get();
 bool BlockManager::isBlockSwitch = false;
+Math::Ease BlockManager::switchEase = {};
+Math::Ease BlockManager::notSwitchEase = {};
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
-	typeId(typeId)
+	typeId(typeId),
+	ease{}
 {
 }
 
@@ -84,6 +87,40 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.back().Create();
 }
 
+void BlockManager::EaseInit(vector<Block>& blocks)
+{
+	float start = 0.0f;
+	float end = 1.0f;
+	bool isSkip = false;
+
+	for (auto& i : blocks)
+	{
+		isSkip = false;
+
+		switch (i.typeId)
+		{
+		case SWITCH_BLOCK:
+			start = 1.0f * (isBlockSwitch == false);
+			end = 1.0f * (isBlockSwitch == true);
+			break;
+		case NOT_SWITCH_BLOCK:
+			start = 1.0f * (isBlockSwitch == true);
+			end = 1.0f * (isBlockSwitch == false);
+			break;
+		default:
+			isSkip = true;
+			break;
+		}
+
+		if (isSkip) continue;
+
+		i.ease.isAlive = true;
+		i.ease.time = 0.0f;
+		i.ease.start = start;
+		i.ease.end = end;
+	}
+}
+
 void BlockManager::Update()
 {
 	static const int width = 1; //playerSurroundingsBlockの横幅
@@ -109,6 +146,8 @@ void BlockManager::Update()
 	switch (playerSurroundingsBlock[playerBlock])
 	{
 	case TypeId::WALL:
+	case TypeId::SWITCH_BLOCK:
+	case TypeId::NOT_SWITCH_BLOCK:
 	case TypeId::HOLE:
 		PlayerPushBack(playerPos);
 		break;
@@ -116,6 +155,7 @@ void BlockManager::Update()
 		if (playerPos == oldPos) break;
 
 		SwitchPush();
+		EaseInit(blocks);
 		break;
 	case TypeId::GOAL:
 		if (playerPos == oldPos) break;
@@ -146,18 +186,6 @@ void BlockManager::Update()
 			PlayerPushBack(playerPos);
 		}
 		break;
-	case TypeId::SWITCH_BLOCK:
-		if (isBlockSwitch == false)
-		{
-			PlayerPushBack(playerPos);
-		}
-		break;
-	case TypeId::NOT_SWITCH_BLOCK:
-		if (isBlockSwitch)
-		{
-			PlayerPushBack(playerPos);
-		}
-		break;
 	case TypeId::UP_STAIRS:
 		step = Step::UP;
 		break;
@@ -169,6 +197,20 @@ void BlockManager::Update()
 		step = Step::STAY;
 		break;
 	}
+}
+
+void BlockManager::EaseUpdate(Block* blocks)
+{
+	if (blocks->ease.isAlive == false) return;
+
+	static float addTime = 0.2f;
+	blocks->ease.time += addTime;
+
+	blocks->pos = Math::Lerp(Vector3(blocks->pos.x, blocks->pos.y, blocks->ease.start),
+							 Vector3(blocks->pos.x, blocks->pos.y, blocks->ease.end),
+							 blocks->ease.time);
+
+	if (blocks->ease.time >= 1.0f) blocks->ease.isAlive = false;
 }
 
 void BlockManager::Draw(const Vector3& offset)
@@ -196,23 +238,6 @@ void BlockManager::Draw(const Vector3& offset)
 			{
 				isSkip = true;
 				break; //ヒットした場合、それ以降はループを回す必要が無い
-			}
-		}
-
-		if (isBlockSwitch)
-		{
-			// スイッチがONの場合
-			if (blocks[i].typeId == TypeId::SWITCH_BLOCK)
-			{
-				isSkip = true;
-			}
-		}
-		else
-		{
-			// スイッチがOFFの場合
-			if (blocks[i].typeId == TypeId::NOT_SWITCH_BLOCK)
-			{
-				isSkip = true;
 			}
 		}
 
@@ -301,6 +326,10 @@ int BlockManager::CreateBlock(TypeId typeId)
 		}
 
 		blocks.emplace_back(typeId);
+		if (blocks.back().typeId == NOT_SWITCH_BLOCK)
+		{
+			blocks.back().pos.z = 1.0f;
+		}
 		return static_cast<int>(blocks.size() - 1);
 	}
 
@@ -311,6 +340,16 @@ void BlockManager::ChengeBlock(int index, TypeId typeId)
 {
 	Block block = Block(typeId);
 	block.pos = blocks[index].pos;
+
+	if (block.typeId == NOT_SWITCH_BLOCK)
+	{
+		block.pos.z = 1.0f;
+	}
+	else
+	{
+		block.pos.z = 0.0f;
+	}
+
 	blocks[index] = block;
 }
 

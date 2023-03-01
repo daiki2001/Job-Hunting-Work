@@ -424,9 +424,20 @@ int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 	bool isSwitch = false;
 	for (size_t i = 0; i < rooms[nowRoom].GetBlockManager()->GetBlockSize(); i++)
 	{
-		if (rooms[nowRoom].GetBlockManager()->GetBlock(i).typeId == BlockManager::TypeId::SWITCH)
+		switch (rooms[nowRoom].GetBlockManager()->GetBlock(i).typeId)
 		{
+		case BlockManager::TypeId::SWITCH:
 			isSwitch = true;
+			break;
+		case BlockManager::TypeId::SWITCH_BLOCK:
+			rooms[nowRoom].GetBlockManager()->GetBlock(i).pos.z =
+				1.0f * (BlockManager::GetBlockSwitch() == true);
+			break;
+		case BlockManager::TypeId::NOT_SWITCH_BLOCK:
+			rooms[nowRoom].GetBlockManager()->GetBlock(i).pos.z =
+				1.0f * (BlockManager::GetBlockSwitch() == false);
+			break;
+		default:
 			break;
 		}
 	}

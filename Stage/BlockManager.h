@@ -10,6 +10,7 @@ class BlockManager
 public: //エイリアス
 	template<class T> using vector = std::vector<T>;
 	using Vector3 = Math::Vector3;
+	using Ease = Math::Ease;
 
 public: //サブクラス
 	enum TypeId
@@ -41,6 +42,7 @@ public: //サブクラス
 	public: //メンバ変数
 		Vector3 pos; //座標
 		TypeId typeId;
+		Ease ease;
 
 	public: //メンバ関数
 		Block(TypeId typeId);
@@ -50,6 +52,15 @@ public: //サブクラス
 private: //静的メンバ変数
 	static Player* player;
 	static bool isBlockSwitch;
+	
+	static Ease switchEase;
+	static Ease notSwitchEase;
+
+public: //静的メンバ関数
+	static void EaseInit(vector<Block>& blocks);
+	static void EaseUpdate(Block* blocks);
+
+	static bool GetBlockSwitch() { return isBlockSwitch; }
 
 private: //メンバ変数
 	vector<BlockType> blockType;

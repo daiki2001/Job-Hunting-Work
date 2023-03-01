@@ -10,7 +10,7 @@ namespace
 static Stage* stage = Stage::Get();
 }
 
-const float Player::SPEED = 0.2f;
+const float Player::SPEED = 0.1f;
 const Math::Vector3 Player::COLLISION_SIZE = Vector3(0.25f, 1.0f, 1.0f);
 
 Player::Player() :

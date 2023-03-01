@@ -104,7 +104,7 @@ public: //メンバ関数
 	{
 		return blocks[index];
 	}
-	int GetBlock(const Vector3& pos);
+	int GetBlock(const Vector3& pos, int skipIndex = FUNCTION_ERROR);
 	const size_t GetBlockSize() const { return blocks.size(); }
 	const bool GetDoor() const { return isSwitch; }
 	const bool GetGoal() const { return isGoal; }

@@ -61,6 +61,7 @@ void Area::StaticInit(DrawPolygon* const draw)
 			planeArea->GetBlockManager()->CreateBlock(BlockManager::TypeId::NONE);
 			planeArea->GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % BlockManager::STAGE_WIDTH) * 1.0f;
 			planeArea->GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / BlockManager::STAGE_WIDTH) * -1.0f;
+			planeArea->GetBlockManager()->GetBlock(i).initPos = planeArea->GetBlockManager()->GetBlock(i).pos;
 		}
 		planeArea->SetDoorInit(Door::DoorStatus::OPEN, Door::DoorStatus::OPEN,
 							   Door::DoorStatus::OPEN, Door::DoorStatus::OPEN);

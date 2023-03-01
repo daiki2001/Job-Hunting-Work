@@ -129,7 +129,7 @@ void BlockManager::Update()
 	static int playerPos = FUNCTION_ERROR; //プレイヤーがいる場所のブロック
 	static int oldPos = FUNCTION_ERROR;
 
-	//EaseUpdate();
+	EaseUpdate();
 
 	oldPos = playerPos;
 	playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
@@ -204,32 +204,39 @@ void BlockManager::EaseUpdate()
 {
 	static float addTime = 0.2f;
 
-	for (auto& i : blocks)
+	for (size_t i = 0; i < blocks.size(); i++)
 	{
-		if (i.ease.isAlive == false) continue;
+		if (blocks[i].ease.isAlive == false) continue;
 
-		i.ease.time += addTime;
-		i.pos = Math::Lerp(i.ease.start, i.ease.end, i.ease.time);
+		blocks[i].ease.time += addTime;
+		blocks[i].pos = Math::Lerp(blocks[i].ease.start, blocks[i].ease.end, blocks[i].ease.time);
 
-		if (i.ease.time >= 1.0f) i.ease.isAlive = false;
-		if (i.ease.isAlive == false)
+		if (blocks[i].ease.time >= 1.0f) blocks[i].ease.isAlive = false;
+		if (blocks[i].ease.isAlive == false)
 		{
-			if (i.typeId == TypeId::MOVE_BLOCK)
+			if (blocks[i].typeId == TypeId::MOVE_BLOCK)
 			{
-				if (i.ease.start.z == i.ease.end.z)
+				if (blocks[i].ease.start.z == blocks[i].ease.end.z)
 				{
-					i.ease.isAlive = true;
-					i.ease.time = 0.0f;
-					i.ease.start = i.pos;
-					i.ease.end.z += 1.0f;
-
-					int index = GetBlock(i.pos);
-					blocks[index].typeId = TypeId::WALL;
+					int index = GetBlock(blocks[i].pos, static_cast<int>(i));
+					if (blocks[index].typeId == TypeId::NONE)
+					{
+						blocks[index].typeId = TypeId::WALL;
+						blocks[i].typeId = TypeId::NONE;
+						blocks[i].pos = blocks[i].initPos;
+					}
+					else
+					{
+						blocks[i].ease.isAlive = true;
+						blocks[i].ease.time = 0.0f;
+						blocks[i].ease.start = blocks[i].pos;
+						blocks[i].ease.end.z += 1.0f;
+					}
 				}
 				else
 				{
-					i.typeId = TypeId::NONE;
-					i.pos = i.initPos;
+					blocks[i].typeId = TypeId::NONE;
+					blocks[i].pos = blocks[i].initPos;
 				}
 			}
 		}
@@ -373,6 +380,7 @@ void BlockManager::ChengeBlock(int index, TypeId typeId)
 	{
 		block.pos.z = 0.0f;
 	}
+	block.initPos = block.pos;
 
 	blocks[index] = block;
 }
@@ -501,18 +509,20 @@ void BlockManager::PushBlock(int index)
 	blocks[index].ease.end = blocks[nextBlock].pos;
 }
 
-int BlockManager::GetBlock(const Vector3& pos)
+int BlockManager::GetBlock(const Vector3& pos, int skipIndex)
 {
 	int result = FUNCTION_ERROR;
 	int posX = static_cast<int>(Math::RoundOff(pos.x));
-	int posY = static_cast<int>(Math::RoundOff(pos.y));
+	int posY = static_cast<int>(Math::RoundOff(pos.y * -1.0f));
 	if (posX < 0 || posX >= STAGE_WIDTH || posY < 0 || posY >= STAGE_HEIGHT)
 	{
 		return result;
 	}
 
-	for (auto i = 0; i < blocks.size(); i++)
+	for (int i = 0; i < static_cast<int>(blocks.size()); i++)
 	{
+		if (i == skipIndex) continue;
+
 		if (pos == blocks[i].pos)
 		{
 			result = i;

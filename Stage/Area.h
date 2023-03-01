@@ -12,8 +12,6 @@ private: //エイリアス
 	using Vector3 = Math::Vector3;
 
 public: //定数
-	static const size_t STAGE_WIDTH;
-	static const size_t STAGE_HEIGHT;
 	static const size_t DOOR_COUNT = 4;
 	static const float WALL_SIZE;
 	static const Vector3 INIT_CAMERA;

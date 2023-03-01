@@ -178,7 +178,7 @@ void Player::MovingRoom()
 		animationVec = Stage::FRONT_ROOM;
 		break;
 	case Player::Direction::BOTTOM:
-		animationPos.y = -(Area::STAGE_HEIGHT - 1.0f);
+		animationPos.y = -(BlockManager::STAGE_HEIGHT - 1.0f);
 		animationVec = Stage::BACK_ROOM;
 		break;
 	case Player::Direction::LEFT:
@@ -186,7 +186,7 @@ void Player::MovingRoom()
 		animationVec = Stage::LEFT_ROOM;
 		break;
 	case Player::Direction::RIGHT:
-		animationPos.x = Area::STAGE_WIDTH - 1.0f;
+		animationPos.x = BlockManager::STAGE_WIDTH - 1.0f;
 		animationVec = Stage::RIGHT_ROOM;
 		break;
 	default:
@@ -232,7 +232,7 @@ void Player::MoveUp()
 			break;
 		}
 
-		pos.y = -(static_cast<int>(Area::STAGE_HEIGHT) - 1.0f);
+		pos.y = -(static_cast<int>(BlockManager::STAGE_HEIGHT) - 1.0f);
 	}
 
 	// 場外判定
@@ -246,7 +246,7 @@ void Player::MoveDown()
 {
 	direction = Player::Direction::BOTTOM;
 
-	if (pos.y < -(Area::STAGE_HEIGHT - 1.0f))
+	if (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))
 	{
 		return;
 	}
@@ -254,7 +254,7 @@ void Player::MoveDown()
 	pos.y -= SPEED;
 
 	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
-		 (pos.y < -(Area::STAGE_HEIGHT - 1.0f))) &&
+		 (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
 		(stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::OPEN))
 	{
 		route.emplace_back(Area::DoorNum::BOTTOM);
@@ -281,9 +281,9 @@ void Player::MoveDown()
 	}
 
 	// 場外判定
-	if ((pos - COLLISION_SIZE / 2.0f).y < stage->GetBlockManager()->GetBlock(0).pos.y - (Area::STAGE_HEIGHT - 1.0f))
+	if ((pos - COLLISION_SIZE / 2.0f).y < stage->GetBlockManager()->GetBlock(0).pos.y - (BlockManager::STAGE_HEIGHT - 1.0f))
 	{
-		pos.y = -(Area::STAGE_HEIGHT - 1.0f);
+		pos.y = -(BlockManager::STAGE_HEIGHT - 1.0f);
 	}
 }
 
@@ -322,7 +322,7 @@ void Player::MoveLeft()
 			break;
 		}
 
-		pos.x = Area::STAGE_WIDTH - 1.0f;
+		pos.x = BlockManager::STAGE_WIDTH - 1.0f;
 	}
 
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
@@ -338,14 +338,14 @@ void Player::MoveRight()
 {
 	direction = Player::Direction::RIGHT;
 
-	if (pos.x > Area::STAGE_WIDTH - 1.0f)
+	if (pos.x > BlockManager::STAGE_WIDTH - 1.0f)
 	{
 		return;
 	}
 
 	pos.x += SPEED;
 
-	if (((pos.x > Area::STAGE_WIDTH - 1.0f) && 
+	if (((pos.x > BlockManager::STAGE_WIDTH - 1.0f) && 
 		 (pos.y <= -2.0f && pos.y >= -4.0f)) &&
 		(stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN))
 	{
@@ -375,9 +375,9 @@ void Player::MoveRight()
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
 
 	// 場外判定
-	if ((pos + COLLISION_BOX).x > stage->GetBlockManager()->GetBlock(0).pos.x + (Area::STAGE_WIDTH - 1.0f))
+	if ((pos + COLLISION_BOX).x > stage->GetBlockManager()->GetBlock(0).pos.x + (BlockManager::STAGE_WIDTH - 1.0f))
 	{
-		pos.x = Area::STAGE_WIDTH - 1.0f;
+		pos.x = BlockManager::STAGE_WIDTH - 1.0f;
 	}
 }
 
@@ -456,11 +456,11 @@ void Player::BombAction()
 			break;
 		case Player::BOTTOM:
 			move.y += BOMB_SIZE.y * 2.0f;
-			side.y = static_cast<float>(Area::STAGE_HEIGHT - 1) * (-1.0f);
+			side.y = static_cast<float>(BlockManager::STAGE_HEIGHT - 1) * (-1.0f);
 			break;
 		case Player::RIGHT:
 			move.x += BOMB_SIZE.x * 2.0f;
-			side.y = static_cast<float>(Area::STAGE_WIDTH - 1) * (-1.0f);
+			side.y = static_cast<float>(BlockManager::STAGE_WIDTH - 1) * (-1.0f);
 			break;
 		default:
 			break;
@@ -470,7 +470,7 @@ void Player::BombAction()
 	if (Collision::IsAABBToAABBCollision(bomb.GetPos() + move - BOMB_SIZE / 2.0f,
 										 bomb.GetPos() + move + BOMB_SIZE / 2.0f,
 										 Vector3::Zero(),
-										 Vector3(static_cast<float>(Area::STAGE_WIDTH), static_cast<float>(Area::STAGE_HEIGHT) * (-1.0f), 0.0f)))
+										 Vector3(static_cast<float>(BlockManager::STAGE_WIDTH), static_cast<float>(BlockManager::STAGE_HEIGHT) * (-1.0f), 0.0f)))
 	{
 		bomb.Set(bomb.GetPos() + move);
 	}

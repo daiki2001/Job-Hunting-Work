@@ -8,8 +8,8 @@ namespace Math
 {
 struct Ease
 {
-	float start = 0.0f;
-	float end = 1.0f;
+	Vector3 start = Vector3::Zero();
+	Vector3 end = Vector3::Zero();
 	float time = 0.0f;
 	bool isAlive = false;
 };

@@ -9,8 +9,6 @@ namespace
 static GameInput* input = GameInput::Get();
 }
 
-const size_t Area::STAGE_WIDTH = 15;
-const size_t Area::STAGE_HEIGHT = 7;
 const float Area::WALL_SIZE = 2.0f;
 const Math::Vector3 Area::INIT_CAMERA = { 7.0f, -3.0f, 0.0f };
 const int Area::NONE_LOST_FOREST = Area::DoorNum::MAX;
@@ -58,11 +56,12 @@ void Area::StaticInit(DrawPolygon* const draw)
 		planeArea = &defArea;
 		isCreatePlane = true;
 
-		for (int i = 0; i < Area::STAGE_WIDTH * Area::STAGE_HEIGHT; i++)
+		for (int i = 0; i < BlockManager::STAGE_WIDTH * BlockManager::STAGE_HEIGHT; i++)
 		{
 			planeArea->GetBlockManager()->CreateBlock(BlockManager::TypeId::NONE);
-			planeArea->GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % Area::STAGE_WIDTH) * 1.0f;
-			planeArea->GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / Area::STAGE_WIDTH) * -1.0f;
+			planeArea->GetBlockManager()->GetBlock(i).pos.x = static_cast<float>(i % BlockManager::STAGE_WIDTH) * 1.0f;
+			planeArea->GetBlockManager()->GetBlock(i).pos.y = static_cast<float>(i / BlockManager::STAGE_WIDTH) * -1.0f;
+			planeArea->GetBlockManager()->GetBlock(i).initPos = planeArea->GetBlockManager()->GetBlock(i).pos;
 		}
 		planeArea->SetDoorInit(Door::DoorStatus::OPEN, Door::DoorStatus::OPEN,
 							   Door::DoorStatus::OPEN, Door::DoorStatus::OPEN);
@@ -91,10 +90,6 @@ void Area::Update()
 {
 	if (isAlive == false) return;
 
-	for (size_t i = 0; i < block_mgr.GetBlockSize(); i++)
-	{
-		BlockManager::EaseUpdate(&block_mgr.GetBlock(i));
-	}
 	block_mgr.Update();
 
 	if (block_mgr.GetDoor())
@@ -143,7 +138,7 @@ void Area::Draw(const Vector3& offset)
 
 int Area::LoadArea(FILE* fileHandle)
 {
-	int mapArray[STAGE_WIDTH * STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
+	int mapArray[BlockManager::STAGE_WIDTH * BlockManager::STAGE_HEIGHT] = { BlockManager::TypeId::NONE };
 	int doorSetting[DOOR_COUNT] = { Door::DoorStatus::OPEN };
 	int courceSetting[MAX_COURSE_NUM] = {};
 
@@ -156,8 +151,8 @@ int Area::LoadArea(FILE* fileHandle)
 	// マップの設定
 	for (int i = 0; i < sizeof(mapArray) / sizeof(mapArray[0]); i++)
 	{
-		int x = i % STAGE_WIDTH;
-		int y = i / STAGE_WIDTH;
+		int x = i % BlockManager::STAGE_WIDTH;
+		int y = i / BlockManager::STAGE_WIDTH;
 		int index = block_mgr.CreateBlock(BlockManager::TypeId(mapArray[i]));
 
 		if (index == Engine::FUNCTION_ERROR)
@@ -168,6 +163,8 @@ int Area::LoadArea(FILE* fileHandle)
 		auto& block = block_mgr.GetBlock(index);
 		block.pos.x = static_cast<float>(x * 1.0f);
 		block.pos.y = static_cast<float>(-y * 1.0f);
+		block.initPos = block.pos;
+		block.initPos.z = 0.0f;
 	}
 
 	// ドアの設定
@@ -247,14 +244,14 @@ int Area::WriteArea(FILE* fileHandle)
 	File::WriteCSV(fileHandle, courceSetting, courceSettingSize + 1U);
 
 	// ブロック情報
-	for (size_t i = 0; i < STAGE_HEIGHT; i++)
+	for (size_t i = 0; i < BlockManager::STAGE_HEIGHT; i++)
 	{
-		int blocks[STAGE_WIDTH] = {};
-		for (size_t j = 0; j < STAGE_WIDTH; j++)
+		int blocks[BlockManager::STAGE_WIDTH] = {};
+		for (size_t j = 0; j < BlockManager::STAGE_WIDTH; j++)
 		{
-			blocks[j] = static_cast<int>(block_mgr.GetBlock(i * STAGE_WIDTH + j).typeId);
+			blocks[j] = static_cast<int>(block_mgr.GetBlock(i * BlockManager::STAGE_WIDTH + j).typeId);
 		}
-		File::WriteCSV(fileHandle, blocks, STAGE_WIDTH);
+		File::WriteCSV(fileHandle, blocks, BlockManager::STAGE_WIDTH);
 	}
 	return 0;
 }

@@ -61,8 +61,8 @@ void Stage::Update()
 	if (scroll.GetFlag())
 	{
 		Vector3 moveCamera = moveDir * scroll.GetTime();
-		moveCamera.x *= (Area::WALL_SIZE * 2.0f + Area::STAGE_WIDTH);
-		moveCamera.y *= -(Area::WALL_SIZE * 2.0f + Area::STAGE_HEIGHT);
+		moveCamera.x *= (Area::WALL_SIZE * 2.0f + BlockManager::STAGE_WIDTH);
+		moveCamera.y *= -(Area::WALL_SIZE * 2.0f + BlockManager::STAGE_HEIGHT);
 		Camera::target = Area::INIT_CAMERA + moveCamera;
 	}
 	else
@@ -125,8 +125,8 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 		rooms[nowRoom + DOWN_FLOOR].isAlive)
 	{
 		rooms[nowRoom + DOWN_FLOOR].Draw(Vector3(
-			(static_cast<float>(Area::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
-			(static_cast<float>(Area::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
+			(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
+			(static_cast<float>(BlockManager::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
 			0.0f) + DOWN_FLOOR_POS + offset);
 	}
 	if (rooms.find(oldRoomPos + DOWN_FLOOR) == rooms.end() ||
@@ -142,8 +142,8 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
 
 	rooms[nowRoom].Draw(Vector3(
-		(static_cast<float>(Area::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
-		(static_cast<float>(Area::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
+		(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
+		(static_cast<float>(BlockManager::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
 		0.0f) + offset);
 	rooms[oldRoomPos].Draw(offset);
 

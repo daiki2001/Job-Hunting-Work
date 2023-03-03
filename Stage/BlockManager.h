@@ -41,6 +41,7 @@ public: //サブクラス
 	{
 	public: //メンバ変数
 		Vector3 pos; //座標
+		Vector3 initPos; //初期座標
 		TypeId typeId;
 		Ease ease;
 
@@ -49,16 +50,17 @@ public: //サブクラス
 		~Block() = default;
 	};
 
+public: //定数
+	static const size_t STAGE_WIDTH = 15;
+	static const size_t STAGE_HEIGHT = 7;
+	
 private: //静的メンバ変数
 	static Player* player;
 	static bool isBlockSwitch;
 	
-	static Ease switchEase;
-	static Ease notSwitchEase;
-
 public: //静的メンバ関数
 	static void EaseInit(vector<Block>& blocks);
-	static void EaseUpdate(Block* blocks);
+	void EaseUpdate();
 
 	static bool GetBlockSwitch() { return isBlockSwitch; }
 
@@ -101,7 +103,8 @@ public: //メンバ関数
 	Block& GetBlock(const size_t& index)
 	{
 		return blocks[index];
-	};
+	}
+	int GetBlock(const Vector3& pos, int skipIndex = FUNCTION_ERROR);
 	const size_t GetBlockSize() const { return blocks.size(); }
 	const bool GetDoor() const { return isSwitch; }
 	const bool GetGoal() const { return isGoal; }

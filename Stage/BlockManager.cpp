@@ -7,11 +7,10 @@
 
 Player* BlockManager::player = Player::Get();
 bool BlockManager::isBlockSwitch = false;
-Math::Ease BlockManager::switchEase = {};
-Math::Ease BlockManager::notSwitchEase = {};
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
+	initPos(0.0f, 0.0f, 0.0f),
 	typeId(typeId),
 	ease{}
 {
@@ -89,8 +88,8 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 void BlockManager::EaseInit(vector<Block>& blocks)
 {
-	float start = 0.0f;
-	float end = 1.0f;
+	Vector3 start = Vector3::Zero();
+	Vector3 end = Vector3::Zero();
 	bool isSkip = false;
 
 	for (auto& i : blocks)
@@ -100,12 +99,12 @@ void BlockManager::EaseInit(vector<Block>& blocks)
 		switch (i.typeId)
 		{
 		case SWITCH_BLOCK:
-			start = 1.0f * (isBlockSwitch == false);
-			end = 1.0f * (isBlockSwitch == true);
+			start = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == false));
+			end = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == true));
 			break;
 		case NOT_SWITCH_BLOCK:
-			start = 1.0f * (isBlockSwitch == true);
-			end = 1.0f * (isBlockSwitch == false);
+			start = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == true));
+			end = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == false));
 			break;
 		default:
 			isSkip = true;
@@ -129,6 +128,8 @@ void BlockManager::Update()
 	static const int playerBlock = (width - 1) * (width - 1); //プレイヤーがいる場所のブロック(playerSurroundingsBlock基準)
 	static int playerPos = FUNCTION_ERROR; //プレイヤーがいる場所のブロック
 	static int oldPos = FUNCTION_ERROR;
+
+	EaseUpdate();
 
 	oldPos = playerPos;
 	playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
@@ -199,18 +200,47 @@ void BlockManager::Update()
 	}
 }
 
-void BlockManager::EaseUpdate(Block* blocks)
+void BlockManager::EaseUpdate()
 {
-	if (blocks->ease.isAlive == false) return;
-
 	static float addTime = 0.2f;
-	blocks->ease.time += addTime;
 
-	blocks->pos = Math::Lerp(Vector3(blocks->pos.x, blocks->pos.y, blocks->ease.start),
-							 Vector3(blocks->pos.x, blocks->pos.y, blocks->ease.end),
-							 blocks->ease.time);
+	for (size_t i = 0; i < blocks.size(); i++)
+	{
+		if (blocks[i].ease.isAlive == false) continue;
 
-	if (blocks->ease.time >= 1.0f) blocks->ease.isAlive = false;
+		blocks[i].ease.time += addTime;
+		blocks[i].pos = Math::Lerp(blocks[i].ease.start, blocks[i].ease.end, blocks[i].ease.time);
+
+		if (blocks[i].ease.time >= 1.0f) blocks[i].ease.isAlive = false;
+		if (blocks[i].ease.isAlive == false)
+		{
+			if (blocks[i].typeId == TypeId::MOVE_BLOCK)
+			{
+				if (blocks[i].ease.start.z == blocks[i].ease.end.z)
+				{
+					int index = GetBlock(blocks[i].pos, static_cast<int>(i));
+					if (blocks[index].typeId == TypeId::NONE)
+					{
+						blocks[index].typeId = TypeId::WALL;
+						blocks[i].typeId = TypeId::NONE;
+						blocks[i].pos = blocks[i].initPos;
+					}
+					else
+					{
+						blocks[i].ease.isAlive = true;
+						blocks[i].ease.time = 0.0f;
+						blocks[i].ease.start = blocks[i].pos;
+						blocks[i].ease.end.z += 1.0f;
+					}
+				}
+				else
+				{
+					blocks[i].typeId = TypeId::NONE;
+					blocks[i].pos = blocks[i].initPos;
+				}
+			}
+		}
+	}
 }
 
 void BlockManager::Draw(const Vector3& offset)
@@ -258,7 +288,7 @@ void BlockManager::Draw(const Vector3& offset)
 		}
 		if (isSkip == false)
 		{
-			BlockType::FloorDraw(blocks[i].pos + offset);
+			BlockType::FloorDraw(blocks[i].initPos + offset);
 		}
 	}
 }
@@ -268,6 +298,7 @@ void BlockManager::Reset()
 	for (auto& i : initPos)
 	{
 		blocks[i.first].typeId = i.second;
+		blocks[i.first].pos = blocks[i.first].initPos;
 	}
 	initPos.clear();
 
@@ -349,6 +380,7 @@ void BlockManager::ChengeBlock(int index, TypeId typeId)
 	{
 		block.pos.z = 0.0f;
 	}
+	block.initPos = block.pos;
 
 	blocks[index] = block;
 }
@@ -432,24 +464,24 @@ void BlockManager::PushBlock(int index)
 	switch (player->GetDirection())
 	{
 	case Player::Direction::LEFT:
-		if ((index % Area::STAGE_WIDTH) == 0) break;
+		if ((index % STAGE_WIDTH) == 0) break;
 
 		nextBlock -= 1;
 		break;
 	case Player::Direction::RIGHT:
-		if ((index % Area::STAGE_WIDTH) == Area::STAGE_WIDTH - 1) break;
+		if ((index % STAGE_WIDTH) == STAGE_WIDTH - 1) break;
 
 		nextBlock += 1;
 		break;
 	case Player::Direction::TOP:
-		if ((index / Area::STAGE_WIDTH) == 0) break;
+		if ((index / STAGE_WIDTH) == 0) break;
 
-		nextBlock -= static_cast<int>(Area::STAGE_WIDTH);
+		nextBlock -= static_cast<int>(STAGE_WIDTH);
 		break;
 	case Player::Direction::BOTTOM:
-		if ((index / Area::STAGE_WIDTH) == 0) break;
+		if ((index / STAGE_WIDTH) == 0) break;
 
-		nextBlock += static_cast<int>(Area::STAGE_WIDTH);
+		nextBlock += static_cast<int>(STAGE_WIDTH);
 		break;
 	default:
 		break;
@@ -465,13 +497,39 @@ void BlockManager::PushBlock(int index)
 	}
 
 	if (initPos.find(index) == initPos.end()) initPos[index] = TypeId::MOVE_BLOCK;
-	blocks[index].typeId = TypeId::NONE;
 	if (blocks[nextBlock].typeId == TypeId::NONE)
 	{
 		if (initPos.find(nextBlock) == initPos.end()) initPos[nextBlock] = blocks[nextBlock].typeId;
-		blocks[nextBlock].typeId = TypeId::WALL;
 	}
+
 	isSwitch = true;
+	blocks[index].ease.isAlive = true;
+	blocks[index].ease.time = 0.0f;
+	blocks[index].ease.start = blocks[index].pos;
+	blocks[index].ease.end = blocks[nextBlock].pos;
+}
+
+int BlockManager::GetBlock(const Vector3& pos, int skipIndex)
+{
+	int result = FUNCTION_ERROR;
+	int posX = static_cast<int>(Math::RoundOff(pos.x));
+	int posY = static_cast<int>(Math::RoundOff(pos.y * -1.0f));
+	if (posX < 0 || posX >= STAGE_WIDTH || posY < 0 || posY >= STAGE_HEIGHT)
+	{
+		return result;
+	}
+
+	for (int i = 0; i < static_cast<int>(blocks.size()); i++)
+	{
+		if (i == skipIndex) continue;
+
+		if (pos == blocks[i].pos)
+		{
+			result = i;
+		}
+	}
+
+	return result;
 }
 
 int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const
@@ -501,7 +559,7 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	if (Collision::IsAABBToAABBCollision(
 		blocks[0].pos - halfBlockSize,
 		blocks[0].pos + halfBlockSize +
-		Vector3(Area::STAGE_WIDTH - 1.0f, -(Area::STAGE_HEIGHT - 1.0f), 0.0f),
+		Vector3(STAGE_WIDTH - 1.0f, -(STAGE_HEIGHT - 1.0f), 0.0f),
 		player->pos - playerSize,
 		player->pos + playerSize) == false)
 	{

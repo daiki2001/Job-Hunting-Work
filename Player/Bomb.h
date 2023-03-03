@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Item.h"
+#include "../Effect/BombParticle.h"
 #include "./Header/EngineGeneral.h"
 
 class Bomb : public Item
@@ -7,6 +8,9 @@ class Bomb : public Item
 public: //エイリアス
 	using Vector3 = Math::Vector3;
 
+private: //静的メンバ変数
+	BombParticle effect;
+	
 private: //メンバ変数
 	Vector3 pos;          //座標
 	unsigned int maxTime; //起爆までの時間

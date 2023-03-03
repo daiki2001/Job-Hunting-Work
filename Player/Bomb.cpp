@@ -33,6 +33,8 @@ void Bomb::Init()
 
 void Bomb::Update()
 {
+	effect.Update();
+
 	if (isAlive == false) return;
 
 	if (isBomber)
@@ -45,6 +47,7 @@ void Bomb::Update()
 		{
 			isBomber = true;
 			nowTime = 0;
+			effect.Create(pos);
 
 			static const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f);
 

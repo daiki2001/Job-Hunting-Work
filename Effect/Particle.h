@@ -22,7 +22,7 @@ public:
 	// 更新処理
 	void Update(const int& maxTime);
 	// 生成処理
-	void Create(const Vector3& startPos, const Vector3& size, const Vector3& startSpeed = {});
+	void Create(const Vector3& startPos, const Vector3& startSpeed = {}, const Vector3& size = Vector3(1.0f, 1.0f, 1.0f));
 
 	Vector3 GetPos() const { return pos; }
 	Vector3 GetSpeed() const { return speed; }

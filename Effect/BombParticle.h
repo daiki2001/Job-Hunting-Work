@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Particle.h"
 #include <vector>
-#include <random>
 #include "./Header/DrawPolygon.h"
 
 class BombParticle
@@ -9,11 +8,12 @@ class BombParticle
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 	
+public: //定数
+	static const int MAX_TIME;
+	
 private: //静的メンバ変数
 	static DrawPolygon* draw;
 	static int model;
-	static std::random_device seed_gen;
-	static std::mt19937 randEngine;
 	
 public: //静的メンバ関数
 	// 初期化処理

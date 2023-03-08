@@ -97,15 +97,11 @@ void Bomb::Update()
 
 void Bomb::Draw(int offsetX, int offsetY)
 {
+	effect.Draw();
 	if (isAlive == false) return;
 
 	DirectDrawing::ChangeOBJShader();
-	if (isBomber)
-	{
-		draw->Draw(object, pos, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 0.8f),
-				   Parameter::Get("white1x1"));
-	}
-	else
+	if (isBomber == false)
 	{
 		draw->Draw(object, pos, Math::Identity(), scale_xyz(0.5f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 				   Parameter::Get(LoadGraph::BOMB.c_str()));

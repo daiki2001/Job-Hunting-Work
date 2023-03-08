@@ -41,8 +41,10 @@ void Door::StaticInit(DrawPolygon* draw)
 }
 
 Door::Door() :
+	pos(Vector3::Zero()),
 	size(Vector3(1.0f, 1.0f, 1.0f)),
-	status(DoorStatus::OPEN)
+	status(DoorStatus::OPEN),
+	ease{}
 {
 }
 
@@ -50,10 +52,38 @@ Door::~Door()
 {
 }
 
-void Door::Init(const Vector3& size, DoorStatus status)
+void Door::Init(const Vector3& pos, const Vector3& size, DoorStatus status)
 {
+	this->pos = pos;
 	this->size = size;
 	this->status = status;
+
+	if (this->status == DoorStatus::OPEN)
+	{
+		this->pos.z = 2.0f;
+	}
+}
+
+void Door::OpenEaseInit()
+{
+	Vector3 start = Vector3(pos.x, pos.y, 0.0f);
+	Vector3 end = Vector3(pos.x, pos.y, 2.0f);
+
+	ease.isAlive = true;
+	ease.time = 0.0f;
+	ease.start = start;
+	ease.end = end;
+}
+
+void Door::EaseUpdate()
+{
+	static float addTime = 0.2f;
+
+	if (ease.isAlive == false) return;
+
+	ease.time += addTime;
+	pos = Math::Lerp(ease.start, ease.end, ease.time);
+	if (ease.time >= 1.0f) ease.isAlive = false;
 }
 
 void Door::Draw(const Vector3& offset)
@@ -72,53 +102,83 @@ void Door::Draw(const Vector3& offset)
 	switch (status)
 	{
 	case DoorStatus::CLOSE:
-		draw->Draw(door_obj, offset, Identity(), size, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->Draw(door_obj, pos + offset, Identity(), size, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 				   debugTex);
 		break;
 	case DoorStatus::WALL:
-		draw->DrawOBJ(Area::GetWallObj(), offset, Identity(), size);
+		draw->DrawOBJ(Area::GetWallObj(), pos + offset, Identity(), size);
 		break;
 	case DoorStatus::KEY_CLOSE:
-		draw->DrawOBJ(keyDoor, offset, rotateX(PI_F), size);
+		draw->DrawOBJ(keyDoor, pos + offset, rotateX(PI_F), size);
 		break;
 	case DoorStatus::BREAK_WALL:
-		draw->DrawOBJ(breakWall, offset, rotateX(PI_F), size);
+		draw->DrawOBJ(breakWall, pos + offset, rotateX(PI_F), size);
 		break;
 	case DoorStatus::ENTRANCE:
-		draw->Draw(entranceLight, offset, Identity(), Vector3(1.0f, 1.0f, 1.0f),
+		draw->Draw(entranceLight, pos + offset, Identity(), Vector3(1.0f, 1.0f, 1.0f),
 				   DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f), debugTex);
 		break;
 	case DoorStatus::OPEN:
-	{
-		static const float halfNum = floorf((Door::DOOR_WIDTH + 2.0f) / 2.0f);
-		float symbol = 0.0f;
-
-		if (((offset - Area::INIT_CAMERA).x > 0) || ((offset - Area::INIT_CAMERA).y > 0))
+		if (pos.z < 2.0f)
 		{
-			symbol = +1.0f;
+			draw->Draw(door_obj, pos + offset, Identity(), size, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					   debugTex);
 		}
-		else if (((offset - Area::INIT_CAMERA).x < 0) || ((offset - Area::INIT_CAMERA).y < 0))
+		else
 		{
-			symbol = -1.0f;
-		}
+			static const float halfNum = floorf((Door::DOOR_WIDTH + 2.0f) / 2.0f);
+			float symbol = 0.0f;
 
-		for (float i = 0; i < Door::DOOR_WIDTH + 2.0f; i += 1.0f)
-		{
-			for (float j = 0; j < 2.0f; j += 1.0f)
+			if (((pos + offset - Area::INIT_CAMERA).x > 0) || ((pos + offset - Area::INIT_CAMERA).y > 0))
 			{
-				if (size.x == Door::DOOR_WIDTH)
+				symbol = +1.0f;
+			}
+			else if (((pos + offset - Area::INIT_CAMERA).x < 0) || ((pos + offset - Area::INIT_CAMERA).y < 0))
+			{
+				symbol = -1.0f;
+			}
+
+			for (float i = 0; i < Door::DOOR_WIDTH + 2.0f; i += 1.0f)
+			{
+				for (float j = 0; j < 2.0f; j += 1.0f)
 				{
-					BlockType::FloorDraw(Vector3((i - halfNum), j * symbol, 0.0f) + offset);
-				}
-				else
-				{
-					BlockType::FloorDraw(Vector3(j * symbol, (i - halfNum), 0.0f) + offset);
+					if (size.x == Door::DOOR_WIDTH)
+					{
+						BlockType::FloorDraw(Vector3(pos.x + (i - halfNum), pos.y + j * symbol, 0.0f) + offset);
+					}
+					else
+					{
+						BlockType::FloorDraw(Vector3(pos.x + j * symbol, pos.y + (i - halfNum), 0.0f) + offset);
+					}
 				}
 			}
+			break;
 		}
-		break;
-	}
 	default:
 		break;
 	}
+}
+
+void Door::Open()
+{
+	if (status != DoorStatus::CLOSE) return;
+
+	status = DoorStatus::OPEN;
+	OpenEaseInit();
+}
+
+void Door::KeyOpen()
+{
+	if (status != DoorStatus::KEY_CLOSE) return;
+
+	status = DoorStatus::OPEN;
+	pos.z = 2.0f;
+}
+
+void Door::BreakWall()
+{
+	if (status != DoorStatus::BREAK_WALL) return;
+
+	status = DoorStatus::OPEN;
+	pos.z = 2.0f;
 }

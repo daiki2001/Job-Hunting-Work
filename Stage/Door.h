@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "./Header/EngineGeneral.h"
+#include "./Math/Easing.h"
 
 class Door
 {
@@ -34,22 +35,29 @@ public: //静的メンバ関数
 	static void StaticInit(DrawPolygon* draw);
 
 private: //メンバ変数
+	Vector3 pos;
 	Vector3 size;
 	DoorStatus status;
+	Math::Ease ease;
 
 public: //メンバ関数
 	Door();
 	~Door();
 
 	// 初期化
-	void Init(const Vector3& size, DoorStatus status);
+	void Init(const Vector3& pos, const Vector3& size, DoorStatus status);
 	// 描画
 	void Draw(const Vector3& offset);
 
-	void Open() { if (status == DoorStatus::CLOSE) status = DoorStatus::OPEN; }
-	void KeyOpen() { if (status == DoorStatus::KEY_CLOSE) status = DoorStatus::OPEN; }
-	void BreakWall() { if (status == DoorStatus::BREAK_WALL) status = DoorStatus::OPEN; }
+	void OpenEaseInit();
+	void EaseUpdate();
 
+	void Open();
+	void KeyOpen();
+	void BreakWall();
+
+	// 扉のサイズの取得
+	const Vector3 GetPos() const { return pos; }
 	// 扉のサイズの取得
 	const Vector3 GetSize() const { return size; }
 	// 扉の状態の取得

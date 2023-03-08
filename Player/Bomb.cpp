@@ -33,6 +33,8 @@ void Bomb::Init()
 
 void Bomb::Update()
 {
+	effect.Update();
+
 	if (isAlive == false) return;
 
 	if (isBomber)
@@ -45,6 +47,7 @@ void Bomb::Update()
 		{
 			isBomber = true;
 			nowTime = 0;
+			effect.Create(pos);
 
 			static const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f);
 
@@ -94,15 +97,11 @@ void Bomb::Update()
 
 void Bomb::Draw(int offsetX, int offsetY)
 {
+	effect.Draw();
 	if (isAlive == false) return;
 
 	DirectDrawing::ChangeOBJShader();
-	if (isBomber)
-	{
-		draw->Draw(object, pos, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 0.8f),
-				   Parameter::Get("white1x1"));
-	}
-	else
+	if (isBomber == false)
 	{
 		draw->Draw(object, pos, Math::Identity(), scale_xyz(0.5f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 				   Parameter::Get(LoadGraph::BOMB.c_str()));

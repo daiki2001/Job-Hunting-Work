@@ -1,5 +1,6 @@
 ﻿#include "Item.h"
 #include "./Input/GameInput.h"
+#include "./Effect/BombParticle.h"
 #include "./Header/Parameter.h"
 #include "./Header/Error.h"
 
@@ -30,6 +31,7 @@ void Item::Init(int texNumber)
 void Item::StaticInit(DrawPolygon* const draw)
 {
 	Item::draw = draw;
+	BombParticle::Init(draw);
 }
 
 void Item::DrawInfo(const char* type, int offsetX, int offsetY, float scale)

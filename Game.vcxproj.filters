@@ -108,11 +108,14 @@
     <ClCompile Include="UndoRedo\RouteSetter.cpp">
       <Filter>UndoRedo</Filter>
     </ClCompile>
-    <ClCompile Include="Effect\Scroll.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="UndoRedo\CreateFloor.cpp">
       <Filter>UndoRedo</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\Scroll.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\BombParticle.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,11 +185,14 @@
     <ClInclude Include="UndoRedo\RouteSetter.h">
       <Filter>UndoRedo</Filter>
     </ClInclude>
-    <ClInclude Include="Effect\Scroll.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="UndoRedo\CreateFloor.h">
       <Filter>UndoRedo</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\BombParticle.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\Scroll.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

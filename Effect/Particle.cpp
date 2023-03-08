@@ -34,7 +34,7 @@ void Particle::Update(const int& maxTime)
 	time++;
 }
 
-void Particle::Create(const Vector3& startPos, const Vector3& size, const Vector3& startSpeed)
+void Particle::Create(const Vector3& startPos, const Vector3& startSpeed, const Vector3& size)
 {
 	pos = startPos;
 	speed = startSpeed;

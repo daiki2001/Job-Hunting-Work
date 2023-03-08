@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Effect\BombParticle.cpp" />
     <ClCompile Include="Effect\Particle.cpp" />
     <ClCompile Include="Effect\Scroll.cpp" />
     <ClCompile Include="Effect\WallBreakEffect.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="UndoRedo\RouteSetter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Effect\BombParticle.h" />
     <ClInclude Include="Effect\Particle.h" />
     <ClInclude Include="Effect\Scroll.h" />
     <ClInclude Include="Effect\WallBreakEffect.h" />

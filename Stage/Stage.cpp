@@ -129,8 +129,8 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 			(static_cast<float>(BlockManager::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
 			0.0f) + DOWN_FLOOR_POS + offset);
 	}
-	if (rooms.find(oldRoomPos + DOWN_FLOOR) == rooms.end() ||
-		rooms[oldRoomPos + DOWN_FLOOR].isAlive == false)
+	if (rooms.find(oldRoomPos + DOWN_FLOOR) != rooms.end() &&
+		rooms[oldRoomPos + DOWN_FLOOR].isAlive)
 	{
 		rooms[oldRoomPos + DOWN_FLOOR].Draw(DOWN_FLOOR_POS + offset);
 	}

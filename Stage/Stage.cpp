@@ -14,6 +14,7 @@ Math::Vector3 Stage::nowRoom = { 0.0f, 0.0f, 0.0f };
 Math::Vector3 Stage::oldRoomPos = Stage::nowRoom;
 Math::Vector3 Stage::moveDir = { 0.0f, 0.0f, 0.0f };
 Scroll Stage::scroll = {};
+bool Stage::oldScrollFlag = false;
 
 Stage::Stage()
 {
@@ -57,6 +58,41 @@ void Stage::Update()
 		}
 	}
 
+	if (scroll.GetFlag() == false && oldScrollFlag)
+	{
+		const int playerInitPos = rooms[nowRoom].GetBlockManager()->GetPlayerInitPos();
+		const int playerInitPosX = playerInitPos % BlockManager::STAGE_WIDTH;
+		const int playerInitPosY = playerInitPos / BlockManager::STAGE_WIDTH;
+
+		if (playerInitPosX <= 8.0f && playerInitPosX >= 6.0f)
+		{
+			if ((playerInitPosY < 0.0f) &&
+				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::CLOSE))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::TOP).CloseEaseInit();
+			}
+			else if ((playerInitPosY >= BlockManager::STAGE_HEIGHT - 1.0f) &&
+					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::CLOSE))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::BOTTOM).CloseEaseInit();
+			}
+		}
+		else if (playerInitPosY <= 4.0f && playerInitPosY >= 2.0f)
+		{
+			if ((playerInitPosX < 0.0f) &&
+				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::CLOSE))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::LEFT).CloseEaseInit();
+			}
+			else if ((playerInitPosX >= BlockManager::STAGE_WIDTH - 2.0f) &&
+					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::CLOSE))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::RIGHT).CloseEaseInit();
+			}
+		}
+	}
+
+	oldScrollFlag = scroll.GetFlag();
 	scroll.ScrollUpdate(0.1f);
 	if (scroll.GetFlag())
 	{
@@ -456,6 +492,7 @@ int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 		rooms[nowRoom].GetBlockManager()->MapInit();
 	}
 
+	oldScrollFlag = scroll.GetFlag();
 	scroll.ScrollStart();
 	return 0;
 }

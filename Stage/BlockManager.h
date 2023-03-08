@@ -118,6 +118,7 @@ public: //メンバ関数
 	/// <returns> プレイヤーが踏んでいるブロックの要素番号 </returns>
 	int GetSurroundingBlock(int radius, TypeId* surroundingBlockType) const;
 
+	const int GetPlayerInitPos() const { return playerInitPos; }
 	bool IsPlayerMove() { return isPlayerMove; }
 private:
 	// プレイヤーの押し戻し処理

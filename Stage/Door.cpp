@@ -8,7 +8,9 @@ int debugTex = FUNCTION_ERROR;
 int entranceLight = FUNCTION_ERROR;
 }
 
-float Door::DOOR_WIDTH = 3.0f;
+const float Door::DOOR_WIDTH = 3.0f;
+const float Door::DEFAULT_DOOR_POS = 0.0f;
+const float Door::DOWN_DOOR_POS = 2.0f;
 DrawPolygon* Door::draw = nullptr;
 int Door::door_obj = FUNCTION_ERROR;
 int Door::keyDoor = FUNCTION_ERROR;
@@ -60,14 +62,29 @@ void Door::Init(const Vector3& pos, const Vector3& size, DoorStatus status)
 
 	if (this->status == DoorStatus::OPEN)
 	{
-		this->pos.z = 2.0f;
+		this->pos.z = DOWN_DOOR_POS;
+	}
+	else
+	{
+		this->pos.z = DEFAULT_DOOR_POS;
 	}
 }
 
 void Door::OpenEaseInit()
 {
-	Vector3 start = Vector3(pos.x, pos.y, 0.0f);
-	Vector3 end = Vector3(pos.x, pos.y, 2.0f);
+	Vector3 start = Vector3(pos.x, pos.y, DEFAULT_DOOR_POS);
+	Vector3 end = Vector3(pos.x, pos.y, DOWN_DOOR_POS);
+
+	ease.isAlive = true;
+	ease.time = 0.0f;
+	ease.start = start;
+	ease.end = end;
+}
+
+void Door::CloseEaseInit()
+{
+	Vector3 start = Vector3(pos.x, pos.y, DOWN_DOOR_POS);
+	Vector3 end = Vector3(pos.x, pos.y, DEFAULT_DOOR_POS);
 
 	ease.isAlive = true;
 	ease.time = 0.0f;
@@ -119,7 +136,7 @@ void Door::Draw(const Vector3& offset)
 				   DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f), debugTex);
 		break;
 	case DoorStatus::OPEN:
-		if (pos.z < 2.0f)
+		if (pos.z < DOWN_DOOR_POS)
 		{
 			draw->Draw(door_obj, pos + offset, Identity(), size, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 					   debugTex);
@@ -172,7 +189,7 @@ void Door::KeyOpen()
 	if (status != DoorStatus::KEY_CLOSE) return;
 
 	status = DoorStatus::OPEN;
-	pos.z = 2.0f;
+	pos.z = DOWN_DOOR_POS;
 }
 
 void Door::BreakWall()
@@ -180,5 +197,5 @@ void Door::BreakWall()
 	if (status != DoorStatus::BREAK_WALL) return;
 
 	status = DoorStatus::OPEN;
-	pos.z = 2.0f;
+	pos.z = DOWN_DOOR_POS;
 }

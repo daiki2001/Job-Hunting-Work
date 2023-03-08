@@ -27,17 +27,12 @@ public: //定数
 	static const Vector3 DOWN_FLOOR; //下の階
 
 public: //サブクラス
-	struct Room
-	{
-		Area area = {}; //部屋の情報
-		int connection[4] = { -1, -1, -1, -1 }; //どの部屋と繋がっているか
-	};
 
 public: //静的メンバ変数
 	static Scroll scroll;
+	static bool oldScrollFlag;
 private:
 	static DrawPolygon* draw;
-	static Player* player;         //プレイヤー
 	static std::map<Vector3, Area> rooms; //各部屋の情報
 	static Vector3 nowRoom;    //プレイヤーが現在いる部屋
 	static Vector3 oldRoomPos; //プレイヤーが一つ前にいた部屋

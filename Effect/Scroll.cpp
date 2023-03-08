@@ -15,9 +15,9 @@ void Scroll::ScrollStart()
 
 void Scroll::ScrollUpdate(float addTime)
 {
-	if (isScroll == false) { return; }
+	if (isScroll == false) return;
 
 	time = Clamp(time + addTime, 1.0f, 0.0f);
 
-	if (time >= 1.0f) { isScroll = false; }
+	if (time >= 1.0f) isScroll = false;
 }

@@ -121,6 +121,8 @@ public: //メンバ関数
 	const int GetPlayerInitPos() const { return playerInitPos; }
 	bool IsPlayerMove() { return isPlayerMove; }
 private:
+	// プレイヤーの前のブロックを取得する
+	int GetPlayerFrontBlock(int playerPos) const;
 	// プレイヤーの押し戻し処理
 	void PlayerPushBack(int index) const;
 	// スイッチが押された時の処理

@@ -22,7 +22,9 @@ public: //サブクラス
 	};
 
 public: //定数
-	static float DOOR_WIDTH; //ドアの横幅
+	static const float DOOR_WIDTH; //ドアの横幅
+	static const float DEFAULT_DOOR_POS; //ドアが閉じている時のz軸の座標
+	static const float DOWN_DOOR_POS;    //ドアが開いている時のz軸の座標
 
 private: //静的メンバ変数
 	static DrawPolygon* draw;
@@ -50,6 +52,7 @@ public: //メンバ関数
 	void Draw(const Vector3& offset);
 
 	void OpenEaseInit();
+	void CloseEaseInit();
 	void EaseUpdate();
 
 	void Open();

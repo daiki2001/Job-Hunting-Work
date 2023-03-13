@@ -144,14 +144,26 @@ void BlockManager::Update()
 	}
 	isPlayerMove = ((playerPos == playerInitPos) == false);
 
+	int frontBlock = GetPlayerFrontBlock(playerPos);
+	if (frontBlock == FUNCTION_ERROR) frontBlock = playerPos;
+	if (blocks[frontBlock].typeId == TypeId::MOVE_BLOCK)
+	{
+		if (GameInput::Get()->DecisionTrigger())
+		{
+			PushBlock(frontBlock);
+		}
+		else
+		{
+			PlayerPushBack(playerPos);
+		}
+	}
+	else
+	{
+		PlayerPushBack(playerPos);
+	}
+
 	switch (playerSurroundingsBlock[playerBlock])
 	{
-	case TypeId::WALL:
-	case TypeId::SWITCH_BLOCK:
-	case TypeId::NOT_SWITCH_BLOCK:
-	case TypeId::HOLE:
-		PlayerPushBack(playerPos);
-		break;
 	case TypeId::SWITCH:
 		if (playerPos == oldPos) break;
 
@@ -177,16 +189,6 @@ void BlockManager::Update()
 			blocks[playerPos].typeId = TypeId::NONE;
 		}
 		break;
-	case TypeId::MOVE_BLOCK:
-		if (GameInput::Get()->DecisionTrigger())
-		{
-			PushBlock(playerPos);
-		}
-		else
-		{
-			PlayerPushBack(playerPos);
-		}
-		break;
 	case TypeId::UP_STAIRS:
 		step = Step::UP;
 		break;
@@ -194,6 +196,11 @@ void BlockManager::Update()
 		step = Step::DOWN;
 		break;
 	case TypeId::NONE:
+	case TypeId::WALL:
+	case TypeId::MOVE_BLOCK:
+	case TypeId::SWITCH_BLOCK:
+	case TypeId::NOT_SWITCH_BLOCK:
+	case TypeId::HOLE:
 	default:
 		step = Step::STAY;
 		break;
@@ -311,6 +318,7 @@ void BlockManager::Reset()
 		}
 	}
 
+	playerInitPos = FUNCTION_ERROR;
 	isBlockSwitch = false;
 	isGoal = false;
 }
@@ -431,23 +439,81 @@ void BlockManager::MoveArea()
 
 void BlockManager::PlayerPushBack(int index) const
 {
-	float a = 0;
+	static TypeId hitBlock[] =
+	{
+		TypeId::WALL,
+		TypeId::MOVE_BLOCK,
+		TypeId::SWITCH_BLOCK,
+		TypeId::NOT_SWITCH_BLOCK,
+		TypeId::HOLE,
+	};
+
+	int blockIndex = index;
+	Vector3 pushDistanse = Vector3::Zero();
 	switch (player->GetDirection())
 	{
 	case Player::Direction::LEFT:
-		player->pos.x += 1.0f - (player->pos.x - blocks[index].pos.x);
+		blockIndex -= 1;
+		if (blockIndex < 0) return; //場外判定
+		pushDistanse.x += 1.0f - (player->pos.x - blocks[blockIndex].pos.x);
 		break;
 	case Player::Direction::RIGHT:
-		player->pos.x -= 1.0f + (player->pos.x - blocks[index].pos.x);
+		pushDistanse.x -= 1.0f + (player->pos.x - blocks[blockIndex].pos.x);
 		break;
 	case Player::Direction::TOP:
-		player->pos.y -= 1.0f + (player->pos.y - blocks[index].pos.y);
+		blockIndex -= STAGE_WIDTH;
+		if (blockIndex < 0) return; //場外判定
+		pushDistanse.y -= 1.0f + (player->pos.y - blocks[blockIndex].pos.y);
 		break;
 	case Player::Direction::BOTTOM:
-		player->pos.y += 1.0f - (player->pos.y - blocks[index].pos.y);
+		pushDistanse.y += 1.0f - (player->pos.y - blocks[blockIndex].pos.y);
 		break;
 	default:
 		break;
+	}
+
+	bool isHitBlock = false;
+	for (auto i : hitBlock)
+	{
+		if (i == blocks[blockIndex].typeId)
+		{
+			isHitBlock = true;
+			break;
+		}
+	}
+
+	if (isHitBlock == false) return;
+
+	static const Vector3 halfBlockSize = Vector3(0.5f, -0.5f, 0.5f);
+	static const Vector3 LeftBlock = Vector3(-1.0f, 0.0f, 0.0f);
+	static const Vector3 RightBlock = Vector3(1.0f, 0.0f, 0.0f);
+	static const Vector3 UpBlock = Vector3(0.0f, 1.0f, 0.0f);
+	static const Vector3 DownBlock = Vector3(0.0f, -1.0f, 0.0f);
+
+	Vector3 playerSize = {};
+
+	if ((player->GetDirection() == Player::Direction::TOP) || (player->GetDirection() == Player::Direction::BOTTOM))
+	{
+		playerSize = Player::COLLISION_SIZE / 2.0f;
+	}
+	else
+	{
+		playerSize = Vector3(Player::COLLISION_SIZE.y, Player::COLLISION_SIZE.x, Player::COLLISION_SIZE.z) / 2.0f;
+	}
+	playerSize.y *= -1.0f;
+
+	bool isRight = player->GetDirection() == Player::Direction::RIGHT;
+	bool isBottom = player->GetDirection() == Player::Direction::BOTTOM;
+	Vector3 correction = LeftBlock * isRight + UpBlock * isBottom; //判定補正
+
+	// 当たり判定
+	if (Collision::IsAABBToAABBCollision(
+		blocks[blockIndex].pos - halfBlockSize + correction,
+		blocks[blockIndex].pos + halfBlockSize + correction,
+		player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f),
+		player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f)))
+	{
+		player->pos += pushDistanse;
 	}
 }
 
@@ -543,25 +609,14 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	const int size = (radius * 2 + 1) * (radius * 2 + 1);
 	std::vector<int> surroundingBlock = {};
 	int playerPos = -1;
-	Vector3 playerSize = {};
-
-	if ((player->GetDirection() == Player::Direction::TOP) || (player->GetDirection() == Player::Direction::BOTTOM))
-	{
-		playerSize = Player::COLLISION_SIZE / 2.0f;
-	}
-	else
-	{
-		playerSize = Vector3(Player::COLLISION_SIZE.y, Player::COLLISION_SIZE.x, Player::COLLISION_SIZE.z) / 2.0f;
-	}
-	playerSize.y *= -1.0f;
 
 	// 場外判定
 	if (Collision::IsAABBToAABBCollision(
 		blocks[0].pos - halfBlockSize,
 		blocks[0].pos + halfBlockSize +
 		Vector3(STAGE_WIDTH - 1.0f, -(STAGE_HEIGHT - 1.0f), 0.0f),
-		player->pos - playerSize,
-		player->pos + playerSize) == false)
+		player->pos,
+		player->pos) == false)
 	{
 		for (int i = 0; i < size; i++)
 		{
@@ -592,8 +647,8 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 		if (Collision::IsAABBToAABBCollision(
 			blocks[i].pos - halfBlockSize + correction,
 			blocks[i].pos + halfBlockSize + correction,
-			player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius),
-			player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)))
+			player->pos - Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius),
+			player->pos + Vector3(1.0f, -1.0f, 0.0f) * static_cast<float>(radius)))
 		{
 			surroundingBlock[j++] = i;
 		}
@@ -623,4 +678,27 @@ int BlockManager::GetSurroundingBlock(int radius, TypeId* surroundingBlockType) 
 	}
 
 	return playerPos;
+}
+
+int BlockManager::GetPlayerFrontBlock(int playerPos) const
+{
+	int result = playerPos;
+
+	switch (player->GetDirection())
+	{
+	case Player::Direction::LEFT:
+		result -= 1;
+		if (result < 0) return FUNCTION_ERROR; //場外判定
+		break;
+	case Player::Direction::TOP:
+		result -= STAGE_WIDTH;
+		if (result < 0) return FUNCTION_ERROR; //場外判定
+		break;
+	case Player::Direction::RIGHT:
+	case Player::Direction::BOTTOM:
+	default:
+		break;
+	}
+
+	return result;
 }

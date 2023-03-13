@@ -67,12 +67,12 @@ void Stage::Update()
 		if (playerInitPosX <= 8.0f && playerInitPosX >= 6.0f)
 		{
 			if ((playerInitPosY < 0.0f) &&
-				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::CLOSE))
+				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::WALL))
 			{
 				rooms[nowRoom].GetDoor(Area::DoorNum::TOP).CloseEaseInit();
 			}
 			else if ((playerInitPosY >= BlockManager::STAGE_HEIGHT - 1.0f) &&
-					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::CLOSE))
+					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::WALL))
 			{
 				rooms[nowRoom].GetDoor(Area::DoorNum::BOTTOM).CloseEaseInit();
 			}
@@ -80,12 +80,12 @@ void Stage::Update()
 		else if (playerInitPosY <= 4.0f && playerInitPosY >= 2.0f)
 		{
 			if ((playerInitPosX < 0.0f) &&
-				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::CLOSE))
+				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::WALL))
 			{
 				rooms[nowRoom].GetDoor(Area::DoorNum::LEFT).CloseEaseInit();
 			}
 			else if ((playerInitPosX >= BlockManager::STAGE_WIDTH - 2.0f) &&
-					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::CLOSE))
+					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::WALL))
 			{
 				rooms[nowRoom].GetDoor(Area::DoorNum::RIGHT).CloseEaseInit();
 			}

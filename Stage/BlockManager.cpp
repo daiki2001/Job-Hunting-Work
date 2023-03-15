@@ -68,7 +68,7 @@ void BlockManager::Init(DrawPolygon* const draw)
 #if _DEBUG
 	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
 #else
-	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false);
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), Vector3(0.985f, 0.985f, 1.0f));
 #endif // !_DEBUG
 	
 	blockType.push_back(BlockType(TypeId::SWITCH_BLOCK));
@@ -267,13 +267,13 @@ void BlockManager::Draw(const Vector3& offset)
 	};
 
 	bool isSkip = false;
-	for (size_t i = 0; i < blocks.size(); i++)
+	for (auto& i : blocks)
 	{
 		// ブロックの描画
 		isSkip = false;
 		for (auto j : blockExclude)
 		{
-			if (blocks[i].typeId == j)
+			if (i.typeId == j)
 			{
 				isSkip = true;
 				break; //ヒットした場合、それ以降はループを回す必要が無い
@@ -282,14 +282,14 @@ void BlockManager::Draw(const Vector3& offset)
 
 		if (isSkip == false)
 		{
-			blockType[blocks[i].typeId].Draw(blocks[i].pos + offset);
+			blockType[i.typeId].Draw(i.pos + offset);
 		}
 
 		// 床の描画
 		isSkip = false;
 		for (auto j : floorExclude)
 		{
-			if (blocks[i].typeId == j)
+			if (i.typeId == j)
 			{
 				isSkip = true;
 				break; //ヒットした場合、それ以降はループを回す必要が無い
@@ -297,7 +297,7 @@ void BlockManager::Draw(const Vector3& offset)
 		}
 		if (isSkip == false)
 		{
-			BlockType::FloorDraw(blocks[i].initPos + offset);
+			BlockType::FloorDraw(i.initPos + offset);
 		}
 	}
 }
@@ -311,9 +311,9 @@ void BlockManager::Reset()
 	}
 	initPos.clear();
 
-	for (size_t i = 0; i < blocks.size(); i++)
+	for (auto& i : blocks)
 	{
-		if (blocks[i].typeId == TypeId::SWITCH || blocks[i].typeId == TypeId::MOVE_BLOCK)
+		if (i.typeId == TypeId::SWITCH || i.typeId == TypeId::MOVE_BLOCK)
 		{
 			isSwitch = false;
 			break;
@@ -359,9 +359,9 @@ void BlockManager::MapInit()
 
 int BlockManager::CreateBlock(TypeId typeId)
 {
-	for (size_t i = 0; i < blockType.size(); i++)
+	for (auto& i : blockType)
 	{
-		if (typeId != blockType[i].GetId())
+		if (typeId != i.GetId())
 		{
 			continue;
 		}
@@ -450,47 +450,84 @@ void BlockManager::PlayerPushBack(int index) const
 		TypeId::HOLE,
 	};
 
-	int blockIndex = index;
+	int frontBlock = index; //自機から見て前にあるブロックのインデックス
+	int frontLeftBlock = index; //自機から見て左前にあるブロックのインデックス
+	int frontRightBlock = index; //自機から見て右前にあるブロックのインデックス
 	Vector3 pushDistanse = Vector3::Zero();
 	switch (player->GetDirection())
 	{
 	case Player::Direction::LEFT:
-		blockIndex -= 1;
-		if (blockIndex < 0) return; //場外判定
-		pushDistanse.x += 1.0f - (player->pos.x - blocks[blockIndex].pos.x);
+		frontBlock -= 1;
+		if (frontBlock < 0) return; //場外判定
+
+		// 自機から見て斜め前にあるブロックの位置の計算
+		frontLeftBlock = frontBlock + STAGE_WIDTH;
+		frontRightBlock = frontBlock - STAGE_WIDTH;
+		if (frontLeftBlock / STAGE_WIDTH >= STAGE_HEIGHT) frontLeftBlock = FUNCTION_ERROR;
+		if (frontRightBlock < 0) frontRightBlock = FUNCTION_ERROR;
+
+		pushDistanse.x += 1.0f - (player->pos.x - blocks[frontBlock].pos.x);
 		break;
 	case Player::Direction::RIGHT:
-		pushDistanse.x -= 1.0f + (player->pos.x - blocks[blockIndex].pos.x);
+		// 自機から見て斜め前にあるブロックの位置の計算
+		frontLeftBlock = frontBlock - STAGE_WIDTH;
+		frontRightBlock = frontBlock + STAGE_WIDTH;
+		if (frontLeftBlock < 0) frontLeftBlock = FUNCTION_ERROR;
+		if (frontRightBlock / STAGE_WIDTH >= STAGE_HEIGHT) frontRightBlock = FUNCTION_ERROR;
+
+		pushDistanse.x -= 1.0f + (player->pos.x - blocks[frontBlock].pos.x);
 		break;
 	case Player::Direction::TOP:
-		blockIndex -= STAGE_WIDTH;
-		if (blockIndex < 0) return; //場外判定
-		pushDistanse.y -= 1.0f + (player->pos.y - blocks[blockIndex].pos.y);
+		frontBlock -= STAGE_WIDTH;
+		if (frontBlock < 0) return; //場外判定
+
+		// 自機から見て斜め前にあるブロックの位置の計算
+		frontLeftBlock = frontBlock - 1;
+		frontRightBlock = frontBlock + 1;
+		if (frontLeftBlock < 0) frontLeftBlock = FUNCTION_ERROR;
+		if (frontRightBlock >= blocks.size()) frontRightBlock = FUNCTION_ERROR;
+
+		pushDistanse.y -= 1.0f + (player->pos.y - blocks[frontBlock].pos.y);
 		break;
 	case Player::Direction::BOTTOM:
-		pushDistanse.y += 1.0f - (player->pos.y - blocks[blockIndex].pos.y);
+		// 自機から見て斜め前にあるブロックの位置の計算
+		frontLeftBlock = frontBlock + 1;
+		frontRightBlock = frontBlock - 1;
+		if (frontLeftBlock >= blocks.size()) frontLeftBlock = FUNCTION_ERROR;
+		if (frontRightBlock < 0) frontRightBlock = FUNCTION_ERROR;
+
+		pushDistanse.y += 1.0f - (player->pos.y - blocks[frontBlock].pos.y);
 		break;
 	default:
 		break;
 	}
 
 	bool isHitBlock = false;
+	bool frontBlockIsHit = false; //自機から見て前にあるブロックが壁かどうか
+	bool frontLeftBlockIsHit = false; //自機から見て左前にあるブロックが壁かどうか
+	bool frontRightBlockIsHit = false; //自機から見て右前にあるブロックが壁かどうか
+
 	for (auto i : hitBlock)
 	{
-		if (i == blocks[blockIndex].typeId)
+		frontBlockIsHit |= (i == blocks[frontBlock].typeId);
+		frontLeftBlockIsHit |=
+			(frontLeftBlock != FUNCTION_ERROR && i == blocks[frontLeftBlock].typeId);
+		frontRightBlockIsHit |=
+			(frontRightBlock != FUNCTION_ERROR && i == blocks[frontRightBlock].typeId);
+
+		if (frontBlockIsHit || frontLeftBlockIsHit || frontRightBlockIsHit)
 		{
 			isHitBlock = true;
-			break;
 		}
 	}
 
 	if (isHitBlock == false) return;
 
 	static const Vector3 halfBlockSize = Vector3(0.5f, -0.5f, 0.5f);
-	static const Vector3 LeftBlock = Vector3(-1.0f, 0.0f, 0.0f);
-	static const Vector3 RightBlock = Vector3(1.0f, 0.0f, 0.0f);
-	static const Vector3 UpBlock = Vector3(0.0f, 1.0f, 0.0f);
-	static const Vector3 DownBlock = Vector3(0.0f, -1.0f, 0.0f);
+	static const Vector3 leftBlock = Vector3(-1.0f, 0.0f, 0.0f);
+	static const Vector3 rightBlock = Vector3(1.0f, 0.0f, 0.0f);
+	static const Vector3 upBlock = Vector3(0.0f, 1.0f, 0.0f);
+	static const Vector3 downBlock = Vector3(0.0f, -1.0f, 0.0f);
 
 	Vector3 playerSize = {};
 
@@ -506,14 +543,28 @@ void BlockManager::PlayerPushBack(int index) const
 
 	bool isRight = player->GetDirection() == Player::Direction::RIGHT;
 	bool isBottom = player->GetDirection() == Player::Direction::BOTTOM;
-	Vector3 correction = LeftBlock * isRight + UpBlock * isBottom; //判定補正
-
+	Vector3 correction = leftBlock * isRight + upBlock * isBottom; //判定補正
+	
 	// 当たり判定
-	if (Collision::IsAABBToAABBCollision(
-		blocks[blockIndex].pos - halfBlockSize + correction,
-		blocks[blockIndex].pos + halfBlockSize + correction,
-		player->pos - playerSize - Vector3(1.0f, -1.0f, 0.0f),
-		player->pos + playerSize + Vector3(1.0f, -1.0f, 0.0f)))
+	bool isHit = frontBlockIsHit && 
+		Collision::IsAABBToAABBCollision(
+			blocks[frontBlock].pos - halfBlockSize + correction,
+			blocks[frontBlock].pos + halfBlockSize + correction,
+			player->pos - playerSize,
+			player->pos + playerSize);
+	isHit |= frontLeftBlockIsHit && 
+		Collision::IsAABBToAABBCollision(
+			blocks[frontLeftBlock].pos - halfBlockSize + correction,
+			blocks[frontLeftBlock].pos + halfBlockSize + correction,
+			player->pos - playerSize,
+			player->pos + playerSize);
+	isHit |= frontRightBlockIsHit && 
+		Collision::IsAABBToAABBCollision(
+			blocks[frontRightBlock].pos - halfBlockSize + correction,
+			blocks[frontRightBlock].pos + halfBlockSize + correction,
+			player->pos - playerSize,
+			player->pos + playerSize);
+	if (isHit)
 	{
 		player->pos += pushDistanse;
 	}

@@ -1,4 +1,5 @@
 ﻿#include "BlockType.h"
+#include "BlockManager.h"
 
 const float BlockType::BLOCK_SIZE = 1.0f;
 const float BlockType::BLOCK_HEIGHT = 1.5f;
@@ -7,6 +8,8 @@ const std::string BlockType::blockResourcesDir = "./Resources/Game/Block/";
 DrawPolygon* BlockType::draw = nullptr;
 int BlockType::floorGraph = FUNCTION_ERROR;
 int BlockType::floorObj = FUNCTION_ERROR;
+int BlockType::switchBlock = FUNCTION_ERROR;
+int BlockType::blueSwitchBlock = FUNCTION_ERROR;
 
 BlockType::BlockType(int typeId) :
 	typeId(typeId),
@@ -36,6 +39,14 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 	if (floorObj == FUNCTION_ERROR)
 	{
 		floorObj = BlockType::draw->Create3Dbox(Vector3(BLOCK_SIZE, BLOCK_SIZE, FLOOR_HEIGHT));
+	}
+	if (switchBlock == FUNCTION_ERROR)
+	{
+		switchBlock = BlockType::draw->CreateOBJModel("./Resources/Game/Block/Switch.obj", "./Resources/Game/Block/");
+	}
+	if (blueSwitchBlock == FUNCTION_ERROR)
+	{
+		blueSwitchBlock = BlockType::draw->CreateOBJModel("./Resources/Game/Block/Switch_blue.obj", "./Resources/Game/Block/");
 	}
 }
 
@@ -111,7 +122,14 @@ void BlockType::Draw(const Vector3& offset) const
 	{
 		// 'graph'が'FUNCTION_ERROR'の時
 		DirectDrawing::ChangeMaterialShader();
-		draw->DrawOBJ(blockBox, offset, rotation, scale, color);
+		if (blockBox == switchBlock && BlockManager::GetBlockSwitch())
+		{
+			draw->DrawOBJ(blueSwitchBlock, offset, rotation, scale, color);
+		}
+		else
+		{
+			draw->DrawOBJ(blockBox, offset, rotation, scale, color);
+		}
 	}
 	else
 	{

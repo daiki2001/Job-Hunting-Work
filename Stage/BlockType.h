@@ -21,6 +21,8 @@ private: //静的メンバ変数
 	
 	static int floorGraph; //床のテクスチャ
 	static int floorObj;   //床のオブジェクト
+	static int switchBlock;
+	static int blueSwitchBlock;
 	
 public: //静的メンバ関数
 	static void StaticInit(DrawPolygon* const draw);

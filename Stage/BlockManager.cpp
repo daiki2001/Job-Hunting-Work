@@ -24,6 +24,7 @@ BlockManager::BlockManager() :
 	initPos{},
 	step(Step::STAY),
 	playerInitPos(FUNCTION_ERROR),
+	isInitPlayer(true),
 	isPlayerMove(false)
 {
 }
@@ -138,9 +139,10 @@ void BlockManager::Update()
 	{
 		return;
 	}
-	if(playerInitPos == FUNCTION_ERROR)
+	if(isInitPlayer)
 	{
 		playerInitPos = playerPos;
+		isInitPlayer = false;
 	}
 	isPlayerMove = ((playerPos == playerInitPos) == false);
 

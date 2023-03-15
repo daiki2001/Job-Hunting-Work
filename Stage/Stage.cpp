@@ -494,6 +494,7 @@ int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 
 	oldScrollFlag = scroll.GetFlag();
 	scroll.ScrollStart();
+	rooms[nowRoom].GetBlockManager()->isInitPlayer = true;
 	return 0;
 }
 

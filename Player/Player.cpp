@@ -52,9 +52,12 @@ void Player::Update(const GameInput* const input)
 {
 	bomb.Update();
 
-	Move(input);
-	SelectAction(input);
-	Action(input);
+	if (stage->scroll.GetFlag() == false)
+	{
+		Move(input);
+		SelectAction(input);
+		Action(input);
+	}
 
 	MovingRoom();
 }

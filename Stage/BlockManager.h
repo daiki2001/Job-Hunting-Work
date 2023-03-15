@@ -64,7 +64,9 @@ public: //静的メンバ関数
 
 	static bool GetBlockSwitch() { return isBlockSwitch; }
 
-private: //メンバ変数
+public: //メンバ変数
+	bool isInitPlayer;
+private:
 	vector<BlockType> blockType;
 	vector<Block> blocks;
 	bool isSwitch;

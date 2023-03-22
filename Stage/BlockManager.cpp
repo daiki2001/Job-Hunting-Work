@@ -58,24 +58,36 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.push_back(BlockType(TypeId::KEY));
 	blockType.back().Create("key.obj",
 							Math::rotateZ(-Math::PI_F / 4),
-							scale_xyz(0.25f),
-							{ 1.0f, 1.0f, 0.0f, 1.0f });
+							Vector3::Scale_xyz(0.25f),
+							Color::AddAlphaValue(Color::YELLOW, 1.0f));
 
 	blockType.push_back(BlockType(TypeId::BOMB));
 	blockType.back().Create("Bomb.obj", Math::rotateY(Math::PI_F * 1.5f));
 
 	blockType.push_back(BlockType(TypeId::MOVE_BLOCK));
 #if _DEBUG
-	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()),
+							false,
+							Math::Identity(),
+							Vector3::Scale_xyz(1.0f),
+							Color::AddAlphaValue(Color::YELLOW, 1.0f));
 #else
 	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), Vector3(0.985f, 0.985f, 1.0f));
 #endif // !_DEBUG
-	
+
 	blockType.push_back(BlockType(TypeId::SWITCH_BLOCK));
-	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-	
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()),
+							false,
+							Math::Identity(),
+							Vector3::Scale_xyz(1.0f),
+							Color::AddAlphaValue(Color::RED, 1.0f));
+
 	blockType.push_back(BlockType(TypeId::NOT_SWITCH_BLOCK));
-	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()), false, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	blockType.back().Create(Parameter::Get(LoadGraph::WALL_BLOCK.c_str()),
+							false,
+							Math::Identity(),
+							Vector3::Scale_xyz(1.0f),
+							Color::AddAlphaValue(Color::BLUE, 1.0f));
 
 	blockType.push_back(BlockType(TypeId::HOLE));
 	blockType.back().Create();

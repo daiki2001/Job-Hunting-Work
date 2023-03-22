@@ -17,7 +17,7 @@ BlockType::BlockType(int typeId) :
 	blockBox(FUNCTION_ERROR),
 	rotation(Math::Identity()),
 	scale(1.0f, 1.0f, 1.0f),
-	color(1.0f, 1.0f, 1.0f, 1.0f)
+	color(Color::AddAlphaValue(Color::WHITE, 1.0f))
 {
 }
 
@@ -65,7 +65,7 @@ int BlockType::Create(const wchar_t* filename, const Matrix4& rotation, const Ve
 
 	if (blockBox == FUNCTION_ERROR)
 	{
-		blockBox = draw->Create3Dbox(scale_xyz(BLOCK_SIZE));
+		blockBox = draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
 	}
 
 	this->rotation = rotation;
@@ -105,7 +105,7 @@ int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const 
 
 		if (blockBox == FUNCTION_ERROR)
 		{
-			blockBox = draw->Create3Dbox(scale_xyz(BLOCK_SIZE));
+			blockBox = draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
 		}
 	}
 
@@ -121,15 +121,14 @@ void BlockType::Draw(const Vector3& offset) const
 	if (graph == FUNCTION_ERROR)
 	{
 		// 'graph'が'FUNCTION_ERROR'の時
-		DirectDrawing::ChangeMaterialShader();
+		int objIndex = blockBox;
 		if (blockBox == switchBlock && BlockManager::GetBlockSwitch())
 		{
-			draw->DrawOBJ(blueSwitchBlock, offset, rotation, scale, color);
+			objIndex = blueSwitchBlock;
 		}
-		else
-		{
-			draw->DrawOBJ(blockBox, offset, rotation, scale, color);
-		}
+
+		DirectDrawing::ChangeMaterialShader();
+		draw->DrawOBJ(objIndex, offset, rotation, scale, color);
 	}
 	else
 	{
@@ -144,5 +143,5 @@ void BlockType::FloorDraw(const Vector3& offset)
 	Vector3 floorPos = offset;
 	floorPos.z += (BLOCK_HEIGHT + FLOOR_HEIGHT) / 2.0f;
 	DirectDrawing::ChangeOBJShader();
-	draw->Draw(floorObj, floorPos, Math::Identity(), scale_xyz(1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), floorGraph);
+	draw->Draw(floorObj, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), floorGraph);
 }

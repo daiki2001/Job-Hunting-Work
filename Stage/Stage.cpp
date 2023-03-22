@@ -122,7 +122,7 @@ void Stage::Draw(int offsetX, int offsetY)
 	draw->DrawTextrue(
 		0.0f, 0.0f, static_cast<float>(winW), static_cast<float>(winH),
 		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f),
-		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
+		Color::AddAlphaValue(Color::BLACK, 0.5f));
 
 	rooms[nowRoom].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f });
 
@@ -175,7 +175,7 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 		static_cast<float>(winW) / 2.0f, static_cast<float>(winH) / 2.0f,
 		static_cast<float>(winW), static_cast<float>(winH),
 		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.5f, 0.5f),
-		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f));
+		Color::AddAlphaValue(Color::BLACK, 0.5f));
 
 	rooms[nowRoom].Draw(Vector3(
 		(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
@@ -590,7 +590,7 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale, DirectX::XMFLOAT2 scr
 						  0.0f,
 						  Parameter::Get("white1x1"),
 						  DirectX::XMFLOAT2(0.5f, 0.5f),
-						  (roomPos == nowRoom) ? DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, color.w) : color);
+						  (roomPos == nowRoom) ? Color::AddAlphaValue(Color::WHITE, color.w) : color);
 		if (rooms.find(roomPos + LEFT_ROOM) != rooms.end() &&
 			rooms[roomPos].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN &&
 			(rooms[roomPos + LEFT_ROOM].isAlive == true))

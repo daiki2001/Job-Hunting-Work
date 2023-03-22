@@ -279,7 +279,7 @@ int Area::WriteArea(FILE* fileHandle)
 
 void Area::DrawWall(const Vector3& offset)
 {
-	const Vector3 size = scale_xyz(WALL_SIZE);
+	const Vector3 size = Vector3::Scale_xyz(WALL_SIZE);
 
 	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
 	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);

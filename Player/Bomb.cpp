@@ -103,7 +103,7 @@ void Bomb::Draw(int offsetX, int offsetY)
 	DirectDrawing::ChangeOBJShader();
 	if (isBomber == false)
 	{
-		draw->Draw(object, pos, Math::Identity(), scale_xyz(0.5f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->Draw(object, pos, Math::Identity(), Vector3::Scale_xyz(0.5f), Color::AddAlphaValue(Color::WHITE, 1.0f),
 				   Parameter::Get(LoadGraph::BOMB.c_str()));
 	}
 }

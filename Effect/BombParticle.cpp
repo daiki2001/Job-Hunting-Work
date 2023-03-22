@@ -1,7 +1,6 @@
 ﻿#include "BombParticle.h"
 #include <random>
 #include "./Header/Parameter.h"
-#include "./Header/Error.h"
 
 const int BombParticle::MAX_TIME = 20;
 DrawPolygon* BombParticle::draw = nullptr;
@@ -76,7 +75,7 @@ void BombParticle::Draw(const Vector3& offset)
 			i.GetPos(),
 			Math::Identity(),
 			i.GetSize() * particleTime,
-			DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, particleTime),
+			Color::AddAlphaValue(Color::RED, particleTime),
 			Parameter::Get("white1x1"));
 	}
 }

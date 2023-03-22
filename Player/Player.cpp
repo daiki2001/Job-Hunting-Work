@@ -85,8 +85,8 @@ void Player::Draw(int offsetX, int offsetY)
 		object,
 		playerDrawPos,
 		Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
-		scale_xyz(1.0f / 256.0f),
-		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		Vector3::Scale_xyz(1.0f / 256.0f),
+		Color::AddAlphaValue(Color::BLACK, 1.0f)
 	);
 }
 

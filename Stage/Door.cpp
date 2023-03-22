@@ -119,7 +119,7 @@ void Door::Draw(const Vector3& offset)
 	switch (status)
 	{
 	case DoorStatus::CLOSE:
-		draw->Draw(door_obj, pos + offset, Identity(), size, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->Draw(door_obj, pos + offset, Identity(), size, Color::AddAlphaValue(Color::WHITE, 1.0f),
 				   debugTex);
 		break;
 	case DoorStatus::WALL:
@@ -133,12 +133,12 @@ void Door::Draw(const Vector3& offset)
 		break;
 	case DoorStatus::ENTRANCE:
 		draw->Draw(entranceLight, pos + offset, Identity(), Vector3(1.0f, 1.0f, 1.0f),
-				   DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f), debugTex);
+				   Color::AddAlphaValue(Color::WHITE, 0.5f), debugTex);
 		break;
 	case DoorStatus::OPEN:
 		if (pos.z < DOWN_DOOR_POS)
 		{
-			draw->Draw(door_obj, pos + offset, Identity(), size, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			draw->Draw(door_obj, pos + offset, Identity(), size, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					   debugTex);
 		}
 		else

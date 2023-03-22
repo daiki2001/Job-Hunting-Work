@@ -2,6 +2,7 @@
 #include "Particle.h"
 #include <vector>
 #include "./Header/DrawPolygon.h"
+#include "./Header/EngineGeneral.h"
 
 class BombParticle
 {

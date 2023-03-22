@@ -78,7 +78,7 @@ void SceneChangeAnimation::Draw()
 							  0.0f,
 							  Parameter::Get("white1x1"),
 							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+							  Color::AddAlphaValue(Color::BLACK, 1.0f));
 		}
 	}
 }

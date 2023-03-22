@@ -339,7 +339,7 @@ void StageEditorScene::Draw()
 				  FRAME_SIZE,
 				  angle,
 				  tex,
-				  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+				  Color::AddAlphaValue(Color::WHITE, 1.0f),
 				  isSelect);
 
 		if (stage->GetArea().GetRoute()[i] == Area::NONE_LOST_FOREST)
@@ -350,28 +350,28 @@ void StageEditorScene::Draw()
 
 	if (isRoute == false)
 	{
-		draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 						 "Move:WASD");
 	}
-	draw->DrawString(0.0f, winH - (32.0f * (5.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (5.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Select:Arrow");
 	if (isRoute)
 	{
-		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 						 "Change:Space");
 	}
 	else
 	{
-		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 						 "Decision:Space");
 	}
-	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Save:Ctrl + S");
-	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Redo:Ctrl + Z");
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Undo:Ctrl + Y");
-	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Title:F1");
 }
 
@@ -641,12 +641,12 @@ void StageEditorScene::DrawUIBox(float posX, float posY, float size, float angle
 void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 {
 	int graphHandle = FUNCTION_ERROR;
-	XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	DirectX::XMFLOAT3 color = Color::WHITE;
 	bool isSelect = false;
 
 	for (int i = 0; i < BlockManager::TypeId::MAX; i++)
 	{
-		color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		color = Color::WHITE;
 		isSelect = (isRoute == false) && (i == blockIndex);
 
 		switch (i)
@@ -655,13 +655,13 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 			graphHandle = cross;
 			break;
 		case BlockManager::TypeId::SWITCH_BLOCK:
-			color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			color = Color::RED;
 			goto WALL_GRAPH;
 		case BlockManager::TypeId::NOT_SWITCH_BLOCK:
-			color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+			color = Color::BLUE;
 			goto WALL_GRAPH;
 		case BlockManager::TypeId::MOVE_BLOCK:
-			color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+			color = Color::YELLOW;
 		case BlockManager::TypeId::WALL:
 		WALL_GRAPH:
 			graphHandle = Parameter::Get(LoadGraph::WALL_BLOCK.c_str());
@@ -696,7 +696,7 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 				  FRAME_SIZE,
 				  0.0f,
 				  graphHandle,
-				  color,
+				  Color::AddAlphaValue(color, 1.0f),
 				  isSelect);
 	}
 }
@@ -739,7 +739,7 @@ void StageEditorScene::DrawSelectDoorUI(float offsetX, float offsetY)
 				  FRAME_SIZE,
 				  0.0f,
 				  graphHandle,
-				  XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+				  Color::AddAlphaValue(Color::WHITE, 1.0f),
 				  isSelect);
 	}
 }

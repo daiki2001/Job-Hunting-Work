@@ -173,17 +173,6 @@ void StageSelectScene::Draw()
 					  XMFLOAT2(0.0f, 0.0f));
 	if (stageIndex == StageStatus::TITLE)
 	{
-		//draw->DrawTextrue(winW / 2.0f,
-		//				  100.0f,
-		//				  100.0f,
-		//				  404.0f,
-		//				  0.0f,
-		//				  Parameter::Get("white1x1"),
-		//				  XMFLOAT2(0.5f, 0.0f),
-		//				  XMFLOAT4(255.0f / 255.0f,
-		//						   243.0f / 255.0f,
-		//						   146.0f / 255.0f,
-		//						   1.0f));
 		draw->DrawTextrue(winW / 2.0f,
 						  100.0f,
 						  336.0f,
@@ -198,7 +187,7 @@ void StageSelectScene::Draw()
 		draw->DrawOBJ(cave,
 					  Vector3(0.0f, 0.0f, 30.0f),
 					  Math::rotateY(90.0f * Math::DEGREE_F),
-					  scale_xyz(7.0f));
+					  Vector3::Scale_xyz(7.0f));
 		DirectDrawing::ChangeSpriteShader();
 		draw->DrawTextrue(winW / 2.0f,
 						  100.0f,
@@ -214,7 +203,7 @@ void StageSelectScene::Draw()
 		draw->DrawOBJ(cave,
 					  Vector3(0.0f, 0.0f, 30.0f),
 					  Math::rotateY(90.0f * Math::DEGREE_F),
-					  scale_xyz(7.0f));
+					  Vector3::Scale_xyz(7.0f));
 		DirectDrawing::ChangeSpriteShader();
 		draw->DrawTextrue(winW / 2.0f - 70.0f,
 						  100.0f,
@@ -257,5 +246,5 @@ void StageSelectScene::Draw()
 						  XMFLOAT2(0.5f, 0.5f));
 	}
 
-	draw->DrawString(winW / 2.0f - (4.0f * 9.0f * 4.0f), winH - 64.0f, 4.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), "Press Space");
+	draw->DrawString(winW / 2.0f - (4.0f * 9.0f * 4.0f), winH - 64.0f, 4.0f, Color::AddAlphaValue(Color::WHITE, 1.0f), "Press Space");
 }

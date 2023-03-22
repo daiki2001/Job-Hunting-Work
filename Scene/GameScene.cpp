@@ -122,21 +122,21 @@ void GameScene::Draw()
 	if (isClear)
 	{
 		draw->DrawTextrue(winW / 2.0f, winH / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,
-						  DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+						  DirectX::XMFLOAT2(0.5f, 0.5f), Color::AddAlphaValue(Color::BLUE, 1.0f));
 	}
 	else
 	{
 		const float inventoryScale = 1.5f;
 		player->DrawInventory(static_cast<int>(winW - 64.0f * inventoryScale), static_cast<int>(winH - 32.0f * inventoryScale), inventoryScale);
 
-		draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 						 "Move:WASD");
-		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 						 "ItemSelect:Arrow");
 	}
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Action:Space");
-	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					 "Title:F1");
 }
 

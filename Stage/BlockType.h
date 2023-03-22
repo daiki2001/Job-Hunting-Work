@@ -43,11 +43,11 @@ public: //メンバ関数
 
 	// 生成処理
 	int Create(const wchar_t* filename = nullptr, const Matrix4& rotation = Math::Identity(),
-			   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+			   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = Color::AddAlphaValue(Color::WHITE, 1.0f));
 	int Create(const char* filename, const Matrix4& rotation = Math::Identity(),
-			   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+			   const Vector3& scale = { 1.0f, 1.0f, 1.0f }, const XMFLOAT4& color = Color::AddAlphaValue(Color::WHITE, 1.0f));
 	int Create(int number, bool isObject, const Matrix4& rotation = Math::Identity(), const Vector3& scale = { 1.0f, 1.0f, 1.0f },
-					   const XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+					   const XMFLOAT4& color = Color::AddAlphaValue(Color::WHITE, 1.0f));
 	// 描画処理
 	void Draw(const Vector3& offset) const;
 

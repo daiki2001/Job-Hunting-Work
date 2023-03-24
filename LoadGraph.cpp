@@ -9,6 +9,7 @@ const std::string LoadGraph::BOMB = "Bomb";
 const std::string LoadGraph::ARROW = "Arrow";
 const std::string LoadGraph::UP_STAIRS = "UpStairs";
 const std::string LoadGraph::DOWN_STAIRS = "DownStairs";
+const std::string LoadGraph::TORCH = "Torch";
 
 const std::string LoadGraph::WALL_UI = "WallUI";
 const std::string LoadGraph::KEY_CLOSE = "Key_Close";
@@ -45,6 +46,7 @@ void LoadGraph::Load(DrawPolygon* const draw)
 	Parameter::Set(ARROW.c_str(), draw->LoadTextrue(L"./Resources/UI/Arrow.png"));
 	Parameter::Set(UP_STAIRS.c_str(), draw->LoadTextrue(L"./Resources/UI/UpStairs.png"));
 	Parameter::Set(DOWN_STAIRS.c_str(), draw->LoadTextrue(L"./Resources/UI/DownStairs.png"));
+	Parameter::Set(TORCH.c_str(), draw->LoadTextrue(L"./Resources/UI/Torch.png"));
 
 	Parameter::Set(WALL_UI.c_str(), draw->LoadTextrue(L"./Resources/UI/WallUI.png"));
 	Parameter::Set(KEY_CLOSE.c_str(), draw->LoadTextrue(L"./Resources/UI/KeyClose.png"));

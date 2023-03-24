@@ -102,9 +102,18 @@ void TitleScene::Draw()
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
 
+	// 3Dオブジェクト
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+}
+
+void TitleScene::BGDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
 	// 背景
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 	draw->DrawTextrue(
 		winW / 2.0f,
@@ -114,10 +123,15 @@ void TitleScene::Draw()
 		0.0f,
 		background
 	);
+}
 
-	// 3Dオブジェクト
+void TitleScene::UIDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
-	// 前景
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 	switch (buttonIndex)
 	{

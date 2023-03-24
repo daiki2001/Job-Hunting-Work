@@ -25,6 +25,8 @@ public: //メンバ関数
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+	void BGDraw() override;
+	void UIDraw() override;
 private:
 	void Reset();
 };

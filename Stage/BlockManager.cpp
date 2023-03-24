@@ -2,9 +2,11 @@
 #include "Area.h"
 #include "./Math/Collision/Collision.h"
 #include "./Header/DirectXInit.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
+DrawPolygon* BlockManager::draw = nullptr;
 Player* BlockManager::player = Player::Get();
 bool BlockManager::isBlockSwitch = false;
 
@@ -38,6 +40,7 @@ BlockManager::~BlockManager()
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
+	BlockManager::draw = draw;
 	BlockType::StaticInit(draw);
 
 	blockType.clear();
@@ -97,6 +100,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 	
 	blockType.push_back(BlockType(TypeId::DOWN_STAIRS));
 	blockType.back().Create();
+
+	blockType.push_back(BlockType(TypeId::TORCH));
+	blockType.back().Create("Torch.obj", Math::rotateX(Math::PI_F), Vector3::Scale_xyz(0.5f));
 }
 
 void BlockManager::EaseInit(vector<Block>& blocks)
@@ -215,6 +221,7 @@ void BlockManager::Update()
 	case TypeId::SWITCH_BLOCK:
 	case TypeId::NOT_SWITCH_BLOCK:
 	case TypeId::HOLE:
+	case TypeId::TORCH:
 	default:
 		step = Step::STAY;
 		break;
@@ -310,6 +317,11 @@ void BlockManager::Draw(const Vector3& offset)
 		if (isSkip == false)
 		{
 			BlockType::FloorDraw(i.initPos + offset);
+		}
+
+		if (i.typeId == TypeId::TORCH)
+		{
+			TorchLight(i.pos);
 		}
 	}
 }
@@ -460,6 +472,7 @@ void BlockManager::PlayerPushBack(int index) const
 		TypeId::SWITCH_BLOCK,
 		TypeId::NOT_SWITCH_BLOCK,
 		TypeId::HOLE,
+		TypeId::TORCH,
 	};
 
 	int frontBlock = index; //自機から見て前にあるブロックのインデックス
@@ -638,6 +651,40 @@ void BlockManager::PushBlock(int index)
 	blocks[index].ease.time = 0.0f;
 	blocks[index].ease.start = blocks[index].pos;
 	blocks[index].ease.end = blocks[nextBlock].pos;
+}
+
+void BlockManager::TorchLight(const Vector3& pos)
+{
+	static int plane = draw->CreateCircle(0.5f, 8);
+	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
+	/*
+	static auto shaderMgr = ShaderManager::Get();
+	// 各種シェーダーのコンパイルと読み込み
+	static int shader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "ObjectVS.hlsl").c_str(),
+												StringToWString(shadersDirectory + "ObjectPS.hlsl").c_str());
+
+	// 頂点レイアウト
+	static int inputLayout = shaderMgr->CreateInputLayout();
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
+	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+
+	static int graphicPipeline = shaderMgr->CreateGPipeline(shader, inputLayout);
+
+	// デスクリプタテーブルの設定
+	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {}; //デスクリプタテーブルの設定(シェーダリソース)
+	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+	// ルートパラメータの設定
+	CD3DX12_ROOT_PARAMETER rootparams[2]{}; //ルートパラメータの設定
+	rootparams[0].InitAsConstantBufferView(0);
+	rootparams[1].InitAsDescriptorTable(1, &descRangeSRV);
+
+	static int rootSignature = shaderMgr->CreateRootSignature(graphicPipeline, _countof(rootparams), rootparams);
+	static int pipelineState = shaderMgr->CreatePipelineState(graphicPipeline);
+	*/
+	DrawPolygon::ChangeOBJShader();
+	draw->Draw(plane, pos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 0.1f), graph);
 }
 
 int BlockManager::GetBlock(const Vector3& pos, int skipIndex)

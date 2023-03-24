@@ -27,6 +27,7 @@ public: //サブクラス
 		HOLE,             //穴
 		UP_STAIRS,        //上り階段
 		DOWN_STAIRS,      //下り階段
+		TORCH,            //松明
 		MAX               //TypeIdの上限(プログラム用)
 	};
 
@@ -55,6 +56,7 @@ public: //定数
 	static const size_t STAGE_HEIGHT = 7;
 	
 private: //静的メンバ変数
+	static DrawPolygon* draw;
 	static Player* player;
 	static bool isBlockSwitch;
 	
@@ -131,4 +133,6 @@ private:
 	void SwitchPush();
 	// 押せるブロックの処理
 	void PushBlock(int index);
+
+	void TorchLight(const Vector3& pos);
 };

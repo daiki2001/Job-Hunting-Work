@@ -30,7 +30,7 @@ void GameScene::Init()
 {
 	if (background == FUNCTION_ERROR)
 	{
-		background = draw->LoadTextrue((gameResourcesDir + L"background.png").c_str());
+		background = draw->LoadTextrue((gameResourcesDir + L"Floor.png").c_str());
 	}
 	if (clear == FUNCTION_ERROR)
 	{
@@ -104,8 +104,6 @@ void GameScene::Draw()
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
-	// 背景
-
 	// 3Dオブジェクト
 	if (stage->scroll.GetFlag())
 	{
@@ -116,9 +114,40 @@ void GameScene::Draw()
 		stage->Draw();
 	}
 	player->Draw();
+}
 
-	// 前景
+void GameScene::BGDraw()
+{
+	constexpr int TEX_SIZE = 64;
+
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
+
+	for (size_t y = 0; y < BlockManager::STAGE_HEIGHT; y++)
+	{
+		for (size_t x = 0; x < BlockManager::STAGE_WIDTH; x++)
+		{
+			draw->DrawTextrue(
+				static_cast<float>(x * TEX_SIZE),
+				static_cast<float>(y * TEX_SIZE),
+				static_cast<float>(TEX_SIZE),
+				static_cast<float>(TEX_SIZE),
+				0.0f,
+				background,
+				DirectX::XMFLOAT2(0.0f, 0.0f));
+		}
+	}
+}
+
+void GameScene::UIDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	DirectDrawing::ChangeSpriteShader();
+
 	if (isClear)
 	{
 		draw->DrawTextrue(winW / 2.0f, winH / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,

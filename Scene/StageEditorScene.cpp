@@ -26,7 +26,6 @@ StageEditorScene::StageEditorScene(SceneChanger* sceneChanger) :
 	isRoute(false),
 	routeIndex(0),
 	cursorState(CursorState::BLOCKS),
-	background(FUNCTION_ERROR),
 	cursor(FUNCTION_ERROR),
 	frame(FUNCTION_ERROR),
 	cross(FUNCTION_ERROR)
@@ -48,11 +47,6 @@ void StageEditorScene::Init()
 	LoadGraph::Get()->Load(draw);
 	stage->StaticInit(draw);
 
-	// 背景画像の読み込み
-	if (background == FUNCTION_ERROR)
-	{
-		background = draw->LoadTextrue((resourcesDir + L"./Game/background.png").c_str());
-	}
 	// カーソル画像の読み込み
 	if (cursor == FUNCTION_ERROR)
 	{
@@ -247,16 +241,20 @@ void StageEditorScene::Draw()
 	DirectXInit* w = DirectXInit::GetInstance();
 	const int winW = w->windowWidth;
 	const int winH = w->windowHeight;
-	const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f);
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
-	// 背景
-
 	// 3Dオブジェクト
 	stage->Draw();
+}
 
-	// 前景
+void StageEditorScene::UIDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	const int winW = w->windowWidth;
+	const int winH = w->windowHeight;
+
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 
 	// ブロック配置用カーソル
@@ -347,7 +345,6 @@ void StageEditorScene::Draw()
 			break;
 		}
 	}
-
 	if (isRoute == false)
 	{
 		draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
@@ -686,6 +683,9 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 			break;
 		case BlockManager::TypeId::DOWN_STAIRS:
 			graphHandle = Parameter::Get(LoadGraph::DOWN_STAIRS.c_str());
+			break;
+		case BlockManager::TypeId::TORCH:
+			graphHandle = Parameter::Get(LoadGraph::TORCH.c_str());
 			break;
 		default:
 			break;

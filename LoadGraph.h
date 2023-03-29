@@ -24,13 +24,16 @@ public: //定数
 	static const string ARROW;
 	static const string UP_STAIRS;
 	static const string DOWN_STAIRS;
+	static const string TORCH;
+	static const string TRIANGLE;
 
 	static const string WALL_UI;
 	static const string KEY_CLOSE;
 	static const string BREAK_WALL_UI;
 	static const string CREATE_ROOM;
 	
-	static const string TRIANGLE;
+	static const string KEYBOARD;
+	static const string PUSH_KEYBOARD;
 
 private: //メンバ変数
 	bool isLoad;

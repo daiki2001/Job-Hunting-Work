@@ -44,7 +44,6 @@ private: //メンバ変数
 
 	FuncRedoUndo redoUndo;
 
-	int background; //背景画像
 	int cursor; //カーソル画像
 	int frame; //フレーム画像
 	int cross; //×の画像
@@ -56,6 +55,7 @@ public: //メンバ関数
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+	void UIDraw() override;
 private:
 	// 配置されたブロックを消す
 	void EraseBlock();

@@ -40,14 +40,16 @@ void Item::DrawInfo(const char* type, int offsetX, int offsetY, float scale)
 
 	if (graph == FUNCTION_ERROR)
 	{
-		draw->DrawString(static_cast<float>(offsetX), static_cast<float>(offsetY), 2.0f * scale, Color::AddAlphaValue(Color::WHITE, 1.0f),
+		draw->DrawString(static_cast<float>(offsetX), static_cast<float>(offsetY), 2.0f * scale,
+						 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 						 "%sCount:%d", type, count);
 	}
 	else
 	{
 		draw->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY), 32.0f * scale, 32.0f * scale, 0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f));
 		draw->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY), 32.0f * scale, 32.0f * scale, 0.0f, graph, DirectX::XMFLOAT2(0.0f, 0.0f));
-		draw->DrawString(static_cast<float>(offsetX) + 32.0f * scale, static_cast<float>(offsetY), 2.0f * scale, Color::AddAlphaValue(Color::WHITE, 1.0f),
+		draw->DrawString(static_cast<float>(offsetX) + 32.0f * scale, static_cast<float>(offsetY), 2.0f * scale,
+						 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 						 ":%d", count);
 	}
 }

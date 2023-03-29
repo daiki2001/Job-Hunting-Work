@@ -2,11 +2,16 @@
 #include "Area.h"
 #include "./Math/Collision/Collision.h"
 #include "./Header/DirectXInit.h"
+#include "./ShaderMgr/ShaderManager.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
+DrawPolygon* BlockManager::draw = nullptr;
 Player* BlockManager::player = Player::Get();
 bool BlockManager::isBlockSwitch = false;
+ShaderManager* BlockManager::shaderMgr = ShaderManager::Get();
+PostEffect BlockManager::postEffect{};
+int BlockManager::torchLight = FUNCTION_ERROR;
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
@@ -38,6 +43,7 @@ BlockManager::~BlockManager()
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
+	BlockManager::draw = draw;
 	BlockType::StaticInit(draw);
 
 	blockType.clear();
@@ -97,6 +103,23 @@ void BlockManager::Init(DrawPolygon* const draw)
 	
 	blockType.push_back(BlockType(TypeId::DOWN_STAIRS));
 	blockType.back().Create();
+
+	blockType.push_back(BlockType(TypeId::TORCH));
+	blockType.back().Create("Torch.obj", Math::rotateX(Math::PI_F), Vector3::Scale_xyz(0.5f));
+
+	if (torchLight == FUNCTION_ERROR)
+	{
+		postEffect.Init();
+		int shader = shaderMgr->CreateShader(shaderMgr->GetShader(DrawPolygon::GetSpriteShader()).GetVertex(),
+											 StringToWString(shadersDirectory + "TorchShader.hlsl").c_str());
+		int gPipeline = shaderMgr->CreateGPipeline(shader, postEffect.GetInputLayout());
+		for (size_t i = 0; i < 5; i++)
+		{
+			shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i)).pRootSignature =
+				postEffect.GetRootSignature();
+		}
+		torchLight = shaderMgr->CreatePipelineState(gPipeline);
+	}
 }
 
 void BlockManager::EaseInit(vector<Block>& blocks)
@@ -215,6 +238,7 @@ void BlockManager::Update()
 	case TypeId::SWITCH_BLOCK:
 	case TypeId::NOT_SWITCH_BLOCK:
 	case TypeId::HOLE:
+	case TypeId::TORCH:
 	default:
 		step = Step::STAY;
 		break;
@@ -460,6 +484,7 @@ void BlockManager::PlayerPushBack(int index) const
 		TypeId::SWITCH_BLOCK,
 		TypeId::NOT_SWITCH_BLOCK,
 		TypeId::HOLE,
+		TypeId::TORCH,
 	};
 
 	int frontBlock = index; //自機から見て前にあるブロックのインデックス
@@ -638,6 +663,18 @@ void BlockManager::PushBlock(int index)
 	blocks[index].ease.time = 0.0f;
 	blocks[index].ease.start = blocks[index].pos;
 	blocks[index].ease.end = blocks[nextBlock].pos;
+}
+
+void BlockManager::TorchLight(const Vector3& pos)
+{
+	static int plane = draw->CreateCircle(0.5f, 8);
+	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
+
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		postEffect.GetRootSignature(),
+		torchLight);
+	draw->Draw(plane, pos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 0.1f), graph);
 }
 
 int BlockManager::GetBlock(const Vector3& pos, int skipIndex)

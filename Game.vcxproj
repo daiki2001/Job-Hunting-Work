@@ -111,6 +111,7 @@
     <ClCompile Include="Stage\Door.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
     <ClCompile Include="Stage\Area.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="UndoRedo\AddBlock.cpp" />
     <ClCompile Include="UndoRedo\AddDoor.cpp" />
     <ClCompile Include="UndoRedo\CreateFloor.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="Stage\Door.h" />
     <ClInclude Include="Stage\Stage.h" />
     <ClInclude Include="Stage\Area.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="UndoRedo\AddBlock.h" />
     <ClInclude Include="UndoRedo\AddDoor.h" />
     <ClInclude Include="UndoRedo\CreateFloor.h" />

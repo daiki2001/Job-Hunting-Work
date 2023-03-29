@@ -180,6 +180,7 @@ void Door::Open()
 {
 	if (status != DoorStatus::CLOSE) return;
 
+	pos.z = DOWN_DOOR_POS;
 	status = DoorStatus::OPEN;
 	OpenEaseInit();
 }

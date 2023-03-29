@@ -69,7 +69,15 @@ public: //メンバ関数
 	// 扉の状態の設定
 	void SetStatus(DoorStatus status)
 	{
-		if(status == DoorStatus::MAX) this->status = DoorStatus::OPEN;
-		this->status = status;
+		if (status == DoorStatus::OPEN || status == DoorStatus::MAX)
+		{
+			this->pos.z = DOWN_DOOR_POS;
+			this->status = DoorStatus::OPEN;
+		}
+		else
+		{
+			this->pos.z = DEFAULT_DOOR_POS;
+			this->status = status;
+		}
 	}
 };

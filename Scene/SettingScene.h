@@ -13,6 +13,7 @@ public: //メンバ関数
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+	void BGDraw() override;
 
 private: //メンバ変数
 	int background; //背景画像

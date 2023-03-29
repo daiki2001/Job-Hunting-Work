@@ -10,12 +10,18 @@
 #include "../Scene/StageEditorScene.h"
 #include "../Scene/StageSelectScene.h"
 
+#include "./Header/Parameter.h"
+#include "../UI.h"
 #include "./Header/Error.h"
+
+PostEffect SceneManager::postEffect;
 
 SceneManager::SceneManager(DrawPolygon* draw) :
 	draw(draw)
 {
-	BaseScene::StaticInit(this->draw);
+	BaseScene::StaticInit(draw);
+	UI::StaticInit(draw);
+	postEffect.Init();
 
 	if (DirectXInit::EngineDebug)
 	{
@@ -36,8 +42,18 @@ void SceneManager::Loop() const
 	Camera::Update();
 
 	static auto w = DirectXInit::GetInstance();
-	w->ClearScreen();
+	postEffect.PreDraw();
+	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
 	sceneStack.top()->Draw();
+	postEffect.PostDraw();
+
+	w->ClearScreen();
+	// 背景
+	sceneStack.top()->BGDraw();
+	// オブジェクト
+	postEffect.Draw();
+	// 前景
+	sceneStack.top()->UIDraw();
 	BaseScene::ChangeAnimationDraw();
 	w->ScreenFlip();
 

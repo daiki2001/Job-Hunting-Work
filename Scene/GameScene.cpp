@@ -2,6 +2,8 @@
 #include "./Header/DirectXInit.h"
 #include "./Input/GameInput.h"
 #include "./Header/Camera.h"
+#include "./Header/Parameter.h"
+#include "UI.h"
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 const std::string GameScene::stageDir = resourcesDirectory + "Stage/";
@@ -12,6 +14,7 @@ bool GameScene::isClear = false;
 GameScene::GameScene(SceneChanger* sceneChanger) :
 	BaseScene(sceneChanger),
 	background(Engine::FUNCTION_ERROR),
+	backgroundObj(Engine::FUNCTION_ERROR),
 	clear(Engine::FUNCTION_ERROR)
 {
 	Init();
@@ -31,6 +34,16 @@ void GameScene::Init()
 	if (background == FUNCTION_ERROR)
 	{
 		background = draw->LoadTextrue((gameResourcesDir + L"Floor.png").c_str());
+	}
+	if (backgroundObj == FUNCTION_ERROR)
+	{
+		const float TEX_SIZE = 64.0f;
+
+		backgroundObj = draw->CreateRect(static_cast<float>(DirectXInit::GetInstance()->windowWidth),
+										 static_cast<float>(DirectXInit::GetInstance()->windowHeight));
+		draw->Tiring(backgroundObj,
+					 DirectXInit::GetInstance()->windowWidth / TEX_SIZE,
+					 DirectXInit::GetInstance()->windowHeight / TEX_SIZE);
 	}
 	if (clear == FUNCTION_ERROR)
 	{
@@ -118,25 +131,18 @@ void GameScene::Draw()
 
 void GameScene::BGDraw()
 {
-	constexpr int TEX_SIZE = 64;
-
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 
-	for (size_t y = 0; y < BlockManager::STAGE_HEIGHT; y++)
-	{
-		for (size_t x = 0; x < BlockManager::STAGE_WIDTH; x++)
-		{
-			draw->DrawTextrue(
-				static_cast<float>(x * TEX_SIZE),
-				static_cast<float>(y * TEX_SIZE),
-				static_cast<float>(TEX_SIZE),
-				static_cast<float>(TEX_SIZE),
-				0.0f,
-				background,
-				DirectX::XMFLOAT2(0.0f, 0.0f));
-		}
-	}
+	draw->DrawTextrue(DirectXInit::GetInstance()->windowWidth / 2.0f,
+					  DirectXInit::GetInstance()->windowHeight / 2.0f,
+					  static_cast<float>(DirectXInit::GetInstance()->windowWidth),
+					  static_cast<float>(DirectXInit::GetInstance()->windowHeight),
+					  0.0f,
+					  Parameter::Get("white1x1"),
+					  DirectX::XMFLOAT2(0.5f, 0.5f),
+					  Color::AddAlphaValue(Color::BLACK, 1.0f));
+
 }
 
 void GameScene::UIDraw()
@@ -155,17 +161,17 @@ void GameScene::UIDraw()
 	}
 	else
 	{
-		const float inventoryScale = 1.5f;
-		player->DrawInventory(static_cast<int>(winW - 64.0f * inventoryScale), static_cast<int>(winH - 32.0f * inventoryScale), inventoryScale);
+		const float INVENTORY_SCALE = 1.5f;
+		const float TEX_SIZE = 32.0f;
+		player->DrawInventory(winW - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.5f),
+							  winH - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.0f), INVENTORY_SCALE);
 
-		draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-						 "Move:WASD");
-		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-						 "ItemSelect:Arrow");
+		UI::Get()->WASD(winW - TEX_SIZE * 9.0f, winH - TEX_SIZE * 3.0f, 0.5f * INVENTORY_SCALE);
+		UI::Get()->LeftRightArrow(winW - TEX_SIZE * INVENTORY_SCALE * 3.0f, winH - TEX_SIZE * INVENTORY_SCALE * 3.0f, 0.5f * INVENTORY_SCALE);
+		UI::Get()->Space(winW - TEX_SIZE * INVENTORY_SCALE * 2.5f, winH - TEX_SIZE * INVENTORY_SCALE * 1.0f, 0.5f * INVENTORY_SCALE);
 	}
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-					 "Action:Space");
-	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Title:F1");
 }
 

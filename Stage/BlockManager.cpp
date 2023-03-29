@@ -9,6 +9,9 @@
 DrawPolygon* BlockManager::draw = nullptr;
 Player* BlockManager::player = Player::Get();
 bool BlockManager::isBlockSwitch = false;
+ShaderManager* BlockManager::shaderMgr = ShaderManager::Get();
+PostEffect BlockManager::postEffect{};
+int BlockManager::torchLight = FUNCTION_ERROR;
 
 BlockManager::Block::Block(TypeId typeId) :
 	pos(0.0f, 0.0f, 0.0f),
@@ -103,6 +106,20 @@ void BlockManager::Init(DrawPolygon* const draw)
 
 	blockType.push_back(BlockType(TypeId::TORCH));
 	blockType.back().Create("Torch.obj", Math::rotateX(Math::PI_F), Vector3::Scale_xyz(0.5f));
+
+	if (torchLight == FUNCTION_ERROR)
+	{
+		postEffect.Init();
+		int shader = shaderMgr->CreateShader(shaderMgr->GetShader(DrawPolygon::GetSpriteShader()).GetVertex(),
+											 StringToWString(shadersDirectory + "TorchShader.hlsl").c_str());
+		int gPipeline = shaderMgr->CreateGPipeline(shader, postEffect.GetInputLayout());
+		for (size_t i = 0; i < 5; i++)
+		{
+			shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i)).pRootSignature =
+				postEffect.GetRootSignature();
+		}
+		torchLight = shaderMgr->CreatePipelineState(gPipeline);
+	}
 }
 
 void BlockManager::EaseInit(vector<Block>& blocks)
@@ -317,11 +334,6 @@ void BlockManager::Draw(const Vector3& offset)
 		if (isSkip == false)
 		{
 			BlockType::FloorDraw(i.initPos + offset);
-		}
-
-		if (i.typeId == TypeId::TORCH)
-		{
-			TorchLight(i.pos);
 		}
 	}
 }
@@ -657,33 +669,11 @@ void BlockManager::TorchLight(const Vector3& pos)
 {
 	static int plane = draw->CreateCircle(0.5f, 8);
 	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
-	/*
-	static auto shaderMgr = ShaderManager::Get();
-	// 各種シェーダーのコンパイルと読み込み
-	static int shader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "ObjectVS.hlsl").c_str(),
-												StringToWString(shadersDirectory + "ObjectPS.hlsl").c_str());
 
-	// 頂点レイアウト
-	static int inputLayout = shaderMgr->CreateInputLayout();
-	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
-	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
-	shaderMgr->GetInputLayout(inputLayout).PushInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
-
-	static int graphicPipeline = shaderMgr->CreateGPipeline(shader, inputLayout);
-
-	// デスクリプタテーブルの設定
-	CD3DX12_DESCRIPTOR_RANGE descRangeSRV = {}; //デスクリプタテーブルの設定(シェーダリソース)
-	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-
-	// ルートパラメータの設定
-	CD3DX12_ROOT_PARAMETER rootparams[2]{}; //ルートパラメータの設定
-	rootparams[0].InitAsConstantBufferView(0);
-	rootparams[1].InitAsDescriptorTable(1, &descRangeSRV);
-
-	static int rootSignature = shaderMgr->CreateRootSignature(graphicPipeline, _countof(rootparams), rootparams);
-	static int pipelineState = shaderMgr->CreatePipelineState(graphicPipeline);
-	*/
-	DrawPolygon::ChangeOBJShader();
+	shaderMgr->ChangePipelineState(
+		DirectXInit::GetCommandList(),
+		postEffect.GetRootSignature(),
+		torchLight);
 	draw->Draw(plane, pos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 0.1f), graph);
 }
 

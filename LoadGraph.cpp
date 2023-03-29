@@ -10,13 +10,15 @@ const std::string LoadGraph::ARROW = "Arrow";
 const std::string LoadGraph::UP_STAIRS = "UpStairs";
 const std::string LoadGraph::DOWN_STAIRS = "DownStairs";
 const std::string LoadGraph::TORCH = "Torch";
+const std::string LoadGraph::TRIANGLE = "Triangle";
 
 const std::string LoadGraph::WALL_UI = "WallUI";
 const std::string LoadGraph::KEY_CLOSE = "Key_Close";
 const std::string LoadGraph::BREAK_WALL_UI = "BreakWallUI";
 const std::string LoadGraph::CREATE_ROOM = "CreateRoom";
 
-const std::string LoadGraph::TRIANGLE = "Triangle";
+const std::string LoadGraph::KEYBOARD = "Keyboard";
+const std::string LoadGraph::PUSH_KEYBOARD = "PushKeyboard";
 
 LoadGraph::LoadGraph() :
 	isLoad(false)
@@ -47,11 +49,13 @@ void LoadGraph::Load(DrawPolygon* const draw)
 	Parameter::Set(UP_STAIRS.c_str(), draw->LoadTextrue(L"./Resources/UI/UpStairs.png"));
 	Parameter::Set(DOWN_STAIRS.c_str(), draw->LoadTextrue(L"./Resources/UI/DownStairs.png"));
 	Parameter::Set(TORCH.c_str(), draw->LoadTextrue(L"./Resources/UI/Torch.png"));
+	Parameter::Set(TRIANGLE.c_str(), draw->LoadTextrue(L"./Resources/UI/TriangleArrow.png"));
 
 	Parameter::Set(WALL_UI.c_str(), draw->LoadTextrue(L"./Resources/UI/WallUI.png"));
 	Parameter::Set(KEY_CLOSE.c_str(), draw->LoadTextrue(L"./Resources/UI/KeyClose.png"));
 	Parameter::Set(BREAK_WALL_UI.c_str(), draw->LoadTextrue(L"./Resources/UI/BreakWallUI.png"));
 	Parameter::Set(CREATE_ROOM.c_str(), draw->LoadTextrue(L"./Resources/UI/CreateRoom.png"));
 
-	Parameter::Set(TRIANGLE.c_str(), draw->LoadTextrue(L"./Resources/UI/TriangleArrow.png"));
+	Parameter::Set(KEYBOARD.c_str(), draw->LoadTextrue(L"./Resources/UI/Keyboard.png"));
+	Parameter::Set(PUSH_KEYBOARD.c_str(), draw->LoadTextrue(L"./Resources/UI/PushKeyboard.png"));
 }

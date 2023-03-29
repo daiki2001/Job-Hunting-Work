@@ -59,6 +59,9 @@ private: //静的メンバ変数
 	static DrawPolygon* draw;
 	static Player* player;
 	static bool isBlockSwitch;
+	static ShaderManager* shaderMgr;
+	static PostEffect postEffect;
+	static int torchLight;
 	
 public: //静的メンバ関数
 	static void EaseInit(vector<Block>& blocks);

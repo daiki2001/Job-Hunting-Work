@@ -81,5 +81,6 @@ int TestObject::CreateModel(const char* filePath, const char* directoryPath)
 
 void TestObject::OnCollision(const CollisionInfo& info)
 {
-	draw->DrawString(0.0f, 0.0f, 1.0f, Color::AddAlphaValue(Color::WHITE, 1.0f), "Hit");
+	draw->DrawString(0.0f, 0.0f, 1.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
+					 Color::AddAlphaValue(Color::BLACK, 0.5f), "Hit");
 }

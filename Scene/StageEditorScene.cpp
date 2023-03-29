@@ -3,6 +3,7 @@
 #include "./Header/Camera.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
+#include "UI.h"
 
 #include "./UndoRedo/AddBlock.h"
 #include "./UndoRedo/AddDoor.h"
@@ -345,30 +346,26 @@ void StageEditorScene::UIDraw()
 			break;
 		}
 	}
+	float TEX_SIZE = 64.0f;
+	float SCALE = 0.75f;
 	if (isRoute == false)
 	{
-		draw->DrawString(0.0f, winH - (32.0f * (6.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-						 "Move:WASD");
+		UI::Get()->WASD(winW - TEX_SIZE * SCALE * 9.0f, winH - TEX_SIZE * SCALE * 2.0f, SCALE);
 	}
-	draw->DrawString(0.0f, winH - (32.0f * (5.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-					 "Select:Arrow");
-	if (isRoute)
-	{
-		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-						 "Change:Space");
-	}
-	else
-	{
-		draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
-						 "Decision:Space");
-	}
-	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
+	UI::Get()->Arrow(winW - TEX_SIZE * SCALE * 3.0f, winH - TEX_SIZE * SCALE * 2.0f, SCALE);
+	UI::Get()->Space(winW - TEX_SIZE * SCALE * 5.5f, winH - TEX_SIZE * SCALE * 2.0f, SCALE);
+
+	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Save:Ctrl + S");
-	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Redo:Ctrl + Z");
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Undo:Ctrl + Y");
-	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, Color::AddAlphaValue(Color::WHITE, 1.0f),
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Title:F1");
 }
 

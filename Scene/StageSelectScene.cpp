@@ -260,5 +260,7 @@ void StageSelectScene::UIDraw()
 						  DirectX::XMFLOAT2(0.5f, 0.5f));
 	}
 
-	draw->DrawString(winW / 2.0f - (4.0f * 9.0f * 4.0f), winH - 64.0f, 4.0f, Color::AddAlphaValue(Color::WHITE, 1.0f), "Press Space");
+	draw->DrawString(winW / 2.0f - (4.0f * 9.0f * 4.0f), winH - 64.0f, 4.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
+					 "Press Space");
 }

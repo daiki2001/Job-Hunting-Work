@@ -1,6 +1,6 @@
 ﻿#include "SettingScene.h"
 #include "./Header/DirectXInit.h"
-#include "./Header/Input.h"
+#include "./Input/Input.h"
 
 namespace
 {
@@ -59,8 +59,20 @@ void SettingScene::Draw()
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
-	// 背景
+	// 3Dオブジェクト
+
+	// 前景
+}
+
+void SettingScene::BGDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
+
 	draw->DrawTextrue(
 		winW / 2.0f,
 		winH / 2.0f,
@@ -69,8 +81,4 @@ void SettingScene::Draw()
 		0.0f,
 		background
 	);
-
-	// 3Dオブジェクト
-
-	// 前景
 }

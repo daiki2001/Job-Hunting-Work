@@ -1,7 +1,9 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
-#include "InputManager.h"
+#include "./Input/GameInput.h"
 #include "./Header/Camera.h"
+#include "./Header/Parameter.h"
+#include "UI.h"
 
 const std::wstring GameScene::gameResourcesDir = L"./Resources/Game/";
 const std::string GameScene::stageDir = resourcesDirectory + "Stage/";
@@ -12,6 +14,7 @@ bool GameScene::isClear = false;
 GameScene::GameScene(SceneChanger* sceneChanger) :
 	BaseScene(sceneChanger),
 	background(Engine::FUNCTION_ERROR),
+	backgroundObj(Engine::FUNCTION_ERROR),
 	clear(Engine::FUNCTION_ERROR)
 {
 	Init();
@@ -30,7 +33,17 @@ void GameScene::Init()
 {
 	if (background == FUNCTION_ERROR)
 	{
-		background = draw->LoadTextrue((gameResourcesDir + L"background.png").c_str());
+		background = draw->LoadTextrue((gameResourcesDir + L"Floor.png").c_str());
+	}
+	if (backgroundObj == FUNCTION_ERROR)
+	{
+		const float TEX_SIZE = 64.0f;
+
+		backgroundObj = draw->CreateRect(static_cast<float>(DirectXInit::GetInstance()->windowWidth),
+										 static_cast<float>(DirectXInit::GetInstance()->windowHeight));
+		draw->Tiring(backgroundObj,
+					 DirectXInit::GetInstance()->windowWidth / TEX_SIZE,
+					 DirectXInit::GetInstance()->windowHeight / TEX_SIZE);
 	}
 	if (clear == FUNCTION_ERROR)
 	{
@@ -44,7 +57,7 @@ void GameScene::Init()
 	Camera::latitude = Math::DEGREE_F * (0.0f);
 
 	Camera::pos = { 0.0f, 0.0f, -10.0f };
-	Camera::target = { 7.0f, -3.0f, 0.0f };
+	Camera::target = Area::INIT_CAMERA;
 	Camera::upVec = { 0.0f, 1.0f, 0.0f };
 }
 
@@ -52,7 +65,7 @@ void GameScene::Update()
 {
 	if (isClear)
 	{
-		if (isSceneDest == false && InputManager::Get()->DecisionTrigger())
+		if (isSceneDest == false && GameInput::Get()->DecisionTrigger())
 		{
 			isSceneDest = true;
 			nextScene = SceneChanger::Scene::Title;
@@ -61,7 +74,7 @@ void GameScene::Update()
 	}
 	else
 	{
-		player->Update(InputManager::Get());
+		player->Update(GameInput::Get());
 		stage->Update();
 
 		if (Stage::IsGoal())
@@ -78,10 +91,6 @@ void GameScene::Update()
 	if (Input::IsKeyTrigger(DIK_L))
 	{
 		stage->LastRoom();
-	}
-	if (Input::IsKeyTrigger(DIK_F1))
-	{
-		stage->LoadStage((stageDir + "stage1.csv").c_str());
 	}
 #endif // _DEBUG
 	if (Input::IsKeyTrigger(DIK_RETURN))
@@ -108,48 +117,61 @@ void GameScene::Draw()
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
-	// 背景
-	DirectDrawing::ChangeSpriteShader();
-	for (int y = 0; y * 128 < winH; y++)
-	{
-		for (int x = 0; x * 128 < winW; x++)
-		{
-			draw->DrawTextrue(
-				x * 128.0f,
-				y * 128.0f,
-				128.0f,
-				128.0f,
-				0.0f,
-				background,
-				DirectX::XMFLOAT2(0.0f, 0.0f)
-			);
-		}
-	}
-
 	// 3Dオブジェクト
-	stage->Draw();
-	player->Draw();
-
-	// 前景
-	DirectDrawing::ChangeSpriteShader();
-	if (isClear)
+	if (stage->scroll.GetFlag())
 	{
-		draw->DrawTextrue(winW / 2.0f, winH / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,
-						  DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+		stage->ScrollDraw();
 	}
 	else
 	{
-		const float inventoryScale = 1.5f;
-		player->DrawInventory(static_cast<int>(winW - 64.0f * inventoryScale), static_cast<int>(winH - 32.0f * inventoryScale), inventoryScale);
-
-		draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-						 "Move:WASD");
-		draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-						 "ItemSelect:Arrow");
+		stage->Draw();
 	}
-	draw->DrawString(0.0f, winH - (32.0f * (1.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-					 "Action:Space");
-	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	player->Draw();
+}
+
+void GameScene::BGDraw()
+{
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	DirectDrawing::ChangeSpriteShader();
+
+	draw->DrawTextrue(DirectXInit::GetInstance()->windowWidth / 2.0f,
+					  DirectXInit::GetInstance()->windowHeight / 2.0f,
+					  static_cast<float>(DirectXInit::GetInstance()->windowWidth),
+					  static_cast<float>(DirectXInit::GetInstance()->windowHeight),
+					  0.0f,
+					  Parameter::Get("white1x1"),
+					  DirectX::XMFLOAT2(0.5f, 0.5f),
+					  Color::AddAlphaValue(Color::BLACK, 1.0f));
+
+}
+
+void GameScene::UIDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	DirectDrawing::ChangeSpriteShader();
+
+	if (isClear)
+	{
+		draw->DrawTextrue(winW / 2.0f, winH / 2.0f, 160.0f * 4.0f, 48.0f * 4.0f, 0.0f, clear,
+						  DirectX::XMFLOAT2(0.5f, 0.5f), Color::AddAlphaValue(Color::BLUE, 1.0f));
+	}
+	else
+	{
+		const float INVENTORY_SCALE = 1.5f;
+		const float TEX_SIZE = 32.0f;
+		player->DrawInventory(winW - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.5f),
+							  winH - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.0f), INVENTORY_SCALE);
+
+		UI::Get()->WASD(winW - TEX_SIZE * 9.0f, winH - TEX_SIZE * 3.0f, 0.5f * INVENTORY_SCALE);
+		UI::Get()->LeftRightArrow(winW - TEX_SIZE * INVENTORY_SCALE * 3.0f, winH - TEX_SIZE * INVENTORY_SCALE * 3.0f, 0.5f * INVENTORY_SCALE);
+		UI::Get()->Space(winW - TEX_SIZE * INVENTORY_SCALE * 2.5f, winH - TEX_SIZE * INVENTORY_SCALE * 1.0f, 0.5f * INVENTORY_SCALE);
+	}
+	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Title:F1");
 }
 

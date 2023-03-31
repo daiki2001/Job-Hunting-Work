@@ -10,17 +10,19 @@ namespace
 static Stage* stage = Stage::Get();
 }
 
-const float Player::SPEED = 0.3f;
+const float Player::SPEED = 0.1f;
 const Math::Vector3 Player::COLLISION_SIZE = Vector3(0.25f, 1.0f, 1.0f);
 
 Player::Player() :
 	draw(nullptr),
 	pos{},
-	direction(Player::Direction::UP),
+	direction(Player::Direction::TOP),
 	object(Engine::FUNCTION_ERROR),
+	animationPos{},
 	selectItem(SelectItem::KEY),
 	key(100),
-	bomb(100, 10)
+	bomb(100, 100),
+	route{}
 {
 	Reset();
 }
@@ -43,30 +45,59 @@ void Player::Init(DrawPolygon* const draw)
 	Item::StaticInit(this->draw);
 	key.Init(Parameter::Get(LoadGraph::KEY.c_str()));
 	bomb.Init();
+	route.reserve(Area::MAX_COURSE_NUM);
 }
 
-void Player::Update(const InputManager* const input)
+void Player::Update(const GameInput* const input)
 {
 	bomb.Update();
 
-	Move(input);
-	SelectAction(input);
-	Action(input);
+	if (stage->scroll.GetFlag() == false)
+	{
+		Move(input);
+		SelectAction(input);
+		Action(input);
+	}
+
+	MovingRoom();
 }
 
 void Player::Draw(int offsetX, int offsetY)
 {
-	bomb.Draw();
+	static const int SHADOW = draw->CreateCircle(0.4f, 8);
 
+	Vector3 offset = Vector3(
+		static_cast<float>(offsetX),
+		static_cast<float>(offsetY),
+		0.0f);
+	Vector3 playerDrawPos = Vector3::Zero();
+
+	if (stage->scroll.GetFlag())
+	{
+		playerDrawPos = animationPos + offset;
+	}
+	else
+	{
+		playerDrawPos = pos + offset;
+	}
+
+	bomb.Draw();
 	DirectDrawing::ChangeMaterialShader();
 	draw->DrawOBJ(
 		object,
-		pos + Vector3(static_cast<float>(offsetX),
-					  static_cast<float>(offsetY),
-					  0.0f),
+		playerDrawPos,
 		Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
-		scale_xyz(1.0f / 256.0f),
-		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		Vector3::Scale_xyz(1.0f / 256.0f),
+		Color::AddAlphaValue(Color::WHITE, 1.0f)
+	);
+	DirectDrawing::ChangeOBJShader();
+	draw->Draw(
+		SHADOW,
+		playerDrawPos + Vector3(0.0f, 0.0f, 0.0f),
+		Math::Identity(),
+		Vector3::Scale_xyz(1.0f),
+		Color::AddAlphaValue(Color::BLACK, 0.5f),
+		Parameter::Get("white1x1")
 	);
 }
 
@@ -87,32 +118,33 @@ void Player::DrawInventory(int offsetX, int offsetY, float scale)
 
 void Player::Reset()
 {
-	pos = { 7.0f, -6.0f, 0.0f };
+	pos = Area::INIT_CAMERA + Vector3(0.0f, -3.0f, 0.0f);
+	selectItem = SelectItem::KEY;
 	key.Reset();
 	bomb.Reset();
 }
 
-void Player::Move(const InputManager* const input)
+void Player::Move(const GameInput* const input)
 {
 	if (input->MainUp())
 	{
-		MoveUp(input);
+		MoveUp();
 	}
 	else if (input->MainDown())
 	{
-		MoveDown(input);
+		MoveDown();
 	}
 	else if (input->MainLeft())
 	{
-		MoveLeft(input);
+		MoveLeft();
 	}
 	else if (input->MainRight())
 	{
-		MoveRight(input);
+		MoveRight();
 	}
 }
 
-void Player::SelectAction(const InputManager* const input)
+void Player::SelectAction(const GameInput* const input)
 {
 	if (input->SubLeftTrigger())
 	{
@@ -124,7 +156,7 @@ void Player::SelectAction(const InputManager* const input)
 	}
 }
 
-void Player::Action(const InputManager* const input)
+void Player::Action(const GameInput* const input)
 {
 	if (input->DecisionTrigger())
 	{
@@ -142,23 +174,79 @@ void Player::Action(const InputManager* const input)
 	}
 }
 
-void Player::MoveUp(const InputManager* const input)
+void Player::MovingRoom()
 {
-	direction = Player::Direction::UP;
+	if (stage->scroll.GetFlag() == false)
+	{
+		if (animationPos != Vector3::Zero()) animationPos = Vector3::Zero();
+		return;
+	}
 
-	if (pos.y > 0.0f) return;
+	Vector3 animationVec = Vector3::Zero();
+	animationPos = pos;
+
+	switch (direction)
+	{
+	case Player::Direction::TOP:
+		animationPos.y = 0.0f;
+		animationVec = Stage::FRONT_ROOM;
+		break;
+	case Player::Direction::BOTTOM:
+		animationPos.y = -(BlockManager::STAGE_HEIGHT - 1.0f);
+		animationVec = Stage::BACK_ROOM;
+		break;
+	case Player::Direction::LEFT:
+		animationPos.x = 0.0f;
+		animationVec = Stage::LEFT_ROOM;
+		break;
+	case Player::Direction::RIGHT:
+		animationPos.x = BlockManager::STAGE_WIDTH - 1.0f;
+		animationVec = Stage::RIGHT_ROOM;
+		break;
+	default:
+		break;
+	}
+
+	animationVec.y *= -1.0f;
+	animationPos += (animationVec * stage->scroll.GetTime()) * (Area::WALL_SIZE * 2.0f);
+}
+
+void Player::MoveUp()
+{
+	direction = Player::Direction::TOP;
+
+	if (pos.y > 0.0f)
+	{
+		return;
+	}
 
 	pos.y += SPEED;
 
-	if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y >= 0.0f)
+	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
+		 (pos.y >= 0.0f)) &&
+		(stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::TOP);
+
+		switch (stage->GetArea().LostForest(route))
 		{
-			if (stage->MoveUpRoom() == 0)
+		case 0:
+			if (stage->MoveFrontRoom() == 0)
 			{
-				pos.y = -(Area::STAGE_HEIGHT - 1.0f);
+				route.clear();
 			}
+			break;
+		case 2:
+		case FUNCTION_ERROR:
+			route.clear();
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::FRONT_ROOM);
+			break;
+		default:
+			break;
 		}
+
+		pos.y = -(static_cast<int>(BlockManager::STAGE_HEIGHT) - 1.0f);
 	}
 
 	// 場外判定
@@ -168,36 +256,52 @@ void Player::MoveUp(const InputManager* const input)
 	}
 }
 
-void Player::MoveDown(const InputManager* const input)
+void Player::MoveDown()
 {
-	direction = Player::Direction::DOWN;
+	direction = Player::Direction::BOTTOM;
 
-	if (pos.y < -(Area::STAGE_HEIGHT - 1.0f))
+	if (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))
 	{
 		return;
 	}
 
 	pos.y -= SPEED;
 
-	if ((pos.x <= 8.0f && pos.x >= 6.0f) && pos.y < -(Area::STAGE_HEIGHT - 1.0f))
+	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
+		 (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
+		(stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::BOTTOM);
+
+		switch (stage->GetArea().LostForest(route))
 		{
-			if (stage->MoveDownRoom() == 0)
+		case 0:
+			if (stage->MoveBackRoom() == 0)
 			{
-				pos.y = 0.0f;
+				route.clear();
 			}
+			break;
+		case 2:
+		case FUNCTION_ERROR:
+			route.clear();
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::BACK_ROOM);
+			break;
+		default:
+			break;
 		}
+
+		pos.y = 0.0f;
 	}
 
 	// 場外判定
-	if ((pos - COLLISION_SIZE / 2.0f).y < stage->GetBlockManager()->GetBlock(0).pos.y - (Area::STAGE_HEIGHT - 1.0f))
+	if ((pos - COLLISION_SIZE / 2.0f).y < stage->GetBlockManager()->GetBlock(0).pos.y - (BlockManager::STAGE_HEIGHT - 1.0f))
 	{
-		pos.y = -(Area::STAGE_HEIGHT - 1.0f);
+		pos.y = -(BlockManager::STAGE_HEIGHT - 1.0f);
 	}
 }
 
-void Player::MoveLeft(const InputManager* const input)
+void Player::MoveLeft()
 {
 	direction = Player::Direction::LEFT;
 
@@ -208,15 +312,31 @@ void Player::MoveLeft(const InputManager* const input)
 
 	pos.x -= SPEED;
 
-	if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x < 0.0f)
+	if (((pos.x < 0.0f)) &&
+		 (pos.y <= -2.0f && pos.y >= -4.0f) &&
+		(stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::LEFT);
+
+		switch (stage->GetArea().LostForest(route))
 		{
+		case 0:
 			if (stage->MoveLeftRoom() == 0)
 			{
-				pos.x = Area::STAGE_WIDTH - 1.0f;
+				route.clear();
 			}
+			break;
+		case 2:
+		case FUNCTION_ERROR:
+			route.clear();
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::LEFT_ROOM);
+			break;
+		default:
+			break;
 		}
+
+		pos.x = BlockManager::STAGE_WIDTH - 1.0f;
 	}
 
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
@@ -228,34 +348,50 @@ void Player::MoveLeft(const InputManager* const input)
 	}
 }
 
-void Player::MoveRight(const InputManager* const input)
+void Player::MoveRight()
 {
 	direction = Player::Direction::RIGHT;
 
-	if (pos.x > Area::STAGE_WIDTH - 1.0f)
+	if (pos.x > BlockManager::STAGE_WIDTH - 1.0f)
 	{
 		return;
 	}
 
 	pos.x += SPEED;
 
-	if ((pos.y <= -2.0f && pos.y >= -4.0f) && pos.x > Area::STAGE_WIDTH - 1.0f)
+	if (((pos.x > BlockManager::STAGE_WIDTH - 1.0f) && 
+		 (pos.y <= -2.0f && pos.y >= -4.0f)) &&
+		(stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN))
 	{
-		if (stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN)
+		route.emplace_back(Area::DoorNum::RIGHT);
+
+		switch (stage->GetArea().LostForest(route))
 		{
+		case 0:
 			if (stage->MoveRightRoom() == 0)
 			{
-				pos.x = 0.0f;
+				route.clear();
 			}
+			break;
+		case 2:
+		case FUNCTION_ERROR:
+			route.clear();
+		case 1:
+			stage->MoveRoom(Stage::GetRoom(), Stage::RIGHT_ROOM);
+			break;
+		default:
+			break;
 		}
+
+		pos.x = 0.0f;
 	}
 
 	static const Vector3 COLLISION_BOX = Vector3(COLLISION_SIZE.y, COLLISION_SIZE.x, COLLISION_SIZE.z) / 2.0f;
 
 	// 場外判定
-	if ((pos + COLLISION_BOX).x > stage->GetBlockManager()->GetBlock(0).pos.x + (Area::STAGE_WIDTH - 1.0f))
+	if ((pos + COLLISION_BOX).x > stage->GetBlockManager()->GetBlock(0).pos.x + (BlockManager::STAGE_WIDTH - 1.0f))
 	{
-		pos.x = Area::STAGE_WIDTH - 1.0f;
+		pos.x = BlockManager::STAGE_WIDTH - 1.0f;
 	}
 }
 
@@ -281,23 +417,79 @@ void Player::KeyAction()
 	}
 	if ((playerPos == FUNCTION_ERROR ||
 		 (playerPos >= 6 && playerPos <= 8)) &&
-		stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::KEY_CLOSE)
+		stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::KEY_CLOSE)
 	{
-		stage->GetArea().GetDoor(Area::DoorNum::UP).KeyOpen();
+		stage->GetArea().GetDoor(Area::DoorNum::TOP).KeyOpen();
 		key.Use();
 	}
 	if ((playerPos == FUNCTION_ERROR ||
 		 (playerPos >= 96 && playerPos <= 98)) &&
-		stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::KEY_CLOSE)
+		stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::KEY_CLOSE)
 	{
-		stage->GetArea().GetDoor(Area::DoorNum::DOWN).KeyOpen();
+		stage->GetArea().GetDoor(Area::DoorNum::BOTTOM).KeyOpen();
 		key.Use();
 	}
 }
 
 void Player::BombAction()
 {
-	if (bomb.GetCount() <= 0) return;
+	if (bomb.GetAlive() == false)
+	{
+		if (bomb.GetCount() <= 0) return;
 
-	bomb.Set(pos);
+		bomb.Set(pos);
+		return;
+	}
+
+	static const Vector3 BOMB_SIZE = Vector3(BlockType::BLOCK_SIZE, -BlockType::BLOCK_SIZE, BlockType::BLOCK_SIZE);
+	Vector3 size = COLLISION_SIZE / 2.0f;
+	if (direction == Direction::LEFT || direction == Direction::RIGHT)
+	{
+		float temp = size.x;
+		size.x = size.y;
+		size.y = temp;
+	}
+
+	Vector3 move = Vector3::Zero();
+	Vector3 side = bomb.GetPos();
+
+	if (Collision::IsAABBToAABBCollision(pos - size / 2.0f,
+										 pos + size / 2.0f,
+										 bomb.GetPos() - BOMB_SIZE / 2.0f,
+										 bomb.GetPos() + BOMB_SIZE / 2.0f))
+	{
+		switch (direction)
+		{
+		case Player::TOP:
+			move.y -= BOMB_SIZE.y * 2.0f;
+			side.y = 0.0f;
+			break;
+		case Player::LEFT:
+			move.x -= BOMB_SIZE.x * 2.0f;
+			side.x = 0.0f;
+			break;
+		case Player::BOTTOM:
+			move.y += BOMB_SIZE.y * 2.0f;
+			side.y = static_cast<float>(BlockManager::STAGE_HEIGHT - 1) * (-1.0f);
+			break;
+		case Player::RIGHT:
+			move.x += BOMB_SIZE.x * 2.0f;
+			side.y = static_cast<float>(BlockManager::STAGE_WIDTH - 1) * (-1.0f);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (Collision::IsAABBToAABBCollision(bomb.GetPos() + move - BOMB_SIZE / 2.0f,
+										 bomb.GetPos() + move + BOMB_SIZE / 2.0f,
+										 Vector3::Zero(),
+										 Vector3(static_cast<float>(BlockManager::STAGE_WIDTH), static_cast<float>(BlockManager::STAGE_HEIGHT) * (-1.0f), 0.0f)))
+	{
+		bomb.Set(bomb.GetPos() + move);
+	}
+	else
+	{
+		bomb.Set(side);
+	}
 }

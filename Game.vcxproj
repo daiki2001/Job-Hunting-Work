@@ -45,11 +45,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Output\</OutDir>
-    <TargetName>猫の記憶_x64_d</TargetName>
+    <TargetName>猫の記憶_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Output\</OutDir>
-    <TargetName>猫の記憶_x64</TargetName>
+    <TargetName>猫の記憶</TargetName>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -66,6 +66,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Engine\External\DirectXTex\lib\;$(SolutionDir)Engine\External\fbx_sdk\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -87,13 +88,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Engine\External\DirectXTex\lib\;$(SolutionDir)Engine\External\fbx_sdk\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Effect\BombParticle.cpp" />
+    <ClCompile Include="Effect\FireParticle.cpp" />
     <ClCompile Include="Effect\Particle.cpp" />
+    <ClCompile Include="Effect\Scroll.cpp" />
     <ClCompile Include="Effect\WallBreakEffect.cpp" />
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LoadGraph.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player\Bomb.cpp" />
@@ -109,15 +112,20 @@
     <ClCompile Include="Stage\Door.cpp" />
     <ClCompile Include="Stage\Stage.cpp" />
     <ClCompile Include="Stage\Area.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="UndoRedo\AddBlock.cpp" />
     <ClCompile Include="UndoRedo\AddDoor.cpp" />
+    <ClCompile Include="UndoRedo\CreateFloor.cpp" />
     <ClCompile Include="UndoRedo\CreateRoom.cpp" />
     <ClCompile Include="UndoRedo\FuncRedoUndo.cpp" />
+    <ClCompile Include="UndoRedo\RouteSetter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Effect\BombParticle.h" />
+    <ClInclude Include="Effect\FireParticle.h" />
     <ClInclude Include="Effect\Particle.h" />
+    <ClInclude Include="Effect\Scroll.h" />
     <ClInclude Include="Effect\WallBreakEffect.h" />
-    <ClInclude Include="InputManager.h" />
     <ClInclude Include="LoadGraph.h" />
     <ClInclude Include="Player\Bomb.h" />
     <ClInclude Include="Player\Item.h" />
@@ -132,11 +140,14 @@
     <ClInclude Include="Stage\Door.h" />
     <ClInclude Include="Stage\Stage.h" />
     <ClInclude Include="Stage\Area.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="UndoRedo\AddBlock.h" />
     <ClInclude Include="UndoRedo\AddDoor.h" />
+    <ClInclude Include="UndoRedo\CreateFloor.h" />
     <ClInclude Include="UndoRedo\CreateRoom.h" />
     <ClInclude Include="UndoRedo\FuncRedoUndo.h" />
     <ClInclude Include="UndoRedo\BaseUndoRedo.h" />
+    <ClInclude Include="UndoRedo\RouteSetter.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Game\background.png" />

@@ -33,6 +33,8 @@ void Bomb::Init()
 
 void Bomb::Update()
 {
+	effect.Update();
+
 	if (isAlive == false) return;
 
 	if (isBomber)
@@ -45,6 +47,7 @@ void Bomb::Update()
 		{
 			isBomber = true;
 			nowTime = 0;
+			effect.Create(pos);
 
 			static const Vector3 offset = Vector3(7.0f, -3.0f, 0.0f);
 
@@ -62,16 +65,16 @@ void Bomb::Update()
 			if (Collision::IsSphereToAABBCollision(Sphere(pos, 1.0f),
 												   upDoorPos - (upDoorSize / 2.0f),
 												   upDoorPos + (upDoorSize / 2.0f)) &&
-				stage->GetDoorStatus(Area::DoorNum::UP) == Door::DoorStatus::BREAK_WALL)
+				stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::BREAK_WALL)
 			{
-				stage->GetArea().GetDoor(Area::DoorNum::UP).BreakWall();
+				stage->GetArea().GetDoor(Area::DoorNum::TOP).BreakWall();
 			}
 			if (Collision::IsSphereToAABBCollision(Sphere(pos, 1.0f),
 												   downDoorPos - (downDoorSize / 2.0f),
 												   downDoorPos + (downDoorSize / 2.0f)) &&
-				stage->GetDoorStatus(Area::DoorNum::DOWN) == Door::DoorStatus::BREAK_WALL)
+				stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::BREAK_WALL)
 			{
-				stage->GetArea().GetDoor(Area::DoorNum::DOWN).BreakWall();
+				stage->GetArea().GetDoor(Area::DoorNum::BOTTOM).BreakWall();
 			}
 			if (Collision::IsSphereToAABBCollision(Sphere(pos, 1.0f),
 												   leftDoorPos - (leftDoorSize / 2.0f),
@@ -94,18 +97,14 @@ void Bomb::Update()
 
 void Bomb::Draw(int offsetX, int offsetY)
 {
+	effect.Draw();
 	if (isAlive == false) return;
 
 	DirectDrawing::ChangeOBJShader();
-	if (isBomber)
+	if (isBomber == false)
 	{
-		draw->Draw(object, pos, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 0.8f),
-				   Parameter::Get("white1x1"));
-	}
-	else
-	{
-		draw->Draw(object, pos, Math::Identity(), scale_xyz(1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
-				   Parameter::Get("white1x1"));
+		draw->Draw(object, pos, Math::Identity(), Vector3::Scale_xyz(0.5f), Color::AddAlphaValue(Color::WHITE, 1.0f),
+				   Parameter::Get(LoadGraph::BOMB.c_str()));
 	}
 }
 

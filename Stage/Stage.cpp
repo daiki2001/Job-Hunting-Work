@@ -2,13 +2,19 @@
 #include "./Header/DirectXInit.h"
 #include "./Header/Parameter.h"
 
-const Math::Vector3 Stage::moveUpRoom = { 0.0f, -1.0f, 0.0f };
-const Math::Vector3 Stage::moveDownRoom = { 0.0f, 1.0f, 0.0f };
-const Math::Vector3 Stage::moveLeftRoom = { -1.0f, 0.0f, 0.0f };
-const Math::Vector3 Stage::moveRightRoom = { 1.0f, 0.0f, 0.0f };
+const Math::Vector3 Stage::LEFT_ROOM = { -1.0f, 0.0f, 0.0f };
+const Math::Vector3 Stage::RIGHT_ROOM = { 1.0f, 0.0f, 0.0f };
+const Math::Vector3 Stage::FRONT_ROOM = { 0.0f, -1.0f, 0.0f };
+const Math::Vector3 Stage::BACK_ROOM = { 0.0f, 1.0f, 0.0f };
+const Math::Vector3 Stage::UP_FLOOR = { 0.0f, 0.0f, 1.0f };
+const Math::Vector3 Stage::DOWN_FLOOR = { 0.0f, 0.0f, -1.0f };
 DrawPolygon* Stage::draw = nullptr;
 std::map<Math::Vector3, Area> Stage::rooms;
 Math::Vector3 Stage::nowRoom = { 0.0f, 0.0f, 0.0f };
+Math::Vector3 Stage::oldRoomPos = Stage::nowRoom;
+Math::Vector3 Stage::moveDir = { 0.0f, 0.0f, 0.0f };
+Scroll Stage::scroll = {};
+bool Stage::oldScrollFlag = false;
 
 Stage::Stage()
 {
@@ -39,12 +45,88 @@ void Stage::Init()
 void Stage::Update()
 {
 	rooms[nowRoom].Update();
+
+	if (rooms[nowRoom].GetBlockManager()->IsPlayerMove())
+	{
+		if (rooms[nowRoom].GetBlockManager()->GetStep() == BlockManager::Step::UP)
+		{
+			MoveUpFloor();
+		}
+		else if (rooms[nowRoom].GetBlockManager()->GetStep() == BlockManager::Step::DOWN)
+		{
+			MoveDownFloor();
+		}
+	}
+
+	if (scroll.GetFlag() == false && oldScrollFlag)
+	{
+		const int playerInitPos = rooms[nowRoom].GetBlockManager()->GetPlayerInitPos();
+		const int playerInitPosX = playerInitPos % BlockManager::STAGE_WIDTH;
+		const int playerInitPosY = playerInitPos / BlockManager::STAGE_WIDTH;
+
+		if (playerInitPosX <= 8.0f && playerInitPosX >= 6.0f)
+		{
+			if ((playerInitPosY < 0.0f) &&
+				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::WALL))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::TOP).CloseEaseInit();
+			}
+			else if ((playerInitPosY >= BlockManager::STAGE_HEIGHT - 1.0f) &&
+					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::WALL))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::BOTTOM).CloseEaseInit();
+			}
+		}
+		else if (playerInitPosY <= 4.0f && playerInitPosY >= 2.0f)
+		{
+			if ((playerInitPosX < 0.0f) &&
+				(rooms[nowRoom].GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::WALL))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::LEFT).CloseEaseInit();
+			}
+			else if ((playerInitPosX >= BlockManager::STAGE_WIDTH - 2.0f) &&
+					 (rooms[nowRoom].GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::WALL))
+			{
+				rooms[nowRoom].GetDoor(Area::DoorNum::RIGHT).CloseEaseInit();
+			}
+		}
+	}
+
+	oldScrollFlag = scroll.GetFlag();
+	scroll.ScrollUpdate(0.1f);
+	if (scroll.GetFlag())
+	{
+		Vector3 moveCamera = moveDir * scroll.GetTime();
+		moveCamera.x *= (Area::WALL_SIZE * 2.0f + BlockManager::STAGE_WIDTH);
+		moveCamera.y *= -(Area::WALL_SIZE * 2.0f + BlockManager::STAGE_HEIGHT);
+		Camera::target = Area::INIT_CAMERA + moveCamera;
+	}
+	else
+	{
+		Camera::target = Area::INIT_CAMERA;
+	}
 }
 
 void Stage::Draw(int offsetX, int offsetY)
 {
-	rooms[nowRoom].Draw(offsetX, offsetY);
-	MiniMap(DirectXInit::GetInstance()->windowWidth, 0, 20.0f);
+	int winW = DirectXInit::GetInstance()->windowWidth;
+	int winH = DirectXInit::GetInstance()->windowHeight;
+
+	// 下の階層を暗めに描画する
+	if (rooms.find(nowRoom + DOWN_FLOOR) != rooms.end() &&
+		rooms[nowRoom + DOWN_FLOOR].isAlive)
+	{
+		rooms[nowRoom + DOWN_FLOOR].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), Area::WALL_SIZE });
+	}
+	DirectDrawing::ChangeSpriteShader();
+	draw->DrawTextrue(
+		0.0f, 0.0f, static_cast<float>(winW), static_cast<float>(winH),
+		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f),
+		Color::AddAlphaValue(Color::BLACK, 0.5f));
+
+	rooms[nowRoom].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f });
+
+	MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
 }
 
 void Stage::Reset()
@@ -55,6 +137,53 @@ void Stage::Reset()
 	{
 		i.second.Reset();
 	}
+}
+
+void Stage::ScrollDraw(int offsetX, int offsetY)
+{
+	static const Vector3 DOWN_FLOOR_POS = { 0.0f, 0.0f, Area::WALL_SIZE };
+
+	int winW = DirectXInit::GetInstance()->windowWidth;
+	int winH = DirectXInit::GetInstance()->windowHeight;
+	DirectX::XMFLOAT2 scr = {
+		moveDir.x * scroll.GetTime(),
+		moveDir.y * scroll.GetTime()
+	};
+	Vector3 offset = { static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f };
+
+	if (rooms.find(oldRoomPos) == rooms.end())
+	{
+		oldRoomPos = nowRoom;
+	}
+
+	// 下の階層を暗めに描画する
+	if (rooms.find(nowRoom + DOWN_FLOOR) != rooms.end() &&
+		rooms[nowRoom + DOWN_FLOOR].isAlive)
+	{
+		rooms[nowRoom + DOWN_FLOOR].Draw(Vector3(
+			(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
+			(static_cast<float>(BlockManager::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
+			0.0f) + DOWN_FLOOR_POS + offset);
+	}
+	if (rooms.find(oldRoomPos + DOWN_FLOOR) != rooms.end() &&
+		rooms[oldRoomPos + DOWN_FLOOR].isAlive)
+	{
+		rooms[oldRoomPos + DOWN_FLOOR].Draw(DOWN_FLOOR_POS + offset);
+	}
+	DirectDrawing::ChangeSpriteShader();
+	draw->DrawTextrue(
+		static_cast<float>(winW) / 2.0f, static_cast<float>(winH) / 2.0f,
+		static_cast<float>(winW), static_cast<float>(winH),
+		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.5f, 0.5f),
+		Color::AddAlphaValue(Color::BLACK, 0.5f));
+
+	rooms[nowRoom].Draw(Vector3(
+		(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
+		(static_cast<float>(BlockManager::STAGE_HEIGHT) + Area::WALL_SIZE * 2.0f) * moveDir.y * -1.0f,
+		0.0f) + offset);
+	rooms[oldRoomPos].Draw(offset);
+
+	MiniMap(winW + offsetX, offsetY, 20.0f, scr);
 }
 
 int Stage::LoadStage(const char* filePath)
@@ -117,16 +246,27 @@ int Stage::LoadStage(const char* filePath)
 
 int Stage::WirteStage(const char* filePath)
 {
-	static int roomPos[3] = {};
+	int roomPos[3] = {};
 
 	FILE* fileHandle;
 	File::WriteFileOpen(&fileHandle, filePath);
 
+	size_t deadRoomCount = 0; //描画していない部屋の数
 	// 部屋数
-	fprintf_s(fileHandle, "%zu\n", rooms.size());
+	for (auto& i : rooms)
+	{
+		if (i.second.isAlive == false)
+		{
+			deadRoomCount++;
+		}
+	}
+	fprintf_s(fileHandle, "%zu\n", rooms.size() - deadRoomCount);
+
 	// 各部屋の情報
 	for (auto& i : rooms)
 	{
+		if (i.second.isAlive == false) continue;
+
 		roomPos[0] = static_cast<int>(i.first.x);
 		roomPos[1] = static_cast<int>(i.first.y);
 		roomPos[2] = static_cast<int>(i.first.z);
@@ -153,17 +293,17 @@ int Stage::CreateRoom(int direction)
 
 	switch (direction)
 	{
-	case Area::DoorNum::UP:
-		nowRoom += moveUpRoom;
-		break;
-	case Area::DoorNum::DOWN:
-		nowRoom += moveDownRoom;
-		break;
 	case Area::DoorNum::LEFT:
-		nowRoom += moveLeftRoom;
+		nowRoom += LEFT_ROOM;
 		break;
 	case Area::DoorNum::RIGHT:
-		nowRoom += moveRightRoom;
+		nowRoom += RIGHT_ROOM;
+		break;
+	case Area::DoorNum::TOP:
+		nowRoom += FRONT_ROOM;
+		break;
+	case Area::DoorNum::BOTTOM:
+		nowRoom += BACK_ROOM;
 		break;
 	default:
 		break;
@@ -181,6 +321,22 @@ int Stage::CreateRoom(int direction)
 	return direction;
 }
 
+int Stage::CreateRoom(const Vector3& moveRoom)
+{
+	nowRoom += moveRoom;
+
+	if (rooms.find(nowRoom) != rooms.end())
+	{
+		rooms[nowRoom].isAlive = true;
+		return 0;
+	}
+
+	rooms[nowRoom] = Area::GetPlaneArea();
+	rooms[nowRoom].isAlive = true;
+
+	return 0;
+}
+
 int Stage::DeleteRoom(int direction)
 {
 	if (direction < 0 && direction >= 4)
@@ -192,17 +348,17 @@ int Stage::DeleteRoom(int direction)
 
 	switch (direction)
 	{
-	case Area::DoorNum::UP:
-		moveRoom = nowRoom + moveUpRoom;
-		break;
-	case Area::DoorNum::DOWN:
-		moveRoom = nowRoom + moveDownRoom;
-		break;
 	case Area::DoorNum::LEFT:
-		moveRoom = nowRoom + moveLeftRoom;
+		moveRoom = nowRoom + LEFT_ROOM;
 		break;
 	case Area::DoorNum::RIGHT:
-		moveRoom = nowRoom + moveRightRoom;
+		moveRoom = nowRoom + RIGHT_ROOM;
+		break;
+	case Area::DoorNum::TOP:
+		moveRoom = nowRoom + FRONT_ROOM;
+		break;
+	case Area::DoorNum::BOTTOM:
+		moveRoom = nowRoom + BACK_ROOM;
 		break;
 	default:
 		break;
@@ -235,17 +391,17 @@ int Stage::DeleteRoom(int direction, const Vector3& roomPos)
 
 		switch (direction)
 		{
-		case Area::DoorNum::UP:
-			moveRoom = nowRoom + moveUpRoom;
+		case Area::DoorNum::TOP:
+			moveRoom = nowRoom + FRONT_ROOM;
 			break;
-		case Area::DoorNum::DOWN:
-			moveRoom = nowRoom + moveDownRoom;
+		case Area::DoorNum::BOTTOM:
+			moveRoom = nowRoom + BACK_ROOM;
 			break;
 		case Area::DoorNum::LEFT:
-			moveRoom = nowRoom + moveLeftRoom;
+			moveRoom = nowRoom + LEFT_ROOM;
 			break;
 		case Area::DoorNum::RIGHT:
-			moveRoom = nowRoom + moveRightRoom;
+			moveRoom = nowRoom + RIGHT_ROOM;
 			break;
 		default:
 			break;
@@ -281,60 +437,105 @@ void Stage::AllDeleteRoom()
 	rooms.clear();
 }
 
-int Stage::MoveUpRoom()
+int Stage::MoveRoom(const Vector3& moveRoomPos, const Vector3& direction)
 {
-	Vector3 moveRoom = nowRoom + moveUpRoom;
-
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
+	if (rooms.find(moveRoomPos) == rooms.end() ||
+		rooms[moveRoomPos].isAlive == false)
 	{
 		return FUNCTION_ERROR;
 	}
 
-	nowRoom = moveRoom;
+	if (direction == Vector3::Zero())
+	{
+		moveDir = moveRoomPos - nowRoom;
+	}
+	else
+	{
+		moveDir = direction.Normalize();
+	}
+
+	oldRoomPos = nowRoom;
+	nowRoom = moveRoomPos;
+
+	bool isSwitch = false;
+	for (size_t i = 0; i < rooms[nowRoom].GetBlockManager()->GetBlockSize(); i++)
+	{
+		switch (rooms[nowRoom].GetBlockManager()->GetBlock(i).typeId)
+		{
+		case BlockManager::TypeId::SWITCH:
+			isSwitch = true;
+			break;
+		case BlockManager::TypeId::SWITCH_BLOCK:
+			rooms[nowRoom].GetBlockManager()->GetBlock(i).pos.z =
+				1.0f * (BlockManager::GetBlockSwitch() == true);
+			break;
+		case BlockManager::TypeId::NOT_SWITCH_BLOCK:
+			rooms[nowRoom].GetBlockManager()->GetBlock(i).pos.z =
+				1.0f * (BlockManager::GetBlockSwitch() == false);
+			break;
+		default:
+			break;
+		}
+	}
+	bool isSwitchDoor = false;
+	for (size_t i = 0; i < Area::DOOR_COUNT; i++)
+	{
+		if (rooms[nowRoom].GetDoorStatus(static_cast<Area::DoorNum>(i)) == Door::DoorStatus::CLOSE)
+		{
+			isSwitchDoor = true;
+			break;
+		}
+	}
+
+	if (isSwitchDoor == false)
+	{
+		rooms[nowRoom].GetBlockManager()->MapInit();
+	}
+
+	oldScrollFlag = scroll.GetFlag();
+	scroll.ScrollStart();
+	rooms[nowRoom].GetBlockManager()->isInitPlayer = true;
 	return 0;
 }
 
-int Stage::MoveDownRoom()
+int Stage::MoveFrontRoom()
 {
-	Vector3 moveRoom = nowRoom + moveDownRoom;
+	return MoveRoom(nowRoom + FRONT_ROOM);
+}
 
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
-	{
-		return FUNCTION_ERROR;
-	}
-
-	nowRoom = moveRoom;
-	return 0;
+int Stage::MoveBackRoom()
+{
+	return MoveRoom(nowRoom + BACK_ROOM);
 }
 
 int Stage::MoveLeftRoom()
 {
-	Vector3 moveRoom = nowRoom + moveLeftRoom;
-
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
-	{
-		return FUNCTION_ERROR;
-	}
-
-	nowRoom = moveRoom;
-	return 0;
+	return MoveRoom(nowRoom + LEFT_ROOM);
 }
 
 int Stage::MoveRightRoom()
 {
-	Vector3 moveRoom = nowRoom + moveRightRoom;
+	return MoveRoom(nowRoom + RIGHT_ROOM);
+}
 
-	if (rooms.find(moveRoom) == rooms.end() ||
-		rooms[moveRoom].isAlive == false)
+int Stage::MoveUpFloor()
+{
+	int resurt = MoveRoom(nowRoom + UP_FLOOR);
+	if (resurt != FUNCTION_ERROR)
 	{
-		return FUNCTION_ERROR;
+		rooms[nowRoom].GetBlockManager()->MoveArea();
 	}
+	return resurt;
+}
 
-	nowRoom = moveRoom;
-	return 0;
+int Stage::MoveDownFloor()
+{
+	int resurt = MoveRoom(nowRoom + DOWN_FLOOR);
+	if (resurt != FUNCTION_ERROR)
+	{
+		rooms[nowRoom].GetBlockManager()->MoveArea();
+	}
+	return resurt;
 }
 
 void Stage::LastRoom()
@@ -361,7 +562,7 @@ void Stage::LastRoom()
 	}
 }
 
-void Stage::MiniMap(int offsetX, int offsetY, float scale)
+void Stage::MiniMap(int offsetX, int offsetY, float scale, DirectX::XMFLOAT2 scroll)
 {
 	Vector3 offset = {
 		offsetX - (1.0f * 3.0f + 2.0f * 3.0f) * scale + 1.0f * scale,
@@ -389,60 +590,129 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale)
 						  0.0f,
 						  Parameter::Get("white1x1"),
 						  DirectX::XMFLOAT2(0.5f, 0.5f),
-						  (roomPos == nowRoom) ? DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, color.w) : color);
-		if (x == 0.0f)
+						  (roomPos == nowRoom) ? Color::AddAlphaValue(Color::WHITE, color.w) : color);
+		if (rooms.find(roomPos + LEFT_ROOM) != rooms.end() &&
+			rooms[roomPos].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + LEFT_ROOM].isAlive == true))
 		{
-			if (rooms.find(roomPos + Vector3(-1.0f, 0.0f, 0.0f)) != rooms.end() &&
-				rooms.at(roomPos).GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
+			if (rooms[roomPos + LEFT_ROOM].GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
 			{
-				draw->DrawTextrue(x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
-								  y * (2.0f + 1.0f) * scale + offset.y,
-								  1.0f * scale,
-								  1.0f * scale,
-								  0.0f,
-								  Parameter::Get("white1x1"),
-								  DirectX::XMFLOAT2(0.5f, 0.5f),
-								  color);
+				if (x == 0.0f)
+				{
+					draw->DrawTextrue(
+						x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
+						y * (2.0f + 1.0f) * scale + offset.y,
+						1.0f * scale,
+						1.0f * scale,
+						0.0f,
+						Parameter::Get("white1x1"),
+						DirectX::XMFLOAT2(0.5f, 0.5f),
+						color);
+				}
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale - 1.5f * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					0.0f,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
 			}
 		}
-		if (y == 0.0f)
+		if (rooms.find(roomPos + FRONT_ROOM) != rooms.end() &&
+			rooms[roomPos].GetDoorStatus(Area::TOP) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + FRONT_ROOM].isAlive == true))
 		{
-			if (rooms.find(roomPos + Vector3(0.0f, -1.0f, 0.0f)) != rooms.end() &&
-				rooms.at(roomPos).GetDoorStatus(Area::UP) == Door::DoorStatus::OPEN)
+			if (rooms[roomPos + FRONT_ROOM].GetDoorStatus(Area::BOTTOM) == Door::DoorStatus::OPEN)
 			{
-				draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
-								  y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
-								  1.0f * scale,
-								  1.0f * scale,
-								  0.0f,
-								  Parameter::Get("white1x1"),
-								  DirectX::XMFLOAT2(0.5f, 0.5f),
-								  color);
+				if (y == 0.0f)
+				{
+					draw->DrawTextrue(
+						x * (2.0f + 1.0f) * scale + offset.x,
+						y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
+						1.0f * scale,
+						1.0f * scale,
+						0.0f,
+						Parameter::Get("white1x1"),
+						DirectX::XMFLOAT2(0.5f, 0.5f),
+						color);
+				}
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale + offset.x,
+					y * (2.0f + 1.0f) * scale - 1.5f * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					90.0f * Math::DEGREE_F,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
 			}
 		}
-		if (rooms.find(roomPos + Vector3(1.0f, 0.0f, 0.0f)) != rooms.end() &&
-			rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN)
+		if (rooms.find(roomPos + RIGHT_ROOM) != rooms.end() &&
+			rooms.at(roomPos).GetDoorStatus(Area::RIGHT) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + RIGHT_ROOM].isAlive == true))
 		{
-			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
-							  y * (2.0f + 1.0f) * scale + offset.y,
-							  1.0f * scale,
-							  1.0f * scale,
-							  0.0f,
-							  Parameter::Get("white1x1"),
-							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  color);
+			if (rooms[roomPos + RIGHT_ROOM].GetDoorStatus(Area::LEFT) == Door::DoorStatus::OPEN)
+			{
+				draw->DrawTextrue(
+					x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					0.0f,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale + 1.5f * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					Math::PI_F,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
 		}
-		if (rooms.find(roomPos + Vector3(0.0f, 1.0f, 0.0f)) != rooms.end() &&
-			rooms.at(roomPos).GetDoorStatus(Area::DOWN) == Door::DoorStatus::OPEN)
+		if (rooms.find(roomPos + BACK_ROOM) != rooms.end() &&
+			rooms.at(roomPos).GetDoorStatus(Area::BOTTOM) == Door::DoorStatus::OPEN &&
+			(rooms[roomPos + BACK_ROOM].isAlive == true))
 		{
-			draw->DrawTextrue(x * (2.0f + 1.0f) * scale + offset.x,
-							  y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
-							  1.0f * scale,
-							  1.0f * scale,
-							  0.0f,
-							  Parameter::Get("white1x1"),
-							  DirectX::XMFLOAT2(0.5f, 0.5f),
-							  color);
+
+			if (rooms[roomPos + BACK_ROOM].GetDoorStatus(Area::TOP) == Door::DoorStatus::OPEN)
+			{
+				draw->DrawTextrue(
+					x * (2.0f + 1.0f) * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					0.0f,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
+			else
+			{
+				draw->Draw2DTriangle(
+					x * (2.0f + 1.0f) * scale + offset.x,
+					y * (2.0f + 1.0f) * scale + 1.5f * scale + offset.y,
+					1.0f * scale,
+					1.0f * scale,
+					270.0f * Math::DEGREE_F,
+					Parameter::Get("white1x1"),
+					DirectX::XMFLOAT2(0.5f, 0.5f),
+					color);
+			}
 		}
 	}
 }
@@ -458,6 +728,7 @@ const bool Stage::IsGoal()
 		{
 			if (i.second.IsGoal())
 			{
+				Camera::target = Area::INIT_CAMERA;
 				reslut = true;
 				break;
 			}

@@ -1,6 +1,7 @@
 ﻿#include "SceneManager.h"
-#include "./Header/Camera.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/Camera.h"
+#include "./Input/Input.h"
 
 #include "EngineTestScene.h"
 #include "../Scene/TitleScene.h"
@@ -9,12 +10,18 @@
 #include "../Scene/StageEditorScene.h"
 #include "../Scene/StageSelectScene.h"
 
+#include "./Header/Parameter.h"
+#include "../UI.h"
 #include "./Header/Error.h"
+
+PostEffect SceneManager::postEffect;
 
 SceneManager::SceneManager(DrawPolygon* draw) :
 	draw(draw)
 {
-	BaseScene::StaticInit(this->draw);
+	BaseScene::StaticInit(draw);
+	UI::StaticInit(draw);
+	postEffect.Init();
 
 	if (DirectXInit::EngineDebug)
 	{
@@ -30,12 +37,23 @@ SceneManager::SceneManager(DrawPolygon* draw) :
 void SceneManager::Loop() const
 {
 	sceneStack.top()->Update();
+	sceneStack.top()->ChengeTitleScene(Input::IsKeyTrigger(DIK_F1));
 	BaseScene::ChangeAnimationUpdate();
 	Camera::Update();
 
 	static auto w = DirectXInit::GetInstance();
-	w->ClearScreen();
+	postEffect.PreDraw();
+	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
 	sceneStack.top()->Draw();
+	postEffect.PostDraw();
+
+	w->ClearScreen();
+	// 背景
+	sceneStack.top()->BGDraw();
+	// オブジェクト
+	postEffect.Draw();
+	// 前景
+	sceneStack.top()->UIDraw();
 	BaseScene::ChangeAnimationDraw();
 	w->ScreenFlip();
 

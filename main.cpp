@@ -1,7 +1,7 @@
 ﻿#include "./Header/DirectXInit.h"
 #include "./Header/DrawPolygon.h"
 #include "./Header/Camera.h"
-#include "./Header/Input.h"
+#include "./Input/Input.h"
 #include "./Scene/SceneManager.h"
 #include "./Header/EngineGeneral.h"
 #include "./Header/Parameter.h"
@@ -12,7 +12,7 @@ constexpr int window_height = 768; //縦幅
 
 constexpr WCHAR title[] = L"猫の記憶"; //タイトル
 
-constexpr float clearColor[] = { 0.1f, 0.875f, 0.875f, 1.0f }; //背景色
+constexpr float clearColor[] = { 0.1f, 0.1f, 0.15f, 1.0f }; //背景色
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
@@ -34,7 +34,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	Camera::Init();
 	Input::Init();
 
-	int whiteTex = draw.LoadTextrue((StringToWString(engineResourcesDir) + L"white1x1.png").c_str());
+	int whiteTex = draw.LoadTextrue((StringToWString(engineResourcesDir) + L"white.png").c_str());
 	Parameter::Set("white1x1", whiteTex);
 
 	SceneManager sceneManager(&draw);

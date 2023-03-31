@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "./Header/DrawPolygon.h"
 #include "Area.h"
+#include "../Effect/Scroll.h"
 #include <map>
 #include "./Header/EngineGeneral.h"
 
@@ -17,31 +18,33 @@ private:
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 
-private: //定数
-	static const Vector3 moveUpRoom;
-	static const Vector3 moveDownRoom;
-	static const Vector3 moveLeftRoom;
-	static const Vector3 moveRightRoom;
+public: //定数
+	static const Vector3 LEFT_ROOM;  //左の部屋
+	static const Vector3 RIGHT_ROOM; //右の部屋
+	static const Vector3 FRONT_ROOM; //手前の部屋
+	static const Vector3 BACK_ROOM;  //奥の部屋
+	static const Vector3 UP_FLOOR;   //上の階
+	static const Vector3 DOWN_FLOOR; //下の階
 
 public: //サブクラス
-	struct Room
-	{
-		Area area = {}; //部屋の情報
-		int connection[4] = { -1, -1, -1, -1 }; //どの部屋と繋がっているか
-	};
 
-private: //静的メンバ変数
+public: //静的メンバ変数
+	static Scroll scroll;
+	static bool oldScrollFlag;
+private:
 	static DrawPolygon* draw;
-	static Player* player;         //プレイヤー
 	static std::map<Vector3, Area> rooms; //各部屋の情報
-	static Vector3 nowRoom; //プレイヤーが現在いる部屋
-	
+	static Vector3 nowRoom;    //プレイヤーが現在いる部屋
+	static Vector3 oldRoomPos; //プレイヤーが一つ前にいた部屋
+	static Vector3 moveDir;    //部屋移動した方向
+
 public: //静的メンバ関数
 	// 静的初期化処理
 	static void StaticInit(DrawPolygon* const draw);
 
 	// 部屋の追加
 	static int CreateRoom(int direction = -1);
+	static int CreateRoom(const Vector3& moveRoom);
 	// 今いる部屋の削除
 	static int DeleteRoom(int direction);
 	// 部屋の削除
@@ -49,10 +52,13 @@ public: //静的メンバ関数
 	// 全部屋の削除
 	static void AllDeleteRoom();
 
-	static int MoveUpRoom();
-	static int MoveDownRoom();
+	static int MoveRoom(const Vector3& roomPos, const Vector3& direction = Vector3::Zero());
 	static int MoveLeftRoom();
 	static int MoveRightRoom();
+	static int MoveFrontRoom();
+	static int MoveBackRoom();
+	static int MoveUpFloor();
+	static int MoveDownFloor();
 
 	static const bool IsGoal();
 
@@ -94,6 +100,9 @@ public: //メンバ関数
 	// リセット処理
 	void Reset();
 
+	// ステージのスクロール描画
+	void ScrollDraw(int offsetX = 0, int offsetY = 0);
+
 	// ステージ読み込み
 	int LoadStage(const char* filePath = nullptr);
 	// ステージ書き込み
@@ -116,5 +125,5 @@ public: //メンバ関数
 	}
 private:
 	// ミニマップの描画
-	void MiniMap(int offsetX = 0, int offsetY = 0, float scale = 1.0f);
+	void MiniMap(int offsetX = 0, int offsetY = 0, float scale = 1.0f, DirectX::XMFLOAT2 scroll = { 0.0f, 0.0f });
 };

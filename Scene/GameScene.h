@@ -16,6 +16,7 @@ private: //静的メンバ変数
 
 private: //メンバ変数
 	int background; //背景画像
+	int backgroundObj; //背景画像を貼り付けるためのオブジェクト
 	int clear;
 
 public: //メンバ関数
@@ -25,6 +26,8 @@ public: //メンバ関数
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+	void BGDraw() override;
+	void UIDraw() override;
 private:
 	void Reset();
 };

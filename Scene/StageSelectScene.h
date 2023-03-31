@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "./Scene/BaseScene.h"
 #include "./Header/EngineGeneral.h"
-#include "../InputManager.h"
+#include "./Input/GameInput.h"
 
 class StageSelectScene : public BaseScene
 {
@@ -13,7 +13,7 @@ public: //サブクラス
 	{
 		TITLE = 0,
 		USER = -1,
-		MAX = 1
+		MAX = 2
 	};
 
 public: //定数
@@ -21,7 +21,7 @@ public: //定数
 	static const std::string stageDir;
 
 private: //静的メンバ変数
-	static InputManager* inputMgr;
+	static GameInput* inputMgr;
 
 private: //メンバ変数
 	std::string stagePath;
@@ -42,5 +42,7 @@ public: //メンバ関数
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+	void BGDraw() override;
+	void UIDraw() override;
 private:
 };

@@ -14,14 +14,6 @@ public: //サブクラス
 		EDITER
 	};
 
-public: //メンバ関数
-	TitleScene(SceneChanger* sceneChanger);
-	~TitleScene() override;
-
-	void Init() override;
-	void Update() override;
-	void Draw() override;
-
 private: //メンバ変数
 	ButtonIndex buttonIndex;
 
@@ -29,4 +21,14 @@ private: //メンバ変数
 	int buttonBack; //ボタンの背景
 	int start;
 	int editer;
+
+public: //メンバ関数
+	TitleScene(SceneChanger* sceneChanger);
+	~TitleScene() override;
+
+	void Init() override;
+	void Update() override;
+	void Draw() override;
+	void BGDraw() override;
+	void UIDraw() override;
 };

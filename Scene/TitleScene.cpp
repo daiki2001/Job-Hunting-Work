@@ -1,6 +1,6 @@
 ﻿#include "TitleScene.h"
 #include "./Header/DirectXInit.h"
-#include "InputManager.h"
+#include "./Input//GameInput.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
@@ -54,11 +54,11 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (InputManager::Get()->MainUpTrigger() || InputManager::Get()->SubUpTrigger())
+	if (GameInput::Get()->MainUpTrigger() || GameInput::Get()->SubUpTrigger())
 	{
 		buttonIndex = ButtonIndex::START;
 	}
-	else if (InputManager::Get()->MainDownTrigger() || InputManager::Get()->SubDownTrigger())
+	else if (GameInput::Get()->MainDownTrigger() || GameInput::Get()->SubDownTrigger())
 	{
 		buttonIndex = ButtonIndex::EDITER;
 	}
@@ -72,7 +72,7 @@ void TitleScene::Update()
 	}
 	else
 	{
-		if (InputManager::Get()->DecisionTrigger())
+		if (GameInput::Get()->DecisionTrigger())
 		{
 			isSceneDest = true;
 			changeAnimation.Start();
@@ -102,9 +102,18 @@ void TitleScene::Draw()
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
 
+	// 3Dオブジェクト
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+}
+
+void TitleScene::BGDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
 	// 背景
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 	draw->DrawTextrue(
 		winW / 2.0f,
@@ -114,10 +123,15 @@ void TitleScene::Draw()
 		0.0f,
 		background
 	);
+}
 
-	// 3Dオブジェクト
+void TitleScene::UIDraw()
+{
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
 
-	// 前景
+	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 	switch (buttonIndex)
 	{

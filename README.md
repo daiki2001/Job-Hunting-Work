@@ -25,6 +25,16 @@ Visual Studio 2022
 * [FBXSDK](https://www.autodesk.com/products/fbx/overview)
 * [nlohmanjson](https://github.com/nlohmann/json)
 
+## 開発エピソード
+* 就職作品のメイン作品を制作するにあたり、「今までやってきた事を結集させたい」という考えから、今まで制作に関わってきたほとんどのゲームでステージ周りのことをやっていたのもあり、早い段階でマップチップベースのステージにする事に決まった。
+* ゲームと平行してステージエディターの制作もしたが、ゲーム部分を作る時と同じかそれ以上のモチベーションで開発を進めることが出来、結果としてゲーム部分よりも先にステージエディターが出来た。
+
+## アピールポイント
+* `Game - Stage.cpp MiniMap()`  
+自機のいる周囲の部屋の有無と部屋同士の繋がり方が分かる物。
+* `StageEditer - FuncRedoUndo.h, FuncRedoUndo.cpp`  
+実体を生成することでどこでも「アンドゥ／リドゥ」の機能を利用することが出来るクラス。
+
 ## 脚注
 ### 外部素材
 [猫](https://www.cgtrader.com/free-3d-models/animals/mammal/cat-8f299065-4ddc-4308-a0f8-510f08be3ee4)

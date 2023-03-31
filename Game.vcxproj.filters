@@ -120,6 +120,9 @@
     <ClCompile Include="UI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Effect\FireParticle.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\GameScene.h">
@@ -199,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="UI.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\FireParticle.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

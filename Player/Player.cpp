@@ -64,6 +64,8 @@ void Player::Update(const GameInput* const input)
 
 void Player::Draw(int offsetX, int offsetY)
 {
+	static const int SHADOW = draw->CreateCircle(0.4f, 8);
+
 	Vector3 offset = Vector3(
 		static_cast<float>(offsetX),
 		static_cast<float>(offsetY),
@@ -86,7 +88,16 @@ void Player::Draw(int offsetX, int offsetY)
 		playerDrawPos,
 		Math::rotateZ(direction * Math::DEGREE_F * 90.0f),
 		Vector3::Scale_xyz(1.0f / 256.0f),
-		Color::AddAlphaValue(Color::BLACK, 1.0f)
+		Color::AddAlphaValue(Color::WHITE, 1.0f)
+	);
+	DirectDrawing::ChangeOBJShader();
+	draw->Draw(
+		SHADOW,
+		playerDrawPos + Vector3(0.0f, 0.0f, 0.0f),
+		Math::Identity(),
+		Vector3::Scale_xyz(1.0f),
+		Color::AddAlphaValue(Color::BLACK, 0.5f),
+		Parameter::Get("white1x1")
 	);
 }
 

@@ -1,8 +1,11 @@
 ﻿#include "Particle.h"
 
+DrawPolygon* Particle::draw = nullptr;
+
 Particle::Particle() :
 	pos(0.0f, 0.0f, 0.0f),
 	speed(0.0f, 0.0f, 0.0f),
+	accel(0.0f, 0.0f, 0.0f),
 	time(0),
 	isAlive(false)
 {
@@ -13,6 +16,7 @@ void Particle::Init()
 {
 	pos = { 0.0f, 0.0f, 0.0f };
 	speed = { 0.0f, 0.0f, 0.0f };
+	accel = { 0.0f, 0.0f, 0.0f };
 	time = 0;
 	isAlive = false;
 }
@@ -30,14 +34,16 @@ void Particle::Update(const int& maxTime)
 		return;
 	}
 
+	speed += accel;
 	pos += speed;
 	time++;
 }
 
-void Particle::Create(const Vector3& startPos, const Vector3& startSpeed, const Vector3& size)
+void Particle::Create(const Vector3& startPos, const Vector3& startSpeed, const Vector3& accel, const Vector3& size)
 {
 	pos = startPos;
 	speed = startSpeed;
+	this->accel = accel;
 	this->size = size;
 	time = 0;
 	isAlive = true;

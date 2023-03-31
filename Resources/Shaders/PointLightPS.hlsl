@@ -5,5 +5,7 @@ SamplerState smp : register(s0);      //0番スロットに設定されたサン
 
 float4 main(VSOutput input) : SV_TARGET
 {
-	return tex.Sample(smp, input.uv) * color;
+	float4 output = color;
+	float2 lig = input.uv - float2(0.5f, 0.5f);
+	return output * sqrt((lig.x * lig.x) + (lig.y * lig.y));
 }

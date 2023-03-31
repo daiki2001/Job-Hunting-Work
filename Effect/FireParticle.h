@@ -3,27 +3,27 @@
 #include <vector>
 #include "./Header/EngineGeneral.h"
 
-class BombParticle
+class FireParticle
 {
 private: //エイリアス
 	using Vector3 = Math::Vector3;
-	
+
 public: //定数
 	static const int MAX_TIME;
-	
+
 private: //静的メンバ変数
 	static int model;
-	
+
 public: //静的メンバ関数
 	// 初期化処理
 	static void Init();
-	
+
 private: //メンバ変数
 	std::vector<Particle> particle;
 
 public: //メンバ関数
-	BombParticle();
-	~BombParticle();
+	FireParticle();
+	~FireParticle();
 
 	// 生成処理
 	void Create(const Vector3& startPos);

@@ -5,6 +5,8 @@
 #include "Color.h"
 #include "Error.h"
 
+#include <random>
+
 /*定数*/
 namespace Engine
 {
@@ -55,6 +57,15 @@ void ContainerClear(T& std)
 {
 	std.clear();
 	std.shrink_to_fit();
+}
+
+template <class T>
+T RandomNumber(const T& high, const T& low)
+{
+	static std::mt19937 randEngine{ std::random_device{}() };
+	std::uniform_real_distribution<T> dist(low, high);
+
+	return dist(randEngine);
 }
 } //Engine
 

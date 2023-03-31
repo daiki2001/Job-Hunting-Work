@@ -1,6 +1,6 @@
 # Readme 
-制作時期：2022年7月~ 
-制作人数：1人 
+制作時期：2022年7月~  
+制作人数：1人  
 GitHub：https://github.com/daiki2001/Job-Hunting-Work.git  
 
 ## 作品概要
@@ -18,7 +18,8 @@ GitHub：https://github.com/daiki2001/Job-Hunting-Work.git
 
 ## 開発環境
 OS:Windos11  
-DirectXバージョン:12  
+DirectX 12  
+Visual Studio 2022
 ### 使用しているライブラリ
 * [DirectXTex](https://github.com/microsoft/DirectXTex)
 * [FBXSDK](https://www.autodesk.com/products/fbx/overview)

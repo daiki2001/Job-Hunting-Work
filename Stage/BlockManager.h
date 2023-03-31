@@ -2,8 +2,9 @@
 #include "BlockType.h"
 #include "../Player/Player.h"
 #include <vector>
-#include "./Header/EngineGeneral.h"
 #include <map>
+#include "../Effect/FireParticle.h"
+#include "./Header/EngineGeneral.h"
 
 class BlockManager
 {
@@ -56,23 +57,25 @@ public: //定数
 	static const size_t STAGE_HEIGHT = 7;
 	
 private: //静的メンバ変数
-	static DrawPolygon* draw;
 	static Player* player;
+	static vector<BlockType> blockType;
 	static bool isBlockSwitch;
 	static ShaderManager* shaderMgr;
 	static PostEffect postEffect;
+	static FireParticle fireEffect;
 	static int torchLight;
 	
 public: //静的メンバ関数
+	// 初期化処理
+	static void Init(DrawPolygon* const draw);
+	// 演出の初期化
 	static void EaseInit(vector<Block>& blocks);
-	void EaseUpdate();
 
 	static bool GetBlockSwitch() { return isBlockSwitch; }
 
 public: //メンバ変数
 	bool isInitPlayer;
 private:
-	vector<BlockType> blockType;
 	vector<Block> blocks;
 	bool isSwitch;
 	bool isGoal;
@@ -85,10 +88,10 @@ public: //メンバ関数
 	BlockManager();
 	~BlockManager();
 
-	// 初期化処理
-	void Init(DrawPolygon* const draw);
 	// 更新処理
 	void Update();
+	// 演出の更新処理
+	void EffectUpdate();
 	// 描画処理
 	void Draw(const Vector3& offset = Vector3::Zero());
 	// リセット処理

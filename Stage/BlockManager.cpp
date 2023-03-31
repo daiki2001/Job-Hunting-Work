@@ -6,11 +6,12 @@
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
-DrawPolygon* BlockManager::draw = nullptr;
 Player* BlockManager::player = Player::Get();
+std::vector<BlockType> BlockManager::blockType{};
 bool BlockManager::isBlockSwitch = false;
 ShaderManager* BlockManager::shaderMgr = ShaderManager::Get();
 PostEffect BlockManager::postEffect{};
+FireParticle BlockManager::fireEffect{};
 int BlockManager::torchLight = FUNCTION_ERROR;
 
 BlockManager::Block::Block(TypeId typeId) :
@@ -22,7 +23,6 @@ BlockManager::Block::Block(TypeId typeId) :
 }
 
 BlockManager::BlockManager() :
-	blockType{},
 	blocks{},
 	isSwitch(false),
 	isGoal(false),
@@ -43,11 +43,11 @@ BlockManager::~BlockManager()
 
 void BlockManager::Init(DrawPolygon* const draw)
 {
-	BlockManager::draw = draw;
 	BlockType::StaticInit(draw);
+	Particle::StaticInit(draw);
+	fireEffect.Init();
 
 	blockType.clear();
-	blocks.clear();
 
 	blockType.push_back(BlockType(TypeId::NONE));
 	blockType.back().Create();
@@ -110,9 +110,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 	if (torchLight == FUNCTION_ERROR)
 	{
 		postEffect.Init();
-		int shader = shaderMgr->CreateShader(shaderMgr->GetShader(DrawPolygon::GetSpriteShader()).GetVertex(),
-											 StringToWString(shadersDirectory + "TorchShader.hlsl").c_str());
-		int gPipeline = shaderMgr->CreateGPipeline(shader, postEffect.GetInputLayout());
+		int shader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "PointLightVS.hlsl").c_str(),
+											 StringToWString(shadersDirectory + "PointLightPS.hlsl").c_str());
+		int gPipeline = shaderMgr->CreateGPipeline(shader, DrawPolygon::Get2dInputLayout());
 		for (size_t i = 0; i < 5; i++)
 		{
 			shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i)).pRootSignature =
@@ -165,7 +165,7 @@ void BlockManager::Update()
 	static int playerPos = FUNCTION_ERROR; //プレイヤーがいる場所のブロック
 	static int oldPos = FUNCTION_ERROR;
 
-	EaseUpdate();
+	EffectUpdate();
 
 	oldPos = playerPos;
 	playerPos = GetSurroundingBlock(0, playerSurroundingsBlock); //プレイヤーがいる場所のブロック
@@ -245,12 +245,14 @@ void BlockManager::Update()
 	}
 }
 
-void BlockManager::EaseUpdate()
+void BlockManager::EffectUpdate()
 {
 	static float addTime = 0.2f;
 
-	for (size_t i = 0; i < blocks.size(); i++)
+	fireEffect.Update();
+	for (int i = 0; i < blocks.size(); i++)
 	{
+		if (blocks[i].typeId == TypeId::TORCH) fireEffect.Create(blocks[i].pos);
 		if (blocks[i].ease.isAlive == false) continue;
 
 		blocks[i].ease.time += addTime;
@@ -319,6 +321,11 @@ void BlockManager::Draw(const Vector3& offset)
 		if (isSkip == false)
 		{
 			blockType[i.typeId].Draw(i.pos + offset);
+			if (i.typeId == TypeId::TORCH)
+			{
+				//TorchLight(i.pos + offset);
+				fireEffect.Draw(i.pos + offset);
+			}
 		}
 
 		// 床の描画
@@ -667,14 +674,14 @@ void BlockManager::PushBlock(int index)
 
 void BlockManager::TorchLight(const Vector3& pos)
 {
-	static int plane = draw->CreateCircle(0.5f, 8);
-	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
+	static int plane = BlockType::GetDraw()->CreateSphere(0.5f, 8);
+	static int graph = BlockType::GetDraw()->LoadTextrue(L"./Resources/CircleBlur.png");
 
 	shaderMgr->ChangePipelineState(
 		DirectXInit::GetCommandList(),
 		postEffect.GetRootSignature(),
 		torchLight);
-	draw->Draw(plane, pos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 0.1f), graph);
+	BlockType::GetDraw()->Draw(plane, pos + Vector3(0.0f, 0.0f, -0.5f), Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 1.0f));
 }
 
 int BlockManager::GetBlock(const Vector3& pos, int skipIndex)

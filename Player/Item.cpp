@@ -31,7 +31,8 @@ void Item::Init(int texNumber)
 void Item::StaticInit(DrawPolygon* const draw)
 {
 	Item::draw = draw;
-	BombParticle::Init(draw);
+	Particle::StaticInit(draw);
+	BombParticle::Init();
 }
 
 void Item::DrawInfo(const char* type, int offsetX, int offsetY, float scale)

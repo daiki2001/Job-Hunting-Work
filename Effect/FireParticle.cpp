@@ -1,26 +1,26 @@
-﻿#include "BombParticle.h"
+﻿#include "FireParticle.h"
 #include "./Header/Parameter.h"
 
-const int BombParticle::MAX_TIME = 20;
-int BombParticle::model = FUNCTION_ERROR;
+const int FireParticle::MAX_TIME = 10;
+int FireParticle::model = FUNCTION_ERROR;
 
-BombParticle::BombParticle() :
+FireParticle::FireParticle() :
 	particle{}
 {
 }
 
-BombParticle::~BombParticle()
+FireParticle::~FireParticle()
 {
 }
 
-void BombParticle::Init()
+void FireParticle::Init()
 {
 	model = Particle::GetDraw()->CreateSphere(0.1f, 4);
 }
 
-void BombParticle::Create(const Vector3& startPos)
+void FireParticle::Create(const Vector3& startPos)
 {
-	static const size_t CREATE_NUM = 500;
+	static const size_t CREATE_NUM = 1;
 
 	for (size_t i = 0, j = 0; i < CREATE_NUM; j++)
 	{
@@ -34,14 +34,15 @@ void BombParticle::Create(const Vector3& startPos)
 			particle.push_back(createParticle);
 		}
 
-		Vector3 speed = Vector3::Zero();
-		speed = { RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f) };
-		particle[j].Create(startPos, speed.Normalize() * 0.25f);
+		const float speedLength = 0.125f;
+		Vector3 speed = Vector3(0.0f, 1.0f, 0.0f);
+		speed = { RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f), -1.0f };
+		particle[j].Create(startPos, speed.Normalize() * speedLength, -speed.Normalize() * (speedLength / 10.0f));
 		i++;
 	}
 }
 
-void BombParticle::Update()
+void FireParticle::Update()
 {
 	for (auto& i : particle)
 	{
@@ -51,7 +52,7 @@ void BombParticle::Update()
 	}
 }
 
-void BombParticle::Draw(const Vector3& offset)
+void FireParticle::Draw(const Vector3& offset)
 {
 	auto draw = Particle::GetDraw();
 	draw->ChangeOBJShader();

@@ -29,6 +29,8 @@ public: //静的メンバ関数
 	// 床の描画
 	static void FloorDraw(const Vector3& offset);
 
+	static DrawPolygon* GetDraw() { return draw; }
+
 private: //メンバ変数
 	int typeId;
 	int graph;

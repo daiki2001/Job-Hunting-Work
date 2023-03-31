@@ -1,16 +1,16 @@
-# 就職作品用リポジトリ
+# Readme
+## 作品概要
+主人公である猫を操作してゲームを進めていく3Dパズルゲームです。  
 
-### lssuseにまとめてある項目
->##### 開いている項目
->* [ギミックの追加](https://github.com/daiki2001/Job-Hunting-Work/issues/19)
->* [演出](https://github.com/daiki2001/Job-Hunting-Work/issues/24)
->* [UIとリソース](https://github.com/daiki2001/Job-Hunting-Work/issues/21)
->* [その他](https://github.com/daiki2001/Job-Hunting-Work/issues/4)
->##### 閉じている項目
->* [ステージエディターの作成](https://github.com/daiki2001/Job-Hunting-Work/issues/7)
+
+## 開発環境
+OS:Windos11  
+DirectXバージョン:12  
+###使用しているライブラリ
+* [DirectXTex](https://github.com/microsoft/DirectXTex)
+* [FBXSDK](https://www.autodesk.com/products/fbx/overview)
+* [nlohmanjson](https://github.com/nlohmann/json)
 
 ## 脚注
-### 注釈
-[自分のエンジン(エンジン整備用のgit)](https://github.com/daiki2001/Engine-maintenance)
 ### 外部素材
 [猫](https://www.cgtrader.com/free-3d-models/animals/mammal/cat-8f299065-4ddc-4308-a0f8-510f08be3ee4)

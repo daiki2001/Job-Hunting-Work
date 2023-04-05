@@ -27,7 +27,6 @@ StageEditorScene::StageEditorScene(SceneChanger* sceneChanger) :
 	isRoute(false),
 	routeIndex(0),
 	cursorState(CursorState::BLOCKS),
-	cursor(FUNCTION_ERROR),
 	frame(FUNCTION_ERROR),
 	cross(FUNCTION_ERROR)
 {
@@ -48,11 +47,6 @@ void StageEditorScene::Init()
 	LoadGraph::Get()->Load(draw);
 	stage->StaticInit(draw);
 
-	// カーソル画像の読み込み
-	if (cursor == FUNCTION_ERROR)
-	{
-		cursor = draw->LoadTextrue((resourcesDir + L"./UI/Cursor.png").c_str());
-	}
 	// フレーム画像の読み込み
 	if (frame == FUNCTION_ERROR)
 	{
@@ -265,7 +259,7 @@ void StageEditorScene::UIDraw()
 	{
 		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f) * 64.0f + winW / 2.0f,
 						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f) * 64.0f + winH / 2.0f,
-						  64.0f, 64.0f, 0.0f, cursor);
+						  64.0f, 64.0f, 0.0f, Parameter::Get(LoadGraph::CURSOR.c_str()));
 		break;
 	}
 	case CursorState::DOOR_UP:
@@ -274,7 +268,7 @@ void StageEditorScene::UIDraw()
 		float isMinus = (cursorState == CursorState::DOOR_DOWN) ? 1.0f : -1.0f;
 		draw->DrawTextrue(0.0f + winW / 2.0f,
 						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f + isMinus) * 64.0f + winH / 2.0f,
-						  64.0f * 3.0f, 64.0f, 0.0f, cursor);
+						  64.0f * 3.0f, 64.0f, 0.0f, Parameter::Get(LoadGraph::CURSOR.c_str()));
 		break;
 	}
 	case CursorState::DOOR_LEFT:
@@ -283,7 +277,7 @@ void StageEditorScene::UIDraw()
 		float isMinus = (cursorState == CursorState::DOOR_RIGHT) ? 1.0f : -1.0f;
 		draw->DrawTextrue((static_cast<float>(mapIndex % STAGE_WIDTH) - 7.0f + isMinus) * 64.0f + winW / 2.0f,
 						  0.0f + winH / 2.0f,
-						  64.0f, 64.0f * 3.0f, 0.0f, cursor);
+						  64.0f, 64.0f * 3.0f, 0.0f, Parameter::Get(LoadGraph::CURSOR.c_str()));
 		break;
 	}
 	default:

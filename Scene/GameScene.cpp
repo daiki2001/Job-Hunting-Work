@@ -163,12 +163,12 @@ void GameScene::UIDraw()
 	{
 		const float INVENTORY_SCALE = 1.5f;
 		const float TEX_SIZE = 32.0f;
-		player->DrawInventory(winW - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.5f),
-							  winH - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.0f), INVENTORY_SCALE);
+		player->DrawInventory(winW - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.0f),
+							  winH - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 3.0f), INVENTORY_SCALE);
 
 		UI::Get()->WASD(winW - TEX_SIZE * 9.0f, winH - TEX_SIZE * 3.0f, 0.5f * INVENTORY_SCALE);
-		UI::Get()->LeftRightArrow(winW - TEX_SIZE * INVENTORY_SCALE * 3.0f, winH - TEX_SIZE * INVENTORY_SCALE * 3.0f, 0.5f * INVENTORY_SCALE);
-		UI::Get()->Space(winW - TEX_SIZE * INVENTORY_SCALE * 2.5f, winH - TEX_SIZE * INVENTORY_SCALE * 1.0f, 0.5f * INVENTORY_SCALE);
+		UI::Get()->UpDownArrow(winW - TEX_SIZE * INVENTORY_SCALE * 3.0f, winH - TEX_SIZE * INVENTORY_SCALE * 3.0f, 0.5f * INVENTORY_SCALE);
+		UI::Get()->Space(winW - TEX_SIZE * INVENTORY_SCALE * 2.0f, winH - TEX_SIZE * INVENTORY_SCALE * 1.0f, 0.5f * INVENTORY_SCALE);
 	}
 	draw->DrawString(0.0f, winH - (32.0f * (0.0f + 1.0f)), 2.0f,
 					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),

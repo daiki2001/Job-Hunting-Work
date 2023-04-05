@@ -34,6 +34,7 @@ public: //定数
 	
 	static const string KEYBOARD;
 	static const string PUSH_KEYBOARD;
+	static const string CURSOR;
 
 private: //メンバ変数
 	bool isLoad;

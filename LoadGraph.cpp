@@ -19,6 +19,7 @@ const std::string LoadGraph::CREATE_ROOM = "CreateRoom";
 
 const std::string LoadGraph::KEYBOARD = "Keyboard";
 const std::string LoadGraph::PUSH_KEYBOARD = "PushKeyboard";
+const std::string LoadGraph::CURSOR = "Cursor";
 
 LoadGraph::LoadGraph() :
 	isLoad(false)
@@ -58,4 +59,5 @@ void LoadGraph::Load(DrawPolygon* const draw)
 
 	Parameter::Set(KEYBOARD.c_str(), draw->LoadTextrue(L"./Resources/UI/Keyboard.png"));
 	Parameter::Set(PUSH_KEYBOARD.c_str(), draw->LoadTextrue(L"./Resources/UI/PushKeyboard.png"));
+	Parameter::Set(CURSOR.c_str(), draw->LoadTextrue(L"./Resources/UI/Cursor.png"));
 }

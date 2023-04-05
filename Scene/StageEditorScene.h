@@ -44,7 +44,6 @@ private: //メンバ変数
 
 	FuncRedoUndo redoUndo;
 
-	int cursor; //カーソル画像
 	int frame; //フレーム画像
 	int cross; //×の画像
 

@@ -103,16 +103,27 @@ void Player::Draw(int offsetX, int offsetY)
 
 void Player::DrawInventory(int offsetX, int offsetY, float scale)
 {
-	switch (selectItem)
+	for (int i = 0; i < SelectItem::MAX; i++)
 	{
-	case Player::KEY:
-		key.DrawInfo("Key", offsetX, offsetY, scale);
-		break;
-	case Player::BOMB:
-		bomb.DrawInfo("Bomb", offsetX, offsetY, scale);
-		break;
-	default:
-		break;
+		int size = static_cast<int>(32.0f * scale);
+		switch (i)
+		{
+		case SelectItem::KEY:
+			key.DrawInfo("Key", offsetX, offsetY + i * size, scale);
+			break;
+		case SelectItem::BOMB:
+			bomb.DrawInfo("Bomb", offsetX, offsetY + i * size, scale);
+			break;
+		default:
+			break;
+		}
+
+		if (i == selectItem)
+		{
+			draw->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY + i * size),
+							  static_cast<float>(size * 2), static_cast<float>(size), 0.0f,
+							  Parameter::Get(LoadGraph::CURSOR.c_str()), DirectX::XMFLOAT2(0.0f, 0.0f));
+		}
 	}
 }
 
@@ -146,11 +157,11 @@ void Player::Move(const GameInput* const input)
 
 void Player::SelectAction(const GameInput* const input)
 {
-	if (input->SubLeftTrigger())
+	if (input->SubUpTrigger())
 	{
 		selectItem = (selectItem - 1 < 0) ? static_cast<SelectItem>(0) : static_cast<SelectItem>(selectItem - 1);
 	}
-	else if (input->SubRightTrigger())
+	else if (input->SubDownTrigger())
 	{
 		selectItem = (selectItem + 1 >= SelectItem::MAX) ? static_cast<SelectItem>(SelectItem::MAX - 1) : static_cast<SelectItem>(selectItem + 1);
 	}

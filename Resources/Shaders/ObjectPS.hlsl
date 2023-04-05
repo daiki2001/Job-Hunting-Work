@@ -1,14 +1,14 @@
 #include "ObjectData.hlsli"
 
-Texture2D<float4> tex : register(t0); //0”ÔƒXƒƒbƒg‚Éİ’è‚³‚ê‚½ƒeƒNƒXƒ`ƒƒ
-SamplerState smp : register(s0);      //0”ÔƒXƒƒbƒg‚Éİ’è‚³‚ê‚½ƒTƒ“ƒvƒ‰[
+Texture2D<float4> tex : register(t0); //0ç•ªã‚¹ãƒ­ãƒƒãƒˆã«è¨­å®šã•ã‚ŒãŸãƒ†ã‚¯ã‚¹ãƒãƒ£
+SamplerState smp : register(s0);      //0ç•ªã‚¹ãƒ­ãƒƒãƒˆã«è¨­å®šã•ã‚ŒãŸã‚µãƒ³ãƒ—ãƒ©ãƒ¼
 
 float4 main(VSOutput input) : SV_TARGET
 {
 	float4 texColor = float4(tex.Sample(smp, input.uv));
-	float3 light = normalize(lightVec); //ŒõŒ¹‚Ö‚ÌƒxƒNƒgƒ‹‚ğ³‹K‰»
-	float diffuse = saturate(dot(-light, input.normal)); //ŒõŒ¹‚Ö‚ÌƒxƒNƒgƒ‹‚Æ–@üƒxƒNƒgƒ‹‚Ì“àÏ([0, 1]‚Ì”ÍˆÍ‚ÉƒNƒ‰ƒ“ƒv)
-	float brightness = diffuse + 0.3f; //ƒAƒ“ƒrƒGƒ“ƒg€‚ğ0.3‚Æ‚µ‚ÄŒvZ
+	float3 light = normalize(lightVec); //å…‰æºã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–
+	float diffuse = saturate(dot(-light, input.normal)); //å…‰æºã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ã¨æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©([0, 1]ã®ç¯„å›²ã«ã‚¯ãƒ©ãƒ³ãƒ—)
+	float brightness = diffuse + 0.3f; //ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆé …ã‚’0.3ã¨ã—ã¦è¨ˆç®—
 	return float4(texColor.rgb * brightness, texColor.a) * color;
 	//return color;
 }

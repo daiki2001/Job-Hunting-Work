@@ -126,6 +126,7 @@ void BlockManager::EaseInit(vector<Block>& blocks)
 {
 	Vector3 start = Vector3::Zero();
 	Vector3 end = Vector3::Zero();
+	float addTime = 0.0f;
 	bool isSkip = false;
 
 	for (auto& i : blocks)
@@ -137,10 +138,12 @@ void BlockManager::EaseInit(vector<Block>& blocks)
 		case SWITCH_BLOCK:
 			start = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == false));
 			end = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == true));
+			addTime = 0.1f;
 			break;
 		case NOT_SWITCH_BLOCK:
 			start = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == true));
 			end = Vector3(i.pos.x, i.pos.y, 1.0f * (isBlockSwitch == false));
+			addTime = 0.1f;
 			break;
 		default:
 			isSkip = true;
@@ -151,6 +154,7 @@ void BlockManager::EaseInit(vector<Block>& blocks)
 
 		i.ease.isAlive = true;
 		i.ease.time = 0.0f;
+		i.ease.addTime = addTime;
 		i.ease.start = start;
 		i.ease.end = end;
 	}
@@ -247,26 +251,32 @@ void BlockManager::Update()
 
 void BlockManager::EffectUpdate()
 {
-	static float addTime = 0.2f;
-
 	fireEffect.Update();
 	for (int i = 0; i < blocks.size(); i++)
 	{
 		if (blocks[i].typeId == TypeId::TORCH) fireEffect.Create(blocks[i].pos);
 		if (blocks[i].ease.isAlive == false) continue;
 
-		blocks[i].ease.time += addTime;
-		blocks[i].pos = Math::Lerp(blocks[i].ease.start, blocks[i].ease.end, blocks[i].ease.time);
+		blocks[i].ease.time += blocks[i].ease.addTime;
+		blocks[i].pos = Math::easeIn(blocks[i].ease.start, blocks[i].ease.end, blocks[i].ease.time);
 
-		if (blocks[i].ease.time >= 1.0f) blocks[i].ease.isAlive = false;
+		if (blocks[i].ease.time >= 1.0f)
+		{
+			blocks[i].ease.isAlive = false;
+			blocks[i].pos = blocks[i].ease.end;
+		}
 		if (blocks[i].ease.isAlive == false)
 		{
 			if (blocks[i].typeId == TypeId::MOVE_BLOCK)
 			{
-				if (blocks[i].ease.start.z == blocks[i].ease.end.z)
+				if (blocks[i].pos.z == blocks[i].ease.end.z)
 				{
 					int index = GetBlock(blocks[i].pos, static_cast<int>(i));
-					if (blocks[index].typeId == TypeId::NONE)
+					if (index == FUNCTION_ERROR)
+					{
+						blocks[i].typeId = TypeId::WALL;
+					}
+					else if (blocks[index].typeId == TypeId::NONE)
 					{
 						blocks[index].typeId = TypeId::WALL;
 						blocks[i].typeId = TypeId::NONE;
@@ -374,6 +384,7 @@ void BlockManager::MapInit()
 		TypeId::NONE,
 		TypeId::BOMB,
 		TypeId::MOVE_BLOCK,
+		TypeId::HOLE,
 	};
 
 	for (auto i = initPos.begin(); i != initPos.end();)
@@ -391,6 +402,7 @@ void BlockManager::MapInit()
 		if (isInit)
 		{
 			blocks[i->first].typeId = i->second;
+			blocks[i->first].pos = blocks[i->first].initPos;
 			i = initPos.erase(i);
 		}
 		else
@@ -642,7 +654,7 @@ void BlockManager::PushBlock(int index)
 		nextBlock -= static_cast<int>(STAGE_WIDTH);
 		break;
 	case Player::Direction::BOTTOM:
-		if ((index / STAGE_WIDTH) == 0) break;
+		if ((index / STAGE_WIDTH) == STAGE_HEIGHT - 1) break;
 
 		nextBlock += static_cast<int>(STAGE_WIDTH);
 		break;
@@ -660,7 +672,7 @@ void BlockManager::PushBlock(int index)
 	}
 
 	if (initPos.find(index) == initPos.end()) initPos[index] = TypeId::MOVE_BLOCK;
-	if (blocks[nextBlock].typeId == TypeId::NONE)
+	if (blocks[nextBlock].typeId == TypeId::NONE || blocks[nextBlock].typeId == TypeId::HOLE)
 	{
 		if (initPos.find(nextBlock) == initPos.end()) initPos[nextBlock] = blocks[nextBlock].typeId;
 	}
@@ -668,6 +680,7 @@ void BlockManager::PushBlock(int index)
 	isSwitch = true;
 	blocks[index].ease.isAlive = true;
 	blocks[index].ease.time = 0.0f;
+	blocks[index].ease.addTime = 0.05f;
 	blocks[index].ease.start = blocks[index].pos;
 	blocks[index].ease.end = blocks[nextBlock].pos;
 }
@@ -688,8 +701,8 @@ int BlockManager::GetBlock(const Vector3& pos, int skipIndex)
 {
 	int result = FUNCTION_ERROR;
 	int posX = static_cast<int>(Math::RoundOff(pos.x));
-	int posY = static_cast<int>(Math::RoundOff(pos.y * -1.0f));
-	if (posX < 0 || posX >= STAGE_WIDTH || posY < 0 || posY >= STAGE_HEIGHT)
+	int posY = static_cast<int>(Math::RoundOff(pos.y));
+	if (posX < 0 || posX >= STAGE_WIDTH || posY > 0 || posY <= static_cast<int>(STAGE_HEIGHT) * -1.0f)
 	{
 		return result;
 	}
@@ -698,7 +711,7 @@ int BlockManager::GetBlock(const Vector3& pos, int skipIndex)
 	{
 		if (i == skipIndex) continue;
 
-		if (pos == blocks[i].pos)
+		if (Vector3(static_cast<float>(posX), static_cast<float>(posY), pos.z) == blocks[i].initPos)
 		{
 			result = i;
 		}

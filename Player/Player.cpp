@@ -96,7 +96,7 @@ void Player::Draw(int offsetX, int offsetY)
 		playerDrawPos + Vector3(0.0f, 0.0f, 0.0f),
 		Math::Identity(),
 		Vector3::Scale_xyz(1.0f),
-		Color::AddAlphaValue(Color::BLACK, 0.5f),
+		Color::AddAlphaValue(Color::BLACK, 0.3f),
 		Parameter::Get("white1x1")
 	);
 }

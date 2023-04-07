@@ -28,8 +28,8 @@ public: //サブクラス
 		HOLE,             //穴
 		UP_STAIRS,        //上り階段
 		DOWN_STAIRS,      //下り階段
-		TORCH,            //松明
 		WHITE_TILE,       //白の床タイル
+		TORCH,            //松明
 		MAX               //TypeIdの上限(プログラム用)
 	};
 

@@ -1,5 +1,7 @@
 ﻿#include "BlockType.h"
 #include "BlockManager.h"
+#include "LoadGraph.h"
+#include "./Header/Parameter.h"
 
 const float BlockType::BLOCK_SIZE = 1.0f;
 const float BlockType::BLOCK_HEIGHT = 1.5f;
@@ -39,7 +41,7 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 	}
 	if (whiteTile == FUNCTION_ERROR)
 	{
-		whiteTile = BlockType::draw->LoadTextrue(L"./Resources/Game/WhiteTile.png");
+		whiteTile = Parameter::Get(LoadGraph::WHITE_TILE.c_str());
 	}
 	if (floorObj == FUNCTION_ERROR)
 	{

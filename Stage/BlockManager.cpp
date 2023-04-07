@@ -104,6 +104,9 @@ void BlockManager::Init(DrawPolygon* const draw)
 	blockType.push_back(BlockType(TypeId::DOWN_STAIRS));
 	blockType.back().Create();
 
+	blockType.push_back(BlockType(TypeId::WHITE_TILE));
+	blockType.back().Create();
+	
 	blockType.push_back(BlockType(TypeId::TORCH));
 	blockType.back().Create("Torch.obj", Math::rotateX(Math::PI_F), Vector3::Scale_xyz(0.5f));
 
@@ -242,6 +245,7 @@ void BlockManager::Update()
 	case TypeId::SWITCH_BLOCK:
 	case TypeId::NOT_SWITCH_BLOCK:
 	case TypeId::HOLE:
+	case TypeId::WHITE_TILE:
 	case TypeId::TORCH:
 	default:
 		step = Step::STAY;
@@ -276,7 +280,8 @@ void BlockManager::EffectUpdate()
 					{
 						blocks[i].typeId = TypeId::WALL;
 					}
-					else if (blocks[index].typeId == TypeId::NONE)
+					else if (blocks[index].typeId == TypeId::NONE ||
+							 blocks[index].typeId == TypeId::WHITE_TILE)
 					{
 						blocks[index].typeId = TypeId::WALL;
 						blocks[i].typeId = TypeId::NONE;
@@ -351,7 +356,8 @@ void BlockManager::Draw(const Vector3& offset)
 		}
 		if (isSkip == false)
 		{
-			BlockType::FloorDraw(i.initPos + offset);
+			bool isWhiteTile = (i.typeId == TypeId::WHITE_TILE);
+			BlockType::FloorDraw(i.initPos + offset, isWhiteTile);
 		}
 	}
 }
@@ -386,6 +392,7 @@ void BlockManager::MapInit()
 		TypeId::BOMB,
 		TypeId::MOVE_BLOCK,
 		TypeId::HOLE,
+		TypeId::WHITE_TILE,
 	};
 
 	for (auto i = initPos.begin(); i != initPos.end();)
@@ -667,16 +674,13 @@ void BlockManager::PushBlock(int index)
 	{
 		return;
 	}
-	if (blocks[nextBlock].typeId != TypeId::NONE && blocks[nextBlock].typeId != TypeId::HOLE)
+	if (blocks[nextBlock].typeId != TypeId::NONE && blocks[nextBlock].typeId != TypeId::HOLE && blocks[nextBlock].typeId != TypeId::WHITE_TILE)
 	{
 		return;
 	}
 
 	if (initPos.find(index) == initPos.end()) initPos[index] = TypeId::MOVE_BLOCK;
-	if (blocks[nextBlock].typeId == TypeId::NONE || blocks[nextBlock].typeId == TypeId::HOLE)
-	{
-		if (initPos.find(nextBlock) == initPos.end()) initPos[nextBlock] = blocks[nextBlock].typeId;
-	}
+	if (initPos.find(nextBlock) == initPos.end()) initPos[nextBlock] = blocks[nextBlock].typeId;
 
 	isSwitch = true;
 	blocks[index].ease.isAlive = true;

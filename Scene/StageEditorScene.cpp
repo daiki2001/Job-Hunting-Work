@@ -95,9 +95,10 @@ void StageEditorScene::Update()
 
 			if (inputMgr->DecisionTrigger())
 			{
-				if (static_cast<BlockManager::TypeId>(blockIndex) == BlockManager::TypeId::NONE)
+				if (static_cast<BlockManager::TypeId>(blockIndex) == BlockManager::TypeId::NONE ||
+					static_cast<BlockManager::TypeId>(blockIndex) == BlockManager::TypeId::WHITE_TILE)
 				{
-					EraseBlock();
+					EraseBlock(static_cast<BlockManager::TypeId>(blockIndex));
 				}
 				else
 				{
@@ -363,12 +364,12 @@ void StageEditorScene::UIDraw()
 					 "Title:F1");
 }
 
-void StageEditorScene::EraseBlock()
+void StageEditorScene::EraseBlock(BlockManager::TypeId index)
 {
 	// 今配置されているブロックの取得
 	auto oldBlock = stage->GetBlockManager()->GetBlock(mapIndex).typeId;
 	// ブロックの配置
-	AddBlock erase = AddBlock(Stage::GetRoom(), mapIndex, BlockManager::TypeId::NONE, oldBlock);
+	AddBlock erase = AddBlock(Stage::GetRoom(), mapIndex, index, oldBlock);
 	redoUndo.AddCommandList("Delete Block", erase);
 }
 
@@ -674,6 +675,9 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 			break;
 		case BlockManager::TypeId::DOWN_STAIRS:
 			graphHandle = Parameter::Get(LoadGraph::DOWN_STAIRS.c_str());
+			break;
+		case BlockManager::TypeId::WHITE_TILE:
+			graphHandle = Parameter::Get(LoadGraph::WHITE_TILE.c_str());
 			break;
 		case BlockManager::TypeId::TORCH:
 			graphHandle = Parameter::Get(LoadGraph::TORCH.c_str());

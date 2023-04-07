@@ -24,6 +24,7 @@ public: //定数
 	static const string ARROW;
 	static const string UP_STAIRS;
 	static const string DOWN_STAIRS;
+	static const string WHITE_TILE;
 	static const string TORCH;
 	static const string TRIANGLE;
 

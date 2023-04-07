@@ -57,7 +57,7 @@ public: //メンバ関数
 	void UIDraw() override;
 private:
 	// 配置されたブロックを消す
-	void EraseBlock();
+	void EraseBlock(BlockManager::TypeId index);
 
 	// カーソル移動
 	void CursorMove();

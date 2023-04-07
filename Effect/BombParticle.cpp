@@ -15,7 +15,7 @@ BombParticle::~BombParticle()
 
 void BombParticle::Init()
 {
-	model = Particle::GetDraw()->CreateSphere(0.1f, 4);
+	model = Particle::GetDraw()->CreateSphere(0.1f, 6);
 }
 
 void BombParticle::Create(const Vector3& startPos)
@@ -24,6 +24,9 @@ void BombParticle::Create(const Vector3& startPos)
 
 	for (size_t i = 0, j = 0; i < CREATE_NUM; j++)
 	{
+		Vector3 scale = Vector3::Scale_xyz(1.0f);
+		scale *= RandomNumber(1.75f, 1.0f);
+
 		if (j < particle.size())
 		{
 			if (particle[j].GetAlive()) continue;
@@ -36,7 +39,8 @@ void BombParticle::Create(const Vector3& startPos)
 
 		Vector3 speed = Vector3::Zero();
 		speed = { RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f) };
-		particle[j].Create(startPos, speed.Normalize() * 0.25f);
+		float speedLength = RandomNumber(0.5f, 0.1f);
+		particle[j].Create(startPos, speed.Normalize() * speedLength, Vector3::Zero(), scale);
 		i++;
 	}
 }

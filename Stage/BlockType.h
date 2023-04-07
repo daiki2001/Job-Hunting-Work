@@ -20,6 +20,7 @@ private: //静的メンバ変数
 	static DrawPolygon* draw;
 	
 	static int floorGraph; //床のテクスチャ
+	static int whiteTile;  //白の床タイルのテクスチャ
 	static int floorObj;   //床のオブジェクト
 	static int switchBlock;
 	static int blueSwitchBlock;
@@ -27,7 +28,7 @@ private: //静的メンバ変数
 public: //静的メンバ関数
 	static void StaticInit(DrawPolygon* const draw);
 	// 床の描画
-	static void FloorDraw(const Vector3& offset);
+	static void FloorDraw(const Vector3& offset = Vector3::Zero(), bool isWhiteTile = false);
 
 	static DrawPolygon* GetDraw() { return draw; }
 

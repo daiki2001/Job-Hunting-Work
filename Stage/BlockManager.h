@@ -29,6 +29,7 @@ public: //サブクラス
 		UP_STAIRS,        //上り階段
 		DOWN_STAIRS,      //下り階段
 		TORCH,            //松明
+		WHITE_TILE,       //白の床タイル
 		MAX               //TypeIdの上限(プログラム用)
 	};
 

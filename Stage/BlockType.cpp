@@ -7,6 +7,7 @@ const float BlockType::FLOOR_HEIGHT = 0.5f;
 const std::string BlockType::blockResourcesDir = "./Resources/Game/Block/";
 DrawPolygon* BlockType::draw = nullptr;
 int BlockType::floorGraph = FUNCTION_ERROR;
+int BlockType::whiteTile = FUNCTION_ERROR;
 int BlockType::floorObj = FUNCTION_ERROR;
 int BlockType::switchBlock = FUNCTION_ERROR;
 int BlockType::blueSwitchBlock = FUNCTION_ERROR;
@@ -35,6 +36,10 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 	if (floorGraph == FUNCTION_ERROR)
 	{
 		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor.png");
+	}
+	if (whiteTile == FUNCTION_ERROR)
+	{
+		whiteTile = BlockType::draw->LoadTextrue(L"./Resources/Game/WhiteTile.png");
 	}
 	if (floorObj == FUNCTION_ERROR)
 	{
@@ -138,10 +143,20 @@ void BlockType::Draw(const Vector3& offset) const
 	}
 }
 
-void BlockType::FloorDraw(const Vector3& offset)
+void BlockType::FloorDraw(const Vector3& offset, bool isWhiteTile)
 {
 	Vector3 floorPos = offset;
 	floorPos.z += (BLOCK_HEIGHT + FLOOR_HEIGHT) / 2.0f;
+	int graph = FUNCTION_ERROR;
+	if (isWhiteTile)
+	{
+		graph = whiteTile;
+	}
+	else
+	{
+		graph = floorGraph;
+	}
+
 	DirectDrawing::ChangeOBJShader();
-	draw->Draw(floorObj, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), floorGraph);
+	draw->Draw(floorObj, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), graph);
 }

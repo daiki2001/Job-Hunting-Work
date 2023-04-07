@@ -307,6 +307,7 @@ void BlockManager::Draw(const Vector3& offset)
 		TypeId::NONE,
 		TypeId::HOLE,
 		TypeId::DOWN_STAIRS,
+		TypeId::WHITE_TILE,
 	};
 	// 床の描画の除外リスト
 	static TypeId floorExclude[] = {

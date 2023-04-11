@@ -12,8 +12,7 @@ public: //エイリアス
 
 public: //定数
 	static const float BLOCK_SIZE;   //ブロックの大きさ
-	static const float BLOCK_HEIGHT; //ブロックの高さ
-	static const float FLOOR_HEIGHT; //床の厚さ
+	static const float FLOOR_HEIGHT; //床の高さ
 	static const std::string blockResourcesDir;
 
 private: //静的メンバ変数
@@ -21,7 +20,7 @@ private: //静的メンバ変数
 	
 	static int floorGraph; //床のテクスチャ
 	static int whiteTile;  //白の床タイルのテクスチャ
-	static int floorObj;   //床のオブジェクト
+	static int floorBox;   //床のオブジェクト
 	static int switchBlock;
 	static int blueSwitchBlock;
 	

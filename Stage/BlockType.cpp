@@ -4,13 +4,12 @@
 #include "./Header/Parameter.h"
 
 const float BlockType::BLOCK_SIZE = 1.0f;
-const float BlockType::BLOCK_HEIGHT = 1.5f;
-const float BlockType::FLOOR_HEIGHT = 0.5f;
+const float BlockType::FLOOR_HEIGHT = 1.0f;
 const std::string BlockType::blockResourcesDir = "./Resources/Game/Block/";
 DrawPolygon* BlockType::draw = nullptr;
 int BlockType::floorGraph = FUNCTION_ERROR;
 int BlockType::whiteTile = FUNCTION_ERROR;
-int BlockType::floorObj = FUNCTION_ERROR;
+int BlockType::floorBox = FUNCTION_ERROR;
 int BlockType::switchBlock = FUNCTION_ERROR;
 int BlockType::blueSwitchBlock = FUNCTION_ERROR;
 
@@ -43,9 +42,9 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 	{
 		whiteTile = Parameter::Get(LoadGraph::WHITE_TILE.c_str());
 	}
-	if (floorObj == FUNCTION_ERROR)
+	if (floorBox == FUNCTION_ERROR)
 	{
-		floorObj = BlockType::draw->Create3Dbox(Vector3(BLOCK_SIZE, BLOCK_SIZE, FLOOR_HEIGHT));
+		floorBox = BlockType::draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
 	}
 	if (switchBlock == FUNCTION_ERROR)
 	{
@@ -72,7 +71,7 @@ int BlockType::Create(const wchar_t* filename, const Matrix4& rotation, const Ve
 
 	if (blockBox == FUNCTION_ERROR)
 	{
-		blockBox = draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
+		blockBox = floorBox;
 	}
 
 	this->rotation = rotation;
@@ -112,7 +111,7 @@ int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const 
 
 		if (blockBox == FUNCTION_ERROR)
 		{
-			blockBox = draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
+			blockBox = floorBox;
 		}
 	}
 
@@ -148,7 +147,7 @@ void BlockType::Draw(const Vector3& offset) const
 void BlockType::FloorDraw(const Vector3& offset, bool isWhiteTile)
 {
 	Vector3 floorPos = offset;
-	floorPos.z += (BLOCK_HEIGHT + FLOOR_HEIGHT) / 2.0f;
+	floorPos += Vector3(0.0f, 0.0f, FLOOR_HEIGHT);
 	int graph = FUNCTION_ERROR;
 	if (isWhiteTile)
 	{
@@ -160,5 +159,5 @@ void BlockType::FloorDraw(const Vector3& offset, bool isWhiteTile)
 	}
 
 	DirectDrawing::ChangeOBJShader();
-	draw->Draw(floorObj, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), graph);
+	draw->Draw(floorBox, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), graph);
 }

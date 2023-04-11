@@ -278,7 +278,12 @@ void BlockManager::EffectUpdate()
 					int index = GetBlock(blocks[i].pos, static_cast<int>(i));
 					if (index == FUNCTION_ERROR)
 					{
-						blocks[i].typeId = TypeId::WALL;
+						index = GetBlock(Vector3(blocks[i].pos.x, blocks[i].pos.y, 0.0f), static_cast<int>(i));
+						blocks[index].typeId = TypeId::WALL;
+						blocks[index].pos = blocks[i].pos;
+						blocks[i].typeId = TypeId::NONE;
+						blocks[i].pos = blocks[i].initPos;
+						isSwitch = true;
 					}
 					else if (blocks[index].typeId == TypeId::NONE ||
 							 blocks[index].typeId == TypeId::WHITE_TILE)
@@ -286,6 +291,7 @@ void BlockManager::EffectUpdate()
 						blocks[index].typeId = TypeId::WALL;
 						blocks[i].typeId = TypeId::NONE;
 						blocks[i].pos = blocks[i].initPos;
+						isSwitch = true;
 					}
 					else
 					{
@@ -682,7 +688,6 @@ void BlockManager::PushBlock(int index)
 	if (initPos.find(index) == initPos.end()) initPos[index] = TypeId::MOVE_BLOCK;
 	if (initPos.find(nextBlock) == initPos.end()) initPos[nextBlock] = blocks[nextBlock].typeId;
 
-	isSwitch = true;
 	blocks[index].ease.isAlive = true;
 	blocks[index].ease.time = 0.0f;
 	blocks[index].ease.addTime = 0.05f;

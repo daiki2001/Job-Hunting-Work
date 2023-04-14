@@ -1,5 +1,6 @@
 ﻿#include "Door.h"
 #include "Area.h"
+#include "./Header/DrawPolygon.h"
 #include "./Header/Parameter.h"
 
 namespace
@@ -11,26 +12,25 @@ int entranceLight = FUNCTION_ERROR;
 const float Door::DOOR_WIDTH = 3.0f;
 const float Door::DEFAULT_DOOR_POS = 0.0f;
 const float Door::DOWN_DOOR_POS = 2.0f;
-DrawPolygon* Door::draw = nullptr;
 int Door::door_obj = FUNCTION_ERROR;
 int Door::keyDoor = FUNCTION_ERROR;
 int Door::breakWall = FUNCTION_ERROR;
 
-void Door::StaticInit(DrawPolygon* draw)
+void Door::StaticInit()
 {
-	Door::draw = draw;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	if (door_obj == FUNCTION_ERROR)
 	{
-		door_obj = Door::draw->Create3Dbox(1.0f, 1.0f, 1.0f);
+		door_obj = draw->Create3Dbox(1.0f, 1.0f, 1.0f);
 	}
 	if (keyDoor == FUNCTION_ERROR)
 	{
-		keyDoor = Door::draw->CreateOBJModel("./Resources/Game/Wall/KeyWall.obj", "./Resources/Game/Wall/");
+		keyDoor = draw->CreateOBJModel("./Resources/Game/Wall/KeyWall.obj", "./Resources/Game/Wall/");
 	}
 	if (breakWall == FUNCTION_ERROR)
 	{
-		breakWall = Door::draw->CreateOBJModel("./Resources/Game/Wall/BreakWall.obj", "./Resources/Game/Wall/");
+		breakWall = draw->CreateOBJModel("./Resources/Game/Wall/BreakWall.obj", "./Resources/Game/Wall/");
 	}
 	if (debugTex == FUNCTION_ERROR)
 	{
@@ -38,7 +38,7 @@ void Door::StaticInit(DrawPolygon* draw)
 	}
 	if (entranceLight == FUNCTION_ERROR)
 	{
-		entranceLight = Door::draw->CreateCircle(1.0f, 16);
+		entranceLight = draw->CreateCircle(1.0f, 16);
 	}
 }
 
@@ -106,6 +106,7 @@ void Door::EaseUpdate()
 void Door::Draw(const Vector3& offset)
 {
 	using namespace Math;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	if (status == WALL || status == KEY_CLOSE || status == BREAK_WALL)
 	{

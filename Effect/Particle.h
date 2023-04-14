@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 #include "./Header/EngineGeneral.h"
 
 class Particle
@@ -7,13 +6,6 @@ class Particle
 private: //エイリアス
 	using Vector3 = Math::Vector3;
 	
-private: //静的メンバ変数
-	static DrawPolygon* draw;
-	
-public: //静的メンバ変数
-	static void StaticInit(DrawPolygon* draw) { Particle::draw = draw; };
-	static DrawPolygon* GetDraw() { return Particle::draw; };
-
 private: //メンバ変数
 	Vector3 pos;
 	Vector3 speed;

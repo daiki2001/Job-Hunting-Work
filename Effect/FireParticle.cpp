@@ -1,4 +1,5 @@
 ﻿#include "FireParticle.h"
+#include "./Header/DrawPolygon.h"
 #include "./Header/Parameter.h"
 
 const int FireParticle::MAX_TIME = 10;
@@ -15,7 +16,7 @@ FireParticle::~FireParticle()
 
 void FireParticle::Init()
 {
-	model = Particle::GetDraw()->CreateSphere(0.1f, 4);
+	model = Library::DrawPolygon::GetInstance()->CreateSphere(0.1f, 4);
 }
 
 void FireParticle::Create(const Vector3& startPos)
@@ -54,7 +55,7 @@ void FireParticle::Update()
 
 void FireParticle::Draw(const Vector3& offset)
 {
-	auto draw = Particle::GetDraw();
+	auto draw = Library::DrawPolygon::GetInstance();
 	draw->ChangeOBJShader();
 
 	for (auto& i : particle)

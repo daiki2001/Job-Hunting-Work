@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 #include <string>
 #include "./Header/EngineGeneral.h"
 
@@ -16,8 +15,6 @@ public: //定数
 	static const std::string blockResourcesDir;
 
 private: //静的メンバ変数
-	static DrawPolygon* draw;
-	
 	static int floorGraph; //床のテクスチャ
 	static int whiteTile;  //白の床タイルのテクスチャ
 	static int floorBox;   //床のオブジェクト
@@ -25,11 +22,9 @@ private: //静的メンバ変数
 	static int blueSwitchBlock;
 	
 public: //静的メンバ関数
-	static void StaticInit(DrawPolygon* const draw);
+	static void StaticInit();
 	// 床の描画
 	static void FloorDraw(const Vector3& offset = Vector3::Zero(), bool isWhiteTile = false);
-
-	static DrawPolygon* GetDraw() { return draw; }
 
 private: //メンバ変数
 	int typeId;

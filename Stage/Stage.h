@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 #include "Area.h"
 #include "../Effect/Scroll.h"
 #include <map>
@@ -32,7 +31,6 @@ public: //静的メンバ変数
 	static Scroll scroll;
 	static bool oldScrollFlag;
 private:
-	static DrawPolygon* draw;
 	static std::map<Vector3, Area> rooms; //各部屋の情報
 	static Vector3 nowRoom;    //プレイヤーが現在いる部屋
 	static Vector3 oldRoomPos; //プレイヤーが一つ前にいた部屋
@@ -40,7 +38,7 @@ private:
 
 public: //静的メンバ関数
 	// 静的初期化処理
-	static void StaticInit(DrawPolygon* const draw);
+	static void StaticInit();
 
 	// 部屋の追加
 	static int CreateRoom(int direction = -1);

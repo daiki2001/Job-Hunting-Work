@@ -2,7 +2,7 @@
 #include "Area.h"
 #include "./Math/Collision/Collision.h"
 #include "./Header/DirectXInit.h"
-#include "./ShaderMgr/ShaderManager.h"
+#include "./Header/DrawPolygon.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
@@ -36,18 +36,14 @@ BlockManager::BlockManager() :
 
 BlockManager::~BlockManager()
 {
-	blockType.clear();
 	blocks.clear();
 	initPos.clear();
 }
 
-void BlockManager::Init(DrawPolygon* const draw)
+void BlockManager::Init()
 {
-	BlockType::StaticInit(draw);
-	Particle::StaticInit(draw);
+	BlockType::StaticInit();
 	fireEffect.Init();
-
-	blockType.clear();
 
 	blockType.push_back(BlockType(TypeId::NONE));
 	blockType.back().Create();
@@ -115,7 +111,7 @@ void BlockManager::Init(DrawPolygon* const draw)
 		postEffect.Init();
 		int shader = shaderMgr->CreateShader(StringToWString(shadersDirectory + "PointLightVS.hlsl").c_str(),
 											 StringToWString(shadersDirectory + "PointLightPS.hlsl").c_str());
-		int gPipeline = shaderMgr->CreateGPipeline(shader, DrawPolygon::Get2dInputLayout());
+		int gPipeline = shaderMgr->CreateGPipeline(shader, Library::DrawPolygon::GetInstance()->Get3dInputLayout());
 		for (size_t i = 0; i < 5; i++)
 		{
 			shaderMgr->GetGraphicsPipeline(gPipeline, static_cast<ShaderManager::BlendMode>(i)).pRootSignature =
@@ -345,7 +341,7 @@ void BlockManager::Draw(const Vector3& offset)
 			blockType[i.typeId].Draw(i.pos + offset);
 			if (i.typeId == TypeId::TORCH)
 			{
-				//TorchLight(i.pos + offset);
+				TorchLight(i.pos + offset);
 				fireEffect.Draw(i.pos + offset);
 			}
 		}
@@ -697,14 +693,18 @@ void BlockManager::PushBlock(int index)
 
 void BlockManager::TorchLight(const Vector3& pos)
 {
-	static int plane = BlockType::GetDraw()->CreateSphere(0.5f, 8);
-	static int graph = BlockType::GetDraw()->LoadTextrue(L"./Resources/CircleBlur.png");
+	auto draw = Library::DrawPolygon::GetInstance();
+	static int plane = draw->CreateSphere(0.5f, 8);
+	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
 
-	shaderMgr->ChangePipelineState(
-		DirectXInit::GetCommandList(),
-		postEffect.GetRootSignature(),
-		torchLight);
-	BlockType::GetDraw()->Draw(plane, pos + Vector3(0.0f, 0.0f, -0.5f), Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 1.0f));
+	//shaderMgr->ChangePipelineState(
+	//	DirectXInit::GetCommandList(),
+	//	postEffect.GetRootSignature(),
+	//	torchLight);
+	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
+	draw->ChangeSpriteShader();
+	draw->DrawTextrue(pos.x * 70.0f + 160.0f, -pos.y * 70.0f + 160.0f, 64.0f, 64.0f, 0.0f, graph, DirectX::XMFLOAT2(0.5f, 0.5f), Color::AddAlphaValue(Color::ORANGE, 1.0f));
+	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
 }
 
 int BlockManager::GetBlock(const Vector3& pos, int skipIndex)

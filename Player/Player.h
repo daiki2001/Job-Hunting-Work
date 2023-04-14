@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 #include "Item.h"
 #include "Bomb.h"
 #include "./Input/GameInput.h"
@@ -41,8 +40,6 @@ public: //サブクラス
 public: //メンバ変数
 	Vector3 pos; //座標
 private:
-	DrawPolygon* draw;
-
 	Direction direction; //向いている方向
 	int object;          //プレイヤーのオブジェクト
 	Vector3 animationPos; //自機の部屋移動中のアニメーション時の座標
@@ -56,7 +53,7 @@ private:
 
 public: //メンバ関数
 	// 初期化処理
-	void Init(DrawPolygon* const draw);
+	void Init();
 	// 更新処理
 	void Update(const GameInput* const input);
 	// 描画処理

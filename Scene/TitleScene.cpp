@@ -1,8 +1,11 @@
 ﻿#include "TitleScene.h"
 #include "./Header/DirectXInit.h"
-#include "./Input//GameInput.h"
+#include "./Header/DrawPolygon.h"
+#include "./Header/EngineGeneral.h"
+#include "./Input/GameInput.h"
+#include "./Stage/BlockManager.h"
 #include "./Header/Parameter.h"
-#include "LoadGraph.h"
+#include "./LoadGraph.h"
 
 namespace
 {
@@ -14,10 +17,10 @@ const std::wstring TitleScene::titleResourcesDir = L"./Resources/Title/";
 TitleScene::TitleScene(SceneChanger* sceneChanger) :
 	BaseScene(sceneChanger),
 	buttonIndex(ButtonIndex::START),
-	background(Engine::FUNCTION_ERROR),
-	buttonBack(Engine::FUNCTION_ERROR),
-	start(Engine::FUNCTION_ERROR),
-	editer(Engine::FUNCTION_ERROR)
+	background(FUNCTION_ERROR),
+	buttonBack(FUNCTION_ERROR),
+	start(FUNCTION_ERROR),
+	editer(FUNCTION_ERROR)
 {
 	Init();
 }
@@ -32,6 +35,8 @@ TitleScene::~TitleScene()
 
 void TitleScene::Init()
 {
+	auto draw = Library::DrawPolygon::GetInstance();
+
 	if (background == FUNCTION_ERROR)
 	{
 		background = draw->LoadTextrue((titleResourcesDir + backgroundFileName).c_str());
@@ -49,7 +54,8 @@ void TitleScene::Init()
 		editer = draw->LoadTextrue((titleResourcesDir + L"Editer.png").c_str());
 	}
 
-	//LoadGraph::Get()->Load(draw);
+	LoadGraph::Get()->Load();
+	BlockManager::Init();
 }
 
 void TitleScene::Update()
@@ -98,12 +104,8 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	DirectXInit* w = DirectXInit::GetInstance();
-	int winW = w->windowWidth;
-	int winH = w->windowHeight;
-
 	// 3Dオブジェクト
-	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	Library::DrawPolygon::GetInstance()->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 }
 
 void TitleScene::BGDraw()
@@ -111,6 +113,7 @@ void TitleScene::BGDraw()
 	DirectXInit* w = DirectXInit::GetInstance();
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	// 背景
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
@@ -130,6 +133,7 @@ void TitleScene::UIDraw()
 	DirectXInit* w = DirectXInit::GetInstance();
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();

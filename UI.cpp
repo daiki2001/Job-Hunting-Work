@@ -1,9 +1,10 @@
 #include "UI.h"
+#include "./Header/EngineGeneral.h"
+#include "./Header/DrawPolygon.h"
+#include "./Input/Input.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
-#include "./Input/Input.h"
 
-DrawPolygon* UI::draw = nullptr;
 int UI::arrow = FUNCTION_ERROR;
 int UI::space = FUNCTION_ERROR;
 
@@ -13,9 +14,9 @@ UI* UI::Get()
 	return &instance;
 }
 
-void UI::StaticInit(DrawPolygon* draw)
+void UI::StaticInit()
 {
-	UI::draw = draw;
+	auto draw = Library::DrawPolygon::GetInstance();
 	arrow = draw->LoadTextrue(L"./Resources/UI/StraightArrow.png");
 	space = draw->LoadTextrue(L"./Resources/UI/SpaceKeyboard.png");
 }
@@ -29,6 +30,7 @@ void UI::WASD(float offsetX, float offsetY, float scale)
 	const float FONT_POS_Y = 6.0f;
 	const float PUSH_FONT_POS_Y = 8.0f;
 	DirectX::XMFLOAT2 fontPos = { 20.0f, FONT_POS_Y };
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	// W
 	if (Input::IsKey(DIK_W))
@@ -125,6 +127,7 @@ void UI::UpDownArrow(float offsetX, float offsetY, float scale)
 	const float ARROW_POS_Y = -2.0f;
 	const float PUSH_ARROW_POS_Y = ARROW_POS_Y + 2.0f;
 	DirectX::XMFLOAT2 arrowPos = { 0.0f, ARROW_POS_Y };
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	// ª
 	if (Input::IsKey(DIK_UP))
@@ -169,6 +172,7 @@ void UI::LeftRightArrow(float offsetX, float offsetY, float scale)
 	const float ARROW_POS_Y = -2.0f;
 	const float PUSH_ARROW_POS_Y = ARROW_POS_Y + 2.0f;
 	DirectX::XMFLOAT2 arrowPos = { 0.0f, ARROW_POS_Y };
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	// ©
 	if (Input::IsKey(DIK_LEFT))
@@ -219,6 +223,6 @@ void UI::Space(float offsetX, float offsetY, float scale)
 	{
 		texPos.y = 0.0f;
 	}
-	draw->DrawCutTextrue(offsetX, offsetY, DRAW_SIZE.x, DRAW_SIZE.y, texPos, TEX_SIZE, 0.0f, space,
+	Library::DrawPolygon::GetInstance()->DrawCutTextrue(offsetX, offsetY, DRAW_SIZE.x, DRAW_SIZE.y, texPos, TEX_SIZE, 0.0f, space,
 						 DirectX::XMFLOAT2(0.0f, 0.0f), Color::AddAlphaValue(Color::WHITE, ALPHA));
 }

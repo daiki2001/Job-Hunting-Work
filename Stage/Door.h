@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 #include "./Header/EngineGeneral.h"
 #include "./Math/Easing.h"
 
@@ -27,14 +26,13 @@ public: //定数
 	static const float DOWN_DOOR_POS;    //ドアが開いている時のz軸の座標
 
 private: //静的メンバ変数
-	static DrawPolygon* draw;
 	static int door_obj;  //ドアのオブジェクト
 	static int keyDoor;   //鍵ドアのオブジェクト
 	static int breakWall; //壊せる壁のオブジェクト
 
 public: //静的メンバ関数
 	// 初期化
-	static void StaticInit(DrawPolygon* draw);
+	static void StaticInit();
 
 private: //メンバ変数
 	Vector3 pos;

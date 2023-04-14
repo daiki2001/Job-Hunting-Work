@@ -3,7 +3,9 @@
 #include "../Player/Player.h"
 #include <vector>
 #include <map>
+#include "./ShaderMgr/ShaderManager.h"
 #include "../Effect/FireParticle.h"
+#include "./Header/PostEffect.h"
 #include "./Header/EngineGeneral.h"
 
 class BlockManager
@@ -68,7 +70,7 @@ private: //静的メンバ変数
 	
 public: //静的メンバ関数
 	// 初期化処理
-	static void Init(DrawPolygon* const draw);
+	static void Init();
 	// 演出の初期化
 	static void EaseInit(vector<Block>& blocks);
 

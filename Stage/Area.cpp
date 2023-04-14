@@ -1,7 +1,9 @@
 ﻿#include "Area.h"
 #include "Door.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
 #include "./Input/GameInput.h"
+#include "./Header/EngineGeneral.h"
 #include <math.h>
 
 namespace
@@ -13,7 +15,6 @@ const float Area::WALL_SIZE = 2.0f;
 const Math::Vector3 Area::INIT_CAMERA = { 7.0f, -3.0f, 0.0f };
 const int Area::NONE_LOST_FOREST = Area::DoorNum::MAX;
 const size_t Area::MAX_COURSE_NUM = 5;
-DrawPolygon* Area::draw = nullptr;
 int Area::wall_obj = FUNCTION_ERROR;
 Area* Area::planeArea = nullptr;
 
@@ -24,7 +25,7 @@ Area::Area() :
 	lostForest{},
 	isAlive(false)
 {
-	block_mgr.Init(Area::draw);
+	block_mgr.Init();
 
 	door[DoorNum::LEFT].Init(Vector3(-9.0f, 0.0f, 0.0f), Vector3(1.0f, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
 	door[DoorNum::RIGHT].Init(Vector3(+9.0f, 0.0f, 0.0f), Vector3(1.0f, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
@@ -38,14 +39,10 @@ Area::~Area()
 {
 }
 
-void Area::StaticInit(DrawPolygon* const draw)
+void Area::StaticInit()
 {
-	if (draw != nullptr)
-	{
-		Area::draw = draw;
-	}
 	// 外壁のモデルの読み込み
-	wall_obj = Area::draw->CreateOBJModel("./Resources/Game/Wall/Wall.obj", "./Resources/Game/Wall/");
+	wall_obj = Library::DrawPolygon::GetInstance()->CreateOBJModel("./Resources/Game/Wall/Wall.obj", "./Resources/Game/Wall/");
 
 	// planeAreaの初期化
 	static Area defArea = {};
@@ -73,7 +70,7 @@ void Area::StaticInit(DrawPolygon* const draw)
 		}
 	}
 
-	Door::StaticInit(draw);
+	Door::StaticInit();
 }
 
 void Area::Reset()
@@ -280,6 +277,7 @@ int Area::WriteArea(FILE* fileHandle)
 void Area::DrawWall(const Vector3& offset)
 {
 	const Vector3 size = Vector3::Scale_xyz(WALL_SIZE);
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
 	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);

@@ -1,5 +1,4 @@
 #pragma once
-#include "./Header/DrawPolygon.h"
 
 class UI final
 {
@@ -12,12 +11,11 @@ private:
 	~UI() {}
 
 private: //メンバ静的変数
-	static DrawPolygon* draw;
 	static int arrow;
 	static int space;
 
 public: //メンバ静的関数
-	static void StaticInit(DrawPolygon* draw);
+	static void StaticInit();
 
 public: //メンバ関数
 	void WASD(float offsetX = 0.0f, float offsetY = 0.0f, float scale = 1.0f);

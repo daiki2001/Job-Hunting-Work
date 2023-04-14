@@ -1,12 +1,12 @@
 ﻿#include "BlockType.h"
 #include "BlockManager.h"
+#include "./Header/DrawPolygon.h"
 #include "LoadGraph.h"
 #include "./Header/Parameter.h"
 
 const float BlockType::BLOCK_SIZE = 1.0f;
 const float BlockType::FLOOR_HEIGHT = 1.0f;
 const std::string BlockType::blockResourcesDir = "./Resources/Game/Block/";
-DrawPolygon* BlockType::draw = nullptr;
 int BlockType::floorGraph = FUNCTION_ERROR;
 int BlockType::whiteTile = FUNCTION_ERROR;
 int BlockType::floorBox = FUNCTION_ERROR;
@@ -27,16 +27,13 @@ BlockType::~BlockType()
 {
 }
 
-void BlockType::StaticInit(DrawPolygon* const draw)
+void BlockType::StaticInit()
 {
-	if (BlockType::draw == nullptr)
-	{
-		BlockType::draw = draw;
-	}
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	if (floorGraph == FUNCTION_ERROR)
 	{
-		floorGraph = BlockType::draw->LoadTextrue(L"./Resources/Game/Floor.png");
+		floorGraph = draw->LoadTextrue(L"./Resources/Game/Floor.png");
 	}
 	if (whiteTile == FUNCTION_ERROR)
 	{
@@ -44,15 +41,15 @@ void BlockType::StaticInit(DrawPolygon* const draw)
 	}
 	if (floorBox == FUNCTION_ERROR)
 	{
-		floorBox = BlockType::draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
+		floorBox = draw->Create3Dbox(Vector3::Scale_xyz(BLOCK_SIZE));
 	}
 	if (switchBlock == FUNCTION_ERROR)
 	{
-		switchBlock = BlockType::draw->CreateOBJModel("./Resources/Game/Block/Switch.obj", "./Resources/Game/Block/");
+		switchBlock = draw->CreateOBJModel("./Resources/Game/Block/Switch.obj", "./Resources/Game/Block/");
 	}
 	if (blueSwitchBlock == FUNCTION_ERROR)
 	{
-		blueSwitchBlock = BlockType::draw->CreateOBJModel("./Resources/Game/Block/Switch_blue.obj", "./Resources/Game/Block/");
+		blueSwitchBlock = draw->CreateOBJModel("./Resources/Game/Block/Switch_blue.obj", "./Resources/Game/Block/");
 	}
 }
 
@@ -60,13 +57,13 @@ int BlockType::Create(const wchar_t* filename, const Matrix4& rotation, const Ve
 {
 	if (filename == nullptr)
 	{
-		graph = 0;
+		return 0;
 	}
 	else
 	{
 		const std::wstring wBlockResourcesDir = L"./Resources/Game/Block/";
 		auto filePath = wBlockResourcesDir.c_str() + static_cast<std::wstring>(filename);
-		graph = draw->LoadTextrue(filePath.c_str());
+		graph = Library::DrawPolygon::GetInstance()->LoadTextrue(filePath.c_str());
 	}
 
 	if (blockBox == FUNCTION_ERROR)
@@ -88,7 +85,7 @@ int BlockType::Create(const char* filename, const Matrix4& rotation, const Vecto
 	if (blockBox == FUNCTION_ERROR)
 	{
 		auto resDir = blockResourcesDir + ExtractDirectory(filename);
-		blockBox = draw->CreateOBJModel((blockResourcesDir + filename).c_str(), resDir.c_str());
+		blockBox = Library::DrawPolygon::GetInstance()->CreateOBJModel((blockResourcesDir + filename).c_str(), resDir.c_str());
 	}
 
 	this->rotation = rotation;
@@ -124,6 +121,8 @@ int BlockType::Create(int number, bool isObject, const Matrix4& rotation, const 
 
 void BlockType::Draw(const Vector3& offset) const
 {
+	auto draw = Library::DrawPolygon::GetInstance();
+
 	if (graph == FUNCTION_ERROR)
 	{
 		// 'graph'が'FUNCTION_ERROR'の時
@@ -159,5 +158,5 @@ void BlockType::FloorDraw(const Vector3& offset, bool isWhiteTile)
 	}
 
 	DirectDrawing::ChangeOBJShader();
-	draw->Draw(floorBox, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), graph);
+	Library::DrawPolygon::GetInstance()->Draw(floorBox, floorPos, Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::WHITE, 1.0f), graph);
 }

@@ -1,5 +1,7 @@
 ﻿#include "Stage.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
+#include "./Header/Camera.h"
 #include "./Header/Parameter.h"
 
 const Math::Vector3 Stage::LEFT_ROOM = { -1.0f, 0.0f, 0.0f };
@@ -8,7 +10,6 @@ const Math::Vector3 Stage::FRONT_ROOM = { 0.0f, -1.0f, 0.0f };
 const Math::Vector3 Stage::BACK_ROOM = { 0.0f, 1.0f, 0.0f };
 const Math::Vector3 Stage::UP_FLOOR = { 0.0f, 0.0f, 1.0f };
 const Math::Vector3 Stage::DOWN_FLOOR = { 0.0f, 0.0f, -1.0f };
-DrawPolygon* Stage::draw = nullptr;
 std::map<Math::Vector3, Area> Stage::rooms;
 Math::Vector3 Stage::nowRoom = { 0.0f, 0.0f, 0.0f };
 Math::Vector3 Stage::oldRoomPos = Stage::nowRoom;
@@ -31,10 +32,9 @@ Stage* Stage::Get()
 	return &instance;
 }
 
-void Stage::StaticInit(DrawPolygon* const draw)
+void Stage::StaticInit()
 {
-	Stage::draw = draw;
-	Area::StaticInit(Stage::draw);
+	Area::StaticInit();
 }
 
 void Stage::Init()
@@ -119,7 +119,7 @@ void Stage::Draw(int offsetX, int offsetY)
 		rooms[nowRoom + DOWN_FLOOR].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), Area::WALL_SIZE });
 	}
 	DirectDrawing::ChangeSpriteShader();
-	draw->DrawTextrue(
+	Library::DrawPolygon::GetInstance()->DrawTextrue(
 		0.0f, 0.0f, static_cast<float>(winW), static_cast<float>(winH),
 		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f),
 		Color::AddAlphaValue(Color::BLACK, 0.5f));
@@ -171,7 +171,7 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 		rooms[oldRoomPos + DOWN_FLOOR].Draw(DOWN_FLOOR_POS + offset);
 	}
 	DirectDrawing::ChangeSpriteShader();
-	draw->DrawTextrue(
+	Library::DrawPolygon::GetInstance()->DrawTextrue(
 		static_cast<float>(winW) / 2.0f, static_cast<float>(winH) / 2.0f,
 		static_cast<float>(winW), static_cast<float>(winH),
 		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.5f, 0.5f),
@@ -570,6 +570,7 @@ void Stage::MiniMap(int offsetX, int offsetY, float scale, DirectX::XMFLOAT2 scr
 		0.0f
 	};
 	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.625f, 0.625f, 0.625f, 0.75f);
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->ChangeSpriteShader();
 	for (int i = 0; i < 9; i++)

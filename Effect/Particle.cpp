@@ -1,7 +1,5 @@
 ﻿#include "Particle.h"
 
-DrawPolygon* Particle::draw = nullptr;
-
 Particle::Particle() :
 	pos(0.0f, 0.0f, 0.0f),
 	speed(0.0f, 0.0f, 0.0f),

@@ -1,4 +1,5 @@
 ﻿#include "Bomb.h"
+#include "./Header/DrawPolygon.h"
 #include "./Stage/Stage.h"
 #include "./Math/Collision/Collision.h"
 #include "./Header/Parameter.h"
@@ -27,7 +28,7 @@ void Bomb::Init()
 	}
 	if (object == FUNCTION_ERROR)
 	{
-		object = draw->CreateCircle(1.0f, 8);
+		object = Library::DrawPolygon::GetInstance()->CreateCircle(1.0f, 8);
 	}
 }
 
@@ -103,8 +104,8 @@ void Bomb::Draw(int offsetX, int offsetY)
 	DirectDrawing::ChangeOBJShader();
 	if (isBomber == false)
 	{
-		draw->Draw(object, pos, Math::Identity(), Vector3::Scale_xyz(0.5f), Color::AddAlphaValue(Color::WHITE, 1.0f),
-				   Parameter::Get(LoadGraph::BOMB.c_str()));
+		Library::DrawPolygon::GetInstance()->Draw(object, pos, Math::Identity(), Vector3::Scale_xyz(0.5f), Color::AddAlphaValue(Color::WHITE, 1.0f),
+						Parameter::Get(LoadGraph::BOMB.c_str()));
 	}
 }
 

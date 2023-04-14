@@ -3,9 +3,6 @@
 
 class SettingScene : public BaseScene
 {
-public: //定数
-	static const std::wstring settingResourcesDir;
-
 public: //メンバ関数
 	SettingScene(SceneChanger* sceneChanger);
 	~SettingScene() override;

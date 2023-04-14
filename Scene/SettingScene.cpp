@@ -1,17 +1,18 @@
 ﻿#include "SettingScene.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
+#include "./Header/EngineGeneral.h"
 #include "./Input/Input.h"
 
 namespace
 {
+static const std::wstring settingResourcesDir = L"./Resources/Setting/";
 static const std::wstring backgroundFileName = L"background.png";
 }
 
-const std::wstring SettingScene::settingResourcesDir = L"./Resources/Setting/";
-
 SettingScene::SettingScene(SceneChanger* sceneChanger) :
 	BaseScene(sceneChanger),
-	background(Engine::FUNCTION_ERROR)
+	background(FUNCTION_ERROR)
 {
 	Init();
 }
@@ -26,7 +27,7 @@ SettingScene::~SettingScene()
 
 void SettingScene::Init()
 {
-	background = draw->LoadTextrue((settingResourcesDir + backgroundFileName).c_str());
+	background = Library::DrawPolygon::GetInstance()->LoadTextrue((settingResourcesDir + backgroundFileName).c_str());
 }
 
 void SettingScene::Update()
@@ -57,7 +58,7 @@ void SettingScene::Draw()
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
 
-	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	Library::DrawPolygon::GetInstance()->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 3Dオブジェクト
 
@@ -69,6 +70,7 @@ void SettingScene::BGDraw()
 	DirectXInit* w = DirectXInit::GetInstance();
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();

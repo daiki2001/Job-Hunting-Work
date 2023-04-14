@@ -1,13 +1,9 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 
 class Item
 {
-protected: //静的メンバ変数
-	static DrawPolygon* draw;
-
 public: //静的メンバ関数
-	static void StaticInit(DrawPolygon* const draw);
+	static void StaticInit();
 
 public: //メンバ変数
 	int graph; //画像情報

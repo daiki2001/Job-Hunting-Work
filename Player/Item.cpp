@@ -1,10 +1,9 @@
 ﻿#include "Item.h"
+#include "./Header/DrawPolygon.h"
 #include "./Input/GameInput.h"
 #include "./Effect/BombParticle.h"
 #include "./Header/Parameter.h"
 #include "./Header/Error.h"
-
-DrawPolygon* Item::draw = nullptr;
 
 Item::Item(unsigned int maxCount, unsigned int count) :
 	graph(FUNCTION_ERROR),
@@ -19,7 +18,7 @@ void Item::Init(const wchar_t* fileName)
 
 	if (graph == FUNCTION_ERROR)
 	{
-		graph = draw->LoadTextrue(fileName);
+		graph = Library::DrawPolygon::GetInstance()->LoadTextrue(fileName);
 	}
 }
 
@@ -28,17 +27,16 @@ void Item::Init(int texNumber)
 	graph = texNumber;
 }
 
-void Item::StaticInit(DrawPolygon* const draw)
+void Item::StaticInit()
 {
-	Item::draw = draw;
-	Particle::StaticInit(draw);
 	BombParticle::Init();
 }
 
 void Item::DrawInfo(const char* type, int offsetX, int offsetY, float scale)
 {
-	DirectDrawing::ChangeSpriteShader();
+	auto draw = Library::DrawPolygon::GetInstance();
 
+	DirectDrawing::ChangeSpriteShader();
 	if (graph == FUNCTION_ERROR)
 	{
 		draw->DrawString(static_cast<float>(offsetX), static_cast<float>(offsetY), 2.0f * scale,

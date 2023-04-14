@@ -1,4 +1,5 @@
 ﻿#include "Player.h"
+#include "./Header/DrawPolygon.h"
 #include "./Stage/BlockType.h"
 #include "./Stage/Stage.h"
 #include "./Math/Collision/Collision.h"
@@ -14,7 +15,6 @@ const float Player::SPEED = 0.1f;
 const Math::Vector3 Player::COLLISION_SIZE = Vector3(0.25f, 1.0f, 1.0f);
 
 Player::Player() :
-	draw(nullptr),
 	pos{},
 	direction(Player::Direction::TOP),
 	object(Engine::FUNCTION_ERROR),
@@ -37,12 +37,11 @@ Player* Player::Get()
 	return &instance;
 }
 
-void Player::Init(DrawPolygon* const draw)
+void Player::Init()
 {
-	this->draw = draw;
-	object = this->draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
+	object = Library::DrawPolygon::GetInstance()->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
 
-	Item::StaticInit(this->draw);
+	Item::StaticInit();
 	key.Init(Parameter::Get(LoadGraph::KEY.c_str()));
 	bomb.Init();
 	route.reserve(Area::MAX_COURSE_NUM);
@@ -64,6 +63,7 @@ void Player::Update(const GameInput* const input)
 
 void Player::Draw(int offsetX, int offsetY)
 {
+	auto draw = Library::DrawPolygon::GetInstance();
 	static const int SHADOW = draw->CreateCircle(0.4f, 8);
 
 	Vector3 offset = Vector3(
@@ -120,7 +120,7 @@ void Player::DrawInventory(int offsetX, int offsetY, float scale)
 
 		if (i == selectItem)
 		{
-			draw->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY + i * size),
+			Library::DrawPolygon::GetInstance()->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY + i * size),
 							  static_cast<float>(size * 2), static_cast<float>(size), 0.0f,
 							  Parameter::Get(LoadGraph::CURSOR.c_str()), DirectX::XMFLOAT2(0.0f, 0.0f));
 		}

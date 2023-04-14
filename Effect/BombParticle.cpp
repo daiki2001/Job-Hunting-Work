@@ -1,4 +1,5 @@
 ﻿#include "BombParticle.h"
+#include "./Header/DrawPolygon.h"
 #include "./Header/Parameter.h"
 
 const int BombParticle::MAX_TIME = 20;
@@ -15,7 +16,7 @@ BombParticle::~BombParticle()
 
 void BombParticle::Init()
 {
-	model = Particle::GetDraw()->CreateSphere(0.1f, 6);
+	model = Library::DrawPolygon::GetInstance()->CreateSphere(0.1f, 6);
 }
 
 void BombParticle::Create(const Vector3& startPos)
@@ -57,7 +58,7 @@ void BombParticle::Update()
 
 void BombParticle::Draw(const Vector3& offset)
 {
-	auto draw = Particle::GetDraw();
+	auto draw = Library::DrawPolygon::GetInstance();
 	draw->ChangeOBJShader();
 
 	for (auto& i : particle)

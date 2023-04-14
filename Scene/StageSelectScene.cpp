@@ -1,5 +1,7 @@
 ﻿#include "StageSelectScene.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
+#include "./Header/Camera.h"
 #include "./Stage/Stage.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
@@ -33,7 +35,7 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Init()
 {
-	LoadGraph::Get()->Load(draw);
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	if (background == FUNCTION_ERROR)
 	{
@@ -114,7 +116,7 @@ void StageSelectScene::Update()
 		if (changeAnimation.GetChange())
 		{
 			auto* stage = Stage::Get();
-			stage->StaticInit(draw);
+			stage->StaticInit();
 			if (stagePath.empty() == false)
 			{
 				stage->LoadStage(stagePath.c_str());
@@ -157,8 +159,10 @@ void StageSelectScene::Draw()
 {
 	using namespace DirectX;
 
-	int winW = DirectXInit::GetInstance()->windowWidth;
-	int winH = DirectXInit::GetInstance()->windowHeight;
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
@@ -174,8 +178,10 @@ void StageSelectScene::Draw()
 
 void StageSelectScene::BGDraw()
 {
-	int winW = DirectXInit::GetInstance()->windowWidth;
-	int winH = DirectXInit::GetInstance()->windowHeight;
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
@@ -191,8 +197,10 @@ void StageSelectScene::BGDraw()
 
 void StageSelectScene::UIDraw()
 {
-	int winW = DirectXInit::GetInstance()->windowWidth;
-	int winH = DirectXInit::GetInstance()->windowHeight;
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();

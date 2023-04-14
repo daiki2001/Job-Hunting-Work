@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <string>
-#include "./Header/DrawPolygon.h"
 
 class LoadGraph final
 {
@@ -42,7 +41,7 @@ private: //メンバ変数
 
 public: //メンバ関数
 	// 読み込み処理
-	void Load(DrawPolygon* const draw);
+	void Load();
 	// 解放処理
-	void Release(DrawPolygon* const draw) {}
+	void Release() {}
 };

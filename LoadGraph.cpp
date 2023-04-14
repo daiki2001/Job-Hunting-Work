@@ -1,5 +1,6 @@
-﻿#include "LoadGraph.h"
+﻿#include "./Header/DrawPolygon.h"
 #include "./Header/Parameter.h"
+#include "LoadGraph.h"
 
 const std::string LoadGraph::WALL_BLOCK = "WallBlock";
 const std::string LoadGraph::GOAL = "Goal";
@@ -37,10 +38,11 @@ LoadGraph* LoadGraph::Get()
 	return &instance;
 }
 
-void LoadGraph::Load(DrawPolygon* const draw)
+void LoadGraph::Load()
 {
 	if (isLoad) return;
 	isLoad = true;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	Parameter::Set(WALL_BLOCK.c_str(), draw->LoadTextrue(L"./Resources/Game/Block/WallBlock.png"));
 	Parameter::Set(GOAL.c_str(), draw->LoadTextrue(L"./Resources/Game/Block/Goal.png"));

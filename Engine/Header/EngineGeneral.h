@@ -5,6 +5,7 @@
 #include "Color.h"
 #include "Error.h"
 
+#include <string>
 #include <random>
 
 /*定数*/
@@ -18,6 +19,9 @@ static const std::string shadersDirectory = engineResourcesDir + "shaders/"; //�
 /*関数*/
 namespace Engine
 {
+// エンジンの初期化
+void EngineInit(const WCHAR title[], const float clearColor[4], int width, int height);
+
 std::wstring StringToWString(const std::string& s);
 std::string WStringToString(const std::wstring& s);
 

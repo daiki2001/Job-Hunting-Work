@@ -1,5 +1,7 @@
 ﻿#include "GameScene.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
+#include "./Header/EngineGeneral.h"
 #include "./Input/GameInput.h"
 #include "./Header/Camera.h"
 #include "./Header/Parameter.h"
@@ -13,9 +15,9 @@ bool GameScene::isClear = false;
 
 GameScene::GameScene(SceneChanger* sceneChanger) :
 	BaseScene(sceneChanger),
-	background(Engine::FUNCTION_ERROR),
-	backgroundObj(Engine::FUNCTION_ERROR),
-	clear(Engine::FUNCTION_ERROR)
+	background(FUNCTION_ERROR),
+	backgroundObj(FUNCTION_ERROR),
+	clear(FUNCTION_ERROR)
 {
 	Init();
 	Reset();
@@ -31,6 +33,8 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+	auto draw = Library::DrawPolygon::GetInstance();
+
 	if (background == FUNCTION_ERROR)
 	{
 		background = draw->LoadTextrue((gameResourcesDir + L"Floor.png").c_str());
@@ -50,7 +54,7 @@ void GameScene::Init()
 		clear = draw->LoadTextrue((gameResourcesDir + L"Clear.png").c_str());
 	}
 
-	player->Init(draw);
+	player->Init();
 
 	Camera::targetRadius = 10.0f;
 	Camera::longitude = Math::DEGREE_F * (-90.0f);
@@ -111,11 +115,7 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-	DirectXInit* w = DirectXInit::GetInstance();
-	int winW = w->windowWidth;
-	int winH = w->windowHeight;
-
-	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	Library::DrawPolygon::GetInstance()->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 3Dオブジェクト
 	if (stage->scroll.GetFlag())
@@ -131,18 +131,22 @@ void GameScene::Draw()
 
 void GameScene::BGDraw()
 {
+	DirectXInit* w = DirectXInit::GetInstance();
+	int winW = w->windowWidth;
+	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
+
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
 
-	draw->DrawTextrue(DirectXInit::GetInstance()->windowWidth / 2.0f,
-					  DirectXInit::GetInstance()->windowHeight / 2.0f,
-					  static_cast<float>(DirectXInit::GetInstance()->windowWidth),
-					  static_cast<float>(DirectXInit::GetInstance()->windowHeight),
+	draw->DrawTextrue(winW / 2.0f,
+					  winH / 2.0f,
+					  static_cast<float>(winW),
+					  static_cast<float>(winH),
 					  0.0f,
 					  Parameter::Get("white1x1"),
 					  DirectX::XMFLOAT2(0.5f, 0.5f),
 					  Color::AddAlphaValue(Color::BLACK, 1.0f));
-
 }
 
 void GameScene::UIDraw()
@@ -150,6 +154,7 @@ void GameScene::UIDraw()
 	DirectXInit* w = DirectXInit::GetInstance();
 	int winW = w->windowWidth;
 	int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();

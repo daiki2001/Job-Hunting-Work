@@ -1,5 +1,7 @@
 ﻿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
+#include "./Header/DrawPolygon.h"
+#include "./Header/EngineGeneral.h"
 #include "./Header/Camera.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
@@ -44,8 +46,8 @@ StageEditorScene::~StageEditorScene()
 
 void StageEditorScene::Init()
 {
-	LoadGraph::Get()->Load(draw);
-	stage->StaticInit(draw);
+	auto draw = Library::DrawPolygon::GetInstance();
+	stage->StaticInit();
 
 	// フレーム画像の読み込み
 	if (frame == FUNCTION_ERROR)
@@ -238,7 +240,7 @@ void StageEditorScene::Draw()
 	const int winW = w->windowWidth;
 	const int winH = w->windowHeight;
 
-	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
+	Library::DrawPolygon::GetInstance()->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 
 	// 3Dオブジェクト
 	stage->Draw();
@@ -249,6 +251,7 @@ void StageEditorScene::UIDraw()
 	DirectXInit* w = DirectXInit::GetInstance();
 	const int winW = w->windowWidth;
 	const int winH = w->windowHeight;
+	auto draw = Library::DrawPolygon::GetInstance();
 
 	draw->SetDrawBlendMode(DirectDrawing::BlendMode::ALPHA);
 	DirectDrawing::ChangeSpriteShader();
@@ -612,6 +615,8 @@ void StageEditorScene::CursorMoveDown()
 
 void StageEditorScene::DrawUIBox(float posX, float posY, float size, float angle, int graphHandle, const XMFLOAT4& color, bool flag)
 {
+	auto draw = Library::DrawPolygon::GetInstance();
+
 	if (flag)
 	{
 		draw->SetDrawBlendMode(ShaderManager::BlendMode::SUB);

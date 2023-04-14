@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "./Header/DrawPolygon.h"
 #include "BlockManager.h"
 #include "Door.h"
 #include "./Header/EngineGeneral.h"
@@ -29,13 +28,12 @@ public: //サブクラス
 	};
 
 private: //静的メンバ変数
-	static DrawPolygon* draw;
 	static int wall_obj; //外壁のオブジェクト
 	static Area* planeArea; //ブロックが何も置かれていないエリア
 
 public: //静的メンバ関数
 	// 静的初期化処理
-	static void StaticInit(DrawPolygon* const draw);
+	static void StaticInit();
 
 	static const int GetWallObj() { return wall_obj; }
 	static const Area GetPlaneArea() { return *planeArea; }

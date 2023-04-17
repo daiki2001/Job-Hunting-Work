@@ -18,16 +18,24 @@ private: //シングルトン化
 public:
 	static DrawPolygon* GetInstance();
 
-private: // エイリアス
-	using Vector3 = Engine::Math::Vector3;
-	template <class T>
-	using vector = std::vector<T>;
+private: // サブクラス
+	struct AlphaObj
+	{
+		int polygonIndex = 0;
+		int objectIndex = 0;
+		Matrix4 mat = Math::Identity();
+		Vector3 lightVec = Vector3::Zero();
+
+		bool isObj = false;
+		int parentIndex = 0;
+	};
 
 public: // メンバ変数
 	Vector3 light;    //光源
 private:
 	int polygonCount; //オブジェクトの数
 	size_t loopCount; //ループした回数
+	vector<AlphaObj> alphaObj;
 
 	Vector3 lightVec; //光線
 
@@ -76,13 +84,16 @@ public: // メンバ関数
 
 	// オブジェクトの描画処理
 	int Draw(int polygonData, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
-			 const XMFLOAT4& color, int graphHandle = 0, bool isFill = true,
+			 const XMFLOAT4& color, int graphHandle = 0, bool isAlpha = false,
 			 bool isOrthoGraphic = false, bool viewMultiFlag = true, Object* parent = nullptr);
 
 	// モデルの描画処理
 	int DrawOBJ(int object, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
-				const XMFLOAT4& color = Color::AddAlphaValue(Color::WHITE, 1.0f),
+				const XMFLOAT4& color = Color::AddAlphaValue(Color::WHITE, 1.0f), bool isAlpha = false,
 				bool isOrthoGraphic = false, bool viewMultiFlag = true, Object* parent = nullptr);
+
+	// アルファ値有りの描画処理
+	void DrawAlpha();
 
 	// カメラの作成
 	int CreateCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector);

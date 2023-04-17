@@ -1076,7 +1076,7 @@ int DrawPolygon::DrawOBJInit()
 
 int DrawPolygon::Draw(
 	int polygonData, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
-	const XMFLOAT4& color, int graphHandle, bool isFill,
+	const XMFLOAT4& color, int graphHandle, bool isAlpha,
 	bool isOrthoGraphic, bool viewMultiFlag, Object* parent)
 {
 	if ((polygonData < 0 || (size_t)polygonData >= vertices.size()) ||
@@ -1105,14 +1105,6 @@ int DrawPolygon::Draw(
 		}
 
 		objIndex.emplace_back(IndexData{ size, graphHandle });
-
-		if (isFill == false)
-		{
-			for (size_t i = 0; i < vertices[polygonData].vertices.size(); i++)
-			{
-				vertices[polygonData].vertices[i].normal = { -light.x, -light.y, -light.z };
-			}
-		}
 	}
 
 	if (objIndex.size() <= 0)
@@ -1156,6 +1148,20 @@ int DrawPolygon::Draw(
 		lightVec = light;
 	}
 
+	if (isAlpha)
+	{
+		alphaObj.push_back(
+			{
+				polygonCount,
+				polygonData,
+				obj[index.constant].matWorld * mat,
+				lightVec,
+				false
+			});
+
+		return index.constant;
+	}
+
 #pragma region GraphicsCommand
 
 	BaseDrawGraphics();
@@ -1163,7 +1169,7 @@ int DrawPolygon::Draw(
 	ConstBufferData* constMap = nullptr;
 	obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //マッピング
 
-	constMap->color = color;
+	constMap->color = obj[index.constant].color;
 	constMap->mat = obj[index.constant].matWorld * mat;
 	constMap->lightVec = lightVec;
 	obj[index.constant].constBuff->Unmap(0, nullptr); //マッピング解除
@@ -1176,17 +1182,8 @@ int DrawPolygon::Draw(
 	cmdList->SetGraphicsRootConstantBufferView(0, obj[index.constant].constBuff->GetGPUVirtualAddress());
 	cmdList->SetGraphicsRootDescriptorTable(1, textrueData[index.textrue].gpuDescHandle);
 
-	if (isFill == true)
-	{
-		// プリミティブ形状の設定
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
-	else
-	{
-		// プリミティブ形状の設定
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	}
-
+	// プリミティブ形状の設定
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// 頂点バッファの設定
 	cmdList->IASetVertexBuffers(0, 1, &vertices[polygonData].vbView);
 	// インデックスバッファビューの設定
@@ -1194,11 +1191,13 @@ int DrawPolygon::Draw(
 	// 描画コマンド
 	cmdList->DrawIndexedInstanced((UINT)vertices[polygonData].indices.size(), 1, 0, 0, 0);
 
+#pragma endregion //GraphicsCommand
+
 	return index.constant;
 }
 
 int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
-						 const XMFLOAT4& color, bool isOrthoGraphic, bool viewMultiFlag, Object* parent)
+						 const XMFLOAT4& color, bool isAlpha, bool isOrthoGraphic, bool viewMultiFlag, Object* parent)
 {
 	if ((obj[object].polygonData < 0 || (size_t)obj[object].polygonData >= vertices.size()) ||
 		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount))
@@ -1210,7 +1209,7 @@ int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rot
 
 	bool isInit = false;
 	XMMATRIX mat = XMMatrixIdentity();
-	size_t parentIndex = object;
+	int parentIndex = object;
 
 	for (int i = object; i >= 0; i--)
 	{
@@ -1247,7 +1246,7 @@ int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rot
 
 	IndexData& index = objIndex[polygonCount];
 
-	for (int i = static_cast<int>(parentIndex); i <= object; i++)
+	for (int i = parentIndex; i <= object; i++)
 	{
 		if (i == parentIndex)
 		{
@@ -1287,18 +1286,33 @@ int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rot
 		};
 	}
 
+	if (isAlpha)
+	{
+		alphaObj.push_back(
+			{
+				polygonCount,
+				object,
+				obj[index.constant].matWorld * mat,
+				lightVec,
+				true,
+				parentIndex
+			});
+
+		return parentIndex;
+	}
+
 #pragma region GraphicsCommand
 
 	BaseDrawGraphics();
 
 	static auto* cmdList = DirectXInit::GetCommandList();
 
-	for (int i = static_cast<int>(parentIndex); i <= object; i++)
+	for (int i = parentIndex; i <= object; i++)
 	{
 		ConstBufferData* constMap = nullptr;
 		obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //マッピング
 
-		constMap->color = color;
+		constMap->color = obj[index.constant].color;
 		constMap->mat = obj[index.constant].matWorld * mat;
 		constMap->lightVec = lightVec;
 		obj[index.constant].constBuff->Unmap(0, nullptr); //マッピング解除
@@ -1332,7 +1346,101 @@ int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rot
 		cmdList->DrawIndexedInstanced((UINT)vertices[obj[i].polygonData].indices.size(), 1, 0, 0, 0);
 	}
 
-	return static_cast<int>(parentIndex);
+#pragma endregion //GraphicsCommand
+
+	return parentIndex;
+}
+
+void DrawPolygon::DrawAlpha()
+{
+	using namespace DirectX;
+
+#pragma region GraphicsCommand
+
+	static auto* cmdList = DirectXInit::GetCommandList();
+	BaseDrawGraphics();
+
+	for (auto& i : alphaObj)
+	{
+		IndexData& index = objIndex[i.polygonIndex];
+
+		if (i.isObj)
+		{
+			for (int j = i.parentIndex; j <= i.objectIndex; j++)
+			{
+				ChangeMaterialShader();
+
+				ConstBufferData* constMap = nullptr;
+				obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //マッピング
+
+				constMap->color = obj[index.constant].color;
+				constMap->mat = i.mat;
+				constMap->lightVec = i.lightVec;
+				obj[index.constant].constBuff->Unmap(0, nullptr); //マッピング解除
+
+				MaterialConstBufferData* materialConstMap = nullptr;
+				obj[index.constant].materialConstBuff->Map(0, nullptr, (void**)&materialConstMap); //マッピング
+
+				materialConstMap->ambient = obj[j].material.ambient;
+				materialConstMap->diffuse = obj[j].material.diffuse;
+				materialConstMap->specular = obj[j].material.specular;
+				materialConstMap->alpha = obj[j].material.alpha;
+				obj[index.constant].materialConstBuff->Unmap(0, nullptr); //マッピング解除
+
+				// デスクリプタヒープをセット
+				ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
+				cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+				// 定数バッファビューをセット
+				cmdList->SetGraphicsRootConstantBufferView(0, obj[index.constant].constBuff->GetGPUVirtualAddress());
+				cmdList->SetGraphicsRootConstantBufferView(1, obj[index.constant].materialConstBuff->GetGPUVirtualAddress());
+				cmdList->SetGraphicsRootDescriptorTable(2, textrueData[obj[j].material.textrueIndex].gpuDescHandle);
+
+				// プリミティブ形状の設定
+				cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+				// 頂点バッファの設定
+				cmdList->IASetVertexBuffers(0, 1, &vertices[obj[j].polygonData].vbView);
+				// インデックスバッファビューの設定
+				cmdList->IASetIndexBuffer(&vertices[obj[j].polygonData].ibView);
+				// 描画コマンド
+				cmdList->DrawIndexedInstanced((UINT)vertices[obj[j].polygonData].indices.size(), 1, 0, 0, 0);
+			}
+		}
+		else
+		{
+			ChangeOBJShader();
+
+			ConstBufferData* constMap = nullptr;
+			obj[index.constant].constBuff->Map(0, nullptr, (void**)&constMap); //マッピング
+
+			constMap->color = obj[index.constant].color;
+			constMap->mat = i.mat;
+			constMap->lightVec = i.lightVec;
+			obj[index.constant].constBuff->Unmap(0, nullptr); //マッピング解除
+
+			// デスクリプタヒープをセット
+			ID3D12DescriptorHeap* ppHeaps[] = { texCommonData.descHeap.Get() };
+			cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+			// 定数バッファビューをセット
+			cmdList->SetGraphicsRootConstantBufferView(0, obj[index.constant].constBuff->GetGPUVirtualAddress());
+			cmdList->SetGraphicsRootDescriptorTable(1, textrueData[index.textrue].gpuDescHandle);
+
+			// プリミティブ形状の設定
+			cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			// 頂点バッファの設定
+			cmdList->IASetVertexBuffers(0, 1, &vertices[i.objectIndex].vbView);
+			// インデックスバッファビューの設定
+			cmdList->IASetIndexBuffer(&vertices[i.objectIndex].ibView);
+			// 描画コマンド
+			cmdList->DrawIndexedInstanced((UINT)vertices[i.objectIndex].indices.size(), 1, 0, 0, 0);
+		}
+	}
+
+	alphaObj.clear();
+
+#pragma endregion //GraphicsCommand
 }
 
 int DrawPolygon::CreateCamera(const Vector3& cameraPos, const Vector3& cameraTarget, const Vector3& upVector)

@@ -339,11 +339,6 @@ void BlockManager::Draw(const Vector3& offset)
 		if (isSkip == false)
 		{
 			blockType[i.typeId].Draw(i.pos + offset);
-			if (i.typeId == TypeId::TORCH)
-			{
-				TorchLight(i.pos + offset);
-				fireEffect.Draw(i.pos + offset);
-			}
 		}
 
 		// 床の描画
@@ -360,6 +355,12 @@ void BlockManager::Draw(const Vector3& offset)
 		{
 			bool isWhiteTile = (i.typeId == TypeId::WHITE_TILE);
 			BlockType::FloorDraw(i.initPos + offset, isWhiteTile);
+
+			if (i.typeId == TypeId::TORCH)
+			{
+				TorchLight(i.pos + offset);
+				fireEffect.Draw(i.pos + offset);
+			}
 		}
 	}
 }
@@ -694,7 +695,7 @@ void BlockManager::PushBlock(int index)
 void BlockManager::TorchLight(const Vector3& pos)
 {
 	auto draw = Library::DrawPolygon::GetInstance();
-	static int plane = draw->CreateSphere(0.5f, 8);
+	static int plane = draw->CreateCircle(0.5f, 8);
 	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
 
 	//shaderMgr->ChangePipelineState(
@@ -702,8 +703,8 @@ void BlockManager::TorchLight(const Vector3& pos)
 	//	postEffect.GetRootSignature(),
 	//	torchLight);
 	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
-	draw->ChangeSpriteShader();
-	draw->DrawTextrue(pos.x * 70.0f + 160.0f, -pos.y * 70.0f + 160.0f, 64.0f, 64.0f, 0.0f, graph, DirectX::XMFLOAT2(0.5f, 0.5f), Color::AddAlphaValue(Color::ORANGE, 1.0f));
+	draw->ChangeOBJShader();
+	draw->Draw(plane, pos + Vector3(0.0f, 0.0f, -0.5f), Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 1.0f), graph, true);
 	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
 }
 

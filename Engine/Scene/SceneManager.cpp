@@ -53,6 +53,7 @@ void SceneManager::Loop() const
 	sceneStack.top()->BGDraw();
 	// オブジェクト
 	postEffect.Draw();
+	Library::DrawPolygon::GetInstance()->DrawAlpha();
 	// 前景
 	sceneStack.top()->UIDraw();
 	BaseScene::ChangeAnimationDraw();

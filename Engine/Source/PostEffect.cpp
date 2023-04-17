@@ -131,7 +131,6 @@ int PostEffect::Draw()
 	static bool isInit = false;
 	static auto dev = DirectXInit::GetDevice();
 	static auto cmdList = DirectXInit::GetCommandList();
-	static auto renderTex = RenderTexture::Get();
 
 	if (isInit == false)
 	{
@@ -175,7 +174,6 @@ int PostEffect::PreDraw()
 	static DirectXInit* w = DirectXInit::GetInstance();
 	static auto dev = DirectXInit::GetDevice();
 	static auto cmdList = DirectXInit::GetCommandList();
-	static auto renderTex = RenderTexture::Get();
 
 	for (size_t i = 0; i < texBuff.size(); i++)
 	{
@@ -242,7 +240,6 @@ int PostEffect::PreDraw()
 int PostEffect::PostDraw()
 {
 	static auto cmdList = DirectXInit::GetCommandList();
-	static auto renderTex = RenderTexture::Get();
 
 	for (size_t i = 0; i < texBuff.size(); i++)
 	{

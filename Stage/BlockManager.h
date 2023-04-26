@@ -32,6 +32,8 @@ public: //サブクラス
 		DOWN_STAIRS,      //下り階段
 		WHITE_TILE,       //白の床タイル
 		TORCH,            //松明
+		BRACELET,         //ブレスレット
+		TRANSPARENT_KEY,  //スイッチを押したら出現する鍵
 		MAX               //TypeIdの上限(プログラム用)
 	};
 

@@ -13,6 +13,7 @@ const std::string LoadGraph::DOWN_STAIRS = "DownStairs";
 const std::string LoadGraph::WHITE_TILE = "WhiteTile";
 const std::string LoadGraph::TORCH = "Torch";
 const std::string LoadGraph::TRIANGLE = "Triangle";
+const std::string LoadGraph::BRACELET = "Bracelet";
 
 const std::string LoadGraph::WALL_UI = "WallUI";
 const std::string LoadGraph::KEY_CLOSE = "Key_Close";
@@ -55,6 +56,7 @@ void LoadGraph::Load()
 	Parameter::Set(WHITE_TILE.c_str(), draw->LoadTextrue(L"./Resources/Game/WhiteTile.png"));
 	Parameter::Set(TORCH.c_str(), draw->LoadTextrue(L"./Resources/UI/Torch.png"));
 	Parameter::Set(TRIANGLE.c_str(), draw->LoadTextrue(L"./Resources/UI/TriangleArrow.png"));
+	Parameter::Set(BRACELET.c_str(), draw->LoadTextrue(L"./Resources/UI/bracelet.png"));
 
 	Parameter::Set(WALL_UI.c_str(), draw->LoadTextrue(L"./Resources/UI/WallUI.png"));
 	Parameter::Set(KEY_CLOSE.c_str(), draw->LoadTextrue(L"./Resources/UI/KeyClose.png"));

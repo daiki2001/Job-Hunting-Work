@@ -169,7 +169,7 @@ void GameScene::UIDraw()
 		const float INVENTORY_SCALE = 1.5f;
 		const float TEX_SIZE = 32.0f;
 		player->DrawInventory(winW - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 2.0f),
-							  winH - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 3.0f), INVENTORY_SCALE);
+							  winH - static_cast<int>(TEX_SIZE * INVENTORY_SCALE * 4.0f), INVENTORY_SCALE);
 
 		UI::Get()->WASD(winW - TEX_SIZE * 9.0f, winH - TEX_SIZE * 3.0f, 0.5f * INVENTORY_SCALE);
 		UI::Get()->UpDownArrow(winW - TEX_SIZE * INVENTORY_SCALE * 3.0f, winH - TEX_SIZE * INVENTORY_SCALE * 3.0f, 0.5f * INVENTORY_SCALE);

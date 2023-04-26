@@ -3,7 +3,7 @@
 
 class Particle
 {
-private: //エイリアス
+protected: //エイリアス
 	using Vector3 = Math::Vector3;
 	
 private: //メンバ変数

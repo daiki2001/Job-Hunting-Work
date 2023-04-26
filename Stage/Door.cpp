@@ -10,8 +10,8 @@ int entranceLight = FUNCTION_ERROR;
 }
 
 const float Door::DOOR_WIDTH = 3.0f;
-const float Door::DEFAULT_DOOR_POS = 0.0f;
-const float Door::DOWN_DOOR_POS = 2.0f;
+const float Door::DEFAULT_DOOR_POS = -0.5f;
+const float Door::DOWN_DOOR_POS = 1.5f;
 int Door::door_obj = FUNCTION_ERROR;
 int Door::keyDoor = FUNCTION_ERROR;
 int Door::breakWall = FUNCTION_ERROR;

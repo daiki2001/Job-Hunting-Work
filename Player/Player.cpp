@@ -17,11 +17,12 @@ const Math::Vector3 Player::COLLISION_SIZE = Vector3(0.25f, 1.0f, 1.0f);
 Player::Player() :
 	pos{},
 	direction(Player::Direction::TOP),
-	object(Engine::FUNCTION_ERROR),
+	object(FUNCTION_ERROR),
 	animationPos{},
 	selectItem(SelectItem::KEY),
 	key(100),
 	bomb(100, 100),
+	isBracelet(false),
 	route{}
 {
 	Reset();
@@ -39,7 +40,9 @@ Player* Player::Get()
 
 void Player::Init()
 {
-	object = Library::DrawPolygon::GetInstance()->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
+	auto draw = Library::DrawPolygon::GetInstance();
+
+	object = draw->CreateOBJModel("./Resources/Game/Player.obj", "./Resources/Game/");
 
 	Item::StaticInit();
 	key.Init(Parameter::Get(LoadGraph::KEY.c_str()));
@@ -103,11 +106,24 @@ void Player::Draw(int offsetX, int offsetY)
 
 void Player::DrawInventory(int offsetX, int offsetY, float scale)
 {
+	auto draw = Library::DrawPolygon::GetInstance();
+
 	for (int i = 0; i < SelectItem::MAX; i++)
 	{
 		int size = static_cast<int>(32.0f * scale);
 		switch (i)
 		{
+		case SelectItem::BRACELET:
+			if (isBracelet)
+			{
+				draw->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY + i * size),
+								  static_cast<float>(size), static_cast<float>(size), 0.0f,
+								  Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f));
+				draw->DrawTextrue(static_cast<float>(offsetX), static_cast<float>(offsetY + i * size),
+								  static_cast<float>(size), static_cast<float>(size), 0.0f,
+								  Parameter::Get(LoadGraph::BRACELET.c_str()), DirectX::XMFLOAT2(0.0f, 0.0f));
+			}
+			break;
 		case SelectItem::KEY:
 			key.DrawInfo("Key", offsetX, offsetY + i * size, scale);
 			break;
@@ -159,7 +175,8 @@ void Player::SelectAction(const GameInput* const input)
 {
 	if (input->SubUpTrigger())
 	{
-		selectItem = (selectItem - 1 < 0) ? static_cast<SelectItem>(0) : static_cast<SelectItem>(selectItem - 1);
+		if (isBracelet) selectItem = (selectItem - 1 < SelectItem::BRACELET) ? SelectItem::BRACELET : static_cast<SelectItem>(selectItem - 1);
+		else selectItem = (selectItem - 1 < SelectItem::BRACELET + 1) ? static_cast<SelectItem>(SelectItem::BRACELET + 1) : static_cast<SelectItem>(selectItem - 1);
 	}
 	else if (input->SubDownTrigger())
 	{
@@ -220,6 +237,14 @@ void Player::MovingRoom()
 
 	animationVec.y *= -1.0f;
 	animationPos += (animationVec * stage->scroll.GetTime()) * (Area::WALL_SIZE * 2.0f);
+}
+
+bool Player::AcquisitionBracelet()
+{
+	if (GameInput::Get()->DecisionTrigger() == false) return false;
+
+	isBracelet = true;
+	return true;
 }
 
 void Player::MoveUp()

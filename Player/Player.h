@@ -32,9 +32,10 @@ public: //サブクラス
 	};
 	enum SelectItem
 	{
-		KEY,  //鍵
-		BOMB, //爆弾
-		MAX   //種類数(プログラム用)
+		BRACELET, //ブレスレット
+		KEY,      //鍵
+		BOMB,     //爆弾
+		MAX       //種類数(プログラム用)
 	};
 
 public: //メンバ変数
@@ -48,6 +49,7 @@ private:
 	SelectItem selectItem;
 	Item key;  //鍵
 	Bomb bomb; //爆弾
+	bool isBracelet;
 
 	std::vector<int> route; //迷いの森を進んだ道
 
@@ -74,8 +76,11 @@ public: //メンバ関数
 	void UseKey() { key.Use(); }
 	// 爆弾の使用
 	void UseBomb() { bomb.Use(); }
+	// 鍵の獲得
+	bool AcquisitionBracelet();
 
 	const Direction GetDirection() const { return direction; }
+	const SelectItem GetAction() { return selectItem; }
 	const unsigned int GetKeyCount() const { return key.GetCount(); }
 	const unsigned int GetBombCount() const { return bomb.GetCount(); }
 private:

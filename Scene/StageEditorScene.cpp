@@ -353,9 +353,12 @@ void StageEditorScene::UIDraw()
 	UI::Get()->Arrow(winW - TEX_SIZE * SCALE * 3.0f, winH - TEX_SIZE * SCALE * 2.0f, SCALE);
 	UI::Get()->Space(winW - TEX_SIZE * SCALE * 5.5f, winH - TEX_SIZE * SCALE * 2.0f, SCALE);
 
-	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f,
+	draw->DrawString(0.0f, winH - (32.0f * (4.0f + 1.0f)), 2.0f,
 					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Save:Ctrl + S");
+	draw->DrawString(0.0f, winH - (32.0f * (3.0f + 1.0f)), 2.0f,
+					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
+					 "Load:Ctrl + L");
 	draw->DrawString(0.0f, winH - (32.0f * (2.0f + 1.0f)), 2.0f,
 					 Color::AddAlphaValue(Color::WHITE, 1.0f), Color::AddAlphaValue(Color::BLACK, 0.5f),
 					 "Redo:Ctrl + Z");
@@ -636,11 +639,13 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 {
 	int graphHandle = FUNCTION_ERROR;
 	DirectX::XMFLOAT3 color = Color::WHITE;
+	float alpha = 1.0f;
 	bool isSelect = false;
 
 	for (int i = 0; i < BlockManager::TypeId::MAX; i++)
 	{
 		color = Color::WHITE;
+		alpha = 1.0f;
 		isSelect = (isRoute == false) && (i == blockIndex);
 
 		switch (i)
@@ -687,6 +692,13 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 		case BlockManager::TypeId::TORCH:
 			graphHandle = Parameter::Get(LoadGraph::TORCH.c_str());
 			break;
+		case BlockManager::TypeId::BRACELET:
+			graphHandle = Parameter::Get(LoadGraph::BRACELET.c_str());
+			break;
+		case BlockManager::TypeId::TRANSPARENT_KEY:
+			graphHandle = Parameter::Get(LoadGraph::KEY.c_str());
+			alpha = 0.5f;
+			break;
 		default:
 			break;
 		}
@@ -696,7 +708,7 @@ void StageEditorScene::DrawSelectBlockUI(float offsetX, float offsetY)
 				  FRAME_SIZE,
 				  0.0f,
 				  graphHandle,
-				  Color::AddAlphaValue(color, 1.0f),
+				  Color::AddAlphaValue(color, alpha),
 				  isSelect);
 	}
 }

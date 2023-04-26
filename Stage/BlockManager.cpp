@@ -102,9 +102,15 @@ void BlockManager::Init()
 
 	blockType.push_back(BlockType(TypeId::WHITE_TILE));
 	blockType.back().Create();
-	
+
 	blockType.push_back(BlockType(TypeId::TORCH));
 	blockType.back().Create("Torch.obj", Math::rotateX(Math::PI_F), Vector3::Scale_xyz(0.5f));
+
+	blockType.push_back(BlockType(TypeId::BRACELET));
+	blockType.back().Create("bracelet.obj", Math::rotateX(Math::PI_F), Vector3::Scale_xyz(0.5f));
+
+	blockType.push_back(BlockType(TypeId::TRANSPARENT_KEY));
+	blockType.back().Create();
 
 	if (torchLight == FUNCTION_ERROR)
 	{
@@ -188,7 +194,7 @@ void BlockManager::Update()
 	if (frontBlock == FUNCTION_ERROR) frontBlock = playerPos;
 	if (blocks[frontBlock].typeId == TypeId::MOVE_BLOCK)
 	{
-		if (GameInput::Get()->DecisionTrigger())
+		if (GameInput::Get()->DecisionTrigger() && player->GetAction() == Player::SelectItem::BRACELET)
 		{
 			PushBlock(frontBlock);
 		}
@@ -208,6 +214,7 @@ void BlockManager::Update()
 		if (playerPos == oldPos) break;
 
 		SwitchPush();
+		isBlockSwitch = !isBlockSwitch;
 		EaseInit(blocks);
 		break;
 	case TypeId::GOAL:
@@ -234,6 +241,12 @@ void BlockManager::Update()
 		break;
 	case TypeId::DOWN_STAIRS:
 		step = Step::DOWN;
+		break;
+	case TypeId::BRACELET:
+		if (player->AcquisitionBracelet())
+		{
+			blocks[playerPos].typeId = TypeId::NONE;
+		}
 		break;
 	case TypeId::NONE:
 	case TypeId::WALL:
@@ -279,7 +292,7 @@ void BlockManager::EffectUpdate()
 						blocks[index].pos = blocks[i].pos;
 						blocks[i].typeId = TypeId::NONE;
 						blocks[i].pos = blocks[i].initPos;
-						isSwitch = true;
+						SwitchPush();
 					}
 					else if (blocks[index].typeId == TypeId::NONE ||
 							 blocks[index].typeId == TypeId::WHITE_TILE)
@@ -287,7 +300,7 @@ void BlockManager::EffectUpdate()
 						blocks[index].typeId = TypeId::WALL;
 						blocks[i].typeId = TypeId::NONE;
 						blocks[i].pos = blocks[i].initPos;
-						isSwitch = true;
+						SwitchPush();
 					}
 					else
 					{
@@ -353,7 +366,7 @@ void BlockManager::Draw(const Vector3& offset)
 		}
 		if (isSkip == false)
 		{
-			bool isWhiteTile = (i.typeId == TypeId::WHITE_TILE);
+			bool isWhiteTile = (i.typeId == TypeId::WHITE_TILE || i.typeId == TypeId::TRANSPARENT_KEY);
 			BlockType::FloorDraw(i.initPos + offset, isWhiteTile);
 
 			if (i.typeId == TypeId::TORCH)
@@ -640,7 +653,13 @@ void BlockManager::PlayerPushBack(int index) const
 void BlockManager::SwitchPush()
 {
 	isSwitch = true;
-	isBlockSwitch = !isBlockSwitch;
+
+	for (auto& i : blocks)
+	{
+		if (i.typeId != TypeId::TRANSPARENT_KEY) continue;
+
+		i.typeId = TypeId::KEY;
+	}
 }
 
 void BlockManager::PushBlock(int index)
@@ -698,10 +717,6 @@ void BlockManager::TorchLight(const Vector3& pos)
 	static int plane = draw->CreateCircle(0.5f, 8);
 	static int graph = draw->LoadTextrue(L"./Resources/CircleBlur.png");
 
-	//shaderMgr->ChangePipelineState(
-	//	DirectXInit::GetCommandList(),
-	//	postEffect.GetRootSignature(),
-	//	torchLight);
 	draw->SetDrawBlendMode(ShaderManager::BlendMode::ALPHA);
 	draw->ChangeOBJShader();
 	draw->Draw(plane, pos + Vector3(0.0f, 0.0f, -0.5f), Math::Identity(), Vector3::Scale_xyz(1.0f), Color::AddAlphaValue(Color::ORANGE, 1.0f), graph, true);

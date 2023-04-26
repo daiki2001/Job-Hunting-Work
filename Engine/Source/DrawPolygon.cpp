@@ -1199,7 +1199,8 @@ int DrawPolygon::Draw(
 int DrawPolygon::DrawOBJ(int object, const Vector3& position, const Matrix4& rotation, const Vector3& scale,
 						 const XMFLOAT4& color, bool isAlpha, bool isOrthoGraphic, bool viewMultiFlag, Object* parent)
 {
-	if ((obj[object].polygonData < 0 || (size_t)obj[object].polygonData >= vertices.size()) ||
+	if ((object < 0 || object >= obj.size()) ||
+		(obj[object].polygonData < 0 || (size_t)obj[object].polygonData >= vertices.size()) ||
 		(obj[object].material.textrueIndex < 0 || (UINT)obj[object].material.textrueIndex > textrueCount))
 	{
 		return FUNCTION_ERROR;

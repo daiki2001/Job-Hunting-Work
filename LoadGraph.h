@@ -26,6 +26,7 @@ public: //定数
 	static const string WHITE_TILE;
 	static const string TORCH;
 	static const string TRIANGLE;
+	static const string BRACELET;
 
 	static const string WALL_UI;
 	static const string KEY_CLOSE;

@@ -52,6 +52,13 @@ void Player::Init()
 
 void Player::Update(const GameInput* const input)
 {
+#ifdef _DEBUG
+	if (Input::IsControlKey() && Input::IsKeyTrigger(DIK_B))
+	{
+		isBracelet = !isBracelet;
+	}
+#endif // _DEBUG
+
 	bomb.Update();
 
 	if (stage->scroll.GetFlag() == false)
@@ -249,7 +256,7 @@ bool Player::AcquisitionBracelet()
 
 void Player::MoveUp()
 {
-	direction = Player::Direction::TOP;
+	direction = Direction::TOP;
 
 	if (pos.y > 0.0f)
 	{
@@ -258,11 +265,20 @@ void Player::MoveUp()
 
 	pos.y += SPEED;
 
-	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
-		 (pos.y >= 0.0f)) &&
-		(stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::OPEN))
+	bool flag = false;
+	flag |= ((pos.x >= 6.0f && pos.x <= 8.0f) &&
+			 (pos.y >= 0.0f)) &&
+			(stage->GetDoorStatus(Area::DoorNum::TOP) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x >= 0.0f && pos.x <= 2.0f) &&
+			 (pos.y >= 0.0f)) &&
+			(stage->GetDoorStatus(Area::DoorNum::TOP_LEFT) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x >= BlockManager::STAGE_WIDTH - 3.0f && pos.x <= BlockManager::STAGE_WIDTH - 1.0f) &&
+			 (pos.y >= 0.0f)) &&
+			(stage->GetDoorStatus(Area::DoorNum::TOP_RIGHT) == Door::DoorStatus::OPEN);
+
+	if (flag)
 	{
-		route.emplace_back(Area::DoorNum::TOP);
+		route.emplace_back(Direction::TOP);
 
 		switch (stage->GetArea().LostForest(route))
 		{
@@ -294,7 +310,7 @@ void Player::MoveUp()
 
 void Player::MoveDown()
 {
-	direction = Player::Direction::BOTTOM;
+	direction = Direction::BOTTOM;
 
 	if (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))
 	{
@@ -303,11 +319,20 @@ void Player::MoveDown()
 
 	pos.y -= SPEED;
 
-	if (((pos.x <= 8.0f && pos.x >= 6.0f) &&
-		 (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
-		(stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::OPEN))
+	bool flag = false;
+	flag |= ((pos.x <= 8.0f && pos.x >= 6.0f) &&
+			 (pos.y < -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
+			(stage->GetDoorStatus(Area::DoorNum::BOTTOM) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x >= 0.0f && pos.x <= 2.0f) &&
+			 (pos.y >= -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
+			(stage->GetDoorStatus(Area::DoorNum::BOTTOM_LEFT) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x >= BlockManager::STAGE_WIDTH - 3.0f && pos.x <= BlockManager::STAGE_WIDTH - 1.0f) &&
+			 (pos.y >= -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
+			(stage->GetDoorStatus(Area::DoorNum::BOTTOM_RIGHT) == Door::DoorStatus::OPEN);
+
+	if (flag)
 	{
-		route.emplace_back(Area::DoorNum::BOTTOM);
+		route.emplace_back(Direction::BOTTOM);
 
 		switch (stage->GetArea().LostForest(route))
 		{
@@ -339,7 +364,7 @@ void Player::MoveDown()
 
 void Player::MoveLeft()
 {
-	direction = Player::Direction::LEFT;
+	direction = Direction::LEFT;
 
 	if (pos.x < 0.0f)
 	{
@@ -347,12 +372,21 @@ void Player::MoveLeft()
 	}
 
 	pos.x -= SPEED;
+	
+	bool flag = false;
+	flag |= ((pos.x < 0.0f) &&
+			 (pos.y <= -2.0f && pos.y >= -4.0f)) &&
+			(stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x < 0.0f) &&
+			 (pos.y <= 0.0f && pos.y >= -2.0f)) &&
+			(stage->GetDoorStatus(Area::DoorNum::LEFT_TOP) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x < 0.0f) &&
+			 (pos.y <= -4.0f && pos.y >= -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
+			(stage->GetDoorStatus(Area::DoorNum::LEFT_BOTTOM) == Door::DoorStatus::OPEN);
 
-	if (((pos.x < 0.0f)) &&
-		 (pos.y <= -2.0f && pos.y >= -4.0f) &&
-		(stage->GetDoorStatus(Area::DoorNum::LEFT) == Door::DoorStatus::OPEN))
+	if (flag)
 	{
-		route.emplace_back(Area::DoorNum::LEFT);
+		route.emplace_back(Direction::LEFT);
 
 		switch (stage->GetArea().LostForest(route))
 		{
@@ -386,7 +420,7 @@ void Player::MoveLeft()
 
 void Player::MoveRight()
 {
-	direction = Player::Direction::RIGHT;
+	direction = Direction::RIGHT;
 
 	if (pos.x > BlockManager::STAGE_WIDTH - 1.0f)
 	{
@@ -395,11 +429,20 @@ void Player::MoveRight()
 
 	pos.x += SPEED;
 
-	if (((pos.x > BlockManager::STAGE_WIDTH - 1.0f) && 
-		 (pos.y <= -2.0f && pos.y >= -4.0f)) &&
-		(stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN))
+	bool flag = false;
+	flag |= ((pos.x > BlockManager::STAGE_WIDTH - 1.0f) &&
+			 (pos.y <= -2.0f && pos.y >= -4.0f)) &&
+		(stage->GetDoorStatus(Area::DoorNum::RIGHT) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x > BlockManager::STAGE_WIDTH - 1.0f) &&
+			 (pos.y <= 0.0f && pos.y >= -2.0f)) &&
+		(stage->GetDoorStatus(Area::DoorNum::RIGHT_TOP) == Door::DoorStatus::OPEN);
+	flag |= ((pos.x > BlockManager::STAGE_WIDTH - 1.0f) &&
+			 (pos.y <= -4.0f && pos.y >= -(BlockManager::STAGE_HEIGHT - 1.0f))) &&
+		(stage->GetDoorStatus(Area::DoorNum::RIGHT_BOTTOM) == Door::DoorStatus::OPEN);
+
+	if (flag)
 	{
-		route.emplace_back(Area::DoorNum::RIGHT);
+		route.emplace_back(Direction::RIGHT + Direction::COUNT);
 
 		switch (stage->GetArea().LostForest(route))
 		{

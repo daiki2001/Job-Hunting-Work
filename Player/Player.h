@@ -28,7 +28,8 @@ public: //サブクラス
 		RIGHT = -1,
 		TOP,
 		LEFT,
-		BOTTOM
+		BOTTOM,
+		COUNT = 4
 	};
 	enum SelectItem
 	{

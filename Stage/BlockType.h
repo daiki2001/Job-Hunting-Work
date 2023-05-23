@@ -25,6 +25,8 @@ public: //静的メンバ関数
 	static void StaticInit();
 	// 床の描画
 	static void FloorDraw(const Vector3& offset = Vector3::Zero(), bool isWhiteTile = false);
+	// 床のテクスチャ
+	static int GetFloorGraph() { return floorGraph; }
 
 private: //メンバ変数
 	int typeId;

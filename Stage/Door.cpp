@@ -142,36 +142,36 @@ void Door::Draw(const Vector3& offset)
 			draw->Draw(door_obj, pos + offset, Identity(), size, Color::AddAlphaValue(Color::WHITE, 1.0f),
 					   debugTex);
 		}
-		else
-		{
-			static const float halfNum = floorf((Door::DOOR_WIDTH + 2.0f) / 2.0f);
-			float symbol = 0.0f;
+		//else
+		//{
+		//	static const float halfNum = floorf((Door::DOOR_WIDTH + 2.0f) / 2.0f);
+		//	float symbol = 0.0f;
 
-			if (((pos + offset - Area::INIT_CAMERA).x > 0) || ((pos + offset - Area::INIT_CAMERA).y > 0))
-			{
-				symbol = +1.0f;
-			}
-			else if (((pos + offset - Area::INIT_CAMERA).x < 0) || ((pos + offset - Area::INIT_CAMERA).y < 0))
-			{
-				symbol = -1.0f;
-			}
+		//	if (((pos + offset - Area::INIT_CAMERA).x > 0) || ((pos + offset - Area::INIT_CAMERA).y > 0))
+		//	{
+		//		symbol = +1.0f;
+		//	}
+		//	else if (((pos + offset - Area::INIT_CAMERA).x < 0) || ((pos + offset - Area::INIT_CAMERA).y < 0))
+		//	{
+		//		symbol = -1.0f;
+		//	}
 
-			for (float i = 0; i < Door::DOOR_WIDTH + 2.0f; i += 1.0f)
-			{
-				for (float j = 0; j < 2.0f; j += 1.0f)
-				{
-					if (size.x == Door::DOOR_WIDTH)
-					{
-						BlockType::FloorDraw(Vector3(pos.x + (i - halfNum), pos.y + j * symbol, 0.0f) + offset);
-					}
-					else
-					{
-						BlockType::FloorDraw(Vector3(pos.x + j * symbol, pos.y + (i - halfNum), 0.0f) + offset);
-					}
-				}
-			}
-			break;
-		}
+		//	for (float i = 0; i < Door::DOOR_WIDTH + 2.0f; i += 1.0f)
+		//	{
+		//		for (float j = 0; j < 2.0f; j += 1.0f)
+		//		{
+		//			if (size.x == Door::DOOR_WIDTH)
+		//			{
+		//				BlockType::FloorDraw(Vector3(pos.x + (i - halfNum), pos.y + j * symbol, 0.0f) + offset);
+		//			}
+		//			else
+		//			{
+		//				BlockType::FloorDraw(Vector3(pos.x + j * symbol, pos.y + (i - halfNum), 0.0f) + offset);
+		//			}
+		//		}
+		//	}
+		//}
+		break;
 	default:
 		break;
 	}

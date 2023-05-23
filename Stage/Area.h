@@ -11,7 +11,7 @@ private: //エイリアス
 	using Vector3 = Math::Vector3;
 
 public: //定数
-	static const size_t DOOR_COUNT = 4;
+	static const size_t DOOR_COUNT = 12;
 	static const float WALL_SIZE;
 	static const Vector3 INIT_CAMERA;
 	static const int NONE_LOST_FOREST;
@@ -21,14 +21,23 @@ public: //サブクラス
 	enum DoorNum
 	{
 		LEFT,
+		LEFT_TOP,
+		LEFT_BOTTOM,
 		RIGHT,
+		RIGHT_TOP,
+		RIGHT_BOTTOM,
 		TOP,
+		TOP_LEFT,
+		TOP_RIGHT,
 		BOTTOM,
+		BOTTOM_LEFT,
+		BOTTOM_RIGHT,
 		MAX
 	};
 
 private: //静的メンバ変数
 	static int wall_obj; //外壁のオブジェクト
+	static int floorObj; //床のオブジェクト
 	static Area* planeArea; //ブロックが何も置かれていないエリア
 
 public: //静的メンバ関数

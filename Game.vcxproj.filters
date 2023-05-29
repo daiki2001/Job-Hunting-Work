@@ -123,6 +123,12 @@
     <ClCompile Include="Effect\FireParticle.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Effect\AppearParticle.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\SwitchParticle.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\GameScene.h">
@@ -204,6 +210,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Effect\FireParticle.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\AppearParticle.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\SwitchParticle.h">
       <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>

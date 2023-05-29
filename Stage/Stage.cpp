@@ -126,7 +126,7 @@ void Stage::Draw(int offsetX, int offsetY)
 
 	rooms[nowRoom].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f });
 
-	MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
+	//MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
 }
 
 void Stage::Reset()

@@ -3,6 +3,7 @@
 #include "./Stage/BlockType.h"
 #include "./Stage/Stage.h"
 #include "./Math/Collision/Collision.h"
+#include "./Input/GameInput.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
@@ -50,12 +51,23 @@ void Player::Init()
 	route.reserve(Area::MAX_COURSE_NUM);
 }
 
-void Player::Update(const GameInput* const input)
+void Player::Update()
 {
 #ifdef _DEBUG
-	if (Input::IsControlKey() && Input::IsKeyTrigger(DIK_B))
+	if (Input::IsShiftKey())
 	{
-		isBracelet = !isBracelet;
+		if (Input::IsKeyTrigger(DIK_B))
+		{
+			isBracelet = !isBracelet;
+		}
+		if (Input::IsKeyTrigger(DIK_1))
+		{
+			key.Add();
+		}
+		if (Input::IsKeyTrigger(DIK_2))
+		{
+			bomb.Add();
+		}
 	}
 #endif // _DEBUG
 
@@ -63,9 +75,9 @@ void Player::Update(const GameInput* const input)
 
 	if (stage->scroll.GetFlag() == false)
 	{
-		Move(input);
-		SelectAction(input);
-		Action(input);
+		Move();
+		SelectAction();
+		Action();
 	}
 
 	MovingRoom();
@@ -158,42 +170,42 @@ void Player::Reset()
 	bomb.Reset();
 }
 
-void Player::Move(const GameInput* const input)
+void Player::Move()
 {
-	if (input->MainUp())
+	if (GameInput::Get()->MainUp())
 	{
 		MoveUp();
 	}
-	else if (input->MainDown())
+	else if (GameInput::Get()->MainDown())
 	{
 		MoveDown();
 	}
-	else if (input->MainLeft())
+	else if (GameInput::Get()->MainLeft())
 	{
 		MoveLeft();
 	}
-	else if (input->MainRight())
+	else if (GameInput::Get()->MainRight())
 	{
 		MoveRight();
 	}
 }
 
-void Player::SelectAction(const GameInput* const input)
+void Player::SelectAction()
 {
-	if (input->SubUpTrigger())
+	if (GameInput::Get()->SubUpTrigger())
 	{
 		if (isBracelet) selectItem = (selectItem - 1 < SelectItem::BRACELET) ? SelectItem::BRACELET : static_cast<SelectItem>(selectItem - 1);
 		else selectItem = (selectItem - 1 < SelectItem::BRACELET + 1) ? static_cast<SelectItem>(SelectItem::BRACELET + 1) : static_cast<SelectItem>(selectItem - 1);
 	}
-	else if (input->SubDownTrigger())
+	else if (GameInput::Get()->SubDownTrigger())
 	{
 		selectItem = (selectItem + 1 >= SelectItem::MAX) ? static_cast<SelectItem>(SelectItem::MAX - 1) : static_cast<SelectItem>(selectItem + 1);
 	}
 }
 
-void Player::Action(const GameInput* const input)
+void Player::Action()
 {
-	if (input->DecisionTrigger())
+	if (GameInput::Get()->DecisionTrigger())
 	{
 		switch (selectItem)
 		{

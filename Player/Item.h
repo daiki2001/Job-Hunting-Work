@@ -29,6 +29,8 @@ public: //メンバ関数
 	bool Acquisition();
 	// アイテムの使用
 	void Use() { if (count > 0) count--; }
+	// アイテムの追加
+	bool Add();
 
 	// 所持数の取得
 	const unsigned int GetCount() const { return count; }

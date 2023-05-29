@@ -96,10 +96,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Effect\AppearParticle.cpp" />
     <ClCompile Include="Effect\BombParticle.cpp" />
     <ClCompile Include="Effect\FireParticle.cpp" />
     <ClCompile Include="Effect\Particle.cpp" />
     <ClCompile Include="Effect\Scroll.cpp" />
+    <ClCompile Include="Effect\SwitchParticle.cpp" />
     <ClCompile Include="Effect\WallBreakEffect.cpp" />
     <ClCompile Include="LoadGraph.cpp" />
     <ClCompile Include="main.cpp" />
@@ -125,10 +127,12 @@
     <ClCompile Include="UndoRedo\RouteSetter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Effect\AppearParticle.h" />
     <ClInclude Include="Effect\BombParticle.h" />
     <ClInclude Include="Effect\FireParticle.h" />
     <ClInclude Include="Effect\Particle.h" />
     <ClInclude Include="Effect\Scroll.h" />
+    <ClInclude Include="Effect\SwitchParticle.h" />
     <ClInclude Include="Effect\WallBreakEffect.h" />
     <ClInclude Include="LoadGraph.h" />
     <ClInclude Include="Player\Bomb.h" />

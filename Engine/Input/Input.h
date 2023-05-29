@@ -56,4 +56,11 @@ public: // 静的メンバ関数
 	static bool IsControlKeyTrigger() { return IsKeyTrigger(DIK_LCONTROL) || IsKeyTrigger(DIK_RCONTROL); }
 	// コントロールキーから離れたかどうか
 	static bool IsControlKeyReturn() { return IsKeyReturn(DIK_LCONTROL) || IsKeyReturn(DIK_RCONTROL); }
+
+	// シフトキーが押されているかどうか
+	static bool IsShiftKey() { return IsKey(DIK_LSHIFT) || IsKey(DIK_RSHIFT); }
+	// シフトキーが押されたかどうか
+	static bool IsShiftKeyTrigger() { return IsKeyTrigger(DIK_LSHIFT) || IsKeyTrigger(DIK_RSHIFT); }
+	// シフトキーから離れたかどうか
+	static bool IsShiftKeyReturn() { return IsKeyReturn(DIK_LSHIFT) || IsKeyReturn(DIK_RSHIFT); }
 };

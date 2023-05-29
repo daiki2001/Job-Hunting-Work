@@ -1,8 +1,9 @@
 ﻿#include "StageEditorScene.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/DrawPolygon.h"
-#include "./Header/EngineGeneral.h"
 #include "./Header/Camera.h"
+#include "./Input/GameInput.h"
+#include "./Header/EngineGeneral.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 #include "UI.h"
@@ -17,7 +18,6 @@ const std::wstring StageEditorScene::resourcesDir = L"./Resources/";
 const int StageEditorScene::FRAME_SIZE = 64;
 const int StageEditorScene::FRAME_BLANK = 5;
 
-GameInput* StageEditorScene::inputMgr = GameInput::Get();
 Stage* StageEditorScene::stage = Stage::Get();
 
 StageEditorScene::StageEditorScene(SceneChanger* sceneChanger) :
@@ -80,7 +80,7 @@ void StageEditorScene::Update()
 	{
 		RouteSetting();
 
-		if (inputMgr->DecisionTrigger())
+		if (GameInput::Get()->DecisionTrigger())
 		{
 			// 迷いの森の道の設定
 			RouteSetter add = RouteSetter(Stage::GetRoom(), routeIndex);
@@ -95,7 +95,7 @@ void StageEditorScene::Update()
 		{
 			SelectBlock();
 
-			if (inputMgr->DecisionTrigger())
+			if (GameInput::Get()->DecisionTrigger())
 			{
 				if (static_cast<BlockManager::TypeId>(blockIndex) == BlockManager::TypeId::NONE ||
 					static_cast<BlockManager::TypeId>(blockIndex) == BlockManager::TypeId::WHITE_TILE)
@@ -175,7 +175,7 @@ void StageEditorScene::Update()
 		{
 			SelectDoor();
 
-			if (inputMgr->DecisionTrigger())
+			if (GameInput::Get()->DecisionTrigger())
 			{
 				if (doorIndex == Door::DoorStatus::ROOM_CREATE)
 				{
@@ -204,7 +204,7 @@ void StageEditorScene::Update()
 	if (Input::IsControlKey())
 	{
 		static const std::string userStageDir = resourcesDirectory + "Stage/User/";
-		if (inputMgr->MainDownTrigger())
+		if (GameInput::Get()->MainDownTrigger())
 		{
 			stage->WirteStage((userStageDir + "aaa.csv").c_str());
 		}
@@ -266,10 +266,10 @@ void StageEditorScene::UIDraw()
 						  64.0f, 64.0f, 0.0f, Parameter::Get(LoadGraph::CURSOR.c_str()));
 		break;
 	}
-	case CursorState::DOOR_UP:
-	case CursorState::DOOR_DOWN:
+	case CursorState::DOOR_TOP:
+	case CursorState::DOOR_BOTTOM:
 	{
-		float isMinus = (cursorState == CursorState::DOOR_DOWN) ? 1.0f : -1.0f;
+		float isMinus = (cursorState == CursorState::DOOR_BOTTOM) ? 1.0f : -1.0f;
 		draw->DrawTextrue(0.0f + winW / 2.0f,
 						  (static_cast<float>(mapIndex / STAGE_WIDTH) - 3.0f + isMinus) * 64.0f + winH / 2.0f,
 						  64.0f * 3.0f, 64.0f, 0.0f, Parameter::Get(LoadGraph::CURSOR.c_str()));
@@ -381,19 +381,19 @@ void StageEditorScene::EraseBlock(BlockManager::TypeId index)
 
 void StageEditorScene::CursorMove()
 {
-	if (inputMgr->MainLeftTrigger())
+	if (GameInput::Get()->MainLeftTrigger())
 	{
 		CursorMoveLeft();
 	}
-	if (inputMgr->MainRightTrigger())
+	if (GameInput::Get()->MainRightTrigger())
 	{
 		CursorMoveRight();
 	}
-	if (inputMgr->MainUpTrigger())
+	if (GameInput::Get()->MainUpTrigger())
 	{
 		CursorMoveUp();
 	}
-	if (inputMgr->MainDownTrigger() && !Input::IsControlKey())
+	if (GameInput::Get()->MainDownTrigger() && !Input::IsControlKey())
 	{
 		CursorMoveDown();
 	}
@@ -405,11 +405,11 @@ void StageEditorScene::CursorMove(int createRoomDir)
 	{
 	case Area::DoorNum::TOP:
 		mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
-		cursorState = CursorState::DOOR_DOWN;
+		cursorState = CursorState::DOOR_BOTTOM;
 		break;
 	case Area::DoorNum::BOTTOM:
 		mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);
-		cursorState = CursorState::DOOR_UP;
+		cursorState = CursorState::DOOR_TOP;
 		break;
 	case Area::DoorNum::LEFT:
 		mapIndex += STAGE_WIDTH - 1;
@@ -426,14 +426,14 @@ void StageEditorScene::CursorMove(int createRoomDir)
 
 void StageEditorScene::SelectBlock()
 {
-	if (inputMgr->SubLeftTrigger())
+	if (GameInput::Get()->SubLeftTrigger())
 	{
 		if (blockIndex > 0)
 		{
 			blockIndex -= 1;
 		}
 	}
-	if (inputMgr->SubRightTrigger())
+	if (GameInput::Get()->SubRightTrigger())
 	{
 		if (blockIndex < BlockManager::TypeId::MAX - 1)
 		{
@@ -448,14 +448,14 @@ void StageEditorScene::SelectBlock()
 
 void StageEditorScene::SelectDoor()
 {
-	if (inputMgr->SubLeftTrigger())
+	if (GameInput::Get()->SubLeftTrigger())
 	{
 		if (doorIndex > 0)
 		{
 			doorIndex -= 1;
 		}
 	}
-	if (inputMgr->SubRightTrigger())
+	if (GameInput::Get()->SubRightTrigger())
 	{
 		if (doorIndex < Door::DoorStatus::MAX - 1)
 		{
@@ -470,14 +470,14 @@ void StageEditorScene::SelectDoor()
 
 void StageEditorScene::RouteSetting()
 {
-	if (inputMgr->SubUpTrigger())
+	if (GameInput::Get()->SubUpTrigger())
 	{
 		if (routeIndex > 0)
 		{
 			routeIndex -= 1;
 		}
 	}
-	if (inputMgr->SubDownTrigger())
+	if (GameInput::Get()->SubDownTrigger())
 	{
 		int r = stage->GetArea().GetRoute(routeIndex);
 		if (routeIndex < Area::MAX_COURSE_NUM - 1 &&
@@ -487,7 +487,7 @@ void StageEditorScene::RouteSetting()
 			routeIndex += 1;
 		}
 	}
-	if (inputMgr->SubLeftTrigger())
+	if (GameInput::Get()->SubLeftTrigger())
 	{
 		isRoute = false;
 	}
@@ -566,19 +566,19 @@ void StageEditorScene::CursorMoveUp()
 		else
 		{
 			// カーソルが上側のドアに移動
-			cursorState = CursorState::DOOR_UP;
+			cursorState = CursorState::DOOR_TOP;
 		}
 	}
-	else if (cursorState == CursorState::DOOR_UP)
+	else if (cursorState == CursorState::DOOR_TOP)
 	{
 		if (Stage::MoveFrontRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが下側のドアに移動(ループ)
 			mapIndex += STAGE_WIDTH * (STAGE_HEIGHT - 1);
-			cursorState = CursorState::DOOR_DOWN;
+			cursorState = CursorState::DOOR_BOTTOM;
 		}
 	}
-	else if (cursorState == CursorState::DOOR_DOWN)
+	else if (cursorState == CursorState::DOOR_BOTTOM)
 	{
 		// カーソルをブロックに移動
 		cursorState = CursorState::BLOCKS;
@@ -597,19 +597,19 @@ void StageEditorScene::CursorMoveDown()
 		else
 		{
 			// カーソルが下側のドアに移動
-			cursorState = CursorState::DOOR_DOWN;
+			cursorState = CursorState::DOOR_BOTTOM;
 		}
 	}
-	else if (cursorState == CursorState::DOOR_DOWN)
+	else if (cursorState == CursorState::DOOR_BOTTOM)
 	{
 		if (Stage::MoveBackRoom() != FUNCTION_ERROR)
 		{
 			// カーソルが上側のドアに移動(ループ)
 			mapIndex -= STAGE_WIDTH * (STAGE_HEIGHT - 1);
-			cursorState = CursorState::DOOR_UP;
+			cursorState = CursorState::DOOR_TOP;
 		}
 	}
-	else if (cursorState == CursorState::DOOR_UP)
+	else if (cursorState == CursorState::DOOR_TOP)
 	{
 		// カーソルをブロックに移動
 		cursorState = CursorState::BLOCKS;

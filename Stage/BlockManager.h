@@ -5,6 +5,8 @@
 #include <map>
 #include "./ShaderMgr/ShaderManager.h"
 #include "../Effect/FireParticle.h"
+#include "../Effect/AppearParticle.h"
+#include "../Effect/SwitchParticle.h"
 #include "./Header/PostEffect.h"
 #include "./Header/EngineGeneral.h"
 
@@ -68,6 +70,8 @@ private: //静的メンバ変数
 	static ShaderManager* shaderMgr;
 	static PostEffect postEffect;
 	static FireParticle fireEffect;
+	static SwitchParticle switchEffect;
+	static AppearParticle appearEffect;
 	static int torchLight;
 	
 public: //静的メンバ関数

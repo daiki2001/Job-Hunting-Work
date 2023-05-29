@@ -3,6 +3,7 @@
 #include "./Math/Collision/Collision.h"
 #include "./Header/DirectXInit.h"
 #include "./Header/DrawPolygon.h"
+#include "./Input/GameInput.h"
 #include "./Header/Parameter.h"
 #include "LoadGraph.h"
 
@@ -12,6 +13,8 @@ bool BlockManager::isBlockSwitch = false;
 ShaderManager* BlockManager::shaderMgr = ShaderManager::Get();
 PostEffect BlockManager::postEffect{};
 FireParticle BlockManager::fireEffect{};
+SwitchParticle BlockManager::switchEffect{};
+AppearParticle BlockManager::appearEffect{};
 int BlockManager::torchLight = FUNCTION_ERROR;
 
 BlockManager::Block::Block(TypeId typeId) :
@@ -44,6 +47,8 @@ void BlockManager::Init()
 {
 	BlockType::StaticInit();
 	fireEffect.Init();
+	switchEffect.Init();
+	appearEffect.Init();
 
 	blockType.push_back(BlockType(TypeId::NONE));
 	blockType.back().Create();
@@ -215,6 +220,7 @@ void BlockManager::Update()
 
 		SwitchPush();
 		isBlockSwitch = !isBlockSwitch;
+		switchEffect.Create(blocks[playerPos].pos);
 		EaseInit(blocks);
 		break;
 	case TypeId::GOAL:
@@ -256,6 +262,7 @@ void BlockManager::Update()
 	case TypeId::HOLE:
 	case TypeId::WHITE_TILE:
 	case TypeId::TORCH:
+	case TypeId::TRANSPARENT_KEY:
 	default:
 		step = Step::STAY;
 		break;
@@ -265,6 +272,9 @@ void BlockManager::Update()
 void BlockManager::EffectUpdate()
 {
 	fireEffect.Update();
+	switchEffect.Update();
+	appearEffect.Update();
+
 	for (int i = 0; i < blocks.size(); i++)
 	{
 		if (blocks[i].typeId == TypeId::TORCH) fireEffect.Create(blocks[i].pos);
@@ -352,6 +362,15 @@ void BlockManager::Draw(const Vector3& offset)
 		if (isSkip == false)
 		{
 			blockType[i.typeId].Draw(i.pos + offset);
+
+			if (i.typeId == TypeId::SWITCH)
+			{
+				switchEffect.Draw(i.pos + offset);
+			}
+			if (i.typeId == TypeId::KEY)
+			{
+				appearEffect.Draw(i.pos + offset);
+			}
 		}
 
 		// 床の描画
@@ -659,6 +678,7 @@ void BlockManager::SwitchPush()
 		if (i.typeId != TypeId::TRANSPARENT_KEY) continue;
 
 		i.typeId = TypeId::KEY;
+		appearEffect.Create(i.pos);
 	}
 }
 

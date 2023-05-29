@@ -26,23 +26,25 @@ Area::Area() :
 	lostForest{},
 	isAlive(false)
 {
+	float sidePos = 9.0f;
+	float topPos = 5.0f;
 	block_mgr.Init();
 
-	door[DoorNum::LEFT].Init(Vector3(-8.5f, 0.0f, 0.0f), Vector3(WALL_SIZE, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::LEFT_TOP].Init(Vector3(-8.5f, +2.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
-	door[DoorNum::LEFT_BOTTOM].Init(Vector3(-8.5f, -2.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::LEFT].Init(Vector3(-(sidePos - 0.5f), 0.0f, 0.0f), Vector3(WALL_SIZE, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::LEFT_TOP].Init(Vector3(-sidePos, +2.5f, 0.0f), Vector3(1.0f, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::LEFT_BOTTOM].Init(Vector3(-sidePos, -2.5f, 0.0f), Vector3(1.0f, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
 
-	door[DoorNum::RIGHT].Init(Vector3(+8.5f, 0.0f, 0.0f), Vector3(WALL_SIZE, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::RIGHT_TOP].Init(Vector3(+8.5f, +2.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
-	door[DoorNum::RIGHT_BOTTOM].Init(Vector3(+8.5f, -2.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::RIGHT].Init(Vector3(+(sidePos - 0.5f), 0.0f, 0.0f), Vector3(WALL_SIZE, Door::DOOR_WIDTH, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::RIGHT_TOP].Init(Vector3(+sidePos, +2.5f, 0.0f), Vector3(1.0f, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::RIGHT_BOTTOM].Init(Vector3(+sidePos, -2.5f, 0.0f), Vector3(1.0f, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
 
-	door[DoorNum::TOP].Init(Vector3(0.0f, +4.5f, 0.0f), Vector3(Door::DOOR_WIDTH, WALL_SIZE, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::TOP_LEFT].Init(Vector3(-6.5f, +4.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
-	door[DoorNum::TOP_RIGHT].Init(Vector3(+6.5f, +4.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::TOP].Init(Vector3(0.0f, +topPos, 0.0f), Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::TOP_LEFT].Init(Vector3(-6.5f, +topPos, 0.0f), Vector3(WALL_SIZE, 1.0f, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::TOP_RIGHT].Init(Vector3(+6.5f, +topPos, 0.0f), Vector3(WALL_SIZE, 1.0f, WALL_SIZE), Door::DoorStatus::WALL);
 
-	door[DoorNum::BOTTOM].Init(Vector3(0.0f, -4.5f, 0.0f), Vector3(Door::DOOR_WIDTH, WALL_SIZE, WALL_SIZE), Door::DoorStatus::CLOSE);
-	door[DoorNum::BOTTOM_LEFT].Init(Vector3(-6.5f, -4.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
-	door[DoorNum::BOTTOM_RIGHT].Init(Vector3(+6.5f, -4.5f, 0.0f), Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::BOTTOM].Init(Vector3(0.0f, -topPos, 0.0f), Vector3(Door::DOOR_WIDTH, 1.0f, WALL_SIZE), Door::DoorStatus::CLOSE);
+	door[DoorNum::BOTTOM_LEFT].Init(Vector3(-6.5f, -topPos, 0.0f), Vector3(WALL_SIZE, 1.0f, WALL_SIZE), Door::DoorStatus::WALL);
+	door[DoorNum::BOTTOM_RIGHT].Init(Vector3(+6.5f, -topPos, 0.0f), Vector3(WALL_SIZE, 1.0f, WALL_SIZE), Door::DoorStatus::WALL);
 
 	SetDoorInit(door);
 }
@@ -205,23 +207,12 @@ int Area::LoadArea(FILE* fileHandle)
 	// ドアの設定
 	for (int i = 0; i < static_cast<int>(DOOR_COUNT); i++)
 	{
-		Vector3 size = Vector3(WALL_SIZE, WALL_SIZE, WALL_SIZE);
-
 		if (doorSetting[i] == static_cast<int>(Door::DoorStatus::ENTRANCE))
 		{
 			doorSetting[i] = static_cast<int>(Door::DoorStatus::WALL);
 		}
 
-		if (i == DoorNum::LEFT || i == DoorNum::RIGHT)
-		{
-			size.y = 3.0f;
-		}
-		else if (i == DoorNum::TOP || i == DoorNum::BOTTOM)
-		{
-			size.x = 3.0f;
-		}
-
-		door[i].Init(door[i].GetPos(), size, static_cast<Door::DoorStatus>(doorSetting[i]));
+		door[i].Init(door[i].GetPos(), door[i].GetSize(), static_cast<Door::DoorStatus>(doorSetting[i]));
 		doorInit[i] = door[i];
 	}
 
@@ -295,30 +286,20 @@ void Area::DrawWall(const Vector3& offset)
 	auto draw = Library::DrawPolygon::GetInstance();
 
 	DirectDrawing::ChangeMaterialShader();
-	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, +4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-8.5f, -4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, -4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+8.5f, +4.5f, -0.5f) + offset, Math::Identity(), size);
 
-	//draw->DrawOBJ(wall_obj, Vector3(-8.5f, +2.5f, 0.0f) + offset, Math::Identity(), size);
-	//draw->DrawOBJ(wall_obj, Vector3(-8.5f, -2.5f, 0.0f) + offset, Math::Identity(), size);
-	//draw->DrawOBJ(wall_obj, Vector3(+8.5f, -2.5f, 0.0f) + offset, Math::Identity(), size);
-	//draw->DrawOBJ(wall_obj, Vector3(+8.5f, +2.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-4.5f, +4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-4.5f, -4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+4.5f, -4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+4.5f, +4.5f, -0.5f) + offset, Math::Identity(), size);
 
-	//draw->DrawOBJ(wall_obj, Vector3(-6.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
-	//draw->DrawOBJ(wall_obj, Vector3(-6.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	//draw->DrawOBJ(wall_obj, Vector3(+6.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	//draw->DrawOBJ(wall_obj, Vector3(+6.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
-
-	draw->DrawOBJ(wall_obj, Vector3(-4.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(-4.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(+4.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(+4.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
-
-	draw->DrawOBJ(wall_obj, Vector3(-2.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, 0.0f) + offset, Math::Identity(), size);
-	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, 0.0f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-2.5f, +4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(-2.5f, -4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+2.5f, -4.5f, -0.5f) + offset, Math::Identity(), size);
+	draw->DrawOBJ(wall_obj, Vector3(+2.5f, +4.5f, -0.5f) + offset, Math::Identity(), size);
 }
 
 const int Area::LostForest(const std::vector<int>& route, const size_t& index)

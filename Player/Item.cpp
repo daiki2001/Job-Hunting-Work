@@ -59,7 +59,11 @@ void Item::DrawInfo(const char* type, int offsetX, int offsetY, float scale)
 bool Item::Acquisition()
 {
 	if (GameInput::Get()->DecisionTrigger() == false) return false;
+	return Add();
+}
 
+bool Item::Add()
+{
 	if (count < maxCount)
 	{
 		count++;

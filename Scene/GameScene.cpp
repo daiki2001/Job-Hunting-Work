@@ -78,7 +78,7 @@ void GameScene::Update()
 	}
 	else
 	{
-		player->Update(GameInput::Get());
+		player->Update();
 		stage->Update();
 
 		if (Stage::IsGoal())

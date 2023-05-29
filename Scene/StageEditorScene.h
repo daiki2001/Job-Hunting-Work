@@ -2,7 +2,6 @@
 #include "./Scene/BaseScene.h"
 #include "../Stage/Stage.h"
 #include "../UndoRedo/FuncRedoUndo.h"
-#include "./Input/GameInput.h"
 
 class FuncRedoUndo;
 
@@ -22,15 +21,23 @@ public: //サブクラス
 	// カーソルがどこを指しているか
 	enum CursorState
 	{
-		BLOCKS,                               //何かしらのブロック
-		DOOR_UP = Area::DoorNum::TOP + 1,      //上のドア
-		DOOR_DOWN = Area::DoorNum::BOTTOM + 1,  //下のドア
-		DOOR_LEFT = Area::DoorNum::LEFT + 1,  //左のドア
-		DOOR_RIGHT = Area::DoorNum::RIGHT + 1 //右のドア
+		BLOCKS, //何かしらのブロック
+		DOORS,  //何かしらのドア
+		DOOR_LEFT = Area::DoorNum::LEFT + 2, //左のドア
+		DOOR_LEFT_TOP,                       //左上のドア
+		DOOR_LEFT_BOTTOM,                    //左下のドア
+		DOOR_RIGHT,                          //右のドア
+		DOOR_RIGHT_TOP,                      //右上のドア
+		DOOR_RIGHT_BOTTOM,                   //右下のドア
+		DOOR_TOP,                            //上のドア
+		DOOR_TOP_LEFT,                       //上左のドア
+		DOOR_TOP_RIGHT,                      //上右のドア
+		DOOR_BOTTOM,                         //下のドア
+		DOOR_BOTTOM_LEFT,                    //下左のドア
+		DOOR_BOTTOM_RIGHT,                   //下右のドア
 	};
 
 private: //静的メンバ変数
-	static GameInput* inputMgr;
 	static Stage* stage;
 
 private: //メンバ変数

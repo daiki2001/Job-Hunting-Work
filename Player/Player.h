@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Item.h"
 #include "Bomb.h"
-#include "./Input/GameInput.h"
 #include "./Header/EngineGeneral.h"
 #include <vector>
 
@@ -58,7 +57,7 @@ public: //メンバ関数
 	// 初期化処理
 	void Init();
 	// 更新処理
-	void Update(const GameInput* const input);
+	void Update();
 	// 描画処理
 	void Draw(int offsetX = 0, int offsetY = 0);
 	// 描画処理(アイテムインベントリ)
@@ -85,9 +84,9 @@ public: //メンバ関数
 	const unsigned int GetKeyCount() const { return key.GetCount(); }
 	const unsigned int GetBombCount() const { return bomb.GetCount(); }
 private:
-	void Move(const GameInput* const input);
-	void SelectAction(const GameInput* const input);
-	void Action(const GameInput* const input);
+	void Move();
+	void SelectAction();
+	void Action();
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();

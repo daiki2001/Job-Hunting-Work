@@ -22,7 +22,6 @@ void AppearParticle::Init()
 void AppearParticle::Create(const Vector3& startPos)
 {
 	static const size_t CREATE_NUM = 20;
-	Vector3 speed = Vector3(0.0f, 0.0f, -1.0f);
 
 	for (size_t i = 0, j = 0; i < CREATE_NUM; j++)
 	{
@@ -41,8 +40,12 @@ void AppearParticle::Create(const Vector3& startPos)
 
 		float speedLength = 0.125f;
 		float accelLength = 1.0f / 32.0f;
-		Vector3 accel = { RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f), 0.0f };
-		particle[j].Create(startPos, speed.Normalize() * speedLength, accel.Normalize() * accelLength, scale);
+		Vector3 accel = Vector3(RandomNumber(1.0f, -1.0f), RandomNumber(1.0f, -1.0f), 0.0f).Normalize() * accelLength;
+		Vector3 speed = Vector3(0.0f, 0.0f, 1.0f) * speedLength;
+		Vector3 pos = accel.Normalize() * (-1.40625f);
+		pos += Vector3(0.0f, 0.0f, -1.5f);
+		//speed += accel.Normalize() * 0.03125f;
+		particle[j].Create(startPos + pos, speed, accel, scale);
 		i++;
 	}
 }

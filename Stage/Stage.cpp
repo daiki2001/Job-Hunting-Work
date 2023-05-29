@@ -113,8 +113,9 @@ void Stage::Draw(int offsetX, int offsetY)
 	int winH = DirectXInit::GetInstance()->windowHeight;
 
 	// 下の階層を暗めに描画する
-	if (rooms.find(nowRoom + DOWN_FLOOR) != rooms.end() &&
-		rooms[nowRoom + DOWN_FLOOR].isAlive)
+	bool flag = rooms.find(nowRoom + DOWN_FLOOR) != rooms.end() &&
+				rooms[nowRoom + DOWN_FLOOR].isAlive;
+	if (flag)
 	{
 		rooms[nowRoom + DOWN_FLOOR].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), Area::WALL_SIZE });
 	}
@@ -122,11 +123,11 @@ void Stage::Draw(int offsetX, int offsetY)
 	Library::DrawPolygon::GetInstance()->DrawTextrue(
 		0.0f, 0.0f, static_cast<float>(winW), static_cast<float>(winH),
 		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.0f, 0.0f),
-		Color::AddAlphaValue(Color::BLACK, 0.5f));
+		Color::AddAlphaValue(Color::BLACK, 0.5f + !flag * 0.5f));
 
 	rooms[nowRoom].Draw({ static_cast<float>(offsetX), static_cast<float>(offsetY), 0.0f });
 
-	//MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
+	MiniMap(DirectXInit::GetInstance()->windowWidth + offsetX, offsetY, 20.0f);
 }
 
 void Stage::Reset()
@@ -157,8 +158,9 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 	}
 
 	// 下の階層を暗めに描画する
-	if (rooms.find(nowRoom + DOWN_FLOOR) != rooms.end() &&
-		rooms[nowRoom + DOWN_FLOOR].isAlive)
+	bool flag = rooms.find(nowRoom + DOWN_FLOOR) != rooms.end() &&
+				rooms[nowRoom + DOWN_FLOOR].isAlive;
+	if (flag)
 	{
 		rooms[nowRoom + DOWN_FLOOR].Draw(Vector3(
 			(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
@@ -175,7 +177,7 @@ void Stage::ScrollDraw(int offsetX, int offsetY)
 		static_cast<float>(winW) / 2.0f, static_cast<float>(winH) / 2.0f,
 		static_cast<float>(winW), static_cast<float>(winH),
 		0.0f, Parameter::Get("white1x1"), DirectX::XMFLOAT2(0.5f, 0.5f),
-		Color::AddAlphaValue(Color::BLACK, 0.5f));
+		Color::AddAlphaValue(Color::BLACK, 0.5f + !flag * 0.5f));
 
 	rooms[nowRoom].Draw(Vector3(
 		(static_cast<float>(BlockManager::STAGE_WIDTH) + Area::WALL_SIZE * 2.0f) * moveDir.x,
